@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: susuflow-worker
+  labels:
+    app: susuflow-worker
+    app.kubernetes.io/part-of: susuflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: susuflow-worker
+  template:
+    metadata:
+      labels:
+        app: susuflow-worker
+    spec:
+      containers:
+        - name: worker
+          image: susuflow/worker:latest
+          envFrom:
+            - configMapRef:
+                name: susuflow-config
+            - secretRef:
+                name: susuflow-secrets
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

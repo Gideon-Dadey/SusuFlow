@@ -1,0 +1,676 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Run seed: pnpm db:seed
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum TenantStatus {
+  trial
+  active
+  suspended
+  closed
+}
+
+enum UserStatus {
+  pending
+  active
+  suspended
+  locked
+}
+
+enum CustomerStatus {
+  pending
+  active
+  suspended
+  closed
+}
+
+enum KycStatus {
+  pending
+  verified
+  rejected
+}
+
+enum WalletType {
+  customer
+  commission
+  platform
+}
+
+enum WalletStatus {
+  active
+  frozen
+  closed
+}
+
+enum AccountType {
+  asset
+  liability
+  revenue
+  expense
+  equity
+}
+
+enum AccountStatus {
+  active
+  inactive
+}
+
+enum TransactionType {
+  deposit
+  withdrawal
+  transfer
+  commission
+  reversal
+}
+
+enum TransactionStatus {
+  pending
+  processing
+  completed
+  failed
+  reversed
+}
+
+enum EntryType {
+  debit
+  credit
+}
+
+enum PaymentGateway {
+  hubtel
+  paystack
+  flutterwave
+}
+
+enum PaymentMethod {
+  mtn_momo
+  telecel_cash
+  airteltigo
+  visa
+  mastercard
+  bank_transfer
+}
+
+enum PaymentStatus {
+  initiated
+  pending
+  success
+  failed
+  expired
+}
+
+enum WithdrawalStatus {
+  requested
+  approved
+  rejected
+  processing
+  completed
+  failed
+}
+
+enum NotificationChannel {
+  email
+  sms
+  push
+  whatsapp
+}
+
+enum NotificationStatus {
+  pending
+  sent
+  failed
+  delivered
+}
+
+enum SubscriptionPlan {
+  starter
+  growth
+  enterprise
+}
+
+enum SubscriptionStatus {
+  trialing
+  active
+  past_due
+  cancelled
+}
+
+enum PlanFrequency {
+  daily
+  weekly
+  biweekly
+  monthly
+}
+
+enum PlanStatus {
+  active
+  inactive
+}
+
+enum AlertSeverity {
+  low
+  medium
+  high
+  critical
+}
+
+enum AlertStatus {
+  open
+  investigating
+  resolved
+  false_positive
+}
+
+enum DocumentType {
+  ghana_card
+  passport
+  utility_bill
+  selfie
+}
+
+enum DocumentStatus {
+  pending
+  approved
+  rejected
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model Tenant {
+  id              String       @id @default(uuid()) @db.Uuid
+  slug            String       @unique @db.VarChar(30)
+  name            String       @db.VarChar(255)
+  email           String       @db.VarChar(255)
+  phone           String?      @db.VarChar(20)
+  logoUrl         String?      @map("logo_url")
+  primaryColor    String       @default("#1E40AF") @map("primary_color") @db.VarChar(7)
+  status          TenantStatus @default(trial)
+  settings        Json         @default("{}")
+  subscriptionId  String?      @map("subscription_id") @db.Uuid
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  subscription  Subscription?  @relation(fields: [subscriptionId], references: [id])
+  users         User[]
+  customers     Customer[]
+  wallets       Wallet[]
+  accounts      Account[]
+  transactions  Transaction[]
+  payments      Payment[]
+  withdrawals   Withdrawal[]
+  auditLogs     AuditLog[]
+  notifications Notification[]
+  savingsPlans  SavingsPlan[]
+  fraudAlerts   FraudAlert[]
+  subscriptions Subscription[] @relation("TenantSubscriptions")
+  userRoles     UserRole[]
+
+  @@index([status])
+  @@map("tenants")
+}
+
+model User {
+  id               String     @id @default(uuid()) @db.Uuid
+  tenantId         String?    @map("tenant_id") @db.Uuid
+  email            String     @db.VarChar(255)
+  phone            String?    @db.VarChar(20)
+  passwordHash     String     @map("password_hash") @db.VarChar(255)
+  firstName        String     @map("first_name") @db.VarChar(100)
+  lastName         String     @map("last_name") @db.VarChar(100)
+  status           UserStatus @default(pending)
+  emailVerified    Boolean    @default(false) @map("email_verified")
+  phoneVerified    Boolean    @default(false) @map("phone_verified")
+  mfaEnabled       Boolean    @default(false) @map("mfa_enabled")
+  mfaSecret        String?    @map("mfa_secret") @db.VarChar(255)
+  lastLoginAt      DateTime?  @map("last_login_at") @db.Timestamptz
+  failedLoginCount Int        @default(0) @map("failed_login_count")
+  lockedUntil      DateTime?  @map("locked_until") @db.Timestamptz
+  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant              Tenant?      @relation(fields: [tenantId], references: [id])
+  customer            Customer?    @relation("CustomerUser")
+  collectedCustomers  Customer[]   @relation("CollectorCustomers")
+  onboardedCustomers  Customer[]   @relation("OnboardedBy")
+  initiatedTxns       Transaction[] @relation("InitiatedBy")
+  collectorTxns       Transaction[] @relation("CollectorTxns")
+  approvedWithdrawals Withdrawal[] @relation("ApprovedBy")
+  auditLogs           AuditLog[]
+  notifications       Notification[]
+  devices             Device[]
+  refreshTokens       RefreshToken[]
+  userRoles           UserRole[]
+  reviewedDocuments   KycDocument[] @relation("ReviewedBy")
+  resolvedAlerts      FraudAlert[]  @relation("ResolvedBy")
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@index([status])
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique @db.VarChar(50)
+  description String?
+  isSystem    Boolean  @default(false) @map("is_system")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  rolePermissions RolePermission[]
+  userRoles       UserRole[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String @id @default(uuid()) @db.Uuid
+  name        String @unique @db.VarChar(100)
+  resource    String @db.VarChar(50)
+  action      String @db.VarChar(50)
+  description String?
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String @map("role_id") @db.Uuid
+  permissionId String @map("permission_id") @db.Uuid
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  userId   String  @map("user_id") @db.Uuid
+  roleId   String  @map("role_id") @db.Uuid
+  tenantId String? @map("tenant_id") @db.Uuid
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  tenant Tenant? @relation(fields: [tenantId], references: [id])
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model Customer {
+  id              String         @id @default(uuid()) @db.Uuid
+  tenantId        String         @map("tenant_id") @db.Uuid
+  userId          String?        @unique @map("user_id") @db.Uuid
+  collectorId     String?        @map("collector_id") @db.Uuid
+  customerNumber  String         @map("customer_number") @db.VarChar(20)
+  ghanaCardNumber String?        @map("ghana_card_number") @db.VarChar(20)
+  dateOfBirth     DateTime?      @map("date_of_birth") @db.Date
+  address         String?
+  kycLevel        Int            @default(0) @map("kyc_level")
+  kycStatus       KycStatus      @default(pending) @map("kyc_status")
+  status          CustomerStatus @default(pending)
+  onboardedById   String?        @map("onboarded_by") @db.Uuid
+  metadata        Json           @default("{}")
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant         Tenant          @relation(fields: [tenantId], references: [id])
+  user           User?           @relation("CustomerUser", fields: [userId], references: [id])
+  collector      User?           @relation("CollectorCustomers", fields: [collectorId], references: [id])
+  onboardedBy    User?           @relation("OnboardedBy", fields: [onboardedById], references: [id])
+  wallets        Wallet[]
+  transactions   Transaction[]
+  withdrawals    Withdrawal[]
+  customerPlans  CustomerPlan[]
+  kycDocuments   KycDocument[]
+
+  @@unique([tenantId, customerNumber])
+  @@index([tenantId])
+  @@index([collectorId])
+  @@index([status])
+  @@map("customers")
+}
+
+model Wallet {
+  id         String       @id @default(uuid()) @db.Uuid
+  tenantId   String       @map("tenant_id") @db.Uuid
+  customerId String?      @map("customer_id") @db.Uuid
+  walletType WalletType   @map("wallet_type")
+  currency   String       @default("GHS") @db.VarChar(3)
+  status     WalletStatus @default(active)
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  customer     Customer?     @relation(fields: [customerId], references: [id])
+  accounts     Account[]
+  transactions Transaction[]
+
+  @@index([tenantId, customerId])
+  @@index([walletType])
+  @@map("wallets")
+}
+
+model Account {
+  id          String        @id @default(uuid()) @db.Uuid
+  tenantId    String        @map("tenant_id") @db.Uuid
+  walletId    String?       @map("wallet_id") @db.Uuid
+  code        String        @db.VarChar(10)
+  name        String        @db.VarChar(255)
+  accountType AccountType   @map("account_type")
+  parentId    String?       @map("parent_id") @db.Uuid
+  isSystem    Boolean       @default(false) @map("is_system")
+  status      AccountStatus @default(active)
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant         Tenant         @relation(fields: [tenantId], references: [id])
+  wallet         Wallet?        @relation(fields: [walletId], references: [id])
+  parent         Account?       @relation("AccountHierarchy", fields: [parentId], references: [id])
+  children       Account[]      @relation("AccountHierarchy")
+  ledgerEntries  LedgerEntry[]
+
+  @@unique([tenantId, code])
+  @@index([walletId])
+  @@map("accounts")
+}
+
+model Transaction {
+  id             String            @id @default(uuid()) @db.Uuid
+  tenantId       String            @map("tenant_id") @db.Uuid
+  reference      String            @unique @db.VarChar(50)
+  type           TransactionType
+  status         TransactionStatus @default(pending)
+  amount         Decimal           @db.Decimal(18, 2)
+  currency       String            @default("GHS") @db.VarChar(3)
+  customerId     String?           @map("customer_id") @db.Uuid
+  walletId       String?           @map("wallet_id") @db.Uuid
+  initiatedById  String?           @map("initiated_by") @db.Uuid
+  collectorId    String?           @map("collector_id") @db.Uuid
+  description    String?
+  metadata       Json              @default("{}")
+  idempotencyKey String?           @unique @map("idempotency_key") @db.VarChar(255)
+  completedAt    DateTime?         @map("completed_at") @db.Timestamptz
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime          @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id])
+  customer      Customer?      @relation(fields: [customerId], references: [id])
+  wallet        Wallet?        @relation(fields: [walletId], references: [id])
+  initiatedBy   User?          @relation("InitiatedBy", fields: [initiatedById], references: [id])
+  collector     User?          @relation("CollectorTxns", fields: [collectorId], references: [id])
+  ledgerEntries LedgerEntry[]
+  payment       Payment?
+  withdrawal    Withdrawal?
+
+  @@index([tenantId])
+  @@index([customerId])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt(sort: Desc)])
+  @@map("transactions")
+}
+
+model LedgerEntry {
+  id            String    @id @default(uuid()) @db.Uuid
+  tenantId      String    @map("tenant_id") @db.Uuid
+  transactionId String    @map("transaction_id") @db.Uuid
+  accountId     String    @map("account_id") @db.Uuid
+  entryType     EntryType @map("entry_type")
+  amount        Decimal   @db.Decimal(18, 2)
+  currency      String    @default("GHS") @db.VarChar(3)
+  description   String?
+  reversalOfId  String?   @map("reversal_of") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  transaction Transaction  @relation(fields: [transactionId], references: [id])
+  account     Account      @relation(fields: [accountId], references: [id])
+  reversalOf  LedgerEntry? @relation("Reversals", fields: [reversalOfId], references: [id])
+  reversals   LedgerEntry[] @relation("Reversals")
+
+  @@index([tenantId])
+  @@index([transactionId])
+  @@index([accountId])
+  @@index([createdAt(sort: Desc)])
+  @@map("ledger_entries")
+}
+
+model Payment {
+  id                String         @id @default(uuid()) @db.Uuid
+  tenantId          String         @map("tenant_id") @db.Uuid
+  transactionId     String         @unique @map("transaction_id") @db.Uuid
+  gateway           PaymentGateway
+  gatewayReference  String?        @map("gateway_reference") @db.VarChar(255)
+  paymentMethod     PaymentMethod  @map("payment_method")
+  amount            Decimal        @db.Decimal(18, 2)
+  currency          String         @default("GHS") @db.VarChar(3)
+  status            PaymentStatus  @default(initiated)
+  payerPhone        String?        @map("payer_phone") @db.VarChar(20)
+  gatewayResponse   Json?          @map("gateway_response")
+  webhookReceivedAt DateTime?      @map("webhook_received_at") @db.Timestamptz
+  expiresAt         DateTime?      @map("expires_at") @db.Timestamptz
+  createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant      Tenant      @relation(fields: [tenantId], references: [id])
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+
+  @@unique([gateway, gatewayReference])
+  @@index([status])
+  @@map("payments")
+}
+
+model Withdrawal {
+  id                 String           @id @default(uuid()) @db.Uuid
+  tenantId           String           @map("tenant_id") @db.Uuid
+  transactionId      String           @unique @map("transaction_id") @db.Uuid
+  customerId         String           @map("customer_id") @db.Uuid
+  amount             Decimal          @db.Decimal(18, 2)
+  currency           String           @default("GHS") @db.VarChar(3)
+  status             WithdrawalStatus @default(requested)
+  disbursementMethod PaymentMethod    @map("disbursement_method")
+  disbursementPhone  String?          @map("disbursement_phone") @db.VarChar(20)
+  approvedById       String?          @map("approved_by") @db.Uuid
+  approvedAt         DateTime?        @map("approved_at") @db.Timestamptz
+  rejectionReason    String?          @map("rejection_reason")
+  gatewayReference   String?          @map("gateway_reference") @db.VarChar(255)
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant      Tenant      @relation(fields: [tenantId], references: [id])
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  customer    Customer    @relation(fields: [customerId], references: [id])
+  approvedBy  User?       @relation("ApprovedBy", fields: [approvedById], references: [id])
+
+  @@index([tenantId])
+  @@index([customerId])
+  @@index([status])
+  @@map("withdrawals")
+}
+
+model AuditLog {
+  id            String   @id @default(uuid()) @db.Uuid
+  tenantId      String?  @map("tenant_id") @db.Uuid
+  userId        String?  @map("user_id") @db.Uuid
+  action        String   @db.VarChar(100)
+  resourceType  String   @map("resource_type") @db.VarChar(50)
+  resourceId    String?  @map("resource_id") @db.Uuid
+  ipAddress     String?  @map("ip_address") @db.VarChar(45)
+  userAgent     String?  @map("user_agent")
+  deviceId      String?  @map("device_id") @db.VarChar(255)
+  geoLocation   Json?    @map("geo_location")
+  beforeState   Json?    @map("before_state")
+  afterState    Json?    @map("after_state")
+  correlationId String?  @map("correlation_id") @db.VarChar(50)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id])
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([action])
+  @@index([resourceType, resourceId])
+  @@index([createdAt(sort: Desc)])
+  @@map("audit_logs")
+}
+
+model Notification {
+  id        String              @id @default(uuid()) @db.Uuid
+  tenantId  String              @map("tenant_id") @db.Uuid
+  userId    String?             @map("user_id") @db.Uuid
+  channel   NotificationChannel
+  template  String              @db.VarChar(100)
+  recipient String              @db.VarChar(255)
+  subject   String?             @db.VarChar(255)
+  body      String
+  status    NotificationStatus  @default(pending)
+  metadata  Json                @default("{}")
+  sentAt    DateTime?           @map("sent_at") @db.Timestamptz
+  createdAt DateTime            @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User?  @relation(fields: [userId], references: [id])
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([status])
+  @@map("notifications")
+}
+
+model Subscription {
+  id                      String             @id @default(uuid()) @db.Uuid
+  tenantId                String             @map("tenant_id") @db.Uuid
+  plan                    SubscriptionPlan
+  status                  SubscriptionStatus @default(trialing)
+  currentPeriodStart      DateTime           @map("current_period_start") @db.Timestamptz
+  currentPeriodEnd        DateTime           @map("current_period_end") @db.Timestamptz
+  trialEnd                DateTime?          @map("trial_end") @db.Timestamptz
+  cancelledAt             DateTime?          @map("cancelled_at") @db.Timestamptz
+  paystackCustomerCode    String?            @map("paystack_customer_code") @db.VarChar(100)
+  paystackReference       String?            @map("paystack_reference") @db.VarChar(100)
+  lastPaymentAt           DateTime?          @map("last_payment_at") @db.Timestamptz
+  createdAt               DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt               DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant         Tenant   @relation("TenantSubscriptions", fields: [tenantId], references: [id])
+  activeForTenant Tenant[]
+
+  @@index([tenantId])
+  @@map("subscriptions")
+}
+
+model SavingsPlan {
+  id             String        @id @default(uuid()) @db.Uuid
+  tenantId       String        @map("tenant_id") @db.Uuid
+  name           String        @db.VarChar(255)
+  description    String?
+  frequency      PlanFrequency
+  minAmount      Decimal       @map("min_amount") @db.Decimal(18, 2)
+  maxAmount      Decimal?      @map("max_amount") @db.Decimal(18, 2)
+  durationMonths Int?          @map("duration_months")
+  status         PlanStatus    @default(active)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id])
+  customerPlans CustomerPlan[]
+
+  @@index([tenantId])
+  @@map("savings_plans")
+}
+
+model CustomerPlan {
+  id           String     @id @default(uuid()) @db.Uuid
+  customerId   String     @map("customer_id") @db.Uuid
+  planId       String     @map("plan_id") @db.Uuid
+  targetAmount Decimal?   @map("target_amount") @db.Decimal(18, 2)
+  status       PlanStatus @default(active)
+  startedAt    DateTime   @default(now()) @map("started_at") @db.Timestamptz
+  endsAt       DateTime?  @map("ends_at") @db.Timestamptz
+
+  customer Customer    @relation(fields: [customerId], references: [id])
+  plan     SavingsPlan @relation(fields: [planId], references: [id])
+
+  @@index([customerId])
+  @@map("customer_plans")
+}
+
+model FraudAlert {
+  id           String        @id @default(uuid()) @db.Uuid
+  tenantId     String        @map("tenant_id") @db.Uuid
+  rule         String        @db.VarChar(100)
+  severity     AlertSeverity
+  status       AlertStatus   @default(open)
+  resourceType String?       @map("resource_type") @db.VarChar(50)
+  resourceId   String?       @map("resource_id") @db.Uuid
+  details      Json
+  resolvedById String?       @map("resolved_by") @db.Uuid
+  resolvedAt   DateTime?     @map("resolved_at") @db.Timestamptz
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant     Tenant @relation(fields: [tenantId], references: [id])
+  resolvedBy User?  @relation("ResolvedBy", fields: [resolvedById], references: [id])
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("fraud_alerts")
+}
+
+model Device {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  fingerprint String   @db.VarChar(255)
+  name       String?   @db.VarChar(255)
+  lastIp     String?   @map("last_ip") @db.VarChar(45)
+  lastUsedAt DateTime? @map("last_used_at") @db.Timestamptz
+  isTrusted  Boolean   @default(false) @map("is_trusted")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  user          User           @relation(fields: [userId], references: [id])
+  refreshTokens RefreshToken[]
+
+  @@unique([userId, fingerprint])
+  @@map("devices")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash") @db.VarChar(255)
+  deviceId  String?   @map("device_id") @db.Uuid
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  user   User    @relation(fields: [userId], references: [id])
+  device Device? @relation(fields: [deviceId], references: [id])
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model KycDocument {
+  id              String         @id @default(uuid()) @db.Uuid
+  customerId      String         @map("customer_id") @db.Uuid
+  documentType    DocumentType   @map("document_type")
+  fileUrl         String         @map("file_url")
+  status          DocumentStatus @default(pending)
+  reviewedById    String?        @map("reviewed_by") @db.Uuid
+  reviewedAt      DateTime?      @map("reviewed_at") @db.Timestamptz
+  rejectionReason String?        @map("rejection_reason")
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz
+
+  customer   Customer @relation(fields: [customerId], references: [id])
+  reviewedBy User?    @relation("ReviewedBy", fields: [reviewedById], references: [id])
+
+  @@index([customerId])
+  @@map("kyc_documents")
+}

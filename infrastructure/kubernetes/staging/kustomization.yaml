@@ -1,0 +1,49 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: susuflow-staging
+
+resources:
+  - ../base
+
+patches:
+  - target:
+      kind: Namespace
+      name: susuflow
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: susuflow-staging
+  - target:
+      kind: Deployment
+      name: susuflow-api
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - target:
+      kind: Deployment
+      name: susuflow-web
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - target:
+      kind: ConfigMap
+      name: susuflow-config
+    patch: |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: susuflow-config
+      data:
+        API_URL: https://api-staging.susuflow.com
+        WEB_URL: https://staging.susuflow.com
+
+images:
+  - name: susuflow/api
+    newTag: staging
+  - name: susuflow/web
+    newTag: staging
+  - name: susuflow/worker
+    newTag: staging

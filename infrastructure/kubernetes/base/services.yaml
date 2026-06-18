@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: susuflow-api
+  labels:
+    app: susuflow-api
+spec:
+  selector:
+    app: susuflow-api
+  ports:
+    - port: 4000
+      targetPort: 4000
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: susuflow-web
+  labels:
+    app: susuflow-web
+spec:
+  selector:
+    app: susuflow-web
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP

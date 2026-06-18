@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: susuflow-config
+  labels:
+    app.kubernetes.io/part-of: susuflow
+data:
+  NODE_ENV: production
+  API_PORT: "4000"
+  LOG_LEVEL: info
+  TENANT_CACHE_TTL_SECONDS: "300"

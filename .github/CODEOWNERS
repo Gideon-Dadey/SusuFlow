@@ -1,0 +1,14 @@
+# Default owners for all files
+* @susuflow/engineering
+
+# Documentation
+/docs/ @susuflow/product
+
+# Infrastructure and CI/CD
+/.github/ @susuflow/devops
+/infrastructure/ @susuflow/devops
+
+# Security-sensitive
+/apps/api/src/modules/auth/ @susuflow/security
+/apps/api/src/config/ @susuflow/security
+/packages/database/prisma/ @susuflow/engineering
