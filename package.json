@@ -8,6 +8,8 @@
     "dev:api": "pnpm --filter @susuflow/api dev",
     "dev:web": "pnpm --filter @susuflow/web dev",
     "build": "turbo build",
+    "build:web": "pnpm --filter @susuflow/web... build",
+    "start:web": "pnpm --filter @susuflow/web start",
     "lint": "turbo lint",
     "test": "turbo test",
     "test:coverage": "turbo test:coverage",
