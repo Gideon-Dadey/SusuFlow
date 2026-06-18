@@ -16,7 +16,7 @@ export function MarketingHero() {
             fill
             priority
             sizes="100vw"
-            className="object-cover object-[70%_38%] sm:object-[72%_40%] lg:object-[76%_42%]"
+            className="object-cover object-[42%_28%] sm:object-[58%_36%] lg:object-[76%_42%]"
           />
         </div>
       </div>

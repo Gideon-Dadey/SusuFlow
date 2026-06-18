@@ -411,6 +411,12 @@
     inset: -11% -7%;
   }
 
+  @media (max-width: 639px) {
+    .marketing-hero-image-frame {
+      inset: -8% -10% -8% -4%;
+    }
+  }
+
   @media (min-width: 640px) {
     .marketing-hero-image-frame {
       inset: -9% -5%;
