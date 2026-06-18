@@ -1,0 +1,164 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
+import { AuthShell } from '@/components/auth/auth-shell';
+import {
+  AuthFooterExtras,
+  authInputClassName,
+} from '@/components/auth/auth-form-ui';
+import { Button } from '@/components/ui/button';
+import { useAuthStore } from '@/stores/auth.store';
+import { cn } from '@/lib/utils';
+
+const REMEMBER_EMAIL_KEY = 'susuflow-remember-email';
+
+export default function LoginPage() {
+  const router = useRouter();
+  const { login, isLoading, error, clearError, setTenantSlug } = useAuthStore();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [tenant, setTenant] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(REMEMBER_EMAIL_KEY);
+    if (saved) {
+      setEmail(saved);
+      setRememberMe(true);
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    clearError();
+    setTenantSlug(tenant.trim());
+
+    if (rememberMe) {
+      localStorage.setItem(REMEMBER_EMAIL_KEY, email);
+    } else {
+      localStorage.removeItem(REMEMBER_EMAIL_KEY);
+    }
+
+    try {
+      const path = await login(email, password, tenant.trim());
+      router.push(path);
+    } catch {
+      // error set in store
+    }
+  };
+
+  return (
+    <AuthShell>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Sign in</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          or{' '}
+          <Link href="/register" className="font-medium text-secondary hover:text-secondary/80">
+            Join your susu
+          </Link>
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+        <div className="space-y-1.5">
+          <label htmlFor="tenant" className="block text-sm font-medium text-foreground">
+            Susu company
+          </label>
+          <input
+            id="tenant"
+            name="tenant"
+            type="text"
+            placeholder="Company slug"
+            className={authInputClassName}
+            value={tenant}
+            onChange={(e) => setTenant(e.target.value)}
+            autoComplete="organization"
+          />
+          <p className="text-xs text-muted-foreground">
+            Leave blank for platform admin (super admin) login.
+          </p>
+        </div>
+
+        <div className="space-y-1.5">
+          <label htmlFor="email" className="block text-sm font-medium text-foreground">
+            Email address <span className="text-destructive">*</span>
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Email"
+            className={authInputClassName}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <label htmlFor="password" className="text-sm font-medium text-foreground">
+              Password <span className="text-destructive">*</span>
+            </label>
+            <Link
+              href="/contact"
+              className="text-sm font-medium text-secondary hover:text-secondary/80"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+          <div className="relative">
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              className={cn(authInputClassName, 'pr-10')}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+
+        <label className="flex cursor-pointer items-center gap-2">
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="size-4 rounded border-input text-secondary focus:ring-ring"
+          />
+          <span className="text-sm text-foreground">Remember me</span>
+        </label>
+
+        {error ? (
+          <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>
+        ) : null}
+
+        <Button
+          type="submit"
+          className="h-11 w-full rounded-lg text-sm font-semibold shadow-sm"
+          loading={isLoading}
+        >
+          Sign in
+        </Button>
+      </form>
+
+      <AuthFooterExtras action="signing in" mode="login" />
+    </AuthShell>
+  );
+}

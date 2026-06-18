@@ -1,0 +1,35 @@
+{
+  "name": "susuflow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Multi-tenant digital susu savings platform",
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:api": "pnpm --filter @susuflow/api dev",
+    "dev:web": "pnpm --filter @susuflow/web dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "test:coverage": "turbo test:coverage",
+    "test:e2e": "pnpm --filter @susuflow/api test:e2e",
+    "test:load": "bash scripts/run-load-tests.sh smoke",
+    "test:load:baseline": "bash scripts/run-load-tests.sh api-baseline",
+    "pre-deploy": "bash scripts/pre-deploy-check.sh",
+    "db:generate": "pnpm --filter @susuflow/database db:generate",
+    "db:push": "pnpm --filter @susuflow/database db:push",
+    "db:migrate": "pnpm --filter @susuflow/database db:migrate",
+    "db:seed": "pnpm --filter @susuflow/database db:seed",
+    "db:studio": "pnpm --filter @susuflow/database db:studio",
+    "docker:up": "docker compose -f infrastructure/docker/docker-compose.yml up -d",
+    "docker:down": "docker compose -f infrastructure/docker/docker-compose.yml down",
+    "setup": "pnpm install && pnpm db:generate && pnpm docker:up"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "devDependencies": {
+    "turbo": "^2.3.3"
+  }
+}

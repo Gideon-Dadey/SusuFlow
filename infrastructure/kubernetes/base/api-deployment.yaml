@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: susuflow-api
+  labels:
+    app: susuflow-api
+    app.kubernetes.io/part-of: susuflow
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: susuflow-api
+  template:
+    metadata:
+      labels:
+        app: susuflow-api
+    spec:
+      containers:
+        - name: api
+          image: susuflow/api:latest
+          ports:
+            - containerPort: 4000
+          envFrom:
+            - configMapRef:
+                name: susuflow-config
+            - secretRef:
+                name: susuflow-secrets
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health/ready
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health/live
+              port: 4000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi

@@ -1,0 +1,45 @@
+name: Load Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: k6 scenario to run
+        required: true
+        default: smoke
+        type: choice
+        options:
+          - smoke
+          - api-baseline
+          - stress
+      base_url:
+        description: API base URL (e.g. https://api-staging.susuflow.com)
+        required: true
+        default: http://localhost:4000
+
+jobs:
+  load-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: grafana/setup-k6-action@v1
+
+      - name: Check API availability
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf "${{ inputs.base_url }}/api/v1/health/live"; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "API not reachable at ${{ inputs.base_url }}"
+          exit 1
+
+      - name: Run k6 ${{ inputs.scenario }}
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+          TENANT_SLUG: abc-susu
+          LOAD_TEST_EMAIL: nana@abcsusu.com
+          LOAD_TEST_PASSWORD: Collector123!@#
+        run: k6 run tests/load/${{ inputs.scenario }}.js
