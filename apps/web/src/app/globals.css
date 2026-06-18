@@ -560,13 +560,28 @@
     @apply min-h-screen bg-background lg:grid lg:grid-cols-2;
   }
 
+  /* iOS Safari zooms focused inputs below 16px — keep auth fields at 16px on touch devices */
+  @media (max-width: 767px) {
+    .auth-split input:not([type='checkbox']):not([type='radio']),
+    .auth-split select,
+    .auth-split textarea {
+      font-size: 16px;
+    }
+  }
+
   .theme-toggle-rail {
     top: 50%;
-    left: max(0.625rem, env(safe-area-inset-left, 0px));
+    left: max(0.5rem, env(safe-area-inset-left, 0px));
     transform: translateY(-50%);
     transition:
       transform 0.28s ease,
       opacity 0.28s ease;
+  }
+
+  @media (min-width: 1024px) {
+    .theme-toggle-rail {
+      left: max(0.625rem, env(safe-area-inset-left, 0px));
+    }
   }
 
   .theme-toggle-rail--visible {

@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { BrandLockup } from '@/components/marketing/brand-logo';
 import { NAV_LINKS } from '@/lib/marketing-data';
@@ -206,9 +205,6 @@ export function MarketingNavbar() {
                   })}
                 </div>
                 <div className="mx-auto flex w-full max-w-md flex-col gap-3 pt-4">
-                  <div className="flex justify-center pb-1 lg:hidden">
-                    <ThemeToggle onDark />
-                  </div>
                   <Link href="/login" onClick={() => setMenuOpen(false)}>
                     <span className="inline-flex h-12 w-full items-center justify-center rounded-xl border border-white/25 bg-transparent text-sm font-bold text-white transition-colors hover:border-white/40 hover:bg-white/5">
                       Sign in
