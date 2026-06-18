@@ -1,0 +1,13 @@
+# Preview deploy: marketing site only (no API / database required).
+# See https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: susuflow
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: pnpm install --frozen-lockfile --prod=false && pnpm run build:web
+    startCommand: pnpm run start:web
+    envVars:
+      - key: NODE_ENV
+        value: production
