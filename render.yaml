@@ -1,35 +1,7 @@
-# SusuFlow on Render — web + API (login and dashboards require both).
+# SusuFlow on Render — frontend (marketing site) only.
+# Login, dashboards, and MoMo features need a separate API deploy later.
 # See https://render.com/docs/blueprint-spec
 services:
-  - type: web
-    name: susuflow-api
-    runtime: node
-    plan: free
-    branch: main
-    buildCommand: pnpm install --frozen-lockfile --prod=false && pnpm run build:api && pnpm --filter @susuflow/database exec prisma migrate deploy
-    startCommand: pnpm run start:api
-    healthCheckPath: /api/v1/health/live
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: DATABASE_URL
-        sync: false
-      - key: REDIS_URL
-        sync: false
-      - key: JWT_SECRET
-        generateValue: true
-      - key: ENCRYPTION_KEY
-        generateValue: true
-      - key: WEB_URL
-        fromService:
-          type: web
-          name: susuflow
-          envVarKey: RENDER_EXTERNAL_URL
-      - key: SUPER_ADMIN_EMAIL
-        sync: false
-      - key: SUPER_ADMIN_PASSWORD
-        sync: false
-
   - type: web
     name: susuflow
     runtime: node
@@ -40,10 +12,5 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: API_URL
-        fromService:
-          type: web
-          name: susuflow-api
-          envVarKey: RENDER_EXTERNAL_URL
       - key: NEXT_PUBLIC_DEFAULT_TENANT
         value: abc-susu
