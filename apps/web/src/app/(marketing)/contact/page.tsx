@@ -7,7 +7,7 @@ import { ContactForm } from '@/components/marketing/contact-form';
 import { APP_NAME, SUPPORT_EMAIL } from '@/lib/marketing-data';
 
 export const metadata: Metadata = {
-  title: `Contact — ${APP_NAME}`,
+  title: `Contact | ${APP_NAME}`,
   description: 'Get in touch with the SusuFlow team for sales, support, or partnerships.',
 };
 
@@ -16,7 +16,7 @@ export default function ContactPage() {
     <>
       <PageHero
         title="We'd love to hear from you"
-        description="Questions about onboarding your susu company, partnerships, or support — our team responds within one business day."
+        description="Questions about onboarding your susu company, partnerships, or support. Our team responds within one business day."
       />
       <section className="marketing-section">
         <MarketingContainer>
@@ -24,7 +24,7 @@ export default function ContactPage() {
             <div>
               <h2 className="text-xl font-bold text-foreground">Get in touch</h2>
               <p className="mt-3 text-muted-foreground">
-                Fill out the form and we&apos;ll route your message to the right person — sales,
+                Fill out the form and we&apos;ll route your message to the right person: sales,
                 support, or partnerships.
               </p>
               <ul className="mt-8 space-y-5">

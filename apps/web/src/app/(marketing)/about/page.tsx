@@ -3,11 +3,10 @@ import Link from 'next/link';
 import { Check } from 'lucide-react';
 import { PageHero } from '@/components/marketing/page-hero';
 import { MarketingContainer } from '@/components/marketing/marketing-container';
-import { CtaSection } from '@/components/marketing/cta-section';
 import { APP_NAME } from '@/lib/marketing-data';
 
 export const metadata: Metadata = {
-  title: `About — ${APP_NAME}`,
+  title: `About | ${APP_NAME}`,
   description: 'Our mission to digitize susu savings in Ghana with trust, transparency, and Mobile Money.',
 };
 
@@ -18,7 +17,7 @@ const VALUES = [
   },
   {
     title: 'Built for Ghana',
-    body: 'MTN MoMo, local susu culture, and field collectors — not a generic Western fintech clone.',
+    body: 'MTN MoMo, local susu culture, and field collectors, not a generic Western fintech clone.',
   },
   {
     title: 'Transparency',
@@ -35,7 +34,7 @@ export default function AboutPage() {
     <>
       <PageHero
         title="Digitizing susu without breaking trust"
-        description="SusuFlow was built for the way savings actually work in Ghana — community-led, collector-assisted, and now verified through Mobile Money."
+        description="SusuFlow was built for the way savings actually work in Ghana: community-led, collector-assisted, and now verified through Mobile Money."
       />
       <section className="marketing-section">
         <MarketingContainer>
@@ -46,8 +45,8 @@ export default function AboutPage() {
               goes missing.
             </p>
             <p>
-              SusuFlow keeps the susu model — regular contributions, group discipline, collector
-              relationships — while routing every deposit through Mobile Money. Collectors onboard
+              SusuFlow keeps the susu model: regular contributions, group discipline, collector
+              relationships, while routing every deposit through Mobile Money. Collectors onboard
               savers and help them pay; they never hold cash. Companies get real-time visibility;
               savers get receipts and peace of mind.
             </p>
@@ -80,7 +79,6 @@ export default function AboutPage() {
           </div>
         </MarketingContainer>
       </section>
-      <CtaSection />
     </>
   );
 }

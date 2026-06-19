@@ -1,62 +1,123 @@
-import Image from 'next/image';
+'use client';
+
 import Link from 'next/link';
+import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { BRAND_HERO_IMAGE } from '@/lib/brand-assets';
 import { MarketingContainer } from './marketing-container';
+import { HeroProductShowcase } from './hero-product-showcase';
+import { cn } from '@/lib/utils';
+
+type Audience = 'company' | 'saver';
+
+const COPY = {
+  company: {
+    headline: (
+      <>
+        One platform for your susu company.
+        <br />
+        <span className="text-foreground">And every verified cedi.</span>
+      </>
+    ),
+    description:
+      'Run collectors, MoMo deposits, and real-time ledgers from one place. Save time, cut fraud, and scale cashless susu across Ghana.',
+    primaryHref: '/contact?intent=demo',
+    primaryLabel: 'Get started for free',
+    secondaryHref: '/how-it-works',
+    secondaryLabel: 'See how it works',
+  },
+  saver: {
+    headline: (
+      <>
+        Save with your group.
+        <br />
+        <span className="text-secondary">Every deposit verified.</span>
+      </>
+    ),
+    description:
+      'Join your susu digitally. Pay through MTN MoMo, track your balance, and get proof for every contribution. No more “the collector took it.”',
+    primaryHref: '/register',
+    primaryLabel: 'Join your susu',
+    secondaryHref: '/how-it-works',
+    secondaryLabel: 'See how it works',
+  },
+} as const;
 
 export function MarketingHero() {
-  return (
-    <section className="marketing-nav-overlap marketing-hero-viewport relative flex flex-col overflow-hidden">
-      <div className="marketing-hero-media">
-        <div className="marketing-hero-image-frame">
-          <Image
-            src={BRAND_HERO_IMAGE}
-            alt="Ghanaian susu members confirming a verified Mobile Money deposit on SusuFlow"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[42%_28%] sm:object-[58%_36%] lg:object-[76%_42%]"
-          />
-        </div>
-      </div>
-      <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/10 lg:from-black/65 lg:via-black/30 lg:to-transparent"
-        aria-hidden
-      />
+  const [audience, setAudience] = useState<Audience>('company');
+  const copy = COPY[audience];
 
-      <MarketingContainer className="marketing-hero-inner relative z-10 flex flex-1 flex-col">
-        <div className="marketing-hero-content grid flex-1 items-end sm:items-center lg:grid-cols-2 lg:gap-x-10 xl:gap-x-12 2xl:gap-x-16">
-          <div className="animate-fade-in min-w-0 text-center lg:text-left">
-            <h1 className="marketing-hero-title text-balance text-white lg:[text-shadow:0_2px_12px_rgba(0,0,0,0.45)]">
-              Save with confidence.{' '}
-              <span className="text-secondary">Every cedi verified.</span>
-            </h1>
-            <p className="mx-auto mt-4 max-w-xl text-pretty text-[0.9375rem] font-normal leading-relaxed text-white/85 sm:mt-5 sm:text-base lg:mx-0 lg:mt-6 lg:max-w-2xl 2xl:max-w-3xl">
-              SusuFlow digitizes susu collection for Ghana — Mobile Money deposits, real-time
-              ledgers, and collectors who never touch cash.
+  return (
+    <section className="marketing-hero-platform border-b border-border/60 bg-[#f4f6f8] dark:bg-background">
+      <MarketingContainer className="marketing-hero-platform-inner">
+        <div className="flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 xl:gap-16">
+          <div className="min-w-0 text-left lg:pt-0">
+            <div className="mb-6 w-full lg:mb-6 lg:inline-flex lg:w-auto lg:flex-wrap lg:items-center lg:justify-start lg:gap-2">
+              <span className="mb-2 block text-sm text-muted-foreground lg:mb-0 lg:inline">
+                You are on
+              </span>
+              <div
+                className="flex w-full rounded-lg border border-border bg-card p-1 shadow-sm lg:inline-flex lg:w-auto"
+                role="tablist"
+                aria-label="Choose audience"
+              >
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={audience === 'company'}
+                  className={cn(
+                    'flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-colors sm:px-4 sm:py-1.5 lg:flex-none',
+                    audience === 'company'
+                      ? 'bg-foreground text-background'
+                      : 'text-muted-foreground hover:text-foreground',
+                  )}
+                  onClick={() => setAudience('company')}
+                >
+                  Susu companies
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={audience === 'saver'}
+                  className={cn(
+                    'flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-colors sm:px-4 sm:py-1.5 lg:flex-none',
+                    audience === 'saver'
+                      ? 'bg-foreground text-background'
+                      : 'text-muted-foreground hover:text-foreground',
+                  )}
+                  onClick={() => setAudience('saver')}
+                >
+                  Switch to savers
+                </button>
+              </div>
+            </div>
+
+            <h1 className="marketing-hero-title text-balance text-foreground">{copy.headline}</h1>
+
+            <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground lg:mt-6 lg:max-w-lg">
+              {copy.description}
             </p>
-            <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center lg:justify-start">
-              <Link href="/contact?intent=demo">
+
+            <div className="mt-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-start">
+              <Link href={copy.primaryHref} className="w-full lg:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full px-5 text-sm font-medium shadow-[0_10px_28px_rgba(34,197,94,0.35)] sm:w-auto lg:h-[3.25rem] lg:rounded-full lg:px-6"
+                  className="h-12 w-full rounded-lg px-6 text-sm font-semibold shadow-[0_8px_24px_rgba(34,197,94,0.28)] lg:min-w-[12rem]"
                 >
-                  Request a demo
-                  <ArrowRight className="h-4 w-4" />
+                  {copy.primaryLabel}
                 </Button>
               </Link>
-              <Link href="/register">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="h-12 w-full border-white/40 bg-white/5 px-5 text-sm font-medium text-white hover:bg-white/10 sm:w-auto lg:h-[3.25rem] lg:rounded-full lg:px-6"
-                >
-                  Join your susu
-                </Button>
+              <Link
+                href={copy.secondaryHref}
+                className="inline-flex w-full items-center justify-center gap-1.5 text-sm font-semibold text-secondary transition-colors hover:text-secondary/80 lg:w-auto lg:justify-start"
+              >
+                {copy.secondaryLabel}
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
+
+          <HeroProductShowcase className="lg:justify-self-end" />
         </div>
       </MarketingContainer>
     </section>

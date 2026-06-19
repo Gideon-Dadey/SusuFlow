@@ -1,0 +1,72 @@
+import {
+  Activity,
+  FileCheck,
+  ShieldCheck,
+  Smartphone,
+  Users,
+  Wallet,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { HOW_IT_WORKS_TRADITIONAL_PAINS } from '@/lib/marketing-data';
+import { MarketingContainer } from '../marketing-container';
+import { cn } from '@/lib/utils';
+
+const PAIN_ICONS: LucideIcon[] = [
+  FileCheck,
+  Wallet,
+  Smartphone,
+  Users,
+  Activity,
+  ShieldCheck,
+];
+
+export function HowItWorksTraditionalSection() {
+  return (
+    <section className="border-t border-border bg-background">
+      <MarketingContainer className="py-16 sm:py-20 lg:py-24">
+        <div className="flex flex-col gap-8 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-start lg:gap-16 xl:gap-20">
+          <div className="order-1 min-w-0 text-left lg:order-1">
+            <p className="text-sm font-medium text-muted-foreground">For traditional operators</p>
+            <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-[2rem]">
+              Still running susu the old way? You are not alone.
+            </h2>
+            <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
+              Market traders, savings clubs, and susu companies across Ghana still rely on notebooks,
+              cash collection, and informal receipts. That model works until a payment is disputed or
+              a collector cannot prove what was collected.
+            </p>
+            <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
+              SusuFlow does not replace your collectors or your community trust. It gives your company
+              gateway verified deposits, live balances, and records your auditors can export.
+            </p>
+          </div>
+
+          <div className="order-2 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:order-2">
+            {HOW_IT_WORKS_TRADITIONAL_PAINS.map(({ label }, i) => {
+              const Icon = PAIN_ICONS[i]!;
+              return (
+                <div
+                  key={label}
+                  className={cn(
+                    'flex aspect-square flex-col items-center justify-center rounded-2xl bg-[#f3f4f6] px-3 py-5 text-center',
+                    'transition-shadow duration-200 hover:shadow-[0_8px_30px_rgba(15,23,42,0.06)]',
+                    'dark:bg-card dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)]',
+                  )}
+                >
+                  <Icon
+                    className="size-9 shrink-0 text-foreground sm:size-10"
+                    strokeWidth={1.5}
+                    aria-hidden
+                  />
+                  <span className="mt-4 text-xs font-semibold leading-snug text-foreground sm:text-sm">
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </MarketingContainer>
+    </section>
+  );
+}

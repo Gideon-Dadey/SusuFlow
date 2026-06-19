@@ -97,7 +97,7 @@ function AssistDepositContent() {
             <option value="">Choose a customer...</option>
             {customers.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.user?.firstName} {c.user?.lastName} — {c.customerNumber}
+                {c.user?.firstName} {c.user?.lastName} · {c.customerNumber}
               </option>
             ))}
           </select>

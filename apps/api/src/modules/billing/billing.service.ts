@@ -59,7 +59,7 @@ export class PaystackService {
         reference: params.reference,
         authorizationUrl: `${this.webUrl}/admin/tenants?mockPayment=${params.reference}&tenantId=${params.tenantId}`,
         amountGhs,
-        message: 'Paystack not configured — use mock payment URL in development',
+        message: 'Paystack not configured. Use mock payment URL in development',
       };
     }
 

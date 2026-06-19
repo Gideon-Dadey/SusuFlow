@@ -20,7 +20,7 @@ export function MarketingFooter() {
               {APP_TAGLINE}
             </p>
             <p className="mt-2 text-sm text-muted-foreground/80">
-              Built for susu companies, collectors, and savers across Ghana — cashless, verified,
+              Built for susu companies, collectors, and savers across Ghana. Cashless, verified,
               and audit-ready.
             </p>
             <div className="mt-6 space-y-3">

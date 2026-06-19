@@ -179,7 +179,7 @@ export default function RegisterPage() {
 
         <Button
           type="submit"
-          className="h-11 w-full rounded-lg text-sm font-semibold shadow-sm"
+          className="h-11 w-full rounded-lg text-sm font-semibold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
           loading={isLoading}
         >
           Create account

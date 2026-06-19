@@ -4,7 +4,7 @@ import { MarketingContainer } from '@/components/marketing/marketing-container';
 import { APP_NAME } from '@/lib/marketing-data';
 
 export const metadata: Metadata = {
-  title: `Terms of Service — ${APP_NAME}`,
+  title: `Terms of Service | ${APP_NAME}`,
   description: 'Terms governing use of the SusuFlow platform.',
 };
 
@@ -29,7 +29,7 @@ export default function TermsPage() {
             <p>
               SusuFlow provides software for digital susu savings management, including customer
               wallets, collector tools, staff dashboards, and payment gateway integrations. We do
-              not hold customer funds — deposits are processed through licensed payment providers.
+              not hold customer funds. Deposits are processed through licensed payment providers.
             </p>
 
             <h2>3. Accounts</h2>

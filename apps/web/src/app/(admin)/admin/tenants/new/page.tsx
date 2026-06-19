@@ -146,7 +146,7 @@ export default function CreateTenantPage() {
                 onChange={(e) => update('plan', e.target.value)}
               >
                 <option value="starter">Starter (trial)</option>
-                <option value="growth">Growth — GHS 299/mo</option>
+                <option value="growth">Growth (GHS 299/mo)</option>
                 <option value="enterprise">Enterprise (manual)</option>
               </select>
             </div>

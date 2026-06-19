@@ -8,7 +8,7 @@ import { BRAND_LOGO } from '@/lib/brand-assets';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'SusuFlow — Digital Susu Savings',
+  title: 'SusuFlow | Digital Susu Savings',
   description: 'Eliminate fraud in susu collection with gateway-confirmed digital deposits',
   icons: {
     icon: BRAND_LOGO,
