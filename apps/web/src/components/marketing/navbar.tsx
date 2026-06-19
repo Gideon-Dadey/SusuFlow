@@ -9,7 +9,7 @@ import { BrandLockup } from '@/components/marketing/brand-logo';
 import { NAV_LINKS } from '@/lib/marketing-data';
 import { cn } from '@/lib/utils';
 
-const LIGHT_HERO_PATHS = ['/', '/how-it-works', '/pricing'] as const;
+const LIGHT_HERO_PATHS = ['/', '/how-it-works', '/pricing', '/about'] as const;
 
 function hasLightHero(pathname: string) {
   return LIGHT_HERO_PATHS.some((path) =>
