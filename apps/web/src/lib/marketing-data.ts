@@ -275,6 +275,77 @@ export const PRICING_FAQ = [
   },
 ] as const;
 
+export const ABOUT_TRUST_LINE =
+  'Built for Ghanaian susu companies moving from notebooks and cash to verified MoMo.';
+
+export const ABOUT_PEOPLE = [
+  {
+    title: 'Our mission',
+    description:
+      'Digitize susu collections without breaking the community trust that makes savings work in Ghana.',
+    href: '/about#mission',
+    cta: 'Read our story',
+  },
+  {
+    title: 'Onboarding specialists',
+    description:
+      'Hands on setup for your tenant, collector roles, and your first verified MoMo collection cycle.',
+    href: '/contact?intent=demo',
+    cta: 'Book onboarding',
+  },
+  {
+    title: 'Support team',
+    description:
+      'Responsive help when collectors, staff, or management need answers in the field or at the office.',
+    href: '/contact',
+    cta: 'Contact support',
+  },
+] as const;
+
+export const ABOUT_PLATFORM_LINKS = [
+  { label: 'MoMo Deposits', href: '/how-it-works' },
+  { label: 'Collector App', href: '/how-it-works' },
+  { label: 'Live Dashboards', href: '/how-it-works' },
+  { label: 'Payout Approvals', href: '/how-it-works' },
+  { label: 'Commission Tracking', href: '/pricing' },
+  { label: 'Audit Reports', href: '/pricing' },
+] as const;
+
+export const ABOUT_VALUES = [
+  {
+    title: 'Trust first',
+    body: 'Every cedi is gateway confirmed. Savers see proof. Companies see reconciled books.',
+  },
+  {
+    title: 'Built for Ghana',
+    body: 'MTN MoMo, local susu culture, and field collectors. Not a generic Western fintech clone.',
+  },
+  {
+    title: 'Transparency',
+    body: 'Double entry ledgers, audit trails, and role based access so nothing hides in spreadsheets.',
+  },
+  {
+    title: 'Inclusive growth',
+    body: 'Digital tools that strengthen susu relationships instead of replacing them.',
+  },
+] as const;
+
+export const ABOUT_COMPLIANCE_POINTS = [
+  'Deposits credit only after the payment gateway confirms success',
+  'Double entry ledger with reference and receipt per transaction',
+  'Role based access for staff, collectors, and approvers',
+  'Exportable reports for management review and audit readiness',
+] as const;
+
+export const ABOUT_OPERATING_DETAILS = [
+  {
+    region: 'Ghana',
+    entity: 'SusuFlow',
+    partners: 'MTN Mobile Money via Hubtel',
+    standards: 'Designed for Ghana susu operators and the MoMo payments ecosystem',
+  },
+] as const;
+
 export const FAQ_ITEMS = [
   {
     q: 'What is susu?',
