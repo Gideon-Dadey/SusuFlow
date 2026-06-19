@@ -346,41 +346,6 @@ export const ABOUT_OPERATING_DETAILS = [
   },
 ] as const;
 
-export const CONTACT_OFFICE = {
-  region: 'Ghana',
-  headline: 'SusuFlow Ghana',
-  addressLines: ['Accra', 'Greater Accra Region', 'Ghana'],
-  responseTime: 'Within 1 business day',
-} as const;
-
-export const CONTACT_CHANNELS = [
-  {
-    title: 'Susu companies',
-    subtitle: 'Demos, onboarding, and sales for operators going cashless.',
-    email: SUPPORT_EMAIL,
-  },
-  {
-    title: 'Support',
-    subtitle: 'Help for staff, collectors, and savers using your tenant.',
-    email: SUPPORT_EMAIL,
-  },
-  {
-    title: 'Partnerships',
-    subtitle: 'Integrations, resellers, and strategic alliance enquiries.',
-    email: SUPPORT_EMAIL,
-  },
-] as const;
-
-export const CONTACT_REGIONS = [
-  {
-    region: 'Ghana',
-    addressLines: ['Accra', 'Greater Accra Region', 'Ghana'],
-    businessEmail: SUPPORT_EMAIL,
-    supportEmail: SUPPORT_EMAIL,
-    hours: 'Monday to Friday, 8am to 6pm GMT',
-  },
-] as const;
-
 export const FAQ_ITEMS = [
   {
     q: 'What is susu?',
