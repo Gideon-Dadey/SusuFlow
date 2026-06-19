@@ -40,7 +40,7 @@ export default function StaffDashboard() {
           title="Deposits Today"
           value={formatGhs(todayTotal)}
           icon={faWallet}
-          iconBgClassName="bg-emerald-100 dark:bg-emerald-500/15"
+          iconBgClassName="dashboard-icon-emerald"
           iconClassName="text-emerald-600 dark:text-emerald-400"
           trend={{ value: `${todayDeposits.length} txns`, positive: true }}
         />
@@ -48,7 +48,7 @@ export default function StaffDashboard() {
           title="Active Customers"
           value={String(customers?.items?.length || 0)}
           icon={faUsers}
-          iconBgClassName="bg-sky-100 dark:bg-sky-500/15"
+          iconBgClassName="dashboard-icon-sky"
           iconClassName="text-sky-600 dark:text-sky-400"
         />
         <StatCard
@@ -56,7 +56,7 @@ export default function StaffDashboard() {
           value={String(pending)}
           subtitle="Awaiting confirmation"
           icon={faClock}
-          iconBgClassName="bg-amber-100 dark:bg-amber-500/15"
+          iconBgClassName="dashboard-icon-amber"
           iconClassName="text-amber-600 dark:text-amber-400"
         />
         <StatCard
@@ -67,7 +67,7 @@ export default function StaffDashboard() {
               .reduce((s, t) => s + Number(t.amount), 0),
           )}
           icon={faChartLine}
-          iconBgClassName="bg-violet-100 dark:bg-violet-500/15"
+          iconBgClassName="dashboard-icon-violet"
           iconClassName="text-violet-600 dark:text-violet-400"
         />
       </div>

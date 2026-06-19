@@ -11,7 +11,8 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   async rewrites() {
-    const apiUrl = process.env.API_URL || 'http://localhost:4000';
+    const raw = process.env.API_URL || 'http://localhost:4000';
+    const apiUrl = raw.startsWith('http') ? raw : `https://${raw}`;
     return [
       {
         source: '/api/:path*',

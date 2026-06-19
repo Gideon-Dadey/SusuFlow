@@ -66,7 +66,7 @@ async function bootstrap() {
     SwaggerModule.setup('api/docs', app, document);
   }
 
-  const port = process.env.API_PORT || 4000;
+  const port = Number(process.env.PORT || process.env.API_PORT || 4000);
   await app.listen(port);
   logger.log(`SusuFlow API running on http://localhost:${port}`);
   if (!isProduction) {

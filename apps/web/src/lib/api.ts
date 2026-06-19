@@ -49,8 +49,13 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     const error = await response.json().catch(() => ({}));
     const detail = error.detail || error.title;
     if (response.status >= 500 && !detail) {
+      const isLocal =
+        typeof window !== 'undefined' &&
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
       throw new ApiError(
-        'Server error. Make sure the API is running on port 4000 (pnpm dev:api).',
+        isLocal
+          ? 'Server error. Make sure the API is running on port 4000 (pnpm dev:api).'
+          : 'Server error. The API may be down or API_URL is not set on Render.',
         response.status,
         error.errors,
       );

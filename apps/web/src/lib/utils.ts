@@ -52,3 +52,10 @@ export function getDashboardPath(roles: string[]): string {
   if (roles.includes('collector')) return '/collector/dashboard';
   return '/dashboard';
 }
+
+export function getProfilePath(roles: string[]): string {
+  if (roles.includes('super_admin')) return '/admin/profile';
+  if (roles.includes('company_admin') || roles.includes('account_officer')) return '/staff/profile';
+  if (roles.includes('collector')) return '/collector/profile';
+  return '/profile';
+}
