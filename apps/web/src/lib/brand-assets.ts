@@ -7,6 +7,7 @@ export const BRAND_WORKFLOW_AUTOMATION = '/marketing/workflow-automation-bg.png'
 export const HOW_IT_WORKS_GHANIAN_MARKET = '/marketing/how-it-works/ghanian-market.png';
 export const HOW_IT_WORKS_DIGITAL_COLLECTOR = '/marketing/how-it-works/digital-collector.png';
 export const PRICING_HERO_IMAGE = '/marketing/pricing/ghanian-office.png';
+export const CONTACT_MAP_IMAGE = '/marketing/pricing/Contact.png';
 export const ABOUT_HERO_IMAGE = '/marketing/pricing/ghanian-office.png';
 /** 12288×5120 master asset for print and large displays */
 export const BRAND_HERO_IMAGE_MASTER = '/marketing/hero-12k.png';

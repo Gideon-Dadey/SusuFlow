@@ -346,6 +346,11 @@ export const ABOUT_OPERATING_DETAILS = [
   },
 ] as const;
 
+export const CONTACT_OFFICE = {
+  headline: 'SusuFlow Ghana',
+  addressLines: ['Accra', 'Greater Accra Region', 'Ghana'],
+} as const;
+
 export const FAQ_ITEMS = [
   {
     q: 'What is susu?',
