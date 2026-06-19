@@ -34,8 +34,7 @@ pnpm-debug.log*
 coverage/
 .nyc_output/
 
-# Prisma
-packages/database/prisma/migrations/**/migration_lock.toml
+# Prisma — keep migration_lock.toml in git; only ignore dev-only lock copies if needed
 
 # Docker
 docker-data/
