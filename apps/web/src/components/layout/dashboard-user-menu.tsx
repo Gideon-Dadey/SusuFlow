@@ -12,7 +12,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { getRoleLabel } from '@/lib/dashboard-nav';
 import { useAuthStore } from '@/stores/auth.store';
-import { getInitials } from '@/lib/utils';
+import { getInitials, getProfilePath } from '@/lib/utils';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 function getWalletHref(roles: string[]): string {
@@ -98,7 +98,7 @@ export function DashboardUserMenu() {
 
             <div className="p-1.5">
               <Link
-                href="/profile"
+                href={getProfilePath(roles)}
                 role="menuitem"
                 onClick={() => setOpen(false)}
                 className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"

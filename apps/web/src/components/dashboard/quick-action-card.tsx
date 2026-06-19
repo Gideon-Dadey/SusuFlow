@@ -23,7 +23,7 @@ export function QuickActionCard({
   return (
     <Link
       href={href}
-      className="dashboard-tile group flex h-full min-h-[7.25rem] flex-col rounded-xl border border-border/80 bg-card p-3 shadow-card transition-all hover:border-border hover:shadow-elevated sm:min-h-[10.5rem] sm:p-6"
+      className="dashboard-tile group flex h-full min-h-[7.25rem] flex-col rounded-xl border bg-card p-3 transition-colors hover:bg-surface-hover sm:min-h-[10.5rem] sm:p-6 dark:hover:bg-surface-hover"
     >
       <div
         className={cn(

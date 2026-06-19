@@ -18,7 +18,7 @@ const collectorMobileNav: { href: string; label: string; icon: IconDefinition }[
   { href: '/collector/dashboard', label: 'Home', icon: faGaugeHigh },
   { href: '/collector/customers', label: 'Customers', icon: faUsers },
   { href: '/collector/deposit', label: 'Deposit', icon: faHandHoldingDollar },
-  { href: '/profile', label: 'Profile', icon: faUser },
+  { href: '/collector/profile', label: 'Profile', icon: faUser },
 ];
 
 export function BottomNav() {

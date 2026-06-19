@@ -28,7 +28,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        'dashboard-tile flex h-full min-h-[8.5rem] flex-col rounded-xl border border-border/80 bg-card p-4 shadow-card sm:min-h-[10.5rem] sm:p-6',
+        'dashboard-tile flex h-full min-h-[8.5rem] flex-col rounded-xl border bg-card p-4 sm:min-h-[10.5rem] sm:p-6',
         className,
       )}
     >

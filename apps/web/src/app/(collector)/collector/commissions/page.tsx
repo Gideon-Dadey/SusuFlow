@@ -36,7 +36,7 @@ export default function CollectorCommissionsPage() {
           value={formatGhs(monthVolume * COMMISSION_RATE)}
           subtitle={`${thisMonth.length} completed deposits`}
           icon={faPercent}
-          iconBgClassName="bg-emerald-100 dark:bg-emerald-500/15"
+          iconBgClassName="dashboard-icon-emerald"
           iconClassName="text-emerald-600 dark:text-emerald-400"
         />
         <StatCard
@@ -44,7 +44,7 @@ export default function CollectorCommissionsPage() {
           value={formatGhs(totalVolume)}
           subtitle={`Est. commission ${formatGhs(totalCommission)}`}
           icon={faWallet}
-          iconBgClassName="bg-pink-100 dark:bg-pink-500/15"
+          iconBgClassName="dashboard-icon-pink"
           iconClassName="text-pink-600 dark:text-pink-400"
         />
       </div>

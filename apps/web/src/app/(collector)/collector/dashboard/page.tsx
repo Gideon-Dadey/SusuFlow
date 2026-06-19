@@ -65,7 +65,7 @@ export default function CollectorDashboard() {
 
   return (
     <div className="space-y-5 lg:space-y-6">
-      <Card className="overflow-hidden border-border shadow-card">
+      <Card className="overflow-hidden border-border dark:shadow-none">
         <CardContent className="flex flex-row items-center gap-3 p-4 sm:gap-6 sm:p-6 lg:items-center lg:justify-between">
           <div className="min-w-0 flex-1">
             <p className="text-xs text-muted-foreground sm:text-sm">
@@ -116,7 +116,7 @@ export default function CollectorDashboard() {
             title="Assist deposit"
             description="Help a saver pay via MoMo"
             icon={faHandHoldingDollar}
-            iconBgClassName="bg-amber-100 dark:bg-amber-500/15"
+            iconBgClassName="dashboard-icon-amber"
             iconClassName="text-amber-600 dark:text-amber-400"
           />
           <QuickActionCard
@@ -124,7 +124,7 @@ export default function CollectorDashboard() {
             title="Customers"
             description="View and add savers"
             icon={faUsers}
-            iconBgClassName="bg-violet-100 dark:bg-violet-500/15"
+            iconBgClassName="dashboard-icon-violet"
             iconClassName="text-violet-600 dark:text-violet-400"
           />
           <QuickActionCard
@@ -132,7 +132,7 @@ export default function CollectorDashboard() {
             title="Commissions"
             description="Track your earnings"
             icon={faPercent}
-            iconBgClassName="bg-emerald-100 dark:bg-emerald-500/15"
+            iconBgClassName="dashboard-icon-emerald"
             iconClassName="text-emerald-600 dark:text-emerald-400"
           />
         </div>
@@ -146,7 +146,7 @@ export default function CollectorDashboard() {
           value={String(customerItems.length)}
           subtitle="Assigned to you"
           icon={faUsers}
-          iconBgClassName="bg-emerald-100 dark:bg-emerald-500/15"
+          iconBgClassName="dashboard-icon-emerald"
           iconClassName="text-emerald-600 dark:text-emerald-400"
         />
         <StatCard
@@ -154,7 +154,7 @@ export default function CollectorDashboard() {
           value={String(pending.length)}
           subtitle="Awaiting gateway confirm"
           icon={faClock}
-          iconBgClassName="bg-amber-100 dark:bg-amber-500/15"
+          iconBgClassName="dashboard-icon-amber"
           iconClassName="text-amber-600 dark:text-amber-400"
         />
         <StatCard
@@ -162,7 +162,7 @@ export default function CollectorDashboard() {
           value={formatGhs(mtdCommission)}
           subtitle="Est. 2% on assisted volume"
           icon={faPercent}
-          iconBgClassName="bg-violet-100 dark:bg-violet-500/15"
+          iconBgClassName="dashboard-icon-violet"
           iconClassName="text-violet-600 dark:text-violet-400"
         />
         <StatCard
@@ -174,7 +174,7 @@ export default function CollectorDashboard() {
           )}
           subtitle={`${transactions.filter((t) => t.status === 'completed').length} verified deposits`}
           icon={faWallet}
-          iconBgClassName="bg-pink-100 dark:bg-pink-500/15"
+          iconBgClassName="dashboard-icon-pink"
           iconClassName="text-pink-600 dark:text-pink-400"
         />
         </div>
