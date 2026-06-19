@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBriefcase,
@@ -25,21 +25,29 @@ const TAB_ICONS: IconDefinition[] = [
 
 export function AudiencesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const tablistRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const active = AUDIENCE_TABS[activeIndex]!;
 
-  useEffect(() => {
-    tabRefs.current[activeIndex]?.scrollIntoView({
-      behavior: 'smooth',
-      inline: 'center',
-      block: 'nearest',
-    });
-  }, [activeIndex]);
+  const scrollTabIntoView = (index: number) => {
+    const tab = tabRefs.current[index];
+    const list = tablistRef.current;
+    if (!tab || !list) return;
+
+    const target = tab.offsetLeft - (list.clientWidth - tab.offsetWidth) / 2;
+    list.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+  };
+
+  const handleTabSelect = (index: number) => {
+    setActiveIndex(index);
+    scrollTabIntoView(index);
+  };
 
   return (
     <section className="marketing-section border-t border-border bg-background">
       <MarketingContainer>
         <div
+          ref={tablistRef}
           role="tablist"
           aria-label="Who SusuFlow is for"
           className="audience-tablist flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-2 sm:justify-center sm:gap-3 sm:px-1 lg:gap-0"
@@ -59,7 +67,7 @@ export function AudiencesSection() {
                 id={`audience-tab-${tab.id}`}
                 aria-selected={isActive}
                 aria-controls={`audience-panel-${tab.id}`}
-                onClick={() => setActiveIndex(index)}
+                onClick={() => handleTabSelect(index)}
                 className={cn(
                   'audience-tab flex w-[6.75rem] shrink-0 snap-center flex-col items-center gap-2 px-1 py-2 text-center transition-colors sm:w-[8.5rem] sm:px-3 lg:w-auto lg:min-w-0 lg:flex-1 lg:px-4',
                   isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
