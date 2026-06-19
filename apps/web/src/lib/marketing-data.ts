@@ -74,6 +74,48 @@ export const HOW_IT_WORKS = [
   },
 ];
 
+export const AUDIENCE_TABS = [
+  {
+    id: 'group-leaders',
+    title: 'Group Leaders & Organizers',
+    description:
+      'Streamline your savings cycle, track payments in real time, and send automated reminders — all from your phone.',
+    image: '/marketing/audiences/group-leaders.jpg',
+    imagePosition: 'object-[50%_20%]',
+  },
+  {
+    id: 'family-friends',
+    title: 'Family & Friends',
+    description:
+      'Easily save together for school fees, projects, or family goals without stress or confusion.',
+    image: '/marketing/audiences/family-friends.jpg',
+    imagePosition: 'object-center',
+  },
+  {
+    id: 'market-traders',
+    title: 'Market Woman & Traders',
+    description: 'Go cashless and track contributions confidently — no books, no paper.',
+    image: '/marketing/audiences/market-traders.jpg',
+    imagePosition: 'object-[50%_35%]',
+  },
+  {
+    id: 'savings-clubs',
+    title: 'Savings Clubs & Cooperatives',
+    description:
+      'Run member cycles with transparent records, payouts, and accountability built in.',
+    image: '/marketing/audiences/savings-clubs.jpg',
+    imagePosition: 'object-center',
+  },
+  {
+    id: 'anyone-saves',
+    title: 'Anyone Who Saves in Groups',
+    description:
+      'Whether formal or informal, SusuFlow makes group savings easy, faster, and more reliable.',
+    image: '/marketing/audiences/anyone-saves.jpg',
+    imagePosition: 'object-[50%_25%]',
+  },
+] as const;
+
 export const AUDIENCES = [
   {
     title: 'Savers',
