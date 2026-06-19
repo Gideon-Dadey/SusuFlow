@@ -53,7 +53,7 @@ export function MarketingHero() {
         <div className="flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 xl:gap-16">
           <div className="min-w-0 text-left lg:pt-0">
             <div className="mb-6 w-full lg:mb-6 lg:inline-flex lg:w-auto lg:flex-wrap lg:items-center lg:justify-start lg:gap-2">
-              <span className="mb-2 block text-sm text-muted-foreground lg:mb-0 lg:inline">
+              <span className="mb-2 hidden text-sm text-muted-foreground lg:mb-0 lg:inline">
                 You are on
               </span>
               <div
