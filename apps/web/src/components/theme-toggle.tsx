@@ -14,9 +14,10 @@ const OPTIONS = [
 type ThemeToggleProps = {
   className?: string;
   onDark?: boolean;
+  iconOnly?: boolean;
 };
 
-export function ThemeToggle({ className, onDark }: ThemeToggleProps) {
+export function ThemeToggle({ className, onDark, iconOnly }: ThemeToggleProps) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
@@ -50,7 +51,29 @@ export function ThemeToggle({ className, onDark }: ThemeToggleProps) {
   }
 
   const active = theme ?? 'system';
-  const ActiveIcon =
+  const isDark = resolvedTheme === 'dark';
+  const ActiveIcon = isDark ? Moon : Sun;
+
+  if (iconOnly) {
+    return (
+      <button
+        type="button"
+        className={cn(
+          'inline-flex size-9 items-center justify-center rounded-lg transition-colors',
+          onDark
+            ? 'text-white/90 hover:bg-white/10 hover:text-white'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+          className,
+        )}
+        aria-label="Toggle theme"
+        onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      >
+        <ActiveIcon className="h-[1.125rem] w-[1.125rem]" />
+      </button>
+    );
+  }
+
+  const MenuActiveIcon =
     active === 'dark' || (active === 'system' && resolvedTheme === 'dark') ? Moon : Sun;
 
   return (
@@ -68,7 +91,7 @@ export function ThemeToggle({ className, onDark }: ThemeToggleProps) {
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
       >
-        <ActiveIcon className="h-[1.125rem] w-[1.125rem]" />
+        <MenuActiveIcon className="h-[1.125rem] w-[1.125rem]" />
       </button>
 
       {open ? (

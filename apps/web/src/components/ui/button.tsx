@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 
 const buttonVariants = cva(
@@ -39,12 +40,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ref={ref}
       className={cn(buttonVariants({ variant, size }), className)}
       disabled={disabled || loading}
+      aria-busy={loading || undefined}
       {...props}
     >
       {loading ? (
-        <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-      ) : null}
-      {children}
+        <Skeleton
+          className={cn(
+            'h-3 rounded-md',
+            variant === 'primary' || variant === undefined || variant === 'danger'
+              ? 'w-20 bg-primary-foreground/30'
+              : 'w-20 bg-foreground/15',
+          )}
+        />
+      ) : (
+        children
+      )}
     </button>
   ),
 );

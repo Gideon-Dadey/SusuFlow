@@ -1,53 +1,61 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { cn, getInitials } from '@/lib/utils';
-import { useAuthStore } from '@/stores/auth.store';
+import { usePathname } from 'next/navigation';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { cn } from '@/lib/utils';
 import {
-  LayoutDashboard,
-  Users,
-  Wallet,
-  FileText,
-  Settings,
-  LogOut,
-  HandCoins,
-  Building2,
-  History,
-  User,
-} from 'lucide-react';
-
-const staffLinks = [
-  { href: '/staff/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/staff/customers', label: 'Customers', icon: Users },
-  { href: '/staff/deposits', label: 'Deposits', icon: Wallet },
-  { href: '/staff/withdrawals', label: 'Withdrawals', icon: FileText },
-  { href: '/staff/settings', label: 'Settings', icon: Settings },
-];
-
-const adminLinks = [
-  { href: '/admin/tenants', label: 'Tenants', icon: Building2 },
-  { href: '/admin/tenants/new', label: 'New organization', icon: Users },
-];
-
-const collectorLinks = [
-  { href: '/collector/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/collector/customers', label: 'Customers', icon: Users },
-  { href: '/collector/deposit', label: 'Assist Deposit', icon: HandCoins },
-];
-
-const customerLinks = [
-  { href: '/dashboard', label: 'Home', icon: LayoutDashboard },
-  { href: '/deposit', label: 'Deposit', icon: Wallet },
-  { href: '/transactions', label: 'History', icon: History },
-  { href: '/profile', label: 'Profile', icon: User },
-];
+  adminLinks,
+  collectorNavGroups,
+  customerLinks,
+  staffLinks,
+  type NavGroup,
+  type NavItem,
+} from '@/lib/dashboard-nav';
 
 interface SidebarProps {
   variant?: 'staff' | 'collector' | 'admin';
   customerMode?: boolean;
   open?: boolean;
   onClose?: () => void;
+}
+
+function NavLink({
+  href,
+  label,
+  icon,
+  active,
+  onClose,
+}: NavItem & { active: boolean; onClose?: () => void }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClose}
+      className={cn(
+        'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.8125rem] font-medium transition-colors',
+        active
+          ? 'bg-muted text-foreground'
+          : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
+      )}
+    >
+      <FontAwesomeIcon icon={icon} className="h-4 w-4 shrink-0 opacity-80" />
+      {label}
+    </Link>
+  );
+}
+
+function NavSection({ group, pathname, onClose }: { group: NavGroup; pathname: string; onClose?: () => void }) {
+  return (
+    <div className="space-y-1">
+      <p className="px-2.5 pb-1 pt-2.5 text-[0.625rem] font-semibold uppercase tracking-wider text-muted-foreground/80">
+        {group.label}
+      </p>
+      {group.items.map((item) => {
+        const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+        return <NavLink key={item.href} {...item} active={active} onClose={onClose} />;
+      })}
+    </div>
+  );
 }
 
 export function Sidebar({
@@ -57,82 +65,42 @@ export function Sidebar({
   onClose,
 }: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { user, logout } = useAuthStore();
-
-  const links = customerMode
-    ? customerLinks
-    : variant === 'collector'
-      ? collectorLinks
-      : variant === 'admin'
-        ? adminLinks
-        : staffLinks;
 
   const brandLabel =
     variant === 'admin' ? 'SusuFlow Admin' : customerMode ? 'My Susu' : 'SusuFlow';
 
-  const handleLogout = async () => {
-    await logout();
-    router.push('/login');
-  };
+  const flatLinks = customerMode
+    ? customerLinks
+    : variant === 'admin'
+      ? adminLinks
+      : variant === 'collector'
+        ? null
+        : staffLinks;
 
   return (
     <aside
       className={cn(
-        'dashboard-sidebar fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-border bg-background transition-transform duration-200 lg:translate-x-0',
+        'dashboard-sidebar fixed inset-y-0 left-0 z-50 flex w-[var(--dashboard-sidebar-width)] flex-col border-r border-border bg-background transition-transform duration-200 lg:translate-x-0',
         open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
       )}
     >
-      <div className="flex h-16 items-center gap-2 border-b border-border px-6">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary text-sm font-bold text-secondary-foreground">
+      <div className="flex h-16 items-center gap-2 border-b border-border px-4">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
           SF
         </div>
-        <span className="font-semibold text-foreground">{brandLabel}</span>
+        <span className="truncate text-sm font-semibold text-foreground">{brandLabel}</span>
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-        {links.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href || pathname.startsWith(`${href}/`);
-          return (
-            <Link
-              key={href}
-              href={href}
-              onClick={onClose}
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                active
-                  ? 'bg-muted text-foreground'
-                  : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
-              )}
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              {label}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 overflow-y-auto p-2.5">
+        {variant === 'collector' && !customerMode
+          ? collectorNavGroups.map((group) => (
+              <NavSection key={group.label} group={group} pathname={pathname} onClose={onClose} />
+            ))
+          : flatLinks?.map((item) => {
+              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return <NavLink key={item.href} {...item} active={active} onClose={onClose} />;
+            })}
       </nav>
-
-      <div className="border-t border-border p-4">
-        <div className="mb-3 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
-            {getInitials(user?.firstName, user?.lastName)}
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-foreground">
-              {user?.firstName} {user?.lastName}
-            </p>
-            <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
-        >
-          <LogOut className="h-4 w-4" />
-          Sign out
-        </button>
-      </div>
     </aside>
   );
 }

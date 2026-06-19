@@ -6,7 +6,7 @@ import { TransactionRow } from '@/components/financial/transaction-row';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { depositApi, customerApi } from '@/lib/api';
 import { formatGhs } from '@/lib/utils';
-import { Wallet, Users, TrendingUp, Clock } from 'lucide-react';
+import { faChartLine, faClock, faUsers, faWallet } from '@fortawesome/free-solid-svg-icons';
 
 export default function StaffDashboard() {
   const { data: deposits } = useQuery({
@@ -39,19 +39,25 @@ export default function StaffDashboard() {
         <StatCard
           title="Deposits Today"
           value={formatGhs(todayTotal)}
-          icon={Wallet}
+          icon={faWallet}
+          iconBgClassName="bg-emerald-100 dark:bg-emerald-500/15"
+          iconClassName="text-emerald-600 dark:text-emerald-400"
           trend={{ value: `${todayDeposits.length} txns`, positive: true }}
         />
         <StatCard
           title="Active Customers"
           value={String(customers?.items?.length || 0)}
-          icon={Users}
+          icon={faUsers}
+          iconBgClassName="bg-sky-100 dark:bg-sky-500/15"
+          iconClassName="text-sky-600 dark:text-sky-400"
         />
         <StatCard
           title="Pending"
           value={String(pending)}
           subtitle="Awaiting confirmation"
-          icon={Clock}
+          icon={faClock}
+          iconBgClassName="bg-amber-100 dark:bg-amber-500/15"
+          iconClassName="text-amber-600 dark:text-amber-400"
         />
         <StatCard
           title="Total Volume"
@@ -60,7 +66,9 @@ export default function StaffDashboard() {
               .filter((t) => t.status === 'completed')
               .reduce((s, t) => s + Number(t.amount), 0),
           )}
-          icon={TrendingUp}
+          icon={faChartLine}
+          iconBgClassName="bg-violet-100 dark:bg-violet-500/15"
+          iconClassName="text-violet-600 dark:text-violet-400"
         />
       </div>
 

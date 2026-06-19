@@ -206,13 +206,21 @@
 
 @layer components {
   .dashboard-shell {
+    --dashboard-sidebar-width: 13.5rem;
     @apply fixed inset-0 z-0 flex flex-col overflow-hidden bg-background;
     height: 100dvh;
     max-height: 100dvh;
   }
 
   .dashboard-content-column {
-    @apply flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden lg:ml-64;
+    @apply flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden;
+    margin-left: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .dashboard-content-column {
+      margin-left: var(--dashboard-sidebar-width);
+    }
   }
 
   .dashboard-scroll {
@@ -255,7 +263,25 @@
   }
 
   .portal-metric-grid {
-    @apply grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3 lg:gap-4;
+    @apply grid grid-cols-2 gap-3 xl:grid-cols-4 xl:gap-4;
+  }
+
+  .dashboard-section-title {
+    @apply mb-3 text-base font-bold text-foreground;
+  }
+
+  .dashboard-title {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--heading);
+  }
+
+  @media (min-width: 640px) {
+    .dashboard-title {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
   }
 
   .page-header {
@@ -268,26 +294,6 @@
 
   .page-header p {
     @apply dashboard-subtitle mt-1 text-muted-foreground;
-  }
-
-  .marketing-hero-title {
-    font-size: clamp(2.25rem, 5vw, 3.5rem);
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-  }
-
-  .dashboard-title {
-    font-size: 1.125rem;
-    font-weight: 500;
-    letter-spacing: -0.025em;
-    color: var(--heading);
-  }
-
-  @media (min-width: 640px) {
-    .dashboard-title {
-      font-size: 1.5rem;
-    }
   }
 
   .dashboard-subtitle {
