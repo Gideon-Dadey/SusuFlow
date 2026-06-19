@@ -90,9 +90,9 @@ export function MarketingNavbar() {
     };
   }, [menuOpen]);
 
-  const spread = atTop && !menuOpen;
+  const spread = atTop;
   const showBar = visible || menuOpen;
-  const onDarkNav = spread && !hasLightHero(pathname) && !menuOpen;
+  const onDarkNav = spread && !hasLightHero(pathname);
 
   return (
     <>
@@ -107,12 +107,9 @@ export function MarketingNavbar() {
           <div
             className={cn(
               'marketing-nav-bar relative flex h-14 items-center justify-between gap-3 sm:h-[3.75rem]',
-              menuOpen
-                ? 'rounded-none border-b border-border bg-white px-4 dark:bg-background sm:px-5'
-                : spread
-                  ? 'px-0'
-                  : 'marketing-nav-pill px-4 sm:px-6 lg:px-8',
+              spread ? 'px-0' : 'marketing-nav-pill px-4 sm:px-6 lg:px-8',
               !spread && showBar && !menuOpen && 'marketing-nav-pill--active',
+              menuOpen && 'z-[201]',
             )}
           >
             <Link href="/" className="relative z-10 flex min-w-0 shrink-0 items-center">
@@ -196,14 +193,10 @@ export function MarketingNavbar() {
               <button
                 type="button"
                 className={cn(
-                  'inline-flex size-11 items-center justify-center rounded-lg border transition-colors lg:hidden',
-                  menuOpen
-                    ? 'border-border bg-muted/60 text-foreground hover:bg-muted'
-                    : spread
-                      ? onDarkNav
-                        ? 'border-white/25 bg-white/10 text-white hover:bg-white/15'
-                        : 'border-border bg-card text-foreground hover:bg-muted'
-                      : 'border-border bg-card text-foreground hover:bg-muted',
+                  'inline-flex size-11 items-center justify-center rounded-lg transition-colors lg:hidden',
+                  spread && onDarkNav
+                    ? 'text-white hover:text-white/90'
+                    : 'text-foreground hover:text-foreground/80',
                 )}
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
