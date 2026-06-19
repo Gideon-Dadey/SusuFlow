@@ -11,7 +11,7 @@ export function AboutPeopleSection() {
           {ABOUT_PEOPLE.map(({ title, description, href, cta }) => (
             <article
               key={title}
-              className="flex flex-col rounded-[20px] border border-border/80 bg-white p-6 shadow-sm dark:border-border dark:bg-card dark:shadow-none sm:p-8"
+              className="flex flex-col rounded-lg border border-border/80 bg-white p-6 shadow-sm dark:border-border dark:bg-card dark:shadow-none sm:p-8"
             >
               <h3 className="text-lg font-bold tracking-tight text-foreground sm:text-xl">{title}</h3>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground sm:text-base">

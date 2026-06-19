@@ -15,7 +15,7 @@ export function AboutDetailsSection() {
           </p>
         </div>
 
-        <div className="mt-10 overflow-x-auto rounded-2xl border border-border lg:mt-12">
+        <div className="mt-10 overflow-x-auto rounded-lg border border-border lg:mt-12">
           <table className="w-full min-w-[36rem] border-collapse text-left">
             <thead className="bg-[#1a1a1a] text-white dark:bg-muted dark:text-foreground">
               <tr>
