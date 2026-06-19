@@ -6,7 +6,7 @@ services:
     runtime: node
     plan: free
     branch: main
-    buildCommand: pnpm install --frozen-lockfile --prod=false && pnpm run build:api
+    buildCommand: pnpm install --frozen-lockfile --prod=false && pnpm run build:api && pnpm --filter @susuflow/database exec prisma migrate deploy
     startCommand: pnpm run start:api
     healthCheckPath: /api/v1/health/live
     envVars:
