@@ -566,6 +566,51 @@
     color: #8b95a5;
   }
 
+  .faq-item {
+    @apply overflow-hidden rounded-2xl border border-slate-200/90 bg-white transition-colors duration-200;
+  }
+
+  .faq-item:hover,
+  .faq-item[open] {
+    background-color: #fff8f0;
+    border-color: rgb(226 232 240 / 0.95);
+  }
+
+  .dark .faq-item {
+    @apply border-border bg-card;
+  }
+
+  .dark .faq-item:hover,
+  .dark .faq-item[open] {
+    background-color: rgb(34 39 48);
+    border-color: rgb(38 45 58);
+  }
+
+  .faq-item-summary {
+    @apply flex cursor-pointer list-none items-center gap-3 px-4 py-4 sm:gap-4 sm:px-5 sm:py-[1.125rem];
+    &::-webkit-details-marker {
+      display: none;
+    }
+    &::marker {
+      content: '';
+    }
+  }
+
+  .faq-item-answer {
+    @apply border-t border-slate-200/60 px-4 pb-4 pt-3 sm:px-5 sm:pb-5 sm:pt-4;
+    padding-left: calc(1rem + 2rem + 0.75rem);
+  }
+
+  @media (min-width: 640px) {
+    .faq-item-answer {
+      padding-left: calc(1.25rem + 2.25rem + 1rem);
+    }
+  }
+
+  .dark .faq-item-answer {
+    border-top-color: rgb(38 45 58 / 0.6);
+  }
+
   .page-hero-offset {
     padding-top: var(--marketing-hero-content-offset);
     padding-bottom: 4rem;
