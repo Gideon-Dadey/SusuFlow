@@ -1,0 +1,60 @@
+import Image from 'next/image';
+import Link from 'next/link';
+import { CONTACT_MAP_IMAGE } from '@/lib/brand-assets';
+import { CONTACT_OFFICE, SUPPORT_EMAIL } from '@/lib/marketing-data';
+import { Button } from '@/components/ui/button';
+import { MarketingContainer } from '../marketing-container';
+
+export function ContactHero() {
+  return (
+    <section className="border-b border-border/60 bg-[#f4f6f8] dark:bg-background">
+      <MarketingContainer className="py-14 sm:py-16 lg:py-20">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
+          <div className="min-w-0 text-left">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-[2.5rem] lg:leading-tight">
+              {CONTACT_OFFICE.headline}
+            </h1>
+
+            <h2 className="mt-10 text-base font-bold text-foreground sm:mt-12">Office address</h2>
+            <address className="mt-3 not-italic text-sm leading-relaxed text-muted-foreground sm:text-base">
+              {CONTACT_OFFICE.addressLines.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
+            </address>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link href={`mailto:${SUPPORT_EMAIL}`}>
+                <Button className="h-11 w-full rounded-lg px-6 text-sm font-semibold shadow-[0_4px_14px_rgba(34,197,94,0.25)] sm:w-auto">
+                  Email us
+                </Button>
+              </Link>
+              <Link href="#contact-form">
+                <Button
+                  variant="outline"
+                  className="h-11 w-full rounded-lg border-border bg-white px-6 text-sm font-semibold sm:w-auto dark:bg-card"
+                >
+                  Speak to our team
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="relative mx-auto w-full max-w-xl lg:max-w-none lg:justify-self-end">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-[#f4f6f8] dark:bg-background sm:aspect-[5/4]">
+              <Image
+                src={CONTACT_MAP_IMAGE}
+                alt="World map highlighting SusuFlow office location in Ghana"
+                fill
+                priority
+                sizes="(max-width: 1024px) 90vw, 50vw"
+                className="object-contain object-center"
+              />
+            </div>
+          </div>
+        </div>
+      </MarketingContainer>
+    </section>
+  );
+}
