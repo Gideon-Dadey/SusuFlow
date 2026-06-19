@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BrandLockup } from '@/components/marketing/brand-logo';
 import { NAV_LINKS } from '@/lib/marketing-data';
@@ -91,7 +92,7 @@ export function MarketingNavbar() {
 
   const spread = atTop && !menuOpen;
   const showBar = visible || menuOpen;
-  const onDarkNav = spread && !hasLightHero(pathname);
+  const onDarkNav = spread && !hasLightHero(pathname) && !menuOpen;
 
   return (
     <>
@@ -106,8 +107,12 @@ export function MarketingNavbar() {
           <div
             className={cn(
               'marketing-nav-bar relative flex h-14 items-center justify-between gap-3 sm:h-[3.75rem]',
-              spread ? 'px-0' : 'marketing-nav-pill px-4 sm:px-6 lg:px-8',
-              !spread && showBar && 'marketing-nav-pill--active',
+              menuOpen
+                ? 'rounded-none border-b border-border bg-white px-4 dark:bg-background sm:px-5'
+                : spread
+                  ? 'px-0'
+                  : 'marketing-nav-pill px-4 sm:px-6 lg:px-8',
+              !spread && showBar && !menuOpen && 'marketing-nav-pill--active',
             )}
           >
             <Link href="/" className="relative z-10 flex min-w-0 shrink-0 items-center">
@@ -191,12 +196,14 @@ export function MarketingNavbar() {
               <button
                 type="button"
                 className={cn(
-                  'inline-flex size-11 items-center justify-center rounded-full border transition-colors lg:hidden',
-                  spread
-                    ? onDarkNav
-                      ? 'border-white/25 bg-white/10 text-white hover:bg-white/15'
-                      : 'border-border bg-card text-foreground hover:bg-muted'
-                    : 'border-border bg-card text-foreground hover:bg-muted',
+                  'inline-flex size-11 items-center justify-center rounded-lg border transition-colors lg:hidden',
+                  menuOpen
+                    ? 'border-border bg-muted/60 text-foreground hover:bg-muted'
+                    : spread
+                      ? onDarkNav
+                        ? 'border-white/25 bg-white/10 text-white hover:bg-white/15'
+                        : 'border-border bg-card text-foreground hover:bg-muted'
+                      : 'border-border bg-card text-foreground hover:bg-muted',
                 )}
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
@@ -213,38 +220,34 @@ export function MarketingNavbar() {
         ? createPortal(
             <div
               id="mobile-nav"
-              className="fixed inset-0 z-[190] bg-brand-dark dark:bg-background lg:hidden"
-              style={{ paddingTop: 'var(--marketing-header-height, 4.5rem)' }}
+              className="fixed inset-x-0 bottom-0 z-[190] bg-white dark:bg-background lg:hidden"
+              style={{ top: 'var(--marketing-header-height, 4.5rem)' }}
             >
-              <nav className="flex h-full flex-col px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4" aria-label="Mobile">
-                <div className="flex flex-1 flex-col items-center justify-center gap-8 py-6 sm:gap-9 sm:py-8">
-                  {NAV_LINKS.map(({ href, label }) => {
-                    const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
-                    return (
-                      <Link
-                        key={href}
-                        href={href}
-                        className={cn(
-                          'block text-center text-[1.625rem] font-bold leading-tight tracking-tight transition-colors',
-                          active ? 'text-white' : 'text-[#B0B5C0] hover:text-white',
-                        )}
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        {label}
-                      </Link>
-                    );
-                  })}
-                </div>
-                <div className="mx-auto flex w-full max-w-md flex-col gap-3 pt-4">
-                  <Link href="/login" onClick={() => setMenuOpen(false)}>
-                    <span className="inline-flex h-12 w-full items-center justify-center rounded-xl border border-white/25 bg-transparent text-sm font-bold text-white transition-colors hover:border-white/40 hover:bg-white/5">
-                      Sign in
-                    </span>
-                  </Link>
+              <nav className="h-full overflow-y-auto" aria-label="Mobile">
+                {NAV_LINKS.map(({ href, label }, index) => {
+                  const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      className={cn(
+                        'flex items-center px-6 py-4 text-base font-bold text-foreground transition-colors hover:bg-muted/40',
+                        index > 0 && 'border-t border-border',
+                        active && 'text-secondary',
+                      )}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {label}
+                    </Link>
+                  );
+                })}
+
+                <div className="border-t border-border px-6 py-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
                   <Link href="/register" onClick={() => setMenuOpen(false)}>
-                    <span className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-white text-sm font-bold text-brand-dark transition-colors hover:bg-white/95">
+                    <Button className="h-12 w-full rounded-lg text-sm font-semibold shadow-[0_4px_14px_rgba(34,197,94,0.25)]">
                       Get started
-                    </span>
+                      <ArrowRight className="size-4" aria-hidden />
+                    </Button>
                   </Link>
                 </div>
               </nav>

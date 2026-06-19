@@ -24,8 +24,8 @@ export function BrandLogo({
       priority={priority}
       className={cn(
         iconOnly
-          ? 'h-9 w-9 shrink-0 object-contain'
-          : 'h-9 w-auto max-w-[11rem] object-contain object-left sm:max-w-[12.5rem]',
+          ? 'h-8 w-8 shrink-0 object-contain sm:h-9 sm:w-9'
+          : 'h-8 w-auto max-w-[10rem] object-contain object-left sm:h-9 sm:max-w-[11rem]',
         onDark && 'drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]',
         className,
       )}
@@ -49,7 +49,7 @@ export function BrandLockup({
       <BrandLogo priority={priority} onDark={onDark} iconOnly className="-mr-1" />
       <span
         className={cn(
-          'truncate text-lg font-bold leading-none tracking-tight',
+          'truncate text-base font-bold leading-none tracking-tight sm:text-lg',
           onDark && 'drop-shadow-[0_1px_8px_rgba(0,0,0,0.45)]',
           wordmarkClassName,
         )}
