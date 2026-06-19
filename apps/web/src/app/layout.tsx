@@ -1,19 +1,25 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import '@/lib/fontawesome';
 import { Providers } from '@/components/providers';
-import { BRAND_LOGO } from '@/lib/brand-assets';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'SusuFlow | Digital Susu Savings',
   description: 'Eliminate fraud in susu collection with gateway-confirmed digital deposits',
-  icons: {
-    icon: BRAND_LOGO,
-    apple: BRAND_LOGO,
+  applicationName: 'SusuFlow',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: 'SusuFlow',
+    statusBarStyle: 'default',
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#22c55e',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

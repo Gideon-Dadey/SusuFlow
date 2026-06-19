@@ -24,6 +24,7 @@
     "db:migrate": "pnpm --filter @susuflow/database db:migrate",
     "db:seed": "pnpm --filter @susuflow/database db:seed",
     "db:studio": "pnpm --filter @susuflow/database db:studio",
+    "optimize:images": "pnpm --filter @susuflow/web optimize:images",
     "docker:up": "docker compose -f infrastructure/docker/docker-compose.yml up -d",
     "docker:down": "docker compose -f infrastructure/docker/docker-compose.yml down",
     "setup": "pnpm install && pnpm db:generate && pnpm docker:up"
