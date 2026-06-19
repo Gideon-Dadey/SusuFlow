@@ -55,7 +55,7 @@ export default function CollectorCommissionsPage() {
         </CardHeader>
         <CardContent className="space-y-3 text-sm leading-relaxed text-muted-foreground">
           <p>
-            You earn when a customer completes a MoMo deposit you assisted — only after the payment
+            You earn when a customer completes a MoMo deposit you assisted, only after the payment
             gateway confirms success. Cash never passes through your hands.
           </p>
           <p>

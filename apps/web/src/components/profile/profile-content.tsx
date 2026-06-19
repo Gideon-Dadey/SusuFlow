@@ -40,11 +40,11 @@ export function ProfileContent() {
         <CardContent className="space-y-3 text-sm">
           <div className="flex justify-between gap-4">
             <span className="text-muted-foreground">Company</span>
-            <span className="font-medium">{tenantSlug || '—'}</span>
+            <span className="font-medium">{tenantSlug || 'N/A'}</span>
           </div>
           <div className="flex justify-between gap-4">
             <span className="text-muted-foreground">KYC Level</span>
-            <Badge variant="warning">Level 0 — Pending</Badge>
+            <Badge variant="warning">Level 0, Pending</Badge>
           </div>
         </CardContent>
       </Card>

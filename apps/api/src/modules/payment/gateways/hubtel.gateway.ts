@@ -22,7 +22,7 @@ export class HubtelGateway implements PaymentGateway {
     const isDev = !clientId || this.config.get('NODE_ENV') === 'development';
 
     if (isDev) {
-      this.logger.warn('Hubtel not configured — using mock payment session');
+      this.logger.warn('Hubtel not configured. Using mock payment session');
       return {
         sessionId: `mock_${params.reference}`,
         paymentUrl: `${this.config.get('API_URL', 'http://localhost:4000')}/api/v1/payments/mock/${params.reference}`,

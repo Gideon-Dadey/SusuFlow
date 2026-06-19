@@ -4,7 +4,7 @@ import { MarketingContainer } from '@/components/marketing/marketing-container';
 import { APP_NAME } from '@/lib/marketing-data';
 
 export const metadata: Metadata = {
-  title: `Privacy Policy — ${APP_NAME}`,
+  title: `Privacy Policy | ${APP_NAME}`,
   description: 'How SusuFlow collects, uses, and protects your data.',
 };
 
@@ -50,7 +50,7 @@ export default function PrivacyPage() {
             <h2>5. Security</h2>
             <p>
               We use encryption in transit, access controls, and audit logging. No system is 100%
-              secure — report concerns to{' '}
+              secure. Report concerns to{' '}
               <a href="mailto:hello@susuflow.com" className="text-secondary">
                 hello@susuflow.com
               </a>

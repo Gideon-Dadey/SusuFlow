@@ -191,7 +191,7 @@ export default function CollectorDashboard() {
           <CardContent>
             {pending.length === 0 ? (
               <p className="py-6 text-center text-sm text-muted-foreground">
-                No pending MoMo payments — you&apos;re all caught up.
+                No pending MoMo payments. You&apos;re all caught up.
               </p>
             ) : (
               pending.slice(0, 5).map((t) => <TransactionRow key={t.id} transaction={t} />)

@@ -9,6 +9,13 @@ import { BrandLockup } from '@/components/marketing/brand-logo';
 import { NAV_LINKS } from '@/lib/marketing-data';
 import { cn } from '@/lib/utils';
 
+const LIGHT_HERO_PATHS = ['/', '/how-it-works', '/pricing'] as const;
+
+function hasLightHero(pathname: string) {
+  return LIGHT_HERO_PATHS.some((path) =>
+    path === '/' ? pathname === '/' : pathname.startsWith(path),
+  );
+}
 const TOP_THRESHOLD = 24;
 const SCROLL_DELTA = 6;
 
@@ -84,6 +91,7 @@ export function MarketingNavbar() {
 
   const spread = atTop && !menuOpen;
   const showBar = visible || menuOpen;
+  const onDarkNav = spread && !hasLightHero(pathname);
 
   return (
     <>
@@ -103,7 +111,7 @@ export function MarketingNavbar() {
             )}
           >
             <Link href="/" className="relative z-10 flex min-w-0 shrink-0 items-center">
-              <BrandLockup priority onDark={spread} />
+              <BrandLockup priority onDark={onDarkNav} />
             </Link>
 
             <nav
@@ -119,9 +127,13 @@ export function MarketingNavbar() {
                     className={cn(
                       'rounded-full px-3.5 py-2 text-sm font-medium transition-colors',
                       spread
-                        ? active
-                          ? 'text-white'
-                          : 'text-white/75 hover:bg-white/10 hover:text-white'
+                        ? onDarkNav
+                          ? active
+                            ? 'text-white'
+                            : 'text-white/75 hover:bg-white/10 hover:text-white'
+                          : active
+                            ? 'text-foreground'
+                            : 'text-muted-foreground hover:text-foreground'
                         : active
                           ? 'text-secondary'
                           : 'text-muted-foreground hover:text-foreground',
@@ -133,13 +145,28 @@ export function MarketingNavbar() {
               })}
             </nav>
 
-            <div className="relative z-10 flex shrink-0 items-center gap-2 sm:gap-3">
+            <div className="relative z-10 flex shrink-0 items-center gap-3 sm:gap-3">
+              <Link
+                href="/login"
+                className={cn(
+                  'inline-flex px-1 py-2 text-sm font-medium transition-colors lg:hidden',
+                  spread
+                    ? onDarkNav
+                      ? 'text-white/90 hover:text-white'
+                      : 'text-muted-foreground hover:text-foreground'
+                    : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                Sign in
+              </Link>
               <Link
                 href="/login"
                 className={cn(
                   'hidden rounded-full px-3 py-2 text-sm font-medium transition-colors lg:inline-flex',
                   spread
-                    ? 'text-white/90 hover:bg-white/10 hover:text-white'
+                    ? onDarkNav
+                      ? 'text-white/90 hover:bg-white/10 hover:text-white'
+                      : 'text-muted-foreground hover:text-foreground'
                     : 'text-muted-foreground hover:text-foreground',
                 )}
               >
@@ -151,7 +178,9 @@ export function MarketingNavbar() {
                   className={cn(
                     'h-10 rounded-full px-4 text-sm font-semibold',
                     spread
-                      ? 'border-0 bg-white text-brand-dark shadow-lg hover:bg-white/95'
+                      ? onDarkNav
+                        ? 'border-0 bg-white text-brand-dark shadow-lg hover:bg-white/95'
+                        : 'shadow-[0_6px_18px_rgba(34,197,94,0.28)]'
                       : 'shadow-[0_6px_18px_rgba(34,197,94,0.28)]',
                   )}
                 >
@@ -164,7 +193,9 @@ export function MarketingNavbar() {
                 className={cn(
                   'inline-flex size-11 items-center justify-center rounded-full border transition-colors lg:hidden',
                   spread
-                    ? 'border-white/25 bg-white/10 text-white hover:bg-white/15'
+                    ? onDarkNav
+                      ? 'border-white/25 bg-white/10 text-white hover:bg-white/15'
+                      : 'border-border bg-card text-foreground hover:bg-muted'
                     : 'border-border bg-card text-foreground hover:bg-muted',
                 )}
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}

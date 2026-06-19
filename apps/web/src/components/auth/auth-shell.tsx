@@ -10,7 +10,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="auth-split min-h-screen bg-background lg:grid lg:grid-cols-2">
-      <div className="relative flex min-h-screen flex-col overflow-y-auto">
+      <div className="relative flex min-h-screen flex-col overflow-y-auto bg-[#f4f6f8] dark:bg-background">
         <div className="flex items-center justify-between gap-3 px-5 pt-5 sm:px-6 lg:hidden">
           <BrandLockup priority wordmarkClassName="text-xl" />
           <Link
@@ -29,18 +29,22 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <div className="relative hidden min-h-screen lg:block">
+      <div className="relative hidden min-h-screen overflow-hidden lg:block">
         <Image
           src={AUTH_LOGIN_IMAGE}
           alt=""
           fill
           priority
           sizes="50vw"
-          className="object-cover object-center"
+          className="object-cover object-center scale-[1.02]"
           aria-hidden
         />
         <div
-          className="absolute inset-0 bg-gradient-to-br from-brand-dark/75 via-brand-dark/50 to-brand-dark/65"
+          className="absolute inset-0 bg-gradient-to-br from-brand-dark/80 via-brand-dark/55 to-brand-dark/70"
+          aria-hidden
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/10"
           aria-hidden
         />
         <div className="relative z-10 flex h-full min-h-screen flex-col justify-between p-8 xl:p-10">

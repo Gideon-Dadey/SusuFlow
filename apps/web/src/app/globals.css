@@ -368,6 +368,33 @@
     line-height: 1.1;
   }
 
+  @media (max-width: 1023px) {
+    .marketing-hero-title {
+      font-size: clamp(1.875rem, 8vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1.15;
+    }
+  }
+
+  .marketing-hero-platform {
+    @apply relative overflow-hidden;
+  }
+
+  .marketing-hero-platform-inner {
+    padding-top: calc(var(--marketing-header-height) + 1.5rem);
+    padding-bottom: 2.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .marketing-hero-platform-inner {
+      padding-top: calc(var(--marketing-header-height) + 3rem);
+      padding-bottom: 4.5rem;
+      min-height: calc(100svh - var(--marketing-header-height));
+      display: flex;
+      align-items: center;
+    }
+  }
+
   .marketing-canvas {
     --marketing-safe-top: max(1rem, env(safe-area-inset-top, 0px));
     --marketing-gutter: 1rem;
@@ -586,56 +613,6 @@
 
   .marketing-section-grid {
     @apply mt-12 grid gap-6 sm:gap-8 xl:gap-10 2xl:gap-12;
-  }
-
-  .feature-showcase-card {
-    @apply transition-shadow duration-200;
-  }
-
-  .feature-showcase-card:hover {
-    box-shadow: 0 8px 30px rgb(15 23 42 / 0.06);
-  }
-
-  .dark .feature-showcase-card:hover {
-    box-shadow: 0 8px 30px rgb(0 0 0 / 0.25);
-  }
-
-  .audience-tablist {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .audience-tablist::-webkit-scrollbar {
-    display: none;
-  }
-
-  .audience-overlay-card {
-    border: 1px solid rgb(226 232 240 / 0.9);
-    background: rgb(255 255 255 / 0.98);
-    box-shadow: 0 12px 40px rgb(15 23 42 / 0.12);
-    backdrop-filter: blur(8px);
-  }
-
-  .audience-overlay-card h3 {
-    color: #1a365d;
-  }
-
-  .audience-overlay-card p {
-    color: #475569;
-  }
-
-  .dark .audience-overlay-card {
-    border-color: var(--border);
-    background: var(--card);
-    box-shadow: none;
-  }
-
-  .dark .audience-overlay-card h3 {
-    color: #f4f5f7;
-  }
-
-  .dark .audience-overlay-card p {
-    color: #8b95a5;
   }
 
   .faq-item {
