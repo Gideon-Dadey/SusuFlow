@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { depositApi } from '@/lib/api';
 import { getGreeting } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
+import { TransactionListSkeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { Wallet, FileText, ArrowRight } from 'lucide-react';
 
@@ -59,11 +60,7 @@ export default function CustomerDashboard() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-14 animate-pulse rounded-lg bg-muted" />
-              ))}
-            </div>
+            <TransactionListSkeleton count={3} />
           ) : transactions.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-muted-foreground text-sm">No transactions yet</p>

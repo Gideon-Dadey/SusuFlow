@@ -1,15 +1,23 @@
 'use client';
 
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { customerApi } from '@/lib/api';
+import { DashboardPageBar } from '@/components/layout/dashboard-page-bar';
+import { OnboardCustomerForm } from '@/components/collector/onboard-customer-form';
 import { getInitials } from '@/lib/utils';
 import Link from 'next/link';
 import { StatusBadge } from '@/components/ui/badge';
 import { Plus } from 'lucide-react';
+import { CustomerListSkeleton, CustomersPageSkeleton } from '@/components/ui/skeleton';
 
-export default function CollectorCustomersPage() {
+function CollectorCustomersContent() {
+  const searchParams = useSearchParams();
+  const [showForm, setShowForm] = useState(false);
+
   const { data, isLoading } = useQuery({
     queryKey: ['collector-customers'],
     queryFn: () => customerApi.list(),
@@ -17,34 +25,38 @@ export default function CollectorCustomersPage() {
 
   const customers = data?.items || [];
 
+  useEffect(() => {
+    if (searchParams.get('add') === '1') {
+      setShowForm(true);
+    }
+  }, [searchParams]);
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="dashboard-title">My Customers</h1>
-        <Link href="/collector/customers/new">
-          <Button size="sm">
+      <DashboardPageBar
+        title="Customers"
+        actions={
+          <Button size="sm" onClick={() => setShowForm((value) => !value)}>
             <Plus className="h-4 w-4" />
-            Add
+            {showForm ? 'Close' : 'Add'}
           </Button>
-        </Link>
-      </div>
+        }
+      />
+
+      {showForm ? (
+        <OnboardCustomerForm onSuccess={() => setShowForm(false)} onCancel={() => setShowForm(false)} />
+      ) : null}
 
       <Card>
-        <CardContent className="p-0 divide-y divide-gray-100">
+        <CardContent className="divide-y divide-gray-100 p-0">
           {isLoading ? (
-            <div className="p-4 space-y-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-14 animate-pulse rounded-lg bg-muted" />
-              ))}
-            </div>
+            <CustomerListSkeleton count={4} />
           ) : customers.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-sm">No customers yet</p>
-              <Link href="/collector/customers/new">
-                <Button className="mt-4" size="sm">
-                  Onboard your first customer
-                </Button>
-              </Link>
+            <div className="py-12 text-center">
+              <p className="text-sm text-muted-foreground">No customers yet</p>
+              <Button className="mt-4" size="sm" onClick={() => setShowForm(true)}>
+                Add your first customer
+              </Button>
             </div>
           ) : (
             customers.map((c) => (
@@ -53,7 +65,7 @@ export default function CollectorCustomersPage() {
                 href={`/collector/deposit?customer=${c.id}`}
                 className="flex items-center gap-4 p-4 hover:bg-muted"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary text-sm font-medium">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-sm font-medium text-primary">
                   {getInitials(c.user?.firstName, c.user?.lastName)}
                 </div>
                 <div className="flex-1">
@@ -69,5 +81,13 @@ export default function CollectorCustomersPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function CollectorCustomersPage() {
+  return (
+    <Suspense fallback={<CustomersPageSkeleton />}>
+      <CollectorCustomersContent />
+    </Suspense>
   );
 }

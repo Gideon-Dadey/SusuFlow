@@ -35,12 +35,28 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     options.tenantSlug !== undefined ? options.tenantSlug : getTenantSlug();
   if (slug) headers['x-tenant-slug'] = slug;
 
-  const response = await fetch(`${API_BASE}${endpoint}`, { ...init, headers });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE}${endpoint}`, { ...init, headers });
+  } catch {
+    throw new ApiError(
+      'Unable to reach the server. Start the API with: pnpm dev:api',
+      0,
+    );
+  }
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
+    const detail = error.detail || error.title;
+    if (response.status >= 500 && !detail) {
+      throw new ApiError(
+        'Server error. Make sure the API is running on port 4000 (pnpm dev:api).',
+        response.status,
+        error.errors,
+      );
+    }
     throw new ApiError(
-      error.detail || error.title || 'Request failed',
+      detail || 'Request failed',
       response.status,
       error.errors,
     );

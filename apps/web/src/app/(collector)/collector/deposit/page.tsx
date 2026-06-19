@@ -8,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MoneyDisplay } from '@/components/financial/money-display';
 import { customerApi, depositApi } from '@/lib/api';
-import { AlertTriangle, ArrowLeft, CheckCircle } from 'lucide-react';
+import { FormCardSkeleton } from '@/components/ui/skeleton';
+import { CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 function AssistDepositContent() {
@@ -83,15 +84,6 @@ function AssistDepositContent() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Link href="/collector/dashboard">
-          <button className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-muted">
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-        </Link>
-        <h1 className="dashboard-title">Assist Deposit</h1>
-      </div>
-
       <Card>
         <CardHeader>
           <CardTitle>Select Customer</CardTitle>
@@ -134,14 +126,6 @@ function AssistDepositContent() {
             onChange={(e) => setPhone(e.target.value)}
           />
 
-          <div className="flex gap-3 rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm text-amber-800">
-            <AlertTriangle className="h-5 w-5 shrink-0" />
-            <p>
-              Customer will receive a MoMo prompt on <strong>their phone</strong>.
-              They must enter their PIN. You cannot modify the amount after initiation.
-            </p>
-          </div>
-
           {error ? (
             <p className="text-sm text-debit bg-red-50 rounded-lg px-3 py-2">{error}</p>
           ) : null}
@@ -162,7 +146,7 @@ function AssistDepositContent() {
 
 export default function CollectorDepositPage() {
   return (
-    <Suspense fallback={<div className="animate-pulse h-64 bg-muted rounded-xl" />}>
+    <Suspense fallback={<FormCardSkeleton />}>
       <AssistDepositContent />
     </Suspense>
   );

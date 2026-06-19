@@ -16,7 +16,7 @@ interface DashboardShellProps {
 export function DashboardShell({
   children,
   variant,
-  showBottomNav = variant !== 'admin',
+  showBottomNav = variant !== 'admin' && variant !== 'collector',
 }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
@@ -51,7 +51,7 @@ export function DashboardShell({
           data-portal={variant}
           className={cn(
             'dashboard-scroll p-4 sm:p-6 lg:p-8',
-            showBottomNav && 'pb-24 md:pb-8',
+            showBottomNav && 'pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:pb-8',
             sidebarOpen && 'overflow-hidden lg:overflow-y-auto',
           )}
         >

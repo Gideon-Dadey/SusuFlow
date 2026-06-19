@@ -1,46 +1,69 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cn } from '@/lib/utils';
-import { LucideIcon, TrendingDown, TrendingUp } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
   value: string;
   subtitle?: string;
-  icon?: LucideIcon;
+  icon?: IconDefinition;
+  iconBgClassName?: string;
+  iconClassName?: string;
   trend?: { value: string; positive: boolean };
   className?: string;
 }
 
-export function StatCard({ title, value, subtitle, icon: Icon, trend, className }: StatCardProps) {
+export function StatCard({
+  title,
+  value,
+  subtitle,
+  icon,
+  iconBgClassName = 'bg-primary/10',
+  iconClassName = 'text-primary',
+  trend,
+  className,
+}: StatCardProps) {
+  const footer = trend?.value ?? subtitle;
+
   return (
-    <Card className={cn('overflow-hidden', className)}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        {Icon ? (
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary/10 text-secondary">
-            <Icon className="h-4 w-4" />
-          </div>
-        ) : null}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold tracking-tight text-foreground">{value}</div>
-        {subtitle ? <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p> : null}
-        {trend ? (
-          <p
-            className={cn(
-              'mt-1 flex items-center gap-1 text-xs font-medium',
-              trend.positive ? 'text-success' : 'text-destructive',
-            )}
-          >
-            {trend.positive ? (
-              <TrendingUp className="h-3.5 w-3.5" />
-            ) : (
-              <TrendingDown className="h-3.5 w-3.5" />
-            )}
-            {trend.value}
-          </p>
-        ) : null}
-      </CardContent>
-    </Card>
+    <div
+      className={cn(
+        'dashboard-tile flex h-full min-h-[8.5rem] flex-col rounded-xl border border-border/80 bg-card p-4 shadow-card sm:min-h-[10.5rem] sm:p-6',
+        className,
+      )}
+    >
+      {icon ? (
+        <div
+          className={cn(
+            'flex size-8 items-center justify-center rounded-lg sm:size-10',
+            iconBgClassName,
+          )}
+        >
+          <FontAwesomeIcon
+            icon={icon}
+            className={cn('h-3.5 w-3.5 sm:h-[1.125rem] sm:w-[1.125rem]', iconClassName)}
+          />
+        </div>
+      ) : null}
+
+      <p className="mt-3 text-xs text-muted-foreground sm:mt-4 sm:text-sm">{title}</p>
+      <p className="mt-0.5 text-lg font-bold tracking-tight text-foreground sm:mt-1 sm:text-2xl">
+        {value}
+      </p>
+
+      {footer ? (
+        <p
+          className={cn(
+            'mt-auto pt-2 text-[0.625rem] leading-snug text-muted-foreground sm:pt-3 sm:text-xs',
+            trend && !trend.positive && 'text-destructive',
+            trend?.positive && 'text-muted-foreground',
+          )}
+        >
+          {footer}
+        </p>
+      ) : (
+        <span className="mt-auto" aria-hidden />
+      )}
+    </div>
   );
 }

@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { useState, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { FormCardSkeleton } from '@/components/ui/skeleton';
 
 const INTENT_COPY: Record<string, { title: string; cta: string }> = {
   demo: {
@@ -85,7 +86,7 @@ function ContactFormInner() {
 
 export function ContactForm() {
   return (
-    <Suspense fallback={<p className="text-sm text-muted-foreground">Loading form…</p>}>
+    <Suspense fallback={<FormCardSkeleton />}>
       <ContactFormInner />
     </Suspense>
   );

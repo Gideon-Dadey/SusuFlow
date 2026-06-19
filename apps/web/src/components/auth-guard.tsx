@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth.store';
 import { getDashboardPath } from '@/lib/utils';
+import { AuthGuardSkeleton } from '@/components/ui/skeleton';
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -16,11 +17,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated, user, router]);
 
   if (!isAuthenticated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-      </div>
-    );
+    return <AuthGuardSkeleton />;
   }
 
   return <>{children}</>;

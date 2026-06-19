@@ -1,11 +1,10 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
-import { Menu, LogOut } from 'lucide-react';
-import { useAuthStore } from '@/stores/auth.store';
-import { getGreeting, getInitials } from '@/lib/utils';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { usePathname } from 'next/navigation';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@/components/ui/button';
+import { DashboardUserMenu } from '@/components/layout/dashboard-user-menu';
 
 const titles: Record<string, string> = {
   '/staff/dashboard': 'Dashboard',
@@ -13,9 +12,11 @@ const titles: Record<string, string> = {
   '/staff/deposits': 'Deposits',
   '/staff/withdrawals': 'Withdrawals',
   '/staff/settings': 'Settings',
-  '/collector/dashboard': 'Dashboard',
+  '/collector/dashboard': 'Overview',
   '/collector/customers': 'Customers',
-  '/collector/deposit': 'Assist Deposit',
+  '/collector/deposit': 'Assist deposit',
+  '/collector/deposits': 'Deposit history',
+  '/collector/commissions': 'Commissions',
   '/admin/tenants': 'Tenants',
   '/dashboard': 'Home',
   '/deposit': 'Deposit',
@@ -30,8 +31,6 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ onMenuClick, variant }: DashboardHeaderProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { user, logout } = useAuthStore();
 
   const mobileTitle =
     titles[pathname] ||
@@ -43,48 +42,23 @@ export function DashboardHeader({ onMenuClick, variant }: DashboardHeaderProps) 
           ? 'Staff Portal'
           : 'My Savings');
 
-  const handleLogout = async () => {
-    await logout();
-    router.push('/login');
-  };
-
   return (
-    <header className="dashboard-header flex h-16 shrink-0 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-      <div className="flex min-w-0 items-center gap-3">
+    <header className="dashboard-header flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-background px-4 sm:px-6 lg:px-8">
+      <div className="flex min-w-0 items-center gap-2.5 lg:hidden">
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          className="lg:hidden"
           onClick={onMenuClick}
           aria-label="Open menu"
         >
-          <Menu className="h-5 w-5" />
+          <FontAwesomeIcon icon={faBars} className="h-4 w-4" />
         </Button>
-        <div className="min-w-0">
-          <p className="dashboard-title truncate">{mobileTitle}</p>
-          <p className="dashboard-subtitle hidden text-muted-foreground sm:block">
-            {getGreeting()}, {user?.firstName}
-          </p>
-        </div>
+        <p className="dashboard-title min-w-0 truncate">{mobileTitle}</p>
       </div>
 
-      <div className="flex items-center gap-2">
-        <ThemeToggle />
-        <div className="hidden items-center gap-2 sm:flex">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
-            {getInitials(user?.firstName, user?.lastName)}
-          </div>
-          <div className="hidden min-w-0 md:block">
-            <p className="truncate text-sm font-medium text-foreground">
-              {user?.firstName} {user?.lastName}
-            </p>
-            <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
-          </div>
-        </div>
-        <Button type="button" variant="ghost" size="sm" onClick={handleLogout} aria-label="Sign out">
-          <LogOut className="h-4 w-4" />
-        </Button>
+      <div className="ml-auto flex shrink-0 items-center">
+        <DashboardUserMenu />
       </div>
     </header>
   );

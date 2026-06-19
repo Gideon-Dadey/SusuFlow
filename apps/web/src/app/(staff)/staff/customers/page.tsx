@@ -6,6 +6,7 @@ import { Badge, StatusBadge } from '@/components/ui/badge';
 import { customerApi } from '@/lib/api';
 import { getInitials } from '@/lib/utils';
 import Link from 'next/link';
+import { CustomerListSkeleton } from '@/components/ui/skeleton';
 
 export default function StaffCustomersPage() {
   const { data, isLoading } = useQuery({
@@ -24,11 +25,7 @@ export default function StaffCustomersPage() {
       <Card>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-4 space-y-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 animate-pulse rounded-lg bg-muted" />
-              ))}
-            </div>
+            <CustomerListSkeleton count={4} />
           ) : customers.length === 0 ? (
             <p className="text-center text-muted-foreground py-12 text-sm">No customers found</p>
           ) : (

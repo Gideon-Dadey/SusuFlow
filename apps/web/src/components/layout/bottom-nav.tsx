@@ -2,28 +2,23 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faGaugeHigh,
+  faHandHoldingDollar,
+  faUser,
+  faUsers,
+} from '@fortawesome/free-solid-svg-icons';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { cn } from '@/lib/utils';
-import { Home, Wallet, History, User, Users, LayoutDashboard, HandCoins } from 'lucide-react';
+import { collectorLinks, customerLinks, staffLinks } from '@/lib/dashboard-nav';
 import { useAuthStore } from '@/stores/auth.store';
 
-const customerNav = [
-  { href: '/dashboard', label: 'Home', icon: Home },
-  { href: '/deposit', label: 'Deposit', icon: Wallet },
-  { href: '/transactions', label: 'History', icon: History },
-  { href: '/profile', label: 'Profile', icon: User },
-];
-
-const collectorNav = [
-  { href: '/collector/dashboard', label: 'Home', icon: Home },
-  { href: '/collector/customers', label: 'Customers', icon: Users },
-  { href: '/collector/deposit', label: 'Deposit', icon: HandCoins },
-  { href: '/profile', label: 'Profile', icon: User },
-];
-
-const staffNav = [
-  { href: '/staff/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/staff/customers', label: 'Customers', icon: Users },
-  { href: '/staff/deposits', label: 'Deposits', icon: Wallet },
+const collectorMobileNav: { href: string; label: string; icon: IconDefinition }[] = [
+  { href: '/collector/dashboard', label: 'Home', icon: faGaugeHigh },
+  { href: '/collector/customers', label: 'Customers', icon: faUsers },
+  { href: '/collector/deposit', label: 'Deposit', icon: faHandHoldingDollar },
+  { href: '/profile', label: 'Profile', icon: faUser },
 ];
 
 export function BottomNav() {
@@ -34,12 +29,16 @@ export function BottomNav() {
   const isStaff =
     user?.roles.includes('company_admin') || user?.roles.includes('account_officer');
 
-  const nav = isStaff ? staffNav : isCollector ? collectorNav : customerNav;
+  const nav = isStaff
+    ? staffLinks.slice(0, 4)
+    : isCollector
+      ? collectorMobileNav
+      : customerLinks;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-md md:hidden safe-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-md safe-bottom md:hidden">
       <div className="flex items-center justify-around px-2 py-2">
-        {nav.map(({ href, label, icon: Icon }) => {
+        {nav.map(({ href, label, icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
             <Link
@@ -47,10 +46,10 @@ export function BottomNav() {
               href={href}
               className={cn(
                 'flex min-w-[64px] flex-col items-center gap-1 rounded-lg px-3 py-2 transition-colors',
-                active ? 'text-secondary' : 'text-muted-foreground',
+                active ? 'text-primary' : 'text-muted-foreground',
               )}
             >
-              <Icon className="h-5 w-5" />
+              <FontAwesomeIcon icon={icon} className="h-5 w-5" />
               <span className="text-xs font-medium">{label}</span>
             </Link>
           );

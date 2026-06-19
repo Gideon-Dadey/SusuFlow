@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { adminApi, type AdminTenant } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { TenantListSkeleton } from '@/components/ui/skeleton';
 import { formatDate } from '@/lib/utils';
 
 const statusStyles: Record<string, string> = {
@@ -92,7 +93,7 @@ export default function AdminTenantsPage() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">Loading tenants…</p>
+            <TenantListSkeleton count={3} />
           ) : error ? (
             <p className="py-8 text-center text-sm text-destructive">Failed to load tenants</p>
           ) : tenants.length === 0 ? (
