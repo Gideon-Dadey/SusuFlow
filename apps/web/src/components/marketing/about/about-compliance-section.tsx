@@ -20,7 +20,7 @@ export function AboutComplianceSection() {
           {ABOUT_COMPLIANCE_POINTS.map((point) => (
             <li
               key={point}
-              className="flex items-start gap-3 rounded-[20px] border border-border/80 bg-white p-5 dark:border-border dark:bg-card"
+              className="flex items-start gap-3 rounded-lg border border-border/80 bg-white p-5 dark:border-border dark:bg-card"
             >
               <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-[#22c55e] text-white">
                 <Check className="size-4" strokeWidth={2.5} aria-hidden />

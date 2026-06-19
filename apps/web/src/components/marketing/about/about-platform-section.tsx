@@ -29,7 +29,7 @@ export function AboutPlatformSection() {
           {ABOUT_VALUES.map(({ title, body }) => (
             <article
               key={title}
-              className="rounded-[20px] border border-border/80 bg-white p-6 dark:border-border dark:bg-card"
+              className="rounded-lg border border-border/80 bg-white p-6 dark:border-border dark:bg-card"
             >
               <h3 className="text-base font-bold text-foreground sm:text-lg">{title}</h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">{body}</p>

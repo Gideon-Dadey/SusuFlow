@@ -43,7 +43,7 @@ export function AboutHero() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-xl overflow-hidden rounded-3xl lg:max-w-none lg:justify-self-end">
+          <div className="relative mx-auto w-full max-w-xl overflow-hidden rounded-lg lg:max-w-none lg:justify-self-end">
             <div className="relative aspect-[4/3] w-full sm:aspect-[5/4]">
               <Image
                 src={ABOUT_HERO_IMAGE}
