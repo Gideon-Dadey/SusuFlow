@@ -1,18 +1,22 @@
 'use client';
 
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BalanceCard } from '@/components/financial/balance-card';
 import { TransactionRow } from '@/components/financial/transaction-row';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { depositApi } from '@/lib/api';
+import { depositApi, Transaction } from '@/lib/api';
 import { getGreeting } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import { TransactionListSkeleton } from '@/components/ui/skeleton';
+import { ReceiptModal } from '@/components/financial/receipt-modal';
 import Link from 'next/link';
 import { Wallet, FileText, ArrowRight } from 'lucide-react';
 
 export default function CustomerDashboard() {
   const user = useAuthStore((s) => s.user);
+  const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
+  const [receiptOpen, setReceiptOpen] = useState(false);
 
   const { data: deposits, isLoading } = useQuery({
     queryKey: ['deposits'],
@@ -91,10 +95,32 @@ export default function CustomerDashboard() {
               </Link>
             </div>
           ) : (
-            transactions.slice(0, 5).map((t) => <TransactionRow key={t.id} transaction={t} />)
+            <div className="divide-y divide-gray-100 dark:divide-border/40">
+              {transactions.slice(0, 5).map((t) => (
+                <div
+                  key={t.id}
+                  onClick={() => {
+                    setSelectedTxn(t);
+                    setReceiptOpen(true);
+                  }}
+                  className="cursor-pointer hover:bg-muted/50 transition-colors rounded-lg px-2"
+                >
+                  <TransactionRow transaction={t} />
+                </div>
+              ))}
+            </div>
           )}
         </CardContent>
       </Card>
+
+      <ReceiptModal
+        transaction={selectedTxn}
+        open={receiptOpen}
+        onClose={() => {
+          setReceiptOpen(false);
+          setSelectedTxn(null);
+        }}
+      />
     </div>
   );
 }

@@ -51,25 +51,25 @@ export const HOW_IT_WORKS_STEPS = [
     step: '01',
     title: 'Set up your company',
     description:
-      'Create your tenant, invite staff and collectors, and configure commission rules from one admin dashboard.',
+      'Create your tenant, invite staff, and configure settings from one admin dashboard.',
   },
   {
     step: '02',
-    title: 'Collectors onboard savers',
+    title: 'Members sign up directly',
     description:
-      'Field agents register members in minutes. No cash changes hands at signup.',
+      'Savers join your company online in minutes. No manual paperwork or collector visits needed.',
   },
   {
     step: '03',
-    title: 'Members pay via MoMo',
+    title: 'Direct MoMo deposits',
     description:
-      'Savers pay through MTN MoMo. Funds credit only after the gateway confirms payment.',
+      'Savers deposit funds directly from their own Mobile Money wallet, getting an instant confirmation receipt.',
   },
   {
     step: '04',
-    title: 'Approve payouts with proof',
+    title: 'Verify deposits & approve payouts',
     description:
-      'Staff review requests with a full audit trail. Every cedi is traceable from deposit to payout.',
+      'Staff review deposits and payout requests with a full audit trail. Every cedi is traceable from deposit to payout.',
   },
 ] as const;
 

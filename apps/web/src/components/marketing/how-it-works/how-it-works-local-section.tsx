@@ -24,16 +24,13 @@ export function HowItWorksLocalSection() {
           <div className="order-2 min-w-0 text-left lg:order-2">
             <p className="text-sm font-medium text-muted-foreground">Built for Ghana</p>
             <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-[2rem]">
-              Collectors stay in the community. Cash leaves the process.
+              Savers deposit directly. Cash leaves the process.
             </h2>
             <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
-              Your collectors still meet market women, traders, and savers where they work. They send
-              MoMo prompts on the spot, onboard new members, and earn commission only after verified
-              deposits.
+              Susu contributors can deposit money directly into their Susu accounts from their own Mobile Money wallets at any time. No need for cash handoffs or waiting for a collector to visit.
             </p>
             <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
-              SusuFlow is designed for how susu actually runs in Ghana: face to face relationships,
-              mobile money in every pocket, and management teams that need proof not promises.
+              SusuFlow is designed to empower Ghanaian savers: convenient self-service mobile money payments, instant digital receipts, and real-time dashboard verification for the Susu company.
             </p>
             <Link
               href="/contact?intent=demo"

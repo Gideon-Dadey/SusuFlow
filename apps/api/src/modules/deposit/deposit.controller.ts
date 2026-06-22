@@ -50,4 +50,23 @@ export class DepositController {
     return this.depositService.findOne(tenant.id, id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.COMPANY_ADMIN, ROLES.ACCOUNT_OFFICER)
+  @ApiBearerAuth()
+  @ApiHeader({ name: 'x-tenant-slug', required: true })
+  @Post('deposits/:id/confirm')
+  @ApiOperation({ summary: 'Manually confirm/verify a pending deposit' })
+  async confirm(
+    @Tenant() tenant: TenantContext,
+    @Param('id') id: string,
+  ) {
+    const deposit = await this.depositService.findOne(tenant.id, id);
+    return this.depositService.confirmPayment(
+      deposit.reference,
+      deposit.payment?.gatewayReference || `MANUAL_${Date.now()}`,
+      Number(deposit.amount),
+      deposit.payment?.payerPhone || undefined,
+    );
+  }
+
 }
