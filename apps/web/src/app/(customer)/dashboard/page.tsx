@@ -19,6 +19,28 @@ export default function CustomerDashboard() {
     queryFn: () => depositApi.list({ status: 'completed' }),
   });
 
+  // Query customers to find matching customer profile
+  const { data: customersData } = useQuery({
+    queryKey: ['customers-list'],
+    queryFn: () => import('@/lib/api').then((m) => m.customerApi.list()),
+  });
+
+  const activeCustomer =
+    customersData?.items?.find((c) => c.user?.id === user?.id) ||
+    customersData?.items?.[0];
+
+  // Query actual wallet balance from ledger
+  const { data: walletData } = useQuery({
+    queryKey: ['customer-wallet', activeCustomer?.id],
+    queryFn: () =>
+      activeCustomer
+        ? import('@/lib/api').then((m) => m.customerApi.getWallet(activeCustomer.id))
+        : Promise.resolve(null),
+    enabled: !!activeCustomer,
+  });
+
+  const balance = walletData?.balance || 0;
+
   const transactions = deposits?.items || [];
   const todayTotal = transactions
     .filter((t) => new Date(t.createdAt).toDateString() === new Date().toDateString())
@@ -31,7 +53,7 @@ export default function CustomerDashboard() {
         <h2 className="dashboard-title text-foreground">{user?.firstName}</h2>
       </div>
 
-      <BalanceCard balance={0} todayChange={todayTotal} />
+      <BalanceCard balance={balance} todayChange={todayTotal} />
 
       <div className="grid grid-cols-2 gap-3">
         {[

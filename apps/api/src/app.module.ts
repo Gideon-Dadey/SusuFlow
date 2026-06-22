@@ -16,6 +16,7 @@ import { CustomerModule } from './modules/customer/customer.module';
 import { WalletModule } from './modules/wallet/wallet.module';
 import { LedgerModule } from './modules/ledger/ledger.module';
 import { DepositModule } from './modules/deposit/deposit.module';
+import { WithdrawalModule } from './modules/withdrawal/withdrawal.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { HealthModule } from './modules/health/health.module';
@@ -48,6 +49,7 @@ import { loggerConfig } from './config/logger.config';
     WalletModule,
     LedgerModule,
     DepositModule,
+    WithdrawalModule,
     PaymentModule,
     AuditModule,
     HealthModule,

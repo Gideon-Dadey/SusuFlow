@@ -50,7 +50,7 @@ export function ThemeToggle({ className, onDark, iconOnly }: ThemeToggleProps) {
     return <div className={cn('size-9 shrink-0', className)} aria-hidden />;
   }
 
-  const active = theme ?? 'system';
+  const active = theme ?? 'light';
   const isDark = resolvedTheme === 'dark';
   const ActiveIcon = isDark ? Moon : Sun;
 
