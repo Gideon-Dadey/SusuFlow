@@ -285,6 +285,22 @@ export const customerApi = {
     api.get<{ walletId: string; balance: number; currency: string }>(`/customers/${id}/wallet`),
 };
 
+export const withdrawalApi = {
+  create: (data: {
+    customerId: string;
+    amount: number;
+    disbursementMethod: string;
+    disbursementPhone: string;
+  }) => api.post<Transaction>('/withdrawals', data),
+
+  list: (params?: { customer_id?: string }) => {
+    const query = new URLSearchParams(params as Record<string, string>).toString();
+    return api.get<{ items: Transaction[]; hasMore: boolean }>(
+      `/withdrawals${query ? `?${query}` : ''}`,
+    );
+  },
+};
+
 export interface Transaction {
   id: string;
   reference: string;
@@ -301,6 +317,11 @@ export interface Transaction {
     paymentMethod: string;
     status: string;
   };
+  withdrawal?: {
+    disbursementMethod: string;
+    disbursementPhone: string;
+    status: string;
+  };
 }
 
 export interface Customer {
@@ -308,6 +329,7 @@ export interface Customer {
   customerNumber: string;
   status: string;
   kycLevel: number;
+  ghanaCardNumber?: string | null;
   user?: {
     id: string;
     email: string;

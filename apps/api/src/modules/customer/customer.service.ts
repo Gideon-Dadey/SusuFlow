@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateCustomerDto } from './dto/customer.dto';
-import { AuthenticatedUser } from '@susuflow/shared';
+import { AuthenticatedUser, ROLES } from '@susuflow/shared';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class CustomerService {
@@ -10,17 +11,54 @@ export class CustomerService {
   async create(tenantId: string, dto: CreateCustomerDto, onboardedBy: AuthenticatedUser) {
     const count = await this.prisma.customer.count({ where: { tenantId } });
 
+    if (dto.email) {
+      const existing = await this.prisma.user.findFirst({
+        where: { tenantId, email: dto.email },
+      });
+      if (existing) throw new ConflictException('Email already registered');
+    }
+
     return this.prisma.$transaction(async (tx) => {
+      let userId: string | undefined = undefined;
+
+      if (dto.firstName || dto.lastName || dto.email) {
+        const passwordHash = await bcrypt.hash('ChangeMe123!', 12);
+        const customerRole = await tx.role.findUnique({ where: { name: ROLES.CUSTOMER } });
+        if (!customerRole) throw new Error('Customer role not configured');
+
+        const tempEmail = dto.email || `customer-${count + 1}@temp.susuflow.com`;
+        const user = await tx.user.create({
+          data: {
+            tenantId,
+            email: tempEmail,
+            phone: dto.phone,
+            passwordHash,
+            firstName: dto.firstName || 'Customer',
+            lastName: dto.lastName || String(count + 1),
+            status: 'active',
+            emailVerified: !!dto.email,
+          },
+        });
+
+        await tx.userRole.create({
+          data: { userId: user.id, roleId: customerRole.id, tenantId },
+        });
+
+        userId = user.id;
+      }
+
       const customer = await tx.customer.create({
         data: {
           tenantId,
+          userId,
           customerNumber: `CUS-${String(count + 1).padStart(6, '0')}`,
           ghanaCardNumber: dto.ghanaCardNumber,
           dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined,
           address: dto.address,
           collectorId: dto.collectorId || (onboardedBy.roles.includes('collector') ? onboardedBy.id : undefined),
           onboardedById: onboardedBy.id,
-          status: 'pending',
+          status: 'active',
+          kycLevel: 1,
         },
       });
 
