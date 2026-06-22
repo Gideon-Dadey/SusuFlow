@@ -13,6 +13,35 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
+  async redirects() {
+    return [
+      {
+        source: '/collector/dashboard',
+        destination: '/dashboard',
+        permanent: true,
+      },
+      {
+        source: '/collector/deposit',
+        destination: '/deposit',
+        permanent: true,
+      },
+      {
+        source: '/collector/deposits',
+        destination: '/transactions',
+        permanent: true,
+      },
+      {
+        source: '/collector/profile',
+        destination: '/profile',
+        permanent: true,
+      },
+      {
+        source: '/collector/:path*',
+        destination: '/dashboard',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     const raw = process.env.API_URL?.trim();
     if (!raw) return [];
