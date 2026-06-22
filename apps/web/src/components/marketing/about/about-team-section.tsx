@@ -2,7 +2,7 @@ import { MarketingContainer } from '../marketing-container';
 
 export function AboutTeamSection() {
   return (
-    <section id="mission" className="scroll-mt-24 border-t border-border bg-background">
+    <section id="mission" className="scroll-mt-24 bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-3xl text-left lg:text-center">
           <h2 className="text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">

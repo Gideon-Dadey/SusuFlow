@@ -39,7 +39,7 @@ const COMPARISON_GROUP_HEADER =
 
 export function PricingComparisonSection() {
   return (
-    <section id="compare" className="scroll-mt-24 border-b border-border bg-background">
+    <section id="compare" className="scroll-mt-24 bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-3xl text-left lg:text-center">
           <h2 className="text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">

@@ -7,7 +7,7 @@ import { MarketingContainer } from '../marketing-container';
 
 export function AboutHero() {
   return (
-    <section className="border-b border-border/60 bg-[#f4f6f8] dark:bg-background">
+    <section className="bg-[#f4f6f8] dark:bg-background">
       <MarketingContainer className="marketing-hero-platform-inner">
         <div className="flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 xl:gap-16">
           <div className="min-w-0 text-left">

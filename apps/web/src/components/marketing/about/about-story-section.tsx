@@ -6,7 +6,7 @@ import { MarketingContainer } from '../marketing-container';
 
 export function AboutStorySection() {
   return (
-    <section className="border-b border-border bg-background">
+    <section className="bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="mb-10 text-left lg:mb-12 lg:text-center">
           <p className="text-sm font-medium text-muted-foreground">Client stories</p>

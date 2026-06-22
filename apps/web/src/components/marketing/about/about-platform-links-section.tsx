@@ -4,7 +4,7 @@ import { MarketingContainer } from '../marketing-container';
 
 export function AboutPlatformLinksSection() {
   return (
-    <section className="border-b border-border bg-background">
+    <section className="bg-background">
       <MarketingContainer className="py-10 sm:py-12">
         <ul className="flex flex-wrap items-center justify-center gap-x-2 gap-y-3 sm:gap-x-4">
           {ABOUT_PLATFORM_LINKS.map(({ label, href }, index) => (
