@@ -6,7 +6,7 @@ import { MarketingContainer } from '../marketing-container';
 
 export function ContactFormSection() {
   return (
-    <section id="contact-form" className="scroll-mt-24 border-b border-border bg-background">
+    <section id="contact-form" className="scroll-mt-24 bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="text-left">
