@@ -23,7 +23,7 @@ function MomoPayBadge({ className }: { className?: string }) {
 
 export function MomoPaySection() {
   return (
-    <section className="border-t-0 bg-background lg:border-t lg:border-border">
+    <section className="bg-background">
       <MarketingContainer className="pt-2 pb-10 sm:pt-6 sm:pb-16 lg:py-24">
         <div className="flex flex-col gap-6 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
           <div className="order-2 min-w-0 text-left lg:order-1">

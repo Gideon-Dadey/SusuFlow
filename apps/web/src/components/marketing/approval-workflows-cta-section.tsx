@@ -4,7 +4,7 @@ import { MarketingContainer } from './marketing-container';
 
 export function ApprovalWorkflowsCtaSection() {
   return (
-    <section className="border-t border-border bg-[#f4f6f8] dark:bg-background">
+    <section className="bg-[#f4f6f8] dark:bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="w-full rounded-3xl bg-[#1a1a1a] px-6 py-12 text-center sm:px-8 sm:py-14 lg:px-10 lg:py-16 xl:px-12 2xl:px-14">
           <div className="mx-auto max-w-3xl">

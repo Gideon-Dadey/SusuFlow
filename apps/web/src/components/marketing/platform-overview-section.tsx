@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 export function PlatformOverviewSection() {
   return (
-    <section className="border-t border-border bg-[#f4f6f8] dark:bg-background">
+    <section className="bg-[#f4f6f8] dark:bg-background">
       <MarketingContainer className="pt-10 pb-5 sm:pt-16 sm:pb-10 lg:py-24">
         <div className="flex flex-col gap-6 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
           <div className="order-2 min-w-0 text-left lg:order-1">

@@ -8,7 +8,7 @@ import { MarketingContainer } from './marketing-container';
 
 export function FaqSection() {
   return (
-    <section className="marketing-section border-t border-border bg-background">
+    <section className="marketing-section bg-background">
       <MarketingContainer>
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
