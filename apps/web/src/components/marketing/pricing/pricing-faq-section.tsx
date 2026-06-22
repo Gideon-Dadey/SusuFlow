@@ -8,7 +8,7 @@ import { MarketingContainer } from '../marketing-container';
 
 export function PricingFaqSection() {
   return (
-    <section className="border-t border-border bg-[#f4f6f8] dark:bg-background">
+    <section className="bg-[#f4f6f8] dark:bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-3xl text-left lg:text-center">
           <p className="text-sm font-medium text-muted-foreground">FAQs</p>
