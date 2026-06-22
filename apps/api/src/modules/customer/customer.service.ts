@@ -70,7 +70,7 @@ export class CustomerService {
         data: {
           tenantId,
           walletId: wallet.id,
-          code: `1100-${customer.id.slice(0, 8)}`,
+          code: `1100-${customer.id.slice(0, 5)}`,
           name: `Wallet: ${dto.firstName || 'Customer'} ${dto.lastName || customer.customerNumber}`,
           accountType: 'liability',
         },
