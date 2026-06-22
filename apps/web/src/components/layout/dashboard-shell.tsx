@@ -9,14 +9,14 @@ import { BottomNav } from '@/components/layout/bottom-nav';
 
 interface DashboardShellProps {
   children: React.ReactNode;
-  variant: 'staff' | 'collector' | 'admin' | 'customer';
+  variant: 'staff' | 'admin' | 'customer';
   showBottomNav?: boolean;
 }
 
 export function DashboardShell({
   children,
   variant,
-  showBottomNav = variant !== 'admin' && variant !== 'collector',
+  showBottomNav = variant !== 'admin',
 }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
@@ -38,7 +38,7 @@ export function DashboardShell({
 
       <Sidebar
         variant={
-          variant === 'admin' ? 'admin' : variant === 'collector' ? 'collector' : 'staff'
+          variant === 'admin' ? 'admin' : 'staff'
         }
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}

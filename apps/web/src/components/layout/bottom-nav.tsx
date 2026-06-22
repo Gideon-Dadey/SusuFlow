@@ -3,37 +3,20 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faGaugeHigh,
-  faHandHoldingDollar,
-  faUser,
-  faUsers,
-} from '@fortawesome/free-solid-svg-icons';
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { cn } from '@/lib/utils';
-import { collectorLinks, customerLinks, staffLinks } from '@/lib/dashboard-nav';
+import { customerLinks, staffLinks } from '@/lib/dashboard-nav';
 import { useAuthStore } from '@/stores/auth.store';
-
-const collectorMobileNav: { href: string; label: string; icon: IconDefinition }[] = [
-  { href: '/collector/dashboard', label: 'Home', icon: faGaugeHigh },
-  { href: '/collector/customers', label: 'Customers', icon: faUsers },
-  { href: '/collector/deposit', label: 'Deposit', icon: faHandHoldingDollar },
-  { href: '/collector/profile', label: 'Profile', icon: faUser },
-];
 
 export function BottomNav() {
   const pathname = usePathname();
   const user = useAuthStore((s) => s.user);
 
-  const isCollector = user?.roles.includes('collector');
   const isStaff =
     user?.roles.includes('company_admin') || user?.roles.includes('account_officer');
 
   const nav = isStaff
     ? staffLinks.slice(0, 4)
-    : isCollector
-      ? collectorMobileNav
-      : customerLinks;
+    : customerLinks;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-md safe-bottom md:hidden">

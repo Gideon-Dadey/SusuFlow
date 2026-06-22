@@ -6,15 +6,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cn } from '@/lib/utils';
 import {
   adminLinks,
-  collectorNavGroups,
   customerLinks,
   staffLinks,
-  type NavGroup,
   type NavItem,
 } from '@/lib/dashboard-nav';
 
 interface SidebarProps {
-  variant?: 'staff' | 'collector' | 'admin';
+  variant?: 'staff' | 'admin';
   customerMode?: boolean;
   open?: boolean;
   onClose?: () => void;
@@ -44,20 +42,6 @@ function NavLink({
   );
 }
 
-function NavSection({ group, pathname, onClose }: { group: NavGroup; pathname: string; onClose?: () => void }) {
-  return (
-    <div className="space-y-1">
-      <p className="px-2.5 pb-1 pt-2.5 text-[0.625rem] font-semibold uppercase tracking-wider text-muted-foreground/80">
-        {group.label}
-      </p>
-      {group.items.map((item) => {
-        const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-        return <NavLink key={item.href} {...item} active={active} onClose={onClose} />;
-      })}
-    </div>
-  );
-}
-
 export function Sidebar({
   variant = 'staff',
   customerMode = false,
@@ -73,9 +57,7 @@ export function Sidebar({
     ? customerLinks
     : variant === 'admin'
       ? adminLinks
-      : variant === 'collector'
-        ? null
-        : staffLinks;
+      : staffLinks;
 
   return (
     <aside
@@ -92,14 +74,10 @@ export function Sidebar({
       </div>
 
       <nav className="flex-1 overflow-y-auto p-2.5">
-        {variant === 'collector' && !customerMode
-          ? collectorNavGroups.map((group) => (
-              <NavSection key={group.label} group={group} pathname={pathname} onClose={onClose} />
-            ))
-          : flatLinks?.map((item) => {
-              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-              return <NavLink key={item.href} {...item} active={active} onClose={onClose} />;
-            })}
+        {flatLinks?.map((item) => {
+          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          return <NavLink key={item.href} {...item} active={active} onClose={onClose} />;
+        })}
       </nav>
     </aside>
   );

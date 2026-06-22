@@ -13,12 +13,6 @@ const titles: Record<string, string> = {
   '/staff/withdrawals': 'Withdrawals',
   '/staff/settings': 'Settings',
   '/staff/profile': 'Profile',
-  '/collector/dashboard': 'Overview',
-  '/collector/customers': 'Customers',
-  '/collector/deposit': 'Assist deposit',
-  '/collector/deposits': 'Deposit history',
-  '/collector/commissions': 'Commissions',
-  '/collector/profile': 'Profile',
   '/admin/tenants': 'Tenants',
   '/admin/profile': 'Profile',
   '/dashboard': 'Home',
@@ -29,7 +23,7 @@ const titles: Record<string, string> = {
 
 interface DashboardHeaderProps {
   onMenuClick?: () => void;
-  variant: 'staff' | 'collector' | 'admin' | 'customer';
+  variant: 'staff' | 'admin' | 'customer';
 }
 
 export function DashboardHeader({ onMenuClick, variant }: DashboardHeaderProps) {
@@ -39,11 +33,9 @@ export function DashboardHeader({ onMenuClick, variant }: DashboardHeaderProps) 
     titles[pathname] ||
     (variant === 'admin'
       ? 'Platform Admin'
-      : variant === 'collector'
-        ? 'Collector'
-        : variant === 'staff'
-          ? 'Staff Portal'
-          : 'My Savings');
+      : variant === 'staff'
+        ? 'Staff Portal'
+        : 'My Savings');
 
   return (
     <header className="dashboard-header flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-background px-4 sm:px-6 lg:px-8">
