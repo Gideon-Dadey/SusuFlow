@@ -22,7 +22,7 @@ const CAPABILITY_ICONS: LucideIcon[] = [
 
 export function MomoPayCapabilitiesSection() {
   return (
-    <section className="border-t border-border bg-background">
+    <section className="bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="flex flex-col gap-8 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
           <div className="order-2 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:order-1">
