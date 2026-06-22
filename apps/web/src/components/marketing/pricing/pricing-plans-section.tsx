@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 export function PricingPlansSection() {
   return (
-    <section className="border-b border-border/60 bg-[#f4f6f8] dark:bg-background">
+    <section className="bg-[#f4f6f8] dark:bg-background">
       <MarketingContainer className="py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-3xl text-left lg:text-center">
           <h1 className="marketing-hero-title text-balance text-foreground">

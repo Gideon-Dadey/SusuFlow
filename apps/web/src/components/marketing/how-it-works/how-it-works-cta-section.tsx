@@ -5,7 +5,7 @@ import { MarketingContainer } from '../marketing-container';
 
 export function HowItWorksCtaSection() {
   return (
-    <section className="border-t border-border bg-background">
+    <section className="bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="w-full rounded-3xl bg-[#1a1a1a] px-6 py-12 text-left sm:px-8 sm:py-14 lg:px-10 lg:py-16 xl:px-12">
           <p className="text-sm font-medium text-white/70">Ready to modernize?</p>

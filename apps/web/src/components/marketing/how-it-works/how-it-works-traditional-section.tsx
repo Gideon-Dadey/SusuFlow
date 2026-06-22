@@ -22,7 +22,7 @@ const PAIN_ICONS: LucideIcon[] = [
 
 export function HowItWorksTraditionalSection() {
   return (
-    <section className="border-t border-border bg-background">
+    <section className="bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="flex flex-col gap-8 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-start lg:gap-16 xl:gap-20">
           <div className="order-1 min-w-0 text-left lg:order-1">
