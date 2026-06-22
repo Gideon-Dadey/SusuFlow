@@ -7,7 +7,7 @@ const STEP_ICONS: LucideIcon[] = [Users, Smartphone, ShieldCheck, Send];
 
 export function HowItWorksStepsSection() {
   return (
-    <section className="border-t border-border bg-[#f4f6f8] dark:bg-background">
+    <section className="bg-[#f4f6f8] dark:bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="max-w-2xl text-left">
           <p className="text-sm font-medium text-muted-foreground">The digital path</p>

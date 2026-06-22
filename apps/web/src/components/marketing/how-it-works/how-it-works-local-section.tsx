@@ -6,7 +6,7 @@ import { MarketingContainer } from '../marketing-container';
 
 export function HowItWorksLocalSection() {
   return (
-    <section className="border-t border-border bg-background">
+    <section className="bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="flex flex-col gap-10 sm:gap-12 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
           <div className="relative order-1 mx-auto w-full max-w-xl overflow-hidden rounded-3xl lg:order-1 lg:max-w-none">
