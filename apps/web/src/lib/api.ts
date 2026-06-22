@@ -261,6 +261,8 @@ export const depositApi = {
   },
 
   get: (id: string) => api.get<Transaction>(`/deposits/${id}`),
+
+  confirm: (id: string) => api.post<{ message: string }>(`/deposits/${id}/confirm`, {}),
 };
 
 export const customerApi = {

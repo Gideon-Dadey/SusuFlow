@@ -4,7 +4,13 @@ import { StatusBadge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
 import type { Transaction } from '@/lib/api';
 
-export function TransactionRow({ transaction }: { transaction: Transaction }) {
+export function TransactionRow({ 
+  transaction, 
+  action 
+}: { 
+  transaction: Transaction; 
+  action?: React.ReactNode; 
+}) {
   const isDeposit = transaction.type === 'deposit';
   const amount = Number(transaction.amount);
 
@@ -26,16 +32,19 @@ export function TransactionRow({ transaction }: { transaction: Transaction }) {
         </p>
         <p className="text-xs text-muted-foreground">{formatDate(transaction.createdAt)}</p>
       </div>
-      <div className="text-right">
-        <MoneyDisplay
-          amount={amount}
-          type={isDeposit ? 'credit' : 'debit'}
-          showSign
-          size="sm"
-        />
-        <div className="mt-1">
-          <StatusBadge status={transaction.status} />
+      <div className="flex items-center gap-3 text-right">
+        <div>
+          <MoneyDisplay
+            amount={amount}
+            type={isDeposit ? 'credit' : 'debit'}
+            showSign
+            size="sm"
+          />
+          <div className="mt-1 flex justify-end">
+            <StatusBadge status={transaction.status} />
+          </div>
         </div>
+        {action}
       </div>
     </div>
   );
