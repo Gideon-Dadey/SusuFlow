@@ -1,27 +1,29 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { cn } from "@/lib/utils";
 import {
   adminLinks,
   adminNavGroups,
   customerLinks,
+  collectorLinks,
   staffLinks,
   staffNavGroups,
   type NavItem,
   type NavGroup,
-} from '@/lib/dashboard-nav';
+} from "@/lib/dashboard-nav";
 
-import { useQuery } from '@tanstack/react-query';
-import { tenantApi } from '@/lib/api';
-import { getTenantSlug } from '@/lib/utils';
-import { useAuthStore } from '@/stores/auth.store';
+import { useQuery } from "@tanstack/react-query";
+import { tenantApi } from "@/lib/api";
+import { getTenantSlug } from "@/lib/utils";
+import { useAuthStore } from "@/stores/auth.store";
 
 interface SidebarProps {
-  variant?: 'staff' | 'admin';
+  variant?: "staff" | "admin";
   customerMode?: boolean;
+  collectorMode?: boolean;
   open?: boolean;
   onClose?: () => void;
 }
@@ -38,10 +40,10 @@ function NavLink({
       href={href}
       onClick={onClose}
       className={cn(
-        'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.8125rem] font-medium transition-colors',
+        "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.8125rem] font-medium transition-colors",
         active
-          ? 'bg-muted text-foreground'
-          : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
+          ? "bg-muted text-foreground"
+          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
       )}
     >
       <FontAwesomeIcon icon={icon} className="h-4 w-4 shrink-0 opacity-80" />
@@ -59,44 +61,51 @@ function SectionLabel({ label }: { label: string }) {
 }
 
 export function Sidebar({
-  variant = 'staff',
+  variant = "staff",
   customerMode = false,
+  collectorMode = false,
   open = false,
   onClose,
 }: SidebarProps) {
   const pathname = usePathname();
   const { user } = useAuthStore();
-  
+
   const tenantSlug = user?.tenantSlug || getTenantSlug();
   const { data: tenantBranding } = useQuery({
-    queryKey: ['tenant-branding', tenantSlug],
+    queryKey: ["tenant-branding", tenantSlug],
     queryFn: () => tenantApi.getBySlug(tenantSlug),
-    enabled: !!tenantSlug && variant !== 'admin',
+    enabled: !!tenantSlug && variant !== "admin",
   });
 
   const brandLabel =
-    variant === 'admin'
-      ? 'SusuFlow Admin'
-      : (tenantBranding?.name || (customerMode ? 'My Susu' : 'SusuFlow'));
+    variant === "admin"
+      ? "SusuFlow Admin"
+      : tenantBranding?.name ||
+        (collectorMode ? "Collector" : customerMode ? "My Susu" : "SusuFlow");
 
-  const isGrouped = (variant === 'staff' || variant === 'admin') && !customerMode;
-  const navGroups = variant === 'admin' ? adminNavGroups : staffNavGroups;
+  const isGrouped =
+    (variant === "staff" || variant === "admin") &&
+    !customerMode &&
+    !collectorMode;
+  const navGroups = variant === "admin" ? adminNavGroups : staffNavGroups;
 
-  const flatLinks = customerMode
-    ? customerLinks
-    : variant === 'admin'
-      ? adminLinks
-      : staffLinks;
+  const flatLinks = collectorMode
+    ? collectorLinks
+    : customerMode
+      ? customerLinks
+      : variant === "admin"
+        ? adminLinks
+        : staffLinks;
 
   return (
     <aside
       className={cn(
-        'dashboard-sidebar fixed inset-y-0 left-0 z-50 flex w-[var(--dashboard-sidebar-width)] flex-col border-r border-border bg-background transition-transform duration-200 lg:translate-x-0',
-        open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+        "dashboard-sidebar fixed inset-y-0 left-0 z-50 flex w-[var(--dashboard-sidebar-width)] flex-col border-r border-border bg-background transition-transform duration-200 lg:translate-x-0",
+        open ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
       )}
     >
       <div className="flex h-16 items-center gap-2 border-b border-border px-4">
-        {variant !== 'admin' && tenantBranding?.logoUrl ? (
+        {variant !== "admin" && tenantBranding?.logoUrl ? (
           <img
             src={tenantBranding.logoUrl}
             alt={brandLabel}
@@ -104,10 +113,14 @@ export function Sidebar({
           />
         ) : (
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground">
-            {variant === 'admin' ? 'SF' : brandLabel.substring(0, 2).toUpperCase()}
+            {variant === "admin"
+              ? "SF"
+              : brandLabel.substring(0, 2).toUpperCase()}
           </div>
         )}
-        <span className="truncate text-sm font-semibold text-foreground">{brandLabel}</span>
+        <span className="truncate text-sm font-semibold text-foreground">
+          {brandLabel}
+        </span>
       </div>
 
       <nav className="flex-1 overflow-y-auto p-2.5">
@@ -117,7 +130,8 @@ export function Sidebar({
                 <SectionLabel label={group.groupLabel} />
                 {group.items.map((item) => {
                   const active =
-                    pathname === item.href || pathname.startsWith(`${item.href}/`);
+                    pathname === item.href ||
+                    pathname.startsWith(`${item.href}/`);
                   return (
                     <NavLink
                       key={item.href}
@@ -133,7 +147,12 @@ export function Sidebar({
               const active =
                 pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
-                <NavLink key={item.href} {...item} active={active} onClose={onClose} />
+                <NavLink
+                  key={item.href}
+                  {...item}
+                  active={active}
+                  onClose={onClose}
+                />
               );
             })}
       </nav>

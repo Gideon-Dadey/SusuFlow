@@ -1,11 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
-import { ROLES } from '@susuflow/shared';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import * as bcrypt from "bcrypt";
+import { ROLES } from "@susuflow/shared";
+import { PlanService } from "../plan/plan.service";
 
 @Injectable()
 export class DemoSeederService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly planService: PlanService,
+  ) {}
 
   async seedDemoData(tenantSlug: string) {
     const tenant = await this.prisma.tenant.findUnique({
@@ -18,6 +22,8 @@ export class DemoSeederService {
 
     const tenantId = tenant.id;
 
+    await this.planService.seedDefaultPlans(tenantId);
+
     // Clean existing data for this tenant to make it idempotent
     await this.prisma.$executeRawUnsafe(
       `TRUNCATE TABLE audit_logs, fraud_alerts, kyc_documents, customer_plans, ledger_entries, transactions, wallets, customers CASCADE;`,
@@ -26,14 +32,16 @@ export class DemoSeederService {
     // Let's re-create customer wallets account code 1100 or other systems.
     // Wait, let's find the collector user nana@abcsusu.com
     const collector = await this.prisma.user.findFirst({
-      where: { tenantId, email: 'nana@abcsusu.com' },
+      where: { tenantId, email: "nana@abcsusu.com" },
     });
     if (!collector) {
-      throw new NotFoundException('Demo collector user not found. Run seed script first.');
+      throw new NotFoundException(
+        "Demo collector user not found. Run seed script first.",
+      );
     }
 
     const companyAdmin = await this.prisma.user.findFirst({
-      where: { tenantId, email: 'admin@abcsusu.com' },
+      where: { tenantId, email: "admin@abcsusu.com" },
     });
     const companyAdminId = companyAdmin ? companyAdmin.id : undefined;
 
@@ -42,26 +50,56 @@ export class DemoSeederService {
       where: { name: ROLES.CUSTOMER },
     });
     if (!customerRole) {
-      throw new Error('Customer role not configured');
+      throw new Error("Customer role not configured");
     }
 
     // 1. Create mock customers
     const mockCustomers = [
-      { firstName: 'Kofi', lastName: 'Mensah', email: 'kofi@example.com', phone: '+233245678901', card: 'GHA-712345678-1' },
-      { firstName: 'Abena', lastName: 'Osei', email: 'abena@example.com', phone: '+233245678902', card: 'GHA-712345678-2' },
-      { firstName: 'Kwame', lastName: 'Asante', email: 'kwame@example.com', phone: '+233245678903', card: 'GHA-712345678-3' },
-      { firstName: 'Akua', lastName: 'Addo', email: 'akua@example.com', phone: '+233245678904', card: 'GHA-712345678-4' },
-      { firstName: 'Yaw', lastName: 'Boateng', email: 'yaw@example.com', phone: '+233245678905', card: 'GHA-712345678-5' },
+      {
+        firstName: "Kofi",
+        lastName: "Mensah",
+        email: "kofi@example.com",
+        phone: "+233245678901",
+        card: "GHA-712345678-1",
+      },
+      {
+        firstName: "Abena",
+        lastName: "Osei",
+        email: "abena@example.com",
+        phone: "+233245678902",
+        card: "GHA-712345678-2",
+      },
+      {
+        firstName: "Kwame",
+        lastName: "Asante",
+        email: "kwame@example.com",
+        phone: "+233245678903",
+        card: "GHA-712345678-3",
+      },
+      {
+        firstName: "Akua",
+        lastName: "Addo",
+        email: "akua@example.com",
+        phone: "+233245678904",
+        card: "GHA-712345678-4",
+      },
+      {
+        firstName: "Yaw",
+        lastName: "Boateng",
+        email: "yaw@example.com",
+        phone: "+233245678905",
+        card: "GHA-712345678-5",
+      },
     ];
 
     const customerIds: string[] = [];
     const customerAccounts: any[] = [];
 
-    const pwdHash = await bcrypt.hash('ChangeMe123!', 12);
+    const pwdHash = await bcrypt.hash("ChangeMe123!", 12);
 
     for (let i = 0; i < mockCustomers.length; i++) {
       const mc = mockCustomers[i];
-      
+
       const user = await this.prisma.user.create({
         data: {
           tenantId,
@@ -70,7 +108,7 @@ export class DemoSeederService {
           passwordHash: pwdHash,
           firstName: mc.firstName,
           lastName: mc.lastName,
-          status: 'active',
+          status: "active",
           emailVerified: true,
         },
       });
@@ -83,20 +121,20 @@ export class DemoSeederService {
         data: {
           tenantId,
           userId: user.id,
-          customerNumber: `CUS-${String(i + 1).padStart(6, '0')}`,
+          customerNumber: `CUS-${String(i + 1).padStart(6, "0")}`,
           ghanaCardNumber: mc.card,
-          dateOfBirth: new Date('1995-05-15'),
-          address: 'Accra, Ghana',
+          dateOfBirth: new Date("1995-05-15"),
+          address: "Accra, Ghana",
           collectorId: collector.id,
           onboardedById: collector.id,
-          status: 'active',
+          status: "active",
           kycLevel: i === 2 ? 2 : 1,
-          kycStatus: i === 2 ? 'verified' : 'pending',
+          kycStatus: i === 2 ? "verified" : "pending",
         },
       });
 
       const wallet = await this.prisma.wallet.create({
-        data: { tenantId, customerId: customer.id, walletType: 'customer' },
+        data: { tenantId, customerId: customer.id, walletType: "customer" },
       });
 
       const account = await this.prisma.account.create({
@@ -105,7 +143,7 @@ export class DemoSeederService {
           walletId: wallet.id,
           code: `1100-${customer.id.slice(0, 5)}`,
           name: `Wallet: ${mc.firstName} ${mc.lastName}`,
-          accountType: 'liability',
+          accountType: "liability",
         },
       });
 
@@ -115,7 +153,7 @@ export class DemoSeederService {
 
     // 2. Fetch Daily Susu plan
     const dailySusuPlan = await this.prisma.savingsPlan.findFirst({
-      where: { tenantId, name: 'Daily Susu' },
+      where: { tenantId, name: "Daily Susu" },
     });
 
     if (dailySusuPlan) {
@@ -126,7 +164,7 @@ export class DemoSeederService {
             customerId: customerIds[i],
             planId: dailySusuPlan.id,
             targetAmount: 500,
-            status: 'active',
+            status: "active",
             startedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
           },
         });
@@ -135,9 +173,13 @@ export class DemoSeederService {
 
     // 3. Seed Chart of Accounts helper models if they somehow don't exist
     const systemAccounts = [
-      { code: '1000', name: 'Platform Cash', type: 'asset' },
-      { code: '1200', name: 'Collector Commissions Payable', type: 'liability' },
-      { code: '5000', name: 'Commission Expense', type: 'expense' },
+      { code: "1000", name: "Platform Cash", type: "asset" },
+      {
+        code: "1200",
+        name: "Collector Commissions Payable",
+        type: "liability",
+      },
+      { code: "5000", name: "Commission Expense", type: "expense" },
     ];
 
     const accountInstances: Record<string, any> = {};
@@ -179,8 +221,8 @@ export class DemoSeederService {
           data: {
             tenantId,
             reference: ref,
-            type: 'deposit',
-            status: 'completed',
+            type: "deposit",
+            status: "completed",
             amount,
             customerId,
             collectorId: collector.id,
@@ -195,8 +237,8 @@ export class DemoSeederService {
             {
               tenantId,
               transactionId: tx.id,
-              accountId: accountInstances['1000'].id,
-              entryType: 'debit',
+              accountId: accountInstances["1000"].id,
+              entryType: "debit",
               amount,
               description: `Deposit: ${ref}`,
               createdAt: date,
@@ -205,7 +247,7 @@ export class DemoSeederService {
               tenantId,
               transactionId: tx.id,
               accountId: customerAccount.id,
-              entryType: 'credit',
+              entryType: "credit",
               amount,
               description: `Deposit: ${ref}`,
               createdAt: date,
@@ -222,19 +264,19 @@ export class DemoSeederService {
               {
                 tenantId,
                 transactionId: tx.id,
-                accountId: accountInstances['5000'].id,
-                entryType: 'debit',
+                accountId: accountInstances["5000"].id,
+                entryType: "debit",
                 amount: commission,
-                description: 'Collector commission',
+                description: "Collector commission",
                 createdAt: date,
               },
               {
                 tenantId,
                 transactionId: tx.id,
-                accountId: accountInstances['1200'].id,
-                entryType: 'credit',
+                accountId: accountInstances["1200"].id,
+                entryType: "credit",
                 amount: commission,
-                description: 'Collector commission',
+                description: "Collector commission",
                 createdAt: date,
               },
             ],
@@ -254,8 +296,8 @@ export class DemoSeederService {
           data: {
             tenantId,
             reference: ref,
-            type: 'withdrawal',
-            status: 'completed',
+            type: "withdrawal",
+            status: "completed",
             amount,
             customerId,
             createdAt: date,
@@ -270,7 +312,7 @@ export class DemoSeederService {
               tenantId,
               transactionId: tx.id,
               accountId: customerAccount.id,
-              entryType: 'debit',
+              entryType: "debit",
               amount,
               description: `Withdrawal: ${ref}`,
               createdAt: date,
@@ -278,8 +320,8 @@ export class DemoSeederService {
             {
               tenantId,
               transactionId: tx.id,
-              accountId: accountInstances['1000'].id,
-              entryType: 'credit',
+              accountId: accountInstances["1000"].id,
+              entryType: "credit",
               amount,
               description: `Withdrawal: ${ref}`,
               createdAt: date,
@@ -294,9 +336,10 @@ export class DemoSeederService {
     await this.prisma.kycDocument.create({
       data: {
         customerId: customerIds[0],
-        documentType: 'ghana_card',
-        fileUrl: 'https://images.unsplash.com/photo-1554774853-aae0a22c8aa4?auto=format&fit=crop&q=80&w=600',
-        status: 'pending',
+        documentType: "ghana_card",
+        fileUrl:
+          "https://images.unsplash.com/photo-1554774853-aae0a22c8aa4?auto=format&fit=crop&q=80&w=600",
+        status: "pending",
       },
     });
 
@@ -304,9 +347,10 @@ export class DemoSeederService {
     await this.prisma.kycDocument.create({
       data: {
         customerId: customerIds[1],
-        documentType: 'selfie',
-        fileUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=600',
-        status: 'pending',
+        documentType: "selfie",
+        fileUrl:
+          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=600",
+        status: "pending",
       },
     });
 
@@ -314,9 +358,10 @@ export class DemoSeederService {
     await this.prisma.kycDocument.create({
       data: {
         customerId: customerIds[2],
-        documentType: 'utility_bill',
-        fileUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=600',
-        status: 'approved',
+        documentType: "utility_bill",
+        fileUrl:
+          "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=600",
+        status: "approved",
         reviewedById: companyAdminId,
         reviewedAt: new Date(),
       },
@@ -326,12 +371,14 @@ export class DemoSeederService {
     await this.prisma.kycDocument.create({
       data: {
         customerId: customerIds[3],
-        documentType: 'ghana_card',
-        fileUrl: 'https://images.unsplash.com/photo-1554774853-aae0a22c8aa4?auto=format&fit=crop&q=80&w=600',
-        status: 'rejected',
+        documentType: "ghana_card",
+        fileUrl:
+          "https://images.unsplash.com/photo-1554774853-aae0a22c8aa4?auto=format&fit=crop&q=80&w=600",
+        status: "rejected",
         reviewedById: companyAdminId,
         reviewedAt: new Date(),
-        rejectionReason: 'The text is blurry and illegible. Please submit a clearer photo.',
+        rejectionReason:
+          "The text is blurry and illegible. Please submit a clearer photo.",
       },
     });
 
@@ -340,27 +387,27 @@ export class DemoSeederService {
       data: [
         {
           tenantId,
-          rule: 'HIGH_DEPOSIT_VELOCITY',
-          severity: 'high',
-          status: 'open',
-          resourceType: 'Customer',
+          rule: "HIGH_DEPOSIT_VELOCITY",
+          severity: "high",
+          status: "open",
+          resourceType: "Customer",
           resourceId: customerIds[0],
           details: {
-            customerName: 'Kofi Mensah',
-            warning: 'Single day deposit exceeded maximum standard threshold',
-            velocityIndex: '2.5x standard limit',
+            customerName: "Kofi Mensah",
+            warning: "Single day deposit exceeded maximum standard threshold",
+            velocityIndex: "2.5x standard limit",
           },
         },
         {
           tenantId,
-          rule: 'MULTIPLE_IP_LOGINS',
-          severity: 'medium',
-          status: 'open',
-          resourceType: 'User',
+          rule: "MULTIPLE_IP_LOGINS",
+          severity: "medium",
+          status: "open",
+          resourceType: "User",
           resourceId: collector.id,
           details: {
-            userEmail: 'nana@abcsusu.com',
-            ipsLogged: ['197.251.12.3', '197.251.144.92'],
+            userEmail: "nana@abcsusu.com",
+            ipsLogged: ["197.251.12.3", "197.251.144.92"],
             timeWindowMinutes: 5,
           },
         },
@@ -373,33 +420,36 @@ export class DemoSeederService {
         {
           tenantId,
           userId: companyAdminId,
-          action: 'user:login',
-          resourceType: 'user',
+          action: "user:login",
+          resourceType: "user",
           resourceId: companyAdminId,
-          ipAddress: '197.251.12.50',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+          ipAddress: "197.251.12.50",
+          userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
         },
         {
           tenantId,
           userId: collector.id,
-          action: 'customer:create',
-          resourceType: 'customer',
+          action: "customer:create",
+          resourceType: "customer",
           resourceId: customerIds[0],
-          ipAddress: '197.251.14.88',
-          userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)',
+          ipAddress: "197.251.14.88",
+          userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
         },
         {
           tenantId,
           userId: companyAdminId,
-          action: 'kyc:review',
-          resourceType: 'kycDocument',
+          action: "kyc:review",
+          resourceType: "kycDocument",
           resourceId: customerIds[2],
-          ipAddress: '197.251.12.50',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+          ipAddress: "197.251.12.50",
+          userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
         },
       ],
     });
 
-    return { message: 'Demo seeder executed successfully. All dashboard metrics initialized!' };
+    return {
+      message:
+        "Demo seeder executed successfully. All dashboard metrics initialized!",
+    };
   }
 }

@@ -1,23 +1,24 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
+import { usePathname } from "next/navigation";
+import { NotificationPanel } from "./notification-panel";
+import { useAuthStore } from "@/stores/auth.store";
 import {
-  faRightFromBracket,
-  faUser,
-} from '@fortawesome/free-solid-svg-icons';
-import { NotificationPanel } from './notification-panel';
-import { getRoleLabel } from '@/lib/dashboard-nav';
-import { useAuthStore } from '@/stores/auth.store';
-import { getInitials, getProfilePath } from '@/lib/utils';
-import { ThemeToggle } from '@/components/theme-toggle';
-
-
+  getInitials,
+  getPortalFromPathname,
+  getProfilePathForPortal,
+  getRoleLabelForPortal,
+} from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function DashboardUserMenu() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, logout } = useAuthStore();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -32,25 +33,27 @@ export function DashboardUserMenu() {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === "Escape") setOpen(false);
     };
 
-    document.addEventListener('mousedown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener('mousedown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
 
   const handleLogout = async () => {
     setOpen(false);
     await logout();
-    router.push('/login');
+    router.push("/login");
   };
 
   const roles = user?.roles ?? [];
-  const roleLabel = getRoleLabel(roles);
+  const portal = getPortalFromPathname(pathname);
+  const roleLabel = getRoleLabelForPortal(portal, roles);
+  const profilePath = getProfilePathForPortal(portal, roles);
 
   return (
     <div ref={rootRef} className="flex items-center gap-1 sm:gap-2">
@@ -81,18 +84,25 @@ export function DashboardUserMenu() {
               <p className="truncate text-sm font-semibold text-foreground">
                 {user?.firstName} {user?.lastName}
               </p>
-              <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
-              <p className="mt-1 text-xs font-medium text-primary">{roleLabel}</p>
+              <p className="truncate text-xs text-muted-foreground">
+                {user?.email}
+              </p>
+              <p className="mt-1 text-xs font-medium text-primary">
+                {roleLabel}
+              </p>
             </div>
 
             <div className="p-1.5">
               <Link
-                href={getProfilePath(roles)}
+                href={profilePath}
                 role="menuitem"
                 onClick={() => setOpen(false)}
                 className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
               >
-                <FontAwesomeIcon icon={faUser} className="h-4 w-4 text-muted-foreground" />
+                <FontAwesomeIcon
+                  icon={faUser}
+                  className="h-4 w-4 text-muted-foreground"
+                />
                 Profile
               </Link>
             </div>
@@ -104,7 +114,10 @@ export function DashboardUserMenu() {
                 onClick={handleLogout}
                 className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
               >
-                <FontAwesomeIcon icon={faRightFromBracket} className="h-4 w-4" />
+                <FontAwesomeIcon
+                  icon={faRightFromBracket}
+                  className="h-4 w-4"
+                />
                 Sign out
               </button>
             </div>

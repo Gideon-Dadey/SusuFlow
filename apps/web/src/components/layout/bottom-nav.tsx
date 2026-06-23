@@ -1,22 +1,28 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { cn } from '@/lib/utils';
-import { customerLinks, staffLinks } from '@/lib/dashboard-nav';
-import { useAuthStore } from '@/stores/auth.store';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { cn, getPortalFromPathname } from "@/lib/utils";
+import { customerLinks, collectorLinks, staffLinks } from "@/lib/dashboard-nav";
+
+const COLLECTOR_BOTTOM_NAV = [
+  collectorLinks[0],
+  collectorLinks[1],
+  collectorLinks[2],
+  collectorLinks[4],
+];
 
 export function BottomNav() {
   const pathname = usePathname();
-  const user = useAuthStore((s) => s.user);
+  const portal = getPortalFromPathname(pathname);
 
-  const isStaff =
-    user?.roles.includes('company_admin') || user?.roles.includes('account_officer');
-
-  const nav = isStaff
-    ? staffLinks.slice(0, 4)
-    : customerLinks;
+  const nav =
+    portal === "staff"
+      ? staffLinks.slice(0, 4)
+      : portal === "collector"
+        ? COLLECTOR_BOTTOM_NAV
+        : customerLinks;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-md safe-bottom md:hidden">
@@ -28,8 +34,8 @@ export function BottomNav() {
               key={href}
               href={href}
               className={cn(
-                'flex min-w-[64px] flex-col items-center gap-1 rounded-lg px-3 py-2 transition-colors',
-                active ? 'text-primary' : 'text-muted-foreground',
+                "flex min-w-[64px] flex-col items-center gap-1 rounded-lg px-3 py-2 transition-colors",
+                active ? "text-primary" : "text-muted-foreground",
               )}
             >
               <FontAwesomeIcon icon={icon} className="h-5 w-5" />

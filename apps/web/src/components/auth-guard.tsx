@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/stores/auth.store';
-import { getDashboardPath } from '@/lib/utils';
-import { AuthGuardSkeleton } from '@/components/ui/skeleton';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/auth.store";
+import { getDashboardPath } from "@/lib/utils";
+import { AuthGuardSkeleton } from "@/components/ui/skeleton";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -12,11 +12,11 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
-      router.replace('/login');
+      router.replace("/login");
     }
   }, [isAuthenticated, user, router]);
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user) {
     return <AuthGuardSkeleton />;
   }
 

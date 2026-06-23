@@ -1,46 +1,60 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent } from '@/components/ui/card';
-import { StatusBadge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { customerApi } from '@/lib/api';
-import { getInitials } from '@/lib/utils';
-import Link from 'next/link';
-import { CustomerListSkeleton } from '@/components/ui/skeleton';
-import { Plus, Search, Filter } from 'lucide-react';
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent } from "@/components/ui/card";
+import { StatusBadge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { customerApi } from "@/lib/api";
+import { getInitials } from "@/lib/utils";
+import Link from "next/link";
+import { CustomerListSkeleton } from "@/components/ui/skeleton";
+import { Plus, Search, Filter } from "lucide-react";
 
 export default function StaffCustomersPage() {
-  const [search, setSearch] = useState('');
-  const [status, setStatus] = useState('');
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState(searchParams.get("status") || "");
 
   const { data, isLoading } = useQuery({
-    queryKey: ['staff-customers', search, status],
-    queryFn: () => customerApi.list({ search: search || undefined, status: status || undefined }),
+    queryKey: ["staff-customers", search, status],
+    queryFn: () =>
+      customerApi.list({
+        search: search || undefined,
+        status: status || undefined,
+      }),
   });
 
   const handleExportCsv = () => {
     const items = data?.items || [];
-    const headers = ['Customer ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Ghana Card', 'Status'];
+    const headers = [
+      "Customer ID",
+      "First Name",
+      "Last Name",
+      "Email",
+      "Phone",
+      "Ghana Card",
+      "Status",
+    ];
     const rows = items.map((c) => [
       c.customerNumber,
-      c.user?.firstName || 'Pending',
-      c.user?.lastName || 'Onboarding',
-      c.user?.email || 'N/A',
-      c.user?.phone || 'N/A',
-      c.ghanaCardNumber || 'Not verified',
+      c.user?.firstName || "Pending",
+      c.user?.lastName || "Onboarding",
+      c.user?.email || "N/A",
+      c.user?.phone || "N/A",
+      c.ghanaCardNumber || "Not verified",
       c.status,
     ]);
 
     const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `customers_report_${Date.now()}.csv`);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `customers_report_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -105,7 +119,9 @@ export default function StaffCustomersPage() {
           {isLoading ? (
             <CustomerListSkeleton count={4} />
           ) : customers.length === 0 ? (
-            <p className="text-center text-muted-foreground py-12 text-sm">No customers found</p>
+            <p className="text-center text-muted-foreground py-12 text-sm">
+              No customers found
+            </p>
           ) : (
             <div className="divide-y divide-gray-100 dark:divide-border/40">
               {customers.map((c) => (
@@ -119,13 +135,18 @@ export default function StaffCustomersPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-foreground">
-                      {c.user?.firstName || 'Pending'} {c.user?.lastName || 'Onboarding'}
+                      {c.user?.firstName || "Pending"}{" "}
+                      {c.user?.lastName || "Onboarding"}
                     </p>
-                    <p className="text-xs text-muted-foreground font-mono mt-0.5">{c.customerNumber}</p>
+                    <p className="text-xs text-muted-foreground font-mono mt-0.5">
+                      {c.customerNumber}
+                    </p>
                   </div>
                   <div className="text-right">
                     <StatusBadge status={c.status} />
-                    <p className="text-[10px] text-muted-foreground mt-1 uppercase font-semibold">KYC L{c.kycLevel}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1 uppercase font-semibold">
+                      KYC L{c.kycLevel}
+                    </p>
                   </div>
                 </Link>
               ))}

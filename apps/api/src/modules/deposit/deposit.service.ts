@@ -15,6 +15,7 @@ import {
   DEPOSIT_EXPIRY_MINUTES,
   AuthenticatedUser,
   clampPageLimit,
+  ROLES,
 } from "@susuflow/shared";
 import {
   PAYMENT_GATEWAY,
@@ -24,6 +25,7 @@ import { ConfigService } from "@nestjs/config";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { FinancialEventService } from "../../common/services/financial-event.service";
+import { AuditService } from "../audit/audit.service";
 
 @Injectable()
 export class DepositService {
@@ -35,6 +37,7 @@ export class DepositService {
     @InjectQueue("notifications") private readonly notificationQueue: Queue,
     @InjectQueue("receipts") private readonly receiptQueue: Queue,
     private readonly financialEvents: FinancialEventService,
+    private readonly audit: AuditService,
   ) {}
 
   async initiate(
@@ -60,6 +63,15 @@ export class DepositService {
       include: { wallets: { where: { walletType: "customer" } } },
     });
     if (!customer) throw new NotFoundException("Customer not found");
+
+    if (
+      initiatedBy.roles.includes(ROLES.COLLECTOR) &&
+      customer.collectorId !== initiatedBy.id
+    ) {
+      throw new BadRequestException(
+        "You can only collect deposits for customers assigned to you",
+      );
+    }
 
     const wallet = customer.wallets[0];
     if (!wallet) throw new NotFoundException("Customer wallet not found");
@@ -131,6 +143,22 @@ export class DepositService {
       status: "pending",
     });
 
+    await this.audit.log({
+      tenantId,
+      userId: initiatedBy.id,
+      action: "deposit:initiate",
+      resourceType: "transaction",
+      resourceId: result.transaction.id,
+      afterState: {
+        reference,
+        amount: dto.amount,
+        customerId: customer.id,
+        collectorId: isCollectorAssisted ? initiatedBy.id : dto.collectorId,
+        paymentMethod: dto.paymentMethod,
+        payerPhone: dto.payerPhone,
+      },
+    });
+
     return {
       transactionId: result.transaction.id,
       reference,
@@ -159,6 +187,8 @@ export class DepositService {
     if (transaction.status === "completed") return transaction;
 
     const tenantId = transaction.tenantId;
+
+    await this.ledger.ensureChartOfAccounts(tenantId);
 
     await this.prisma.$transaction(async (tx) => {
       await tx.payment.update({
@@ -272,11 +302,23 @@ export class DepositService {
       cursor?: string;
       limit?: number;
     },
+    user?: AuthenticatedUser,
   ) {
     const limit = clampPageLimit(options.limit);
     const where: Record<string, unknown> = { tenantId, type: "deposit" };
     if (options.status) where.status = options.status;
-    if (options.customerId) where.customerId = options.customerId;
+
+    if (user?.roles.includes(ROLES.CUSTOMER)) {
+      const customer = await this.prisma.customer.findFirst({
+        where: { userId: user.id, tenantId },
+      });
+      if (!customer) throw new NotFoundException("Customer profile not found");
+      where.customerId = customer.id;
+    } else if (user?.roles.includes(ROLES.COLLECTOR)) {
+      where.collectorId = user.id;
+    } else if (options.customerId) {
+      where.customerId = options.customerId;
+    }
 
     const items = await this.prisma.transaction.findMany({
       where,

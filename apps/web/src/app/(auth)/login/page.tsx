@@ -1,30 +1,33 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Eye, EyeOff } from 'lucide-react';
-import { AuthShell } from '@/components/auth/auth-shell';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import { AuthShell } from "@/components/auth/auth-shell";
 import {
   AuthFooterExtras,
   authInputClassName,
-} from '@/components/auth/auth-form-ui';
-import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/stores/auth.store';
-import { cn } from '@/lib/utils';
+} from "@/components/auth/auth-form-ui";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores/auth.store";
+import { cn } from "@/lib/utils";
 
-import { Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
-const REMEMBER_EMAIL_KEY = 'susuflow-remember-email';
+const REMEMBER_EMAIL_KEY = "susuflow-remember-email";
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const tenantParam = searchParams.get('tenant') || '';
-  const { login, isLoading, error, clearError, setTenantSlug } = useAuthStore();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const tenantParam = searchParams.get("tenant") || "";
+  const queryClient = useQueryClient();
+  const { login, isLoading, error, clearError, setTenantSlug, tenantSlug } =
+    useAuthStore();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -53,7 +56,8 @@ function LoginContent() {
     }
 
     try {
-      const path = await login(email, password);
+      const path = await login(email, password, tenantSlug || tenantParam);
+      queryClient.clear();
       router.push(path);
     } catch {
       // error set in store
@@ -63,20 +67,26 @@ function LoginContent() {
   return (
     <AuthShell>
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Sign in</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          Sign in
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          or{' '}
-          <Link href="/register" className="font-medium text-secondary hover:text-secondary/80">
+          or{" "}
+          <Link
+            href="/register"
+            className="font-medium text-secondary hover:text-secondary/80"
+          >
             Join your susu
           </Link>
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-
-
         <div className="space-y-1.5">
-          <label htmlFor="email" className="block text-sm font-medium text-foreground">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-foreground"
+          >
             Email address <span className="text-destructive">*</span>
           </label>
           <input
@@ -94,7 +104,10 @@ function LoginContent() {
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-2">
-            <label htmlFor="password" className="text-sm font-medium text-foreground">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-foreground"
+            >
               Password <span className="text-destructive">*</span>
             </label>
             <Link
@@ -108,9 +121,9 @@ function LoginContent() {
             <input
               id="password"
               name="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
-              className={cn(authInputClassName, 'pr-10')}
+              className={cn(authInputClassName, "pr-10")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -120,9 +133,13 @@ function LoginContent() {
               type="button"
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
               onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
         </div>
@@ -138,7 +155,9 @@ function LoginContent() {
         </label>
 
         {error ? (
-          <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>
+          <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            {error}
+          </p>
         ) : null}
 
         <Button
@@ -157,7 +176,13 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="text-center py-8 text-sm text-muted-foreground animate-pulse">Loading login credentials...</div>}>
+    <Suspense
+      fallback={
+        <div className="text-center py-8 text-sm text-muted-foreground animate-pulse">
+          Loading login credentials...
+        </div>
+      }
+    >
       <LoginContent />
     </Suspense>
   );

@@ -1,83 +1,97 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
-import { Button } from '@/components/ui/button';
-import { DashboardUserMenu } from '@/components/layout/dashboard-user-menu';
+import { usePathname } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { Button } from "@/components/ui/button";
+import { DashboardUserMenu } from "@/components/layout/dashboard-user-menu";
 
 const titles: Record<string, string> = {
   // Customer portal
-  '/dashboard': 'My Savings',
-  '/deposit': 'Deposit Funds',
-  '/withdraw': 'Withdraw Funds',
-  '/plans': 'Savings Goals',
-  '/transactions': 'Transaction History',
-  '/profile': 'Profile',
+  "/dashboard": "My Savings",
+  "/deposit": "Deposit Funds",
+  "/withdraw": "Withdraw Funds",
+  "/plans": "Savings Goals",
+  "/transactions": "Transaction History",
+  "/profile": "Profile",
+
+  // Collector portal
+  "/collector/dashboard": "Home",
+  "/collector/customers": "Customers",
+  "/collector/deposit": "Collect",
+  "/collector/deposits": "History",
+  "/collector/earnings": "Earnings",
+  "/collector/activity": "Activity",
+  "/collector/profile": "Profile",
 
   // Staff portal
-  '/staff/dashboard': 'Dashboard',
-  '/staff/customers': 'Customers',
-  '/staff/customers/new': 'Onboard Customer',
-  '/staff/deposits': 'All Deposits',
-  '/staff/withdrawals': 'Withdrawals',
-  '/staff/plans': 'Customer Savings Goals',
-  '/staff/ledger': 'General Ledger',
-  '/staff/kyc': 'KYC Review',
-  '/staff/fraud': 'Fraud & Risk Alerts',
-  '/staff/commissions': 'Collector Commissions',
-  '/staff/audit': 'Audit Logs',
-  '/staff/reports': 'Reports & Analytics',
-  '/staff/settings': 'Profile & Settings',
-  '/staff/profile': 'Profile',
+  "/staff/dashboard": "Dashboard",
+  "/staff/customers": "Customers",
+  "/staff/customers/new": "Onboard Customer",
+  "/staff/deposits": "All Deposits",
+  "/staff/withdrawals": "Withdrawals",
+  "/staff/plans": "Customer Savings Goals",
+  "/staff/ledger": "General Ledger",
+  "/staff/kyc": "KYC Review",
+  "/staff/fraud": "Fraud & Risk Alerts",
+  "/staff/commissions": "Collector Commissions",
+  "/staff/audit": "Audit Logs",
+  "/staff/reports": "Reports & Analytics",
+  "/staff/settings": "Profile & Settings",
+  "/staff/profile": "Profile",
 
   // Admin portal
-  '/admin/dashboard': 'Admin Control Center',
-  '/admin/tenants': 'Platform Tenants',
-  '/admin/tenants/new': 'Create Organization',
-  '/admin/users': 'Platform Users',
-  '/admin/plans': 'Platform Savings Goals',
-  '/admin/ledger': 'Consolidated Ledger',
-  '/admin/audit': 'System Audit Trail',
-  '/admin/kyc': 'KYC Review Queue',
-  '/admin/fraud': 'Fraud Alerts',
-  '/admin/health': 'System Health',
-  '/admin/dev-ops': 'DevOps & Database Ops',
-  '/admin/billing': 'Revenue & Billing',
-  '/admin/commissions': 'Collector Commissions',
-  '/admin/deposits': 'Global Deposits',
-  '/admin/withdrawals': 'Global Withdrawals',
-  '/admin/customers': 'Savers Directory',
-  '/admin/profile': 'Admin Profile',
-  '/admin/settings': 'Platform Configuration',
+  "/admin/dashboard": "Admin Control Center",
+  "/admin/tenants": "Platform Tenants",
+  "/admin/tenants/new": "Create Organization",
+  "/admin/users": "Platform Users",
+  "/admin/plans": "Platform Savings Goals",
+  "/admin/ledger": "Consolidated Ledger",
+  "/admin/audit": "System Audit Trail",
+  "/admin/kyc": "KYC Review Queue",
+  "/admin/fraud": "Fraud Alerts",
+  "/admin/health": "System Health",
+  "/admin/dev-ops": "DevOps & Database Ops",
+  "/admin/billing": "Revenue & Billing",
+  "/admin/commissions": "Collector Commissions",
+  "/admin/deposits": "Global Deposits",
+  "/admin/withdrawals": "Global Withdrawals",
+  "/admin/customers": "Savers Directory",
+  "/admin/profile": "Admin Profile",
+  "/admin/settings": "Platform Configuration",
 };
 
 interface DashboardHeaderProps {
   onMenuClick?: () => void;
-  variant: 'staff' | 'admin' | 'customer';
+  variant: "staff" | "admin" | "customer" | "collector";
 }
 
-export function DashboardHeader({ onMenuClick, variant }: DashboardHeaderProps) {
+export function DashboardHeader({
+  onMenuClick,
+  variant,
+}: DashboardHeaderProps) {
   const pathname = usePathname();
 
   const getMobileTitle = () => {
     if (titles[pathname]) return titles[pathname];
 
     // Dynamic checks
-    if (pathname.startsWith('/staff/customers/')) return 'Customer Account';
-    if (pathname.startsWith('/admin/tenants/')) return 'Tenants';
+    if (pathname.startsWith("/staff/customers/")) return "Customer Account";
+    if (pathname.startsWith("/admin/tenants/")) return "Tenants";
 
     for (const key of Object.keys(titles)) {
-      if (key !== '/' && pathname.startsWith(key)) {
+      if (key !== "/" && pathname.startsWith(key)) {
         return titles[key];
       }
     }
 
-    return variant === 'admin'
-      ? 'Platform Admin'
-      : variant === 'staff'
-        ? 'Staff Portal'
-        : 'My Savings';
+    return variant === "admin"
+      ? "Platform Admin"
+      : variant === "staff"
+        ? "Staff Portal"
+        : variant === "collector"
+          ? "Collector"
+          : "My Savings";
   };
 
   const mobileTitle = getMobileTitle();

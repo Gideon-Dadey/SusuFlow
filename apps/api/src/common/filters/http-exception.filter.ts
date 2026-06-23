@@ -4,8 +4,11 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-} from '@nestjs/common';
-import { Response } from 'express';
+  ConflictException,
+  BadRequestException,
+} from "@nestjs/common";
+import { Response } from "express";
+import { Prisma } from "@susuflow/database";
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -14,21 +17,41 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest();
 
+    let resolved = exception;
+
+    if (exception instanceof Prisma.PrismaClientKnownRequestError) {
+      if (exception.code === "P2002") {
+        const fields =
+          Array.isArray(exception.meta?.target) &&
+          exception.meta.target.length > 0
+            ? (exception.meta.target as string[]).join(", ")
+            : "value";
+        resolved = new ConflictException(
+          `A record with this ${fields} already exists`,
+        );
+      } else if (exception.code === "P2000") {
+        resolved = new BadRequestException(
+          "One of the values you entered is too long. Please check your input and try again.",
+        );
+      }
+    }
+
     const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
+      resolved instanceof HttpException
+        ? resolved.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     const exceptionResponse =
-      exception instanceof HttpException ? exception.getResponse() : null;
+      resolved instanceof HttpException ? resolved.getResponse() : null;
 
     const message =
-      typeof exceptionResponse === 'string'
+      typeof exceptionResponse === "string"
         ? exceptionResponse
-        : (exceptionResponse as Record<string, unknown>)?.message || 'Internal server error';
+        : (exceptionResponse as Record<string, unknown>)?.message ||
+          "Internal server error";
 
     const errors =
-      typeof exceptionResponse === 'object' && exceptionResponse !== null
+      typeof exceptionResponse === "object" && exceptionResponse !== null
         ? (exceptionResponse as Record<string, unknown>).errors
         : undefined;
 
@@ -36,7 +59,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       type: `https://api.susuflow.com/errors/${status}`,
       title: HttpStatus[status],
       status,
-      detail: Array.isArray(message) ? message.join(', ') : message,
+      detail: Array.isArray(message) ? message.join(", ") : message,
       instance: request.url,
       errors,
     });

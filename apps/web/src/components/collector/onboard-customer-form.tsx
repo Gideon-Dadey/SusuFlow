@@ -1,27 +1,30 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { customerApi } from '@/lib/api';
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { customerApi } from "@/lib/api";
 
 type OnboardCustomerFormProps = {
   onSuccess?: () => void;
   onCancel?: () => void;
 };
 
-export function OnboardCustomerForm({ onSuccess, onCancel }: OnboardCustomerFormProps) {
+export function OnboardCustomerForm({
+  onSuccess,
+  onCancel,
+}: OnboardCustomerFormProps) {
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    ghanaCardNumber: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    ghanaCardNumber: "",
   });
 
   const update = (field: string, value: string) =>
@@ -30,20 +33,26 @@ export function OnboardCustomerForm({ onSuccess, onCancel }: OnboardCustomerForm
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
     try {
-      await customerApi.create(form);
-      await queryClient.invalidateQueries({ queryKey: ['collector-customers'] });
+      await customerApi.create({
+        ...form,
+        email: form.email.trim() || undefined,
+        ghanaCardNumber: form.ghanaCardNumber.trim() || undefined,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["collector-customers"],
+      });
       setForm({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        ghanaCardNumber: '',
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        ghanaCardNumber: "",
       });
       onSuccess?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add customer');
+      setError(err instanceof Error ? err.message : "Failed to add customer");
     } finally {
       setLoading(false);
     }
@@ -65,13 +74,13 @@ export function OnboardCustomerForm({ onSuccess, onCancel }: OnboardCustomerForm
             <Input
               label="First name"
               value={form.firstName}
-              onChange={(e) => update('firstName', e.target.value)}
+              onChange={(e) => update("firstName", e.target.value)}
               required
             />
             <Input
               label="Last name"
               value={form.lastName}
-              onChange={(e) => update('lastName', e.target.value)}
+              onChange={(e) => update("lastName", e.target.value)}
               required
             />
           </div>
@@ -80,23 +89,25 @@ export function OnboardCustomerForm({ onSuccess, onCancel }: OnboardCustomerForm
             type="tel"
             placeholder="+233241234567"
             value={form.phone}
-            onChange={(e) => update('phone', e.target.value)}
+            onChange={(e) => update("phone", e.target.value)}
             required
           />
           <Input
             label="Email (optional)"
             type="email"
             value={form.email}
-            onChange={(e) => update('email', e.target.value)}
+            onChange={(e) => update("email", e.target.value)}
           />
           <Input
             label="Ghana Card (optional)"
             placeholder="GHA-123456789-0"
             value={form.ghanaCardNumber}
-            onChange={(e) => update('ghanaCardNumber', e.target.value)}
+            onChange={(e) => update("ghanaCardNumber", e.target.value)}
           />
           {error ? (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-debit">{error}</p>
+            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-debit">
+              {error}
+            </p>
           ) : null}
           <Button type="submit" className="w-full" loading={loading}>
             Add customer

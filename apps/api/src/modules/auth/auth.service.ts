@@ -190,19 +190,10 @@ export class AuthService {
     const isCustomer = user.userRoles.some(
       (ur) => ur.role.name === ROLES.CUSTOMER,
     );
-    if (isCustomer && (!user.emailVerified || !user.phoneVerified)) {
-      throw new ForbiddenException({
-        message: "Please verify your email and phone before logging in",
-        code: "VERIFICATION_REQUIRED",
-        userId: user.id,
-        emailVerified: user.emailVerified,
-        phoneVerified: user.phoneVerified,
-      });
-    }
-
     if (isCustomer && user.status === "pending") {
       throw new ForbiddenException({
-        message: "Account activation pending verification",
+        message:
+          "Please verify your email and phone before logging in, or ask your susu company to activate your account",
         code: "VERIFICATION_REQUIRED",
         userId: user.id,
         emailVerified: user.emailVerified,

@@ -147,6 +147,13 @@ export const api = {
       method: "PUT",
       body: body ? JSON.stringify(body) : undefined,
     }),
+
+  patch: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
+    request<T>(endpoint, {
+      ...options,
+      method: "PATCH",
+      body: body ? JSON.stringify(body) : undefined,
+    }),
 };
 
 function toQueryString(params?: Record<string, any>): string {
@@ -571,6 +578,8 @@ export interface SavingsPlan {
   minAmount: number;
   maxAmount?: number;
   durationMonths?: number;
+  status?: "active" | "inactive";
+  createdAt?: string;
 }
 
 export interface CustomerPlan {
@@ -763,10 +772,149 @@ export const reportApi = {
   getSummary: () => api.get<OperationsReport>("/reports/summary"),
 };
 
-// Extend existing planApi to include listing all enrollments for staff
+export type QueueItemType =
+  | "withdrawal"
+  | "deposit"
+  | "kyc"
+  | "fraud"
+  | "customer";
+
+export interface ActionQueueItem {
+  id: string;
+  type: QueueItemType;
+  title: string;
+  subtitle: string;
+  amount?: number;
+  status: string;
+  createdAt: string;
+  priority: "high" | "medium" | "low";
+}
+
+export interface ActionQueueSummary {
+  pendingWithdrawals: number;
+  pendingDeposits: number;
+  pendingKyc: number;
+  openFraud: number;
+  pendingCustomers: number;
+  total: number;
+}
+
+export interface CollectorPerformance {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  status: string;
+  lastLoginAt?: string;
+  createdAt: string;
+  customerCount: number;
+  depositsCount: number;
+  depositsVolume: number;
+  commissionEarned: number;
+  commissionPaid: number;
+  commissionBalance: number;
+}
+
+export interface TeamMember {
+  id: string;
+  email: string;
+  phone?: string;
+  firstName: string;
+  lastName: string;
+  status: string;
+  emailVerified: boolean;
+  lastLoginAt?: string;
+  createdAt: string;
+  roles: string[];
+  customerCount: number;
+}
+
+export const operationsApi = {
+  getQueue: () =>
+    api.get<{ summary: ActionQueueSummary; items: ActionQueueItem[] }>(
+      "/operations/queue",
+    ),
+  getCollectors: () =>
+    api.get<{ items: CollectorPerformance[] }>("/operations/collectors"),
+  getMySummary: () =>
+    api.get<{
+      collector: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        status: string;
+      };
+      customerCount: number;
+      depositsCount: number;
+      depositsVolume: number;
+      todayDepositsCount: number;
+      todayDepositsVolume: number;
+      weekDepositsCount: number;
+      weekDepositsVolume: number;
+      commissionEarned: number;
+      commissionPaid: number;
+      commissionBalance: number;
+      pendingDeposits: number;
+    }>("/operations/me/summary"),
+  getMyActivity: () =>
+    api.get<{ items: AuditLogEntry[]; hasMore: boolean; cursor?: string }>(
+      "/operations/me/activity",
+    ),
+};
+
+export const teamApi = {
+  list: () => api.get<{ items: TeamMember[] }>("/team"),
+  create: (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    role: "account_officer" | "collector" | "auditor";
+    password?: string;
+  }) =>
+    api.post<{
+      user: TeamMember;
+      credentials?: { email: string; temporaryPassword: string };
+      message: string;
+    }>("/team", data),
+  update: (
+    id: string,
+    data: Partial<{
+      status: "active" | "suspended" | "pending";
+      firstName: string;
+      lastName: string;
+      phone: string;
+    }>,
+  ) => api.patch<{ user: TeamMember; message: string }>(`/team/${id}`, data),
+};
+
+// Extend existing planApi to include staff plan management
 const originalPlanApi = planApi;
 export const staffPlanApi = {
   ...originalPlanApi,
+  listAllPlans: () => api.get<SavingsPlan[]>("/plans?all=true"),
+  createPlan: (data: {
+    name: string;
+    description?: string;
+    frequency: SavingsPlan["frequency"];
+    minAmount: number;
+    maxAmount?: number;
+    durationMonths?: number;
+  }) => api.post<SavingsPlan>("/plans", data),
+  updatePlan: (
+    id: string,
+    data: Partial<{
+      name: string;
+      description: string;
+      frequency: SavingsPlan["frequency"];
+      minAmount: number;
+      maxAmount: number;
+      durationMonths: number;
+      status: "active" | "inactive";
+    }>,
+  ) => api.patch<SavingsPlan>(`/plans/${id}`, data),
   listAllEnrollments: () =>
     api.get<CustomerPlanWithProgress[]>("/plans/enrollments"),
 };

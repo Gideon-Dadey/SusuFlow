@@ -1,45 +1,63 @@
-import { describe, it, expect } from 'vitest';
-import { formatGhs, getDashboardPath, getGreeting, getInitials } from './utils';
+import { describe, it, expect } from "vitest";
+import {
+  formatGhs,
+  getDashboardPath,
+  getGreeting,
+  getInitials,
+  getPortalFromPathname,
+} from "./utils";
 
-describe('web utils', () => {
-  describe('formatGhs', () => {
-    it('formats currency for Ghana locale', () => {
+describe("web utils", () => {
+  describe("formatGhs", () => {
+    it("formats currency for Ghana locale", () => {
       const result = formatGhs(1250.5);
-      expect(result).toContain('1,250.50');
+      expect(result).toContain("1,250.50");
     });
   });
 
-  describe('getDashboardPath', () => {
-    it('routes super admin to admin tenants', () => {
-      expect(getDashboardPath(['super_admin'])).toBe('/admin/tenants');
+  describe("getDashboardPath", () => {
+    it("routes super admin to admin dashboard", () => {
+      expect(getDashboardPath(["super_admin"])).toBe("/admin/dashboard");
     });
 
-    it('routes company admin to staff dashboard', () => {
-      expect(getDashboardPath(['company_admin'])).toBe('/staff/dashboard');
+    it("routes company admin to staff dashboard", () => {
+      expect(getDashboardPath(["company_admin"])).toBe("/staff/dashboard");
     });
 
-    it('routes collector to collector dashboard', () => {
-      expect(getDashboardPath(['collector'])).toBe('/collector/dashboard');
+    it("routes collector to collector dashboard", () => {
+      expect(getDashboardPath(["collector"])).toBe("/collector/dashboard");
     });
 
-    it('routes customer to customer dashboard', () => {
-      expect(getDashboardPath(['customer'])).toBe('/dashboard');
-    });
-  });
-
-  describe('getGreeting', () => {
-    it('returns a time-based greeting', () => {
-      expect(['Good morning', 'Good afternoon', 'Good evening']).toContain(getGreeting());
+    it("routes customer to customer dashboard", () => {
+      expect(getDashboardPath(["customer"])).toBe("/dashboard");
     });
   });
 
-  describe('getInitials', () => {
-    it('combines first letters of names', () => {
-      expect(getInitials('Kwame', 'Mensah')).toBe('KM');
+  describe("getPortalFromPathname", () => {
+    it("detects collector portal routes", () => {
+      expect(getPortalFromPathname("/collector/dashboard")).toBe("collector");
     });
 
-    it('returns ? when names missing', () => {
-      expect(getInitials()).toBe('?');
+    it("detects staff portal routes", () => {
+      expect(getPortalFromPathname("/staff/dashboard")).toBe("staff");
+    });
+  });
+
+  describe("getGreeting", () => {
+    it("returns a time-based greeting", () => {
+      expect(["Good morning", "Good afternoon", "Good evening"]).toContain(
+        getGreeting(),
+      );
+    });
+  });
+
+  describe("getInitials", () => {
+    it("combines first letters of names", () => {
+      expect(getInitials("Kwame", "Mensah")).toBe("KM");
+    });
+
+    it("returns ? when names missing", () => {
+      expect(getInitials()).toBe("?");
     });
   });
 });
