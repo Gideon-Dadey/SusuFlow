@@ -13,8 +13,13 @@ import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
 
-export default function RegisterPage() {
+import { Suspense, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+
+function RegisterContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const tenantParam = searchParams.get('tenant') || '';
   const { register, isLoading, error, clearError, tenantSlug, setTenantSlug } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
@@ -23,8 +28,14 @@ export default function RegisterPage() {
     email: '',
     phone: '',
     password: '',
-    tenant: tenantSlug,
+    tenant: tenantSlug || tenantParam,
   });
+
+  useEffect(() => {
+    if (tenantParam) {
+      setForm((f) => ({ ...f, tenant: tenantParam }));
+    }
+  }, [tenantParam]);
 
   const update = (field: string, value: string) =>
     setForm((f) => ({ ...f, [field]: value }));
@@ -188,5 +199,13 @@ export default function RegisterPage() {
 
       <AuthFooterExtras action="creating an account" mode="register" />
     </AuthShell>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-8 text-sm text-muted-foreground animate-pulse">Loading registration settings...</div>}>
+      <RegisterContent />
+    </Suspense>
   );
 }

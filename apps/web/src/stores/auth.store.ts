@@ -9,6 +9,7 @@ interface User {
   firstName: string;
   lastName: string;
   roles: string[];
+  tenantSlug?: string;
 }
 
 interface AuthState {
@@ -59,10 +60,15 @@ export const useAuthStore = create<AuthState>()(
       hydrate: (data) => {
         localStorage.setItem('access_token', data.accessToken);
         localStorage.setItem('refresh_token', data.refreshToken);
+        const resolvedSlug = data.user.tenantSlug || '';
+        if (resolvedSlug) {
+          localStorage.setItem('tenant_slug', resolvedSlug);
+        }
         set({
           user: data.user,
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
+          tenantSlug: resolvedSlug || get().tenantSlug,
           isAuthenticated: true,
         });
       },
@@ -70,7 +76,7 @@ export const useAuthStore = create<AuthState>()(
       login: async (email, password, tenantSlug) => {
         set({ isLoading: true, error: null });
         try {
-          const slug = (tenantSlug ?? get().tenantSlug).trim();
+          const slug = tenantSlug !== undefined ? tenantSlug.trim() : '';
           const data = await authApi.login(email, password, slug);
           get().hydrate(data);
           return getDashboardPath(data.user.roles);

@@ -95,35 +95,60 @@ export class AuthService {
   }
 
   async login(dto: LoginDto, tenant?: TenantContext) {
-    const user = await this.prisma.user.findFirst({
+    const users = await this.prisma.user.findMany({
       where: {
         email: dto.email,
-        ...(tenant ? { tenantId: tenant.id } : {}),
       },
       include: {
+        tenant: { select: { slug: true } },
         userRoles: { include: { role: { include: { rolePermissions: { include: { permission: true } } } } } },
       },
     });
 
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (users.length === 0) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
-    if (tenant && user.tenantId) {
+    // Filter valid password matching candidates
+    const validCandidates: typeof users = [];
+    for (const candidate of users) {
+      const isMatch = await bcrypt.compare(dto.password, candidate.passwordHash);
+      if (isMatch) {
+        validCandidates.push(candidate);
+      }
+    }
+
+    if (validCandidates.length === 0) {
+      // Increment failed count for all candidate users with this email
+      for (const candidate of users) {
+        const failedCount = candidate.failedLoginCount + 1;
+        const updateData: { failedLoginCount: number; lockedUntil?: Date } = { failedLoginCount: failedCount };
+        if (failedCount >= MAX_FAILED_LOGINS) {
+          updateData.lockedUntil = new Date(Date.now() + LOCKOUT_MINUTES * 60 * 1000);
+        }
+        await this.prisma.user.update({ where: { id: candidate.id }, data: updateData });
+      }
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Resolve the active candidate user using a prioritized selection strategy
+    let user = null;
+    if (tenant) {
+      user = validCandidates.find((u) => u.tenantId === tenant.id);
+    }
+    if (!user) {
+      user = validCandidates.find((u) => u.tenantId === null);
+    }
+    if (!user) {
+      user = validCandidates[0];
+    }
+
+    if (user.tenantId) {
       await this.tenantService.assertTenantOperational(user.tenantId);
     }
 
     if (user.lockedUntil && user.lockedUntil > new Date()) {
       throw new UnauthorizedException('Account temporarily locked. Try again later.');
-    }
-
-    const valid = await bcrypt.compare(dto.password, user.passwordHash);
-    if (!valid) {
-      const failedCount = user.failedLoginCount + 1;
-      const updateData: { failedLoginCount: number; lockedUntil?: Date } = { failedLoginCount: failedCount };
-      if (failedCount >= MAX_FAILED_LOGINS) {
-        updateData.lockedUntil = new Date(Date.now() + LOCKOUT_MINUTES * 60 * 1000);
-      }
-      await this.prisma.user.update({ where: { id: user.id }, data: updateData });
-      throw new UnauthorizedException('Invalid credentials');
     }
 
     await this.prisma.user.update({
@@ -168,6 +193,7 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         roles,
+        tenantSlug: user.tenant?.slug || '',
       },
     };
   }

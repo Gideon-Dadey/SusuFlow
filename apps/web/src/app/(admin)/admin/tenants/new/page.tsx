@@ -8,6 +8,33 @@ import { adminApi, type CreateTenantPayload } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy, faCheck } from '@fortawesome/free-solid-svg-icons';
+
+function CopyLinkButton({ label, url }: { label: string; url: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="flex items-center gap-2 rounded-lg bg-muted/40 px-3 py-1.5 text-xs border border-border/40">
+      <span className="font-semibold text-muted-foreground uppercase text-[9px] tracking-wider whitespace-nowrap">{label}:</span>
+      <span className="font-mono text-foreground truncate max-w-[200px] sm:max-w-none">{url}</span>
+      <button
+        onClick={handleCopy}
+        className="ml-auto text-muted-foreground hover:text-foreground focus:outline-none transition-colors px-1"
+        title="Copy Link"
+        type="button"
+      >
+        <FontAwesomeIcon icon={copied ? faCheck : faCopy} className={`h-3.5 w-3.5 ${copied ? 'text-green-600 dark:text-green-400' : ''}`} />
+      </button>
+    </div>
+  );
+}
 
 export default function CreateTenantPage() {
   const router = useRouter();
@@ -77,10 +104,16 @@ export default function CreateTenantPage() {
                 <code className="rounded bg-muted px-2 py-0.5">{credentials.temporaryPassword}</code>
               </p>
             ) : null}
-            <p>
-              <span className="font-medium text-foreground">Login URL:</span>{' '}
-              {credentials.loginUrl}
-            </p>
+            <div className="space-y-2 pt-2 pb-4">
+              <CopyLinkButton
+                label="Admin Secure Login"
+                url={`${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}/login?tenant=${credentials.tenantSlug}`}
+              />
+              <CopyLinkButton
+                label="Saver Signup URL"
+                url={`${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}/register?tenant=${credentials.tenantSlug}`}
+              />
+            </div>
             <p className="text-muted-foreground">
               The organization starts on a 14-day trial. Activate manually after payment or use
               Collect payment from the tenants list.

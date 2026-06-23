@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -55,12 +55,32 @@ export default function StaffSettingsPage() {
     }
   }, [tenant]);
 
+  const queryClient = useQueryClient();
+
+  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        setErrorMessage('Logo image must be smaller than 2MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoUrl(reader.result as string);
+        setErrorMessage('');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const updateSettingsMutation = useMutation({
     mutationFn: (data: any) => tenantApi.updateMe(data),
     onSuccess: () => {
       setSuccessMessage('Tenant settings updated successfully!');
       setErrorMessage('');
       refetch();
+      queryClient.invalidateQueries({ queryKey: ['tenant-branding'] });
+      queryClient.invalidateQueries({ queryKey: ['tenant-settings'] });
     },
     onError: (err: any) => {
       setErrorMessage(err?.message || 'Failed to update settings.');
@@ -233,12 +253,53 @@ export default function StaffSettingsPage() {
                     />
                   </div>
 
-                  <Input
-                    label="Logo Image URL"
-                    value={logoUrl}
-                    onChange={(e) => setLogoUrl(e.target.value)}
-                    placeholder="https://..."
-                  />
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium text-foreground">Company Logo</label>
+                    <div className="flex items-center gap-4">
+                      {logoUrl ? (
+                        <img
+                          src={logoUrl}
+                          alt="Logo preview"
+                          className="h-16 w-16 rounded-lg object-contain bg-muted border border-border"
+                        />
+                      ) : (
+                        <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-muted text-xs text-muted-foreground font-semibold border border-border">
+                          No Logo
+                        </div>
+                      )}
+                      <div className="flex flex-col gap-1.5">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          id="settings-logo-file"
+                          className="hidden"
+                          onChange={handleLogoFileChange}
+                        />
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => document.getElementById('settings-logo-file')?.click()}
+                          >
+                            Upload Image File
+                          </Button>
+                          {logoUrl && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="text-destructive hover:bg-destructive/10"
+                              onClick={() => setLogoUrl('')}
+                            >
+                              Remove Logo
+                            </Button>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-muted-foreground">Supported format: PNG, JPG, WebP. Max 2MB.</span>
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-foreground">

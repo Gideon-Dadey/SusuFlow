@@ -14,7 +14,7 @@ describe('AuthService', () => {
   let service: AuthService;
   let prisma: {
     user: {
-      findFirst: jest.Mock;
+      findMany: jest.Mock;
       update: jest.Mock;
     };
     refreshToken: { create: jest.Mock; findUnique: jest.Mock; updateMany: jest.Mock };
@@ -43,7 +43,7 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     prisma = {
-      user: { findFirst: jest.fn(), update: jest.fn() },
+      user: { findMany: jest.fn(), update: jest.fn() },
       refreshToken: { create: jest.fn(), findUnique: jest.fn(), updateMany: jest.fn() },
     };
     jwt = { sign: jest.fn().mockReturnValue('access-token') };
@@ -70,7 +70,7 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('returns tokens on successful login', async () => {
-      prisma.user.findFirst.mockResolvedValue(mockUser);
+      prisma.user.findMany.mockResolvedValue([mockUser]);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       prisma.user.update.mockResolvedValue(mockUser);
       prisma.refreshToken.create.mockResolvedValue({});
@@ -90,7 +90,7 @@ describe('AuthService', () => {
     });
 
     it('throws on invalid credentials', async () => {
-      prisma.user.findFirst.mockResolvedValue(mockUser);
+      prisma.user.findMany.mockResolvedValue([mockUser]);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
       prisma.user.update.mockResolvedValue(mockUser);
 
@@ -100,10 +100,12 @@ describe('AuthService', () => {
     });
 
     it('locks account after max failed attempts', async () => {
-      prisma.user.findFirst.mockResolvedValue({
-        ...mockUser,
-        failedLoginCount: MAX_FAILED_LOGINS - 1,
-      });
+      prisma.user.findMany.mockResolvedValue([
+        {
+          ...mockUser,
+          failedLoginCount: MAX_FAILED_LOGINS - 1,
+        },
+      ]);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
       prisma.user.update.mockResolvedValue({});
 
@@ -122,10 +124,13 @@ describe('AuthService', () => {
     });
 
     it('rejects login when account is locked', async () => {
-      prisma.user.findFirst.mockResolvedValue({
-        ...mockUser,
-        lockedUntil: new Date(Date.now() + 60_000),
-      });
+      prisma.user.findMany.mockResolvedValue([
+        {
+          ...mockUser,
+          lockedUntil: new Date(Date.now() + 60_000),
+        },
+      ]);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
       await expect(
         service.login({ email: 'test@example.com', password: 'pass' }),
