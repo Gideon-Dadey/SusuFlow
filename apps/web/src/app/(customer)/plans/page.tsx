@@ -91,7 +91,6 @@ export default function SavingsPlansPage() {
     <div className="space-y-6 pb-20">
       <div>
         <h1 className="dashboard-title">Goals & Plans</h1>
-        <p className="text-xs text-muted-foreground">Enroll in susu target plans to save systematically</p>
       </div>
 
       {/* Active Goals Section */}

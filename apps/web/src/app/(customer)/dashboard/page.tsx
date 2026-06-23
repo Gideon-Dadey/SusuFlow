@@ -6,7 +6,6 @@ import { BalanceCard } from '@/components/financial/balance-card';
 import { TransactionRow } from '@/components/financial/transaction-row';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { depositApi, Transaction, userApi } from '@/lib/api';
-import { getGreeting } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import { TransactionListSkeleton } from '@/components/ui/skeleton';
 import { ReceiptModal } from '@/components/financial/receipt-modal';
@@ -65,7 +64,6 @@ export default function CustomerDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="dashboard-subtitle text-muted-foreground">{getGreeting()},</p>
         <h2 className="dashboard-title text-foreground">{user?.firstName}</h2>
       </div>
 

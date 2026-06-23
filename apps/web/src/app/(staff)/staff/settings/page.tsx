@@ -19,6 +19,23 @@ import {
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
+function hexToRgba(hex: string, alpha: number): string {
+  const cleanHex = hex.replace('#', '');
+  let r = 0, g = 0, b = 0;
+  if (cleanHex.length === 3) {
+    r = parseInt(cleanHex[0] + cleanHex[0], 16);
+    g = parseInt(cleanHex[1] + cleanHex[1], 16);
+    b = parseInt(cleanHex[2] + cleanHex[2], 16);
+  } else if (cleanHex.length === 6) {
+    r = parseInt(cleanHex.substring(0, 2), 16);
+    g = parseInt(cleanHex.substring(2, 4), 16);
+    b = parseInt(cleanHex.substring(4, 6), 16);
+  } else {
+    return `rgba(30, 64, 175, ${alpha})`;
+  }
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 export default function StaffSettingsPage() {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
@@ -227,10 +244,6 @@ export default function StaffSettingsPage() {
       setErrorMessage('Please enter a valid support email address.');
       return;
     }
-    if (primaryColor && !/^#[0-9A-Fa-f]{6}$/.test(primaryColor)) {
-      setErrorMessage('Primary brand color must be a valid hex color code (e.g. #1E40AF).');
-      return;
-    }
 
     updateTenantMutation.mutate({
       name,
@@ -372,7 +385,6 @@ export default function StaffSettingsPage() {
     <div className="space-y-6 max-w-6xl">
       <div>
         <h1 className="dashboard-title">Profile & Settings</h1>
-        <p className="text-xs text-muted-foreground">Manage your personal details, credentials, and organizational rules.</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
@@ -622,44 +634,6 @@ export default function StaffSettingsPage() {
                         </div>
                         <span className="text-[10px] text-muted-foreground">Supported format: PNG, JPG, WebP. Max 2MB.</span>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-foreground">Primary Brand Color</label>
-                    <div className="flex items-center gap-4">
-                      <input
-                        type="color"
-                        value={primaryColor}
-                        onChange={(e) => setPrimaryColor(e.target.value)}
-                        className="h-10 w-20 cursor-pointer rounded-lg border border-border bg-card"
-                      />
-                      <Input
-                        value={primaryColor}
-                        onChange={(e) => setPrimaryColor(e.target.value)}
-                        placeholder="#1E40AF"
-                        className="flex-1 max-w-[150px]"
-                        maxLength={7}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-muted/30 rounded-lg border border-border/50">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Live Component Preview</h4>
-                    <div className="flex flex-wrap items-center gap-3">
-                      <button
-                        type="button"
-                        style={{ backgroundColor: primaryColor }}
-                        className="px-4 py-2 text-xs font-bold text-white rounded-lg shadow-sm hover:opacity-90 transition-opacity"
-                      >
-                        Accent Button
-                      </button>
-                      <span
-                        style={{ color: primaryColor, borderColor: `${primaryColor}30`, backgroundColor: `${primaryColor}10` }}
-                        className="px-2.5 py-1 text-xs font-semibold rounded-full border"
-                      >
-                        Accent Tag
-                      </span>
                     </div>
                   </div>
 

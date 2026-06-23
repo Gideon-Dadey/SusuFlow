@@ -58,9 +58,6 @@ export default function KycReviewPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="dashboard-title">KYC Document Review</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Verify customer identity documents to upgrade account limits
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

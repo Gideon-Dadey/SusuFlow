@@ -225,7 +225,6 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
         </Link>
         <div>
           <h1 className="dashboard-title">Customer Account</h1>
-          <p className="text-xs text-muted-foreground">Manage profile, transactions, and cash operations</p>
         </div>
       </div>
 
