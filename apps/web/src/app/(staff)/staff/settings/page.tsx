@@ -6,11 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { tenantApi } from '@/lib/api';
+import { useAuthStore } from '@/stores/auth.store';
 import { Loader2, CheckCircle, AlertCircle, Sparkles, Sliders, ShieldCheck } from 'lucide-react';
 
 export default function StaffSettingsPage() {
+  const { user } = useAuthStore();
   const { data: tenant, isLoading, refetch } = useQuery({
-    queryKey: ['tenant-settings'],
+    queryKey: ['tenant-settings', user?.tenantSlug],
     queryFn: () => tenantApi.getMe(),
   });
 
