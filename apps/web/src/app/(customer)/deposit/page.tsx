@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MoneyDisplay } from '@/components/financial/money-display';
-import { depositApi } from '@/lib/api';
+import { depositApi, userApi } from '@/lib/api';
 import { useAuthStore } from '@/stores/auth.store';
 import { CheckCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -27,13 +28,25 @@ export default function DepositPage() {
   const [error, setError] = useState('');
   const [result, setResult] = useState<{ reference: string; paymentUrl?: string } | null>(null);
 
+  // Query current user's profile to retrieve the associated customer account and details
+  const { data: userProfile } = useQuery({
+    queryKey: ['user-profile-me'],
+    queryFn: () => userApi.getMe(),
+  });
+
+  // Pre-fill phone number with user's profile phone
+  useEffect(() => {
+    if (userProfile?.phone && !phone) {
+      setPhone(userProfile.phone);
+    }
+  }, [userProfile, phone]);
+
   const handleDeposit = async () => {
     setLoading(true);
     setError('');
     try {
-      // In production, customerId comes from customer profile API
-      const customers = await import('@/lib/api').then((m) => m.customerApi.list());
-      const customer = customers.items?.[0];
+      const profile = await userApi.getMe();
+      const customer = profile.customer;
       if (!customer) throw new Error('Customer profile not found. Please contact support.');
 
       const res = await depositApi.initiate({
