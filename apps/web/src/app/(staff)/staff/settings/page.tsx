@@ -17,6 +17,7 @@ import {
   User,
   Lock,
 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function StaffSettingsPage() {
   const { user } = useAuthStore();
@@ -162,12 +163,18 @@ export default function StaffSettingsPage() {
   });
 
   // 4. Form Handlers
+  const isValidEmail = (emailStr: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailStr);
+
   const handleProfileSave = (e: React.FormEvent) => {
     e.preventDefault();
     setSuccessMessage('');
     setErrorMessage('');
-    if (!firstName || !lastName || !profileEmail) {
+    if (!firstName.trim() || !lastName.trim() || !profileEmail.trim()) {
       setErrorMessage('First Name, Last Name, and Email are required.');
+      return;
+    }
+    if (!isValidEmail(profileEmail)) {
+      setErrorMessage('Please enter a valid email address.');
       return;
     }
     updateProfileMutation.mutate();
@@ -212,8 +219,16 @@ export default function StaffSettingsPage() {
     e.preventDefault();
     setSuccessMessage('');
     setErrorMessage('');
-    if (!name || !email) {
+    if (!name.trim() || !email.trim()) {
       setErrorMessage('Company Name and Support Email are required.');
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setErrorMessage('Please enter a valid support email address.');
+      return;
+    }
+    if (primaryColor && !/^#[0-9A-Fa-f]{6}$/.test(primaryColor)) {
+      setErrorMessage('Primary brand color must be a valid hex color code (e.g. #1E40AF).');
       return;
     }
 
@@ -309,8 +324,46 @@ export default function StaffSettingsPage() {
 
   if (isProfileLoading || (isCompanyAdmin && isTenantLoading)) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="space-y-6 max-w-6xl">
+        <div>
+          <Skeleton className="h-8 w-48 rounded" />
+          <Skeleton className="h-4 w-72 rounded mt-2" />
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-6 animate-pulse">
+          {/* Navigation Sidebar Skeleton */}
+          <div className="w-full md:w-64 shrink-0 flex flex-row md:flex-col gap-1.5 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
+            <Skeleton className="h-11 w-full rounded-lg" />
+            {isCompanyAdmin && (
+              <>
+                <Skeleton className="h-11 w-full rounded-lg" />
+                <Skeleton className="h-11 w-full rounded-lg" />
+                <Skeleton className="h-11 w-full rounded-lg" />
+              </>
+            )}
+          </div>
+
+          {/* Content Panel Skeleton */}
+          <div className="flex-1 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-4 rounded-xl border border-border/50 bg-card p-6">
+                <Skeleton className="h-6 w-32 rounded animate-pulse" />
+                <Skeleton className="h-11 w-full rounded-lg" />
+                <Skeleton className="h-11 w-full rounded-lg" />
+                <Skeleton className="h-11 w-full rounded-lg" />
+                <Skeleton className="h-11 w-full rounded-lg" />
+                <Skeleton className="h-11 w-full rounded-lg" />
+              </div>
+              <div className="space-y-4 rounded-xl border border-border/50 bg-card p-6">
+                <Skeleton className="h-6 w-32 rounded animate-pulse" />
+                <Skeleton className="h-11 w-full rounded-lg" />
+                <Skeleton className="h-11 w-full rounded-lg" />
+                <Skeleton className="h-11 w-full rounded-lg" />
+                <Skeleton className="h-11 w-full rounded-lg" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
