@@ -5,37 +5,80 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { tenantApi } from '@/lib/api';
+import { tenantApi, userApi } from '@/lib/api';
 import { useAuthStore } from '@/stores/auth.store';
-import { Loader2, CheckCircle, AlertCircle, Sparkles, Sliders, ShieldCheck } from 'lucide-react';
+import {
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+  Sparkles,
+  Sliders,
+  ShieldCheck,
+  User,
+  Lock,
+} from 'lucide-react';
 
 export default function StaffSettingsPage() {
   const { user } = useAuthStore();
-  const { data: tenant, isLoading, refetch } = useQuery({
-    queryKey: ['tenant-settings', user?.tenantSlug],
-    queryFn: () => tenantApi.getMe(),
+  const queryClient = useQueryClient();
+
+  // Active navigation tab
+  const [activeTab, setActiveTab] = useState<'profile' | 'branding' | 'operations' | 'commissions'>('profile');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  // 1. User Profile Queries & States
+  const { data: userProfile, isLoading: isProfileLoading, refetch: refetchProfile } = useQuery({
+    queryKey: ['user-profile', user?.id],
+    queryFn: () => userApi.getMe(),
   });
 
-  // Settings states
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [profileEmail, setProfileEmail] = useState('');
+  const [profilePhone, setProfilePhone] = useState('');
+
+  // Password States
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  useEffect(() => {
+    if (userProfile) {
+      setFirstName(userProfile.firstName || '');
+      setLastName(userProfile.lastName || '');
+      setProfileEmail(userProfile.email || '');
+      setProfilePhone(userProfile.phone || '');
+    }
+  }, [userProfile]);
+
+  // 2. Tenant Settings Queries & States
+  const isCompanyAdmin = user?.roles.includes('company_admin');
+
+  const { data: tenant, isLoading: isTenantLoading, refetch: refetchTenant } = useQuery({
+    queryKey: ['tenant-settings', user?.tenantSlug],
+    queryFn: () => tenantApi.getMe(),
+    enabled: !!isCompanyAdmin,
+  });
+
+  // Branding states
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
   const [primaryColor, setPrimaryColor] = useState('#1E40AF');
 
-  // JSON settings states
+  // Operations states
   const [currency, setCurrency] = useState('GHS');
   const [timezone, setTimezone] = useState('Africa/Accra');
   const [minDeposit, setMinDeposit] = useState('5');
   const [maxDeposit, setMaxDeposit] = useState('10000');
   const [minWithdrawal, setMinWithdrawal] = useState('10');
   const [maxWithdrawal, setMaxWithdrawal] = useState('5000');
+
+  // Commissions & Fees states
   const [transactionFee, setTransactionFee] = useState('0.50');
   const [commissionRate, setCommissionRate] = useState('1.5');
-
-  const [activeTab, setActiveTab] = useState<'branding' | 'operations' | 'commissions'>('branding');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     if (tenant) {
@@ -53,11 +96,101 @@ export default function StaffSettingsPage() {
       setMinWithdrawal(String(settings.min_withdrawal ?? '10'));
       setMaxWithdrawal(String(settings.max_withdrawal ?? '5000'));
       setTransactionFee(String(settings.transaction_fee ?? '0.50'));
-      setCommissionRate(String((settings.commission_rate ?? 0.015) * 100)); // convert e.g. 0.015 to 1.5
+      setCommissionRate(String((settings.commission_rate ?? 0.015) * 100));
     }
   }, [tenant]);
 
-  const queryClient = useQueryClient();
+  // Tab switcher
+  const handleTabChange = (tab: typeof activeTab) => {
+    setActiveTab(tab);
+    setSuccessMessage('');
+    setErrorMessage('');
+  };
+
+  // 3. Mutation Operations
+  const updateProfileMutation = useMutation({
+    mutationFn: () => userApi.updateMe({ firstName, lastName, email: profileEmail, phone: profilePhone }),
+    onSuccess: (updatedUser) => {
+      setSuccessMessage('Profile updated successfully!');
+      setErrorMessage('');
+      useAuthStore.setState((state) => ({
+        user: state.user
+          ? {
+              ...state.user,
+              firstName: updatedUser.firstName,
+              lastName: updatedUser.lastName,
+              email: updatedUser.email,
+            }
+          : null,
+      }));
+      refetchProfile();
+    },
+    onError: (err: any) => {
+      setErrorMessage(err?.message || 'Failed to update profile.');
+      setSuccessMessage('');
+    },
+  });
+
+  const updatePasswordMutation = useMutation({
+    mutationFn: () => userApi.updatePassword({ currentPassword, newPassword }),
+    onSuccess: () => {
+      setSuccessMessage('Password changed successfully!');
+      setErrorMessage('');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    },
+    onError: (err: any) => {
+      setErrorMessage(err?.message || 'Failed to change password.');
+      setSuccessMessage('');
+    },
+  });
+
+  const updateTenantMutation = useMutation({
+    mutationFn: (data: any) => tenantApi.updateMe(data),
+    onSuccess: () => {
+      setSuccessMessage('Tenant settings updated successfully!');
+      setErrorMessage('');
+      refetchTenant();
+      queryClient.invalidateQueries({ queryKey: ['tenant-branding'] });
+      queryClient.invalidateQueries({ queryKey: ['tenant-settings'] });
+    },
+    onError: (err: any) => {
+      setErrorMessage(err?.message || 'Failed to update settings.');
+      setSuccessMessage('');
+    },
+  });
+
+  // 4. Form Handlers
+  const handleProfileSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSuccessMessage('');
+    setErrorMessage('');
+    if (!firstName || !lastName || !profileEmail) {
+      setErrorMessage('First Name, Last Name, and Email are required.');
+      return;
+    }
+    updateProfileMutation.mutate();
+  };
+
+  const handlePasswordSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSuccessMessage('');
+    setErrorMessage('');
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setErrorMessage('All password fields are required.');
+      return;
+    }
+    if (newPassword.length < 10) {
+      setErrorMessage('New password must be at least 10 characters.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setErrorMessage('New password and confirm password do not match.');
+      return;
+    }
+    updatePasswordMutation.mutate();
+  };
 
   const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -75,38 +208,34 @@ export default function StaffSettingsPage() {
     }
   };
 
-  const updateSettingsMutation = useMutation({
-    mutationFn: (data: any) => tenantApi.updateMe(data),
-    onSuccess: () => {
-      setSuccessMessage('Tenant settings updated successfully!');
-      setErrorMessage('');
-      refetch();
-      queryClient.invalidateQueries({ queryKey: ['tenant-branding'] });
-      queryClient.invalidateQueries({ queryKey: ['tenant-settings'] });
-    },
-    onError: (err: any) => {
-      setErrorMessage(err?.message || 'Failed to update settings.');
-      setSuccessMessage('');
-    },
-  });
-
-  const handleSave = (e: React.FormEvent) => {
+  const handleBrandingSave = (e: React.FormEvent) => {
     e.preventDefault();
     setSuccessMessage('');
     setErrorMessage('');
-
-    // Validations
     if (!name || !email) {
       setErrorMessage('Company Name and Support Email are required.');
       return;
     }
 
+    updateTenantMutation.mutate({
+      name,
+      email,
+      phone,
+      logoUrl: logoUrl || null,
+      primaryColor,
+      settings: tenant?.settings || {},
+    });
+  };
+
+  const handleOperationsSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSuccessMessage('');
+    setErrorMessage('');
+
     const parsedMinDep = parseFloat(minDeposit);
     const parsedMaxDep = parseFloat(maxDeposit);
     const parsedMinWd = parseFloat(minWithdrawal);
     const parsedMaxWd = parseFloat(maxWithdrawal);
-    const parsedFee = parseFloat(transactionFee);
-    const parsedComm = parseFloat(commissionRate);
 
     if (isNaN(parsedMinDep) || parsedMinDep <= 0) {
       setErrorMessage('Minimum deposit must be greater than 0.');
@@ -124,6 +253,35 @@ export default function StaffSettingsPage() {
       setErrorMessage('Maximum withdrawal must be greater than or equal to minimum withdrawal.');
       return;
     }
+
+    const currentSettings = (tenant?.settings || {}) as Record<string, any>;
+
+    updateTenantMutation.mutate({
+      name,
+      email,
+      phone,
+      logoUrl: logoUrl || null,
+      primaryColor,
+      settings: {
+        ...currentSettings,
+        currency,
+        timezone,
+        min_deposit: parsedMinDep,
+        max_deposit: parsedMaxDep,
+        min_withdrawal: parsedMinWd,
+        max_withdrawal: parsedMaxWd,
+      },
+    });
+  };
+
+  const handleCommissionsSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSuccessMessage('');
+    setErrorMessage('');
+
+    const parsedFee = parseFloat(transactionFee);
+    const parsedComm = parseFloat(commissionRate);
+
     if (isNaN(parsedFee) || parsedFee < 0) {
       setErrorMessage('Transaction fee must be 0 or greater.');
       return;
@@ -133,28 +291,23 @@ export default function StaffSettingsPage() {
       return;
     }
 
-    const payload = {
+    const currentSettings = (tenant?.settings || {}) as Record<string, any>;
+
+    updateTenantMutation.mutate({
       name,
       email,
       phone,
       logoUrl: logoUrl || null,
       primaryColor,
       settings: {
-        currency,
-        timezone,
-        min_deposit: parsedMinDep,
-        max_deposit: parsedMaxDep,
-        min_withdrawal: parsedMinWd,
-        max_withdrawal: parsedMaxWd,
+        ...currentSettings,
         transaction_fee: parsedFee,
-        commission_rate: parsedComm / 100, // convert e.g. 1.5 back to 0.015
+        commission_rate: parsedComm / 100,
       },
-    };
-
-    updateSettingsMutation.mutate(payload);
+    });
   };
 
-  if (isLoading) {
+  if (isProfileLoading || (isCompanyAdmin && isTenantLoading)) {
     return (
       <div className="flex h-64 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -163,73 +316,189 @@ export default function StaffSettingsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="space-y-6 max-w-6xl">
       <div>
-        <h1 className="dashboard-title">Company Settings</h1>
-        <p className="text-xs text-muted-foreground">Customize your organization, operating limits, and transaction commissions</p>
+        <h1 className="dashboard-title">Profile & Settings</h1>
+        <p className="text-xs text-muted-foreground">Manage your personal details, credentials, and organizational rules.</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Navigation Sidebar */}
         <div className="w-full md:w-64 shrink-0 flex flex-row md:flex-col gap-1.5 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
           <button
-            onClick={() => setActiveTab('branding')}
+            onClick={() => handleTabChange('profile')}
             className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
-              activeTab === 'branding'
-                ? 'bg-primary text-white'
+              activeTab === 'profile'
+                ? 'bg-primary text-white font-bold'
                 : 'bg-card text-foreground hover:bg-muted/50 border border-border/50'
             }`}
           >
-            <Sparkles className="h-4 w-4" />
-            General & Branding
+            <User className="h-4 w-4" />
+            My Profile
           </button>
-          <button
-            onClick={() => setActiveTab('operations')}
-            className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
-              activeTab === 'operations'
-                ? 'bg-primary text-white'
-                : 'bg-card text-foreground hover:bg-muted/50 border border-border/50'
-            }`}
-          >
-            <Sliders className="h-4 w-4" />
-            Operations & Limits
-          </button>
-          <button
-            onClick={() => setActiveTab('commissions')}
-            className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
-              activeTab === 'commissions'
-                ? 'bg-primary text-white'
-                : 'bg-card text-foreground hover:bg-muted/50 border border-border/50'
-            }`}
-          >
-            <ShieldCheck className="h-4 w-4" />
-            Commissions & Fees
-          </button>
+          {isCompanyAdmin && (
+            <>
+              <button
+                onClick={() => handleTabChange('branding')}
+                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                  activeTab === 'branding'
+                    ? 'bg-primary text-white font-bold'
+                    : 'bg-card text-foreground hover:bg-muted/50 border border-border/50'
+                }`}
+              >
+                <Sparkles className="h-4 w-4" />
+                Branding & Company
+              </button>
+              <button
+                onClick={() => handleTabChange('operations')}
+                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                  activeTab === 'operations'
+                    ? 'bg-primary text-white font-bold'
+                    : 'bg-card text-foreground hover:bg-muted/50 border border-border/50'
+                }`}
+              >
+                <Sliders className="h-4 w-4" />
+                Operations & Limits
+              </button>
+              <button
+                onClick={() => handleTabChange('commissions')}
+                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                  activeTab === 'commissions'
+                    ? 'bg-primary text-white font-bold'
+                    : 'bg-card text-foreground hover:bg-muted/50 border border-border/50'
+                }`}
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Commissions & Fees
+              </button>
+            </>
+          )}
         </div>
 
-        {/* Content Form */}
-        <div className="flex-1">
-          <form onSubmit={handleSave} className="space-y-6">
-            {successMessage && (
-              <div className="flex items-center gap-2 p-3 text-xs bg-green-50 text-green-700 rounded-lg border border-green-200">
-                <CheckCircle className="h-4 w-4 shrink-0" />
-                <span>{successMessage}</span>
-              </div>
-            )}
-            {errorMessage && (
-              <div className="flex items-center gap-2 p-3 text-xs bg-red-50 text-red-700 rounded-lg border border-red-200">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                <span>{errorMessage}</span>
-              </div>
-            )}
+        {/* Content Form Panel */}
+        <div className="flex-1 space-y-6">
+          {successMessage && (
+            <div className="flex items-center gap-2 p-3 text-xs bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400 rounded-lg border border-green-200 dark:border-green-900/50">
+              <CheckCircle className="h-4 w-4 shrink-0" />
+              <span>{successMessage}</span>
+            </div>
+          )}
+          {errorMessage && (
+            <div className="flex items-center gap-2 p-3 text-xs bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-900/50">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
 
-            {activeTab === 'branding' && (
-              <Card className="shadow-sm">
+          {activeTab === 'profile' && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Personal Details */}
+              <Card className="shadow-sm border-none bg-card">
                 <CardHeader>
-                  <CardTitle className="text-lg">General & Branding</CardTitle>
-                  <p className="text-xs text-muted-foreground">Update your company details and accent colors.</p>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <User className="h-4 w-4 text-primary" />
+                    Personal Details
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent>
+                  <form onSubmit={handleProfileSave} className="space-y-4">
+                    <Input
+                      label="First Name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="Enter first name"
+                      required
+                    />
+                    <Input
+                      label="Last Name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder="Enter last name"
+                      required
+                    />
+                    <Input
+                      label="Email Address"
+                      type="email"
+                      value={profileEmail}
+                      onChange={(e) => setProfileEmail(e.target.value)}
+                      placeholder="Enter email address"
+                      required
+                    />
+                    <Input
+                      label="Phone Number"
+                      value={profilePhone}
+                      onChange={(e) => setProfilePhone(e.target.value)}
+                      placeholder="Enter phone number"
+                    />
+                    <Button
+                      type="submit"
+                      className="w-full flex items-center justify-center gap-2 font-bold"
+                      disabled={updateProfileMutation.isPending}
+                    >
+                      {updateProfileMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                      Save Profile Changes
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+
+              {/* Password Card */}
+              <Card className="shadow-sm border-none bg-card">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Lock className="h-4 w-4 text-primary" />
+                    Security & Password
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handlePasswordSave} className="space-y-4">
+                    <Input
+                      label="Current Password"
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Enter current password"
+                      required
+                    />
+                    <Input
+                      label="New Password"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Minimum 10 characters"
+                      required
+                    />
+                    <Input
+                      label="Confirm New Password"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                      required
+                    />
+                    <Button
+                      type="submit"
+                      variant="outline"
+                      className="w-full flex items-center justify-center gap-2 border-primary text-primary hover:bg-primary/5 font-bold"
+                      disabled={updatePasswordMutation.isPending}
+                    >
+                      {updatePasswordMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                      Update Password
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {isCompanyAdmin && activeTab === 'branding' && (
+            <Card className="shadow-sm border-none bg-card">
+              <CardHeader>
+                <CardTitle className="text-lg">General & Branding</CardTitle>
+                <p className="text-xs text-muted-foreground">Update your company details and logo for organization branding.</p>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleBrandingSave} className="space-y-4">
                   <Input
                     label="Company Name"
                     value={name}
@@ -304,9 +573,7 @@ export default function StaffSettingsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-foreground">
-                      Primary Brand Color
-                    </label>
+                    <label className="block text-sm font-medium text-foreground">Primary Brand Color</label>
                     <div className="flex items-center gap-4">
                       <input
                         type="color"
@@ -324,7 +591,6 @@ export default function StaffSettingsPage() {
                     </div>
                   </div>
 
-                  {/* Brand Color Preview */}
                   <div className="p-4 bg-muted/30 rounded-lg border border-border/50">
                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Live Component Preview</h4>
                     <div className="flex flex-wrap items-center gap-3">
@@ -343,17 +609,30 @@ export default function StaffSettingsPage() {
                       </span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            )}
 
-            {activeTab === 'operations' && (
-              <Card className="shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-lg">Operations & Limits</CardTitle>
-                  <p className="text-xs text-muted-foreground">Configure base rules for deposits and withdrawals.</p>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                  <div className="flex justify-end pt-2">
+                    <Button
+                      type="submit"
+                      className="w-full sm:w-auto font-bold px-6"
+                      disabled={updateTenantMutation.isPending}
+                    >
+                      {updateTenantMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                      Save Branding Settings
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          )}
+
+          {isCompanyAdmin && activeTab === 'operations' && (
+            <Card className="shadow-sm border-none bg-card">
+              <CardHeader>
+                <CardTitle className="text-lg">Operations & Limits</CardTitle>
+                <p className="text-xs text-muted-foreground">Configure transactional requirements and operating boundaries.</p>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleOperationsSave} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="block text-sm font-medium text-foreground">Currency</label>
@@ -419,17 +698,30 @@ export default function StaffSettingsPage() {
                       min="1"
                     />
                   </div>
-                </CardContent>
-              </Card>
-            )}
 
-            {activeTab === 'commissions' && (
-              <Card className="shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-lg">Commissions & Fees</CardTitle>
-                  <p className="text-xs text-muted-foreground">Adjust operational fees charged on user savings plans.</p>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                  <div className="flex justify-end pt-2">
+                    <Button
+                      type="submit"
+                      className="w-full sm:w-auto font-bold px-6"
+                      disabled={updateTenantMutation.isPending}
+                    >
+                      {updateTenantMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                      Save Operations Settings
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          )}
+
+          {isCompanyAdmin && activeTab === 'commissions' && (
+            <Card className="shadow-sm border-none bg-card">
+              <CardHeader>
+                <CardTitle className="text-lg">Commissions & Fees</CardTitle>
+                <p className="text-xs text-muted-foreground">Adjust transaction-level fees and internal agent commission rates.</p>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleCommissionsSave} className="space-y-4">
                   <Input
                     label={`Flat Transaction Fee (${currency})`}
                     type="number"
@@ -451,21 +743,21 @@ export default function StaffSettingsPage() {
                     max="100"
                   />
                   <p className="text-[11px] text-muted-foreground">This percentage is paid out directly to field agent collectors from deposit volumes collected.</p>
-                </CardContent>
-              </Card>
-            )}
 
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                className="w-full sm:w-auto flex items-center gap-2 font-bold px-6"
-                disabled={updateSettingsMutation.isPending}
-              >
-                {updateSettingsMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                Save Settings
-              </Button>
-            </div>
-          </form>
+                  <div className="flex justify-end pt-2">
+                    <Button
+                      type="submit"
+                      className="w-full sm:w-auto font-bold px-6"
+                      disabled={updateTenantMutation.isPending}
+                    >
+                      {updateTenantMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                      Save Fees Settings
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
