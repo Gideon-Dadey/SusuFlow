@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faBell,
   faRightFromBracket,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
+import { NotificationPanel } from './notification-panel';
 import { getRoleLabel } from '@/lib/dashboard-nav';
 import { useAuthStore } from '@/stores/auth.store';
 import { getInitials, getProfilePath } from '@/lib/utils';
@@ -56,14 +56,7 @@ export function DashboardUserMenu() {
     <div ref={rootRef} className="flex items-center gap-1 sm:gap-2">
       <ThemeToggle iconOnly />
 
-      <button
-        type="button"
-        className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        aria-label="Notifications"
-      >
-        <FontAwesomeIcon icon={faBell} className="h-[1.05rem] w-[1.05rem]" />
-        <span className="absolute right-2 top-2 size-1.5 rounded-full bg-primary" aria-hidden />
-      </button>
+      <NotificationPanel />
 
       <div className="relative">
         <button
