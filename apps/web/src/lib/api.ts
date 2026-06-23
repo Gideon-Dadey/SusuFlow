@@ -530,9 +530,10 @@ export interface Transaction {
   currency: string;
   createdAt: string;
   completedAt?: string;
+  description?: string;
   customer?: {
     customerNumber?: string;
-    user?: { firstName: string; lastName: string };
+    user?: { firstName: string; lastName: string; phone?: string; email?: string };
   };
   payment?: {
     paymentMethod: string;
