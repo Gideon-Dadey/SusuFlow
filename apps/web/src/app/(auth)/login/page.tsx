@@ -13,14 +13,18 @@ import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
 
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+
 const REMEMBER_EMAIL_KEY = 'susuflow-remember-email';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const tenantParam = searchParams.get('tenant') || '';
   const { login, isLoading, error, clearError, setTenantSlug } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [tenant, setTenant] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -32,10 +36,15 @@ export default function LoginPage() {
     }
   }, []);
 
+  useEffect(() => {
+    if (tenantParam) {
+      setTenantSlug(tenantParam);
+    }
+  }, [tenantParam, setTenantSlug]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError();
-    setTenantSlug(tenant.trim());
 
     if (rememberMe) {
       localStorage.setItem(REMEMBER_EMAIL_KEY, email);
@@ -44,7 +53,7 @@ export default function LoginPage() {
     }
 
     try {
-      const path = await login(email, password, tenant.trim());
+      const path = await login(email, password);
       router.push(path);
     } catch {
       // error set in store
@@ -64,24 +73,7 @@ export default function LoginPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-        <div className="space-y-1.5">
-          <label htmlFor="tenant" className="block text-sm font-medium text-foreground">
-            Susu company
-          </label>
-          <input
-            id="tenant"
-            name="tenant"
-            type="text"
-            placeholder="Company slug"
-            className={authInputClassName}
-            value={tenant}
-            onChange={(e) => setTenant(e.target.value)}
-            autoComplete="organization"
-          />
-          <p className="text-xs text-muted-foreground">
-            Leave blank for platform admin (super admin) login.
-          </p>
-        </div>
+
 
         <div className="space-y-1.5">
           <label htmlFor="email" className="block text-sm font-medium text-foreground">
@@ -160,5 +152,13 @@ export default function LoginPage() {
 
       <AuthFooterExtras action="signing in" mode="login" />
     </AuthShell>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-8 text-sm text-muted-foreground animate-pulse">Loading login credentials...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

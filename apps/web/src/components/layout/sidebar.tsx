@@ -14,6 +14,11 @@ import {
   type NavGroup,
 } from '@/lib/dashboard-nav';
 
+import { useQuery } from '@tanstack/react-query';
+import { tenantApi } from '@/lib/api';
+import { getTenantSlug } from '@/lib/utils';
+import { useAuthStore } from '@/stores/auth.store';
+
 interface SidebarProps {
   variant?: 'staff' | 'admin';
   customerMode?: boolean;
@@ -60,9 +65,19 @@ export function Sidebar({
   onClose,
 }: SidebarProps) {
   const pathname = usePathname();
+  const { user } = useAuthStore();
+  
+  const tenantSlug = user?.tenantSlug || getTenantSlug();
+  const { data: tenantBranding } = useQuery({
+    queryKey: ['tenant-branding', tenantSlug],
+    queryFn: () => tenantApi.getBySlug(tenantSlug),
+    enabled: !!tenantSlug && variant !== 'admin',
+  });
 
   const brandLabel =
-    variant === 'admin' ? 'SusuFlow Admin' : customerMode ? 'My Susu' : 'SusuFlow';
+    variant === 'admin'
+      ? 'SusuFlow Admin'
+      : (tenantBranding?.name || (customerMode ? 'My Susu' : 'SusuFlow'));
 
   const isGrouped = (variant === 'staff' || variant === 'admin') && !customerMode;
   const navGroups = variant === 'admin' ? adminNavGroups : staffNavGroups;
@@ -81,9 +96,17 @@ export function Sidebar({
       )}
     >
       <div className="flex h-16 items-center gap-2 border-b border-border px-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
-          SF
-        </div>
+        {variant !== 'admin' && tenantBranding?.logoUrl ? (
+          <img
+            src={tenantBranding.logoUrl}
+            alt={brandLabel}
+            className="h-8 w-8 rounded-lg object-contain bg-transparent shrink-0"
+          />
+        ) : (
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground">
+            {variant === 'admin' ? 'SF' : brandLabel.substring(0, 2).toUpperCase()}
+          </div>
+        )}
         <span className="truncate text-sm font-semibold text-foreground">{brandLabel}</span>
       </div>
 
