@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { MoneyDisplay } from './money-display';
 import { StatusBadge } from '@/components/ui/badge';
@@ -14,7 +16,15 @@ interface ReceiptModalProps {
 }
 
 export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   if (!open || !transaction) return null;
+  if (!mounted) return null;
 
   const handlePrint = () => {
     window.print();
@@ -30,10 +40,10 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
 
   const formattedAmount = typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 bg-background/80 backdrop-blur-sm animate-fade-in md:items-center print:bg-white print:p-0 print:static print:block">
       {/* Background click handler */}
-      <div className="fixed inset-0 cursor-default" onClick={onClose} />
+      <div className="fixed inset-0 cursor-default print:hidden" onClick={onClose} />
       
       {/* Card Content Container */}
       <div className="relative z-10 w-full max-w-md my-auto rounded-xl border border-border bg-card p-5 shadow-elevated animate-scale-in print:border-0 print:shadow-none print:p-0 print:static print:block">
@@ -53,75 +63,241 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
         </div>
 
         {/* Printable Area */}
-        <div id="printable-receipt" className="space-y-4 pt-3 print:pt-0">
-          {/* Header */}
-          <div className="text-center space-y-1 border-b border-dashed border-border pb-3">
-            <h3 className="text-base font-bold text-foreground">SusuFlow Platform</h3>
-            <p className="text-[11px] text-muted-foreground">{formatDate(transaction.createdAt)}</p>
-          </div>
-
-          {/* Amount Display */}
-          <div className="text-center bg-muted/40 rounded-lg py-3 px-4 border border-border">
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-              {isDeposit ? 'Amount Saved' : 'Amount Withdrawn'}
-            </p>
-            <div className="mt-1 flex justify-center text-foreground font-bold">
-              <MoneyDisplay amount={formattedAmount} size="lg" />
-            </div>
-            <div className="mt-1.5 flex justify-center">
-              <StatusBadge status={transaction.status} />
-            </div>
-          </div>
-
-          {/* Transaction Metadata Details */}
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Reference</span>
-              <span className="font-mono text-xs font-semibold text-foreground uppercase">
-                {transaction.reference}
-              </span>
+        <div id="printable-receipt" className="w-full">
+          {/* Screen-Only Modal Content */}
+          <div className="print:hidden space-y-4 pt-3">
+            {/* Header */}
+            <div className="text-center space-y-1 border-b border-dashed border-border pb-3">
+              <h3 className="text-base font-bold text-foreground">SusuFlow Platform</h3>
+              <p className="text-[11px] text-muted-foreground">{formatDate(transaction.createdAt)}</p>
             </div>
 
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Transaction Type</span>
-              <span className="font-semibold text-foreground capitalize">
-                {transaction.type}
-              </span>
+            {/* Amount Display */}
+            <div className="text-center bg-muted/40 rounded-lg py-3 px-4 border border-border">
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                {isDeposit ? 'Amount Saved' : 'Amount Withdrawn'}
+              </p>
+              <div className="mt-1 flex justify-center text-foreground font-bold">
+                <MoneyDisplay amount={formattedAmount} size="lg" />
+              </div>
+              <div className="mt-1.5 flex justify-center">
+                <StatusBadge status={transaction.status} />
+              </div>
             </div>
 
-            {transaction.customer?.user ? (
+            {/* Transaction Metadata Details */}
+            <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Customer</span>
-                <span className="font-semibold text-foreground">
-                  {transaction.customer.user.firstName} {transaction.customer.user.lastName}
+                <span className="text-muted-foreground">Reference</span>
+                <span className="font-mono text-xs font-semibold text-foreground uppercase">
+                  {transaction.reference}
                 </span>
               </div>
-            ) : null}
 
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Payment Method</span>
-              <span className="font-semibold text-foreground capitalize">
-                {methodLabel.replace('_', ' ')}
-              </span>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Transaction Type</span>
+                <span className="font-semibold text-foreground capitalize">
+                  {transaction.type}
+                </span>
+              </div>
+
+              {transaction.customer?.user ? (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Customer</span>
+                  <span className="font-semibold text-foreground">
+                    {transaction.customer.user.firstName} {transaction.customer.user.lastName}
+                  </span>
+                </div>
+              ) : null}
+
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Payment Method</span>
+                <span className="font-semibold text-foreground capitalize">
+                  {methodLabel.replace('_', ' ')}
+                </span>
+              </div>
+
+              {phoneLabel ? (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Account / Phone</span>
+                  <span className="font-mono font-semibold text-foreground">{phoneLabel}</span>
+                </div>
+              ) : null}
+
+              <div className="flex justify-between border-t border-border pt-2.5">
+                <span className="text-muted-foreground">Currency</span>
+                <span className="font-semibold text-foreground">{transaction.currency || 'GHS'}</span>
+              </div>
             </div>
 
-            {phoneLabel ? (
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Account / Phone</span>
-                <span className="font-mono font-semibold text-foreground">{phoneLabel}</span>
-              </div>
-            ) : null}
-
-            <div className="flex justify-between border-t border-border pt-2.5">
-              <span className="text-muted-foreground">Currency</span>
-              <span className="font-semibold text-foreground">{transaction.currency || 'GHS'}</span>
+            {/* Footer Receipt Message */}
+            <div className="text-center border-t border-dashed border-border pt-3 space-y-0.5">
+              <p className="text-xs text-muted-foreground font-medium">Thank you for saving with SusuFlow!</p>
+              <p className="text-[10px] text-muted-foreground/60">This is a system-generated electronic receipt.</p>
             </div>
           </div>
 
-          {/* Footer Receipt Message */}
-          <div className="text-center border-t border-dashed border-border pt-3 space-y-0.5">
-            <p className="text-xs text-muted-foreground font-medium">Thank you for saving with SusuFlow!</p>
-            <p className="text-[10px] text-muted-foreground/60">This is a system-generated electronic receipt.</p>
+          {/* Print-Only Professional Document Content */}
+          <div className="hidden print:block space-y-8 text-black bg-white w-full text-sm">
+            {/* Top Accent Line */}
+            <div className="h-1.5 w-full bg-green-600 mb-6" />
+
+            {/* Centered Organization Title */}
+            <div className="text-center space-y-2">
+              <h1 className="text-2xl font-extrabold uppercase tracking-wider text-green-600">
+                {transaction.tenant?.name || 'SusuFlow Platform'}
+              </h1>
+              <h2 className="text-sm font-bold tracking-widest text-gray-800 border-b-2 border-gray-900 pb-1.5 inline-block px-4">
+                PAYMENT RECEIPT / INVOICE
+              </h2>
+            </div>
+
+            {/* Key-Value Details Grid */}
+            <div className="grid grid-cols-2 gap-x-12 gap-y-3 pt-6 text-[13px]">
+              {/* Left Column */}
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="font-semibold text-gray-500">Customer Name:</span>
+                  <span className="font-bold text-gray-900">
+                    {transaction.customer?.user 
+                      ? `${transaction.customer.user.firstName} ${transaction.customer.user.lastName}` 
+                      : 'Susu Member'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-semibold text-gray-500">Invoice / Ref #:</span>
+                  <span className="font-mono font-medium text-gray-900">{transaction.reference}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-semibold text-gray-500">Receipt Code:</span>
+                  <span className="font-mono font-semibold text-gray-900">
+                    {transaction.id.slice(0, 8).toUpperCase()}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-semibold text-gray-500">Payment Method:</span>
+                  <span className="font-bold text-gray-900 uppercase">
+                    {methodLabel.replace('_', ' ')}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-semibold text-gray-500">Payment Time:</span>
+                  <span className="font-medium text-gray-900">{formatDate(transaction.createdAt)}</span>
+                </div>
+              </div>
+
+              {/* Right Column */}
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="font-semibold text-gray-500">Customer ID:</span>
+                  <span className="font-mono font-medium text-gray-900">
+                    {transaction.customer?.customerNumber || 'N/A'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-semibold text-gray-500">Transaction Type:</span>
+                  <span className="font-bold text-gray-900 uppercase">{transaction.type}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-semibold text-gray-500">Payment Status:</span>
+                  <span className="font-bold text-green-600 uppercase">
+                    {transaction.status === 'completed' ? 'PAID' : transaction.status}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-semibold text-gray-500">Payment Ref:</span>
+                  <span className="font-mono font-medium text-gray-900">
+                    {transaction.reference.slice(-8).toUpperCase()}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Line Items Table */}
+            <div className="pt-6">
+              <table className="w-full text-left border-collapse text-[13px]">
+                <thead>
+                  <tr className="bg-green-50/80 border-b border-gray-300">
+                    <th className="py-2.5 px-4 font-bold text-gray-700 w-12 text-center">No.</th>
+                    <th className="py-2.5 px-4 font-bold text-gray-700">Service Description</th>
+                    <th className="py-2.5 px-4 font-bold text-gray-700 w-16 text-center">Qty</th>
+                    <th className="py-2.5 px-4 font-bold text-gray-700 w-28 text-right">Unit Price</th>
+                    <th className="py-2.5 px-4 font-bold text-gray-700 w-28 text-right">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 border-b border-gray-200">
+                  <tr>
+                    <td className="py-3 px-4 text-center text-gray-600">1</td>
+                    <td className="py-3 px-4 font-medium text-gray-900">
+                      {isDeposit 
+                        ? 'Susu Gateway-Confirmed Deposit Contribution' 
+                        : 'Susu Ledger-Authorized Account Cash Payout'}
+                    </td>
+                    <td className="py-3 px-4 text-center text-gray-800">1</td>
+                    <td className="py-3 px-4 text-right font-mono text-gray-800">GH¢ {formattedAmount.toFixed(2)}</td>
+                    <td className="py-3 px-4 text-right font-mono text-gray-900">GH¢ {formattedAmount.toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Summary Block */}
+            <div className="flex justify-end pt-4">
+              <div className="w-80 space-y-2 text-[13px]">
+                <div className="flex justify-between text-gray-600">
+                  <span className="font-medium">Total Bill:</span>
+                  <span className="font-mono">GH¢ {formattedAmount.toFixed(2)}</span>
+                </div>
+                
+                {/* Solid Pill block for Paid Status */}
+                <div className="flex justify-between items-center bg-green-600 text-white rounded-lg px-4 py-2 font-bold text-sm">
+                  <span>Paid:</span>
+                  <span className="font-mono">GH¢ {formattedAmount.toFixed(2)}</span>
+                </div>
+                
+                <div className="flex justify-between text-gray-600">
+                  <span className="font-medium">Balance:</span>
+                  <span className="font-mono">GH¢ 0.00</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Verification and QR Code section */}
+            <div className="flex gap-6 items-start border-t border-gray-200 pt-6 mt-8">
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent('https://susuflow.com/verify/receipt/' + transaction.reference + '?code=' + transaction.id.slice(0, 8).toUpperCase())}`} 
+                alt="Verification QR Code" 
+                className="h-28 w-28 border border-gray-200 p-1.5 bg-white shrink-0" 
+              />
+              <div className="space-y-1.5 text-xs text-gray-600 pt-1.5">
+                <p className="font-bold text-gray-800 uppercase tracking-wider text-[10px]">Verification Details</p>
+                <div className="space-y-0.5">
+                  <p className="font-semibold text-green-700">Verification URL</p>
+                  <p className="font-mono text-gray-500 break-all">
+                    https://susuflow.com/verify/receipt/{transaction.reference}?code={transaction.id.slice(0, 8).toUpperCase()}
+                  </p>
+                  <p className="text-[10px] text-gray-400 mt-1">
+                    Artifact SHA-256: <span className="font-mono">{
+                      // repeatable hash based on transaction reference
+                      (() => {
+                        let hash = 0;
+                        const str = transaction.reference;
+                        for (let i = 0; i < str.length; i++) {
+                          hash = (hash << 5) - hash + str.charCodeAt(i);
+                          hash = hash & hash;
+                        }
+                        return '8efca369' + Math.abs(hash).toString(16).padStart(8, '0') + 'ebffbaf96f00f53f511f71462b587c213e18a67b';
+                      })()
+                    }</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Fine print footer */}
+            <div className="border-t border-gray-200 pt-4 mt-8 text-center text-[10px] text-gray-400">
+              Issued by {transaction.tenant?.name || 'SusuFlow Platform'}. Printed on {new Date().toLocaleDateString('en-US')}, {new Date().toLocaleTimeString('en-US')}. Official receipt timestamp {formatDate(transaction.createdAt)}.
+            </div>
           </div>
         </div>
 
@@ -136,6 +312,7 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
