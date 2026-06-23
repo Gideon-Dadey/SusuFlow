@@ -160,4 +160,103 @@ export class TenantController {
   ) {
     return this.tenantService.getGlobalAuditLogs({ tenantId, cursor, limit });
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @Get('admin/health')
+  @ApiOperation({ summary: 'Get global system health and latency logs (super admin)' })
+  getGlobalHealth() {
+    return this.tenantService.getGlobalHealth();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @Get('admin/billing')
+  @ApiOperation({ summary: 'Get platform revenue & billing subscription reports (super admin)' })
+  getGlobalBilling() {
+    return this.tenantService.getGlobalBilling();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @Get('admin/ledger')
+  @ApiOperation({ summary: 'Get system consolidated trial balance ledger (super admin)' })
+  getGlobalLedger() {
+    return this.tenantService.getGlobalLedger();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @Get('admin/commissions')
+  @ApiOperation({ summary: 'Get consolidated collector commission balances (super admin)' })
+  getGlobalCommissions() {
+    return this.tenantService.getGlobalCommissions();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @Get('admin/plans')
+  @ApiOperation({ summary: 'Get platform savings plans config and enrollments (super admin)' })
+  getGlobalPlans() {
+    return this.tenantService.getGlobalPlans();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @Get('admin/customers')
+  @ApiOperation({ summary: 'Get platform-wide customers directory (super admin)' })
+  getGlobalCustomers(@Query('search') search?: string) {
+    return this.tenantService.getGlobalCustomers({ search });
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @Get('admin/users')
+  @ApiOperation({ summary: 'Get platform-wide users directory (super admin)' })
+  getGlobalUsers() {
+    return this.tenantService.getGlobalUsers();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @Get('admin/kyc')
+  @ApiOperation({ summary: 'Get global KYC document review queue (super admin)' })
+  getGlobalKycQueue() {
+    return this.tenantService.getGlobalKycQueue();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @Get('admin/settings')
+  @ApiOperation({ summary: 'Get platform global configurations (super admin)' })
+  getGlobalSettings() {
+    return this.tenantService.getGlobalSettings();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @Put('admin/settings')
+  @ApiOperation({ summary: 'Update platform global configurations (super admin)' })
+  updateGlobalSettings(@Body() dto: any) {
+    return this.tenantService.updateGlobalSettings(dto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLES.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @Post('admin/dev-ops/clear-cache')
+  @ApiOperation({ summary: 'Clear platform redis cache keys (super admin)' })
+  clearPlatformCache() {
+    return this.tenantService.clearPlatformCache();
+  }
 }
