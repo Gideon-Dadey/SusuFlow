@@ -33,7 +33,6 @@ export default function AdminAuditLogsPage() {
     <div className="space-y-6">
       <div className="page-header mb-0">
         <h1 className="text-2xl font-bold tracking-tight">System Audit Trail</h1>
-        <p className="text-sm text-muted-foreground">Platform-wide audit log of security events and administrative actions</p>
       </div>
 
       {/* Filter panel */}

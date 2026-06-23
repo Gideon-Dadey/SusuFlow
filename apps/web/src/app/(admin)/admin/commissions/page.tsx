@@ -19,7 +19,6 @@ export default function AdminCommissionsPage() {
     <div className="space-y-6">
       <div className="page-header mb-0">
         <h1 className="text-2xl font-bold tracking-tight">Collector Commissions</h1>
-        <p className="text-sm text-muted-foreground">Consolidated earnings, historical disbursements, and payable balances for collectors system-wide</p>
       </div>
 
       {isLoading ? (

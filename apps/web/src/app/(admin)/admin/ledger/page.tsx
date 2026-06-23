@@ -25,7 +25,6 @@ export default function AdminLedgerPage() {
     <div className="space-y-6">
       <div className="page-header mb-0">
         <h1 className="text-2xl font-bold tracking-tight">Consolidated Ledger</h1>
-        <p className="text-sm text-muted-foreground">Consolidated double-entry trial balance sheet across all platform ledger accounts</p>
       </div>
 
       {isLoading ? (

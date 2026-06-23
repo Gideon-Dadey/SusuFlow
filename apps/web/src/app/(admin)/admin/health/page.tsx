@@ -27,7 +27,6 @@ export default function AdminHealthPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="page-header mb-0">
           <h1 className="text-2xl font-bold tracking-tight">System Health Metrics</h1>
-          <p className="text-sm text-muted-foreground">Real-time telemetry, server hardware metrics, and external microservice status</p>
         </div>
         <Button size="sm" variant="outline" onClick={() => refetch()} disabled={isFetching}>
           <FontAwesomeIcon icon={faRefresh} className={`mr-1.5 h-3.5 w-3.5 ${isFetching ? 'animate-spin' : ''}`} />

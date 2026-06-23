@@ -20,7 +20,6 @@ export default function AdminKycPage() {
     <div className="space-y-6">
       <div className="page-header mb-0">
         <h1 className="text-2xl font-bold tracking-tight">Identity KYC Review Queue</h1>
-        <p className="text-sm text-muted-foreground">Monitor Ghana Cards, passport booklets, and identity verification logs across all organizations</p>
       </div>
 
       <Card className="portal-card border-border/60">

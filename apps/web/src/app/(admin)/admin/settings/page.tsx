@@ -63,7 +63,6 @@ export default function AdminSettingsPage() {
     <div className="space-y-6">
       <div className="page-header mb-0">
         <h1 className="text-2xl font-bold tracking-tight">Platform Configuration</h1>
-        <p className="text-sm text-muted-foreground">Adjust SaaS-wide parameters, system overrides, backup policies, and transactional fees</p>
       </div>
 
       {successMsg && (
