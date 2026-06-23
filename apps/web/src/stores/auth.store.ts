@@ -119,6 +119,9 @@ export const useAuthStore = create<AuthState>()(
           refreshToken: null,
           isAuthenticated: false,
         });
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
       },
 
       clearError: () => set({ error: null }),

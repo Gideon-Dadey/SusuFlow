@@ -20,6 +20,14 @@ export class UserService {
         status: true,
         emailVerified: true,
         createdAt: true,
+        customer: {
+          select: {
+            id: true,
+            customerNumber: true,
+            status: true,
+            kycLevel: true,
+          },
+        },
       },
     });
     if (!user) throw new NotFoundException('User not found');

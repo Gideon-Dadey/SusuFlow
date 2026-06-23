@@ -15,7 +15,7 @@ export function ProfileContent() {
   const { user: authUser } = useAuthStore();
 
   const { data: user, refetch } = useQuery({
-    queryKey: ['user-profile'],
+    queryKey: ['user-profile', authUser?.id],
     queryFn: () => userApi.getMe(),
   });
 
@@ -37,7 +37,7 @@ export function ProfileContent() {
   // Company settings & branding states (for company_admin)
   const queryClient = useQueryClient();
   const { data: tenant, refetch: refetchTenant } = useQuery({
-    queryKey: ['tenant-settings'],
+    queryKey: ['tenant-settings', authUser?.tenantSlug],
     queryFn: () => tenantApi.getMe(),
     enabled: !!authUser?.roles.includes('company_admin'),
   });

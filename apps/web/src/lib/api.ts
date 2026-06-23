@@ -46,6 +46,49 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   }
 
   if (!response.ok) {
+    if (response.status === 401 && !skipAuth && typeof window !== 'undefined') {
+      const refreshToken = localStorage.getItem('refresh_token');
+      if (refreshToken) {
+        try {
+          const refreshResponse = await fetch(`${API_BASE}/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken }),
+          });
+          if (refreshResponse.ok) {
+            const refreshData = await refreshResponse.json();
+            const newAccessToken = refreshData.data?.accessToken || refreshData.accessToken;
+            if (newAccessToken) {
+              localStorage.setItem('access_token', newAccessToken);
+
+              // Dynamically import store to avoid circular dependency
+              const { useAuthStore } = await import('@/stores/auth.store');
+              useAuthStore.setState({ accessToken: newAccessToken, isAuthenticated: true });
+
+              // Retry the request with the new access token
+              headers.Authorization = `Bearer ${newAccessToken}`;
+              response = await fetch(`${API_BASE}${endpoint}`, { ...init, headers });
+
+              if (response.ok) {
+                const json = await response.json();
+                return json.data ?? json;
+              }
+            }
+          }
+        } catch {
+          // Ignore and fall through to logout
+        }
+      }
+
+      // If refresh fails or retried request still fails, clear tokens and redirect to login
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      const { useAuthStore } = await import('@/stores/auth.store');
+      useAuthStore.setState({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
+      window.location.href = '/login?expired=1';
+      throw new ApiError('Session expired. Please log in again.', 401);
+    }
+
     const error = await response.json().catch(() => ({}));
     const detail = error.detail || error.title;
     if (response.status >= 500 && !detail) {
@@ -167,6 +210,13 @@ export const authApi = {
 
   logout: (refreshToken: string) =>
     api.post('/auth/logout', { refreshToken }),
+
+  refresh: (refreshToken: string) =>
+    api.post<{ accessToken: string; expiresIn: number }>(
+      '/auth/refresh',
+      { refreshToken },
+      { skipAuth: true },
+    ),
 };
 
 export const tenantApi = {
