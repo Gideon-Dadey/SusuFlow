@@ -4,7 +4,7 @@ import { DepositService } from './deposit.service';
 import { CreateDepositDto } from './dto/deposit.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { Roles, CurrentUser, Tenant } from '../../common/decorators';
+import { Roles, Public, CurrentUser, Tenant } from '../../common/decorators';
 import { ROLES, TenantContext, AuthenticatedUser } from '@susuflow/shared';
 
 @ApiTags('deposits')
@@ -69,4 +69,10 @@ export class DepositController {
     );
   }
 
+  @Public()
+  @Get('deposits/verify/:reference')
+  @ApiOperation({ summary: 'Verify a transaction receipt by reference' })
+  async verifyReceipt(@Param('reference') reference: string) {
+    return this.depositService.verifyReceipt(reference);
+  }
 }

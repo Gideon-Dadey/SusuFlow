@@ -216,4 +216,43 @@ export class DepositService {
     if (!txn) throw new NotFoundException('Deposit not found');
     return txn;
   }
+
+  async verifyReceipt(reference: string) {
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { reference },
+      include: {
+        payment: true,
+        withdrawal: true,
+        tenant: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        customer: {
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+                phone: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!transaction) {
+      throw new NotFoundException('Transaction not found or invalid reference');
+    }
+
+    // Set tenant context to this transaction's tenant so any RLS checks in this execution thread pass.
+    await this.prisma.setTenantContext(transaction.tenantId);
+
+    return transaction;
+  }
 }
+

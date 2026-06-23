@@ -31,6 +31,8 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
   };
 
   const isDeposit = transaction.type === 'deposit';
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://susuflow.com';
+  const verifyUrl = `${origin}/verify/receipt/${transaction.reference}?code=${transaction.id.slice(0, 8).toUpperCase()}`;
   const methodLabel = isDeposit
     ? transaction.payment?.paymentMethod || 'Cash'
     : transaction.withdrawal?.disbursementMethod || 'Cash';
@@ -265,7 +267,7 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
             {/* Verification and QR Code section */}
             <div className="flex gap-6 items-start border-t border-gray-200 pt-6 mt-8">
               <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent('https://susuflow.com/verify/receipt/' + transaction.reference + '?code=' + transaction.id.slice(0, 8).toUpperCase())}`} 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verifyUrl)}`} 
                 alt="Verification QR Code" 
                 className="h-28 w-28 border border-gray-200 p-1.5 bg-white shrink-0" 
               />
@@ -274,7 +276,7 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
                 <div className="space-y-0.5">
                   <p className="font-semibold text-green-700">Verification URL</p>
                   <p className="font-mono text-gray-500 break-all">
-                    https://susuflow.com/verify/receipt/{transaction.reference}?code={transaction.id.slice(0, 8).toUpperCase()}
+                    {verifyUrl}
                   </p>
                   <p className="text-[10px] text-gray-400 mt-1">
                     Artifact SHA-256: <span className="font-mono">{
