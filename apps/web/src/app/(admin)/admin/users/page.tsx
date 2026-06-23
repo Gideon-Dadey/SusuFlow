@@ -44,7 +44,6 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div className="page-header mb-0">
         <h1 className="text-2xl font-bold tracking-tight">Platform Users & Personnel</h1>
-        <p className="text-sm text-muted-foreground">Monitor platform staff, organization administrators, collectors, and account officers globally</p>
       </div>
 
       <Card className="portal-card border-border/60">

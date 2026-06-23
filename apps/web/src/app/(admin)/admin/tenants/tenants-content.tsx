@@ -101,7 +101,6 @@ export default function AdminTenantsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="page-header mb-0">
           <h1>Platform Tenants</h1>
-          <p>Provision susu companies, manage subscriptions, and control access</p>
         </div>
         <Link href="/admin/tenants/new">
           <Button>Create organization</Button>

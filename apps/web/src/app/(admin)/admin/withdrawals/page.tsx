@@ -64,7 +64,6 @@ export default function AdminWithdrawalsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="page-header mb-0">
           <h1 className="text-2xl font-bold tracking-tight">Global Withdrawals</h1>
-          <p className="text-sm text-muted-foreground">System-wide log of saver cash withdrawals across all registered tenants</p>
         </div>
         <Button
           size="sm"

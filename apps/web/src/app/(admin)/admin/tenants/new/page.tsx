@@ -83,7 +83,6 @@ export default function CreateTenantPage() {
       <div className="mx-auto max-w-2xl space-y-6">
         <div className="page-header">
           <h1>Organization provisioned</h1>
-          <p>Share these details with the susu company after your demo and payment</p>
         </div>
         <Card className="portal-card border-secondary/30">
           <CardHeader>
@@ -134,7 +133,6 @@ export default function CreateTenantPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="page-header">
         <h1>Create organization</h1>
-        <p>Provision a new susu company after demo and agreement</p>
       </div>
 
       <Card className="portal-card">
