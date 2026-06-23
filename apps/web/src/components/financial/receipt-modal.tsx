@@ -7,7 +7,9 @@ import { MoneyDisplay } from './money-display';
 import { StatusBadge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
 import { Printer, X, Receipt } from 'lucide-react';
-import { Transaction } from '@/lib/api';
+import { Transaction, tenantApi } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
+import { useAuthStore } from '@/stores/auth.store';
 
 interface ReceiptModalProps {
   transaction: Transaction | null;
@@ -23,8 +25,17 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
     return () => setMounted(false);
   }, []);
 
+  const { tenantSlug } = useAuthStore();
+  const { data: tenantInfo } = useQuery({
+    queryKey: ['tenant-branding', transaction?.tenant?.slug || tenantSlug],
+    queryFn: () => tenantApi.getBySlug(transaction?.tenant?.slug || tenantSlug),
+    enabled: !!(transaction?.tenant?.slug || tenantSlug),
+  });
+
   if (!open || !transaction) return null;
   if (!mounted) return null;
+
+  const companyName = transaction.tenant?.name || tenantInfo?.name || 'SusuFlow Platform';
 
   const handlePrint = () => {
     window.print();
@@ -33,11 +44,27 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
   const isDeposit = transaction.type === 'deposit';
   const origin = typeof window !== 'undefined' ? window.location.origin : 'https://susuflow.com';
   const verifyUrl = `${origin}/verify/receipt/${transaction.reference}?code=${transaction.id.slice(0, 8).toUpperCase()}`;
-  const methodLabel = isDeposit
-    ? transaction.payment?.paymentMethod || 'Cash'
-    : transaction.withdrawal?.disbursementMethod || 'Cash';
+  const getDepositMethod = () => {
+    if (transaction.payment?.paymentMethod) {
+      return transaction.payment.paymentMethod;
+    }
+    if (transaction.description && transaction.description.toLowerCase().includes('via')) {
+      const parts = transaction.description.split(/via/i);
+      return parts[parts.length - 1].trim();
+    }
+    return 'Mobile Money';
+  };
+
+  const getWithdrawalMethod = () => {
+    if (transaction.withdrawal?.disbursementMethod) {
+      return transaction.withdrawal.disbursementMethod;
+    }
+    return 'Mobile Money';
+  };
+
+  const methodLabel = isDeposit ? getDepositMethod() : getWithdrawalMethod();
   const phoneLabel = isDeposit
-    ? transaction.payment?.paymentMethod ? transaction.payment?.paymentMethod : null
+    ? (transaction.payment as any)?.payerPhone || transaction.customer?.user?.phone || null
     : transaction.withdrawal?.disbursementPhone || null;
 
   const formattedAmount = typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount;
@@ -70,7 +97,7 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
           <div className="print:hidden space-y-4 pt-3">
             {/* Header */}
             <div className="text-center space-y-1 border-b border-dashed border-border pb-3">
-              <h3 className="text-base font-bold text-foreground">SusuFlow Platform</h3>
+              <h3 className="text-base font-bold text-foreground">{companyName}</h3>
               <p className="text-[11px] text-muted-foreground">{formatDate(transaction.createdAt)}</p>
             </div>
 
@@ -147,7 +174,7 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
             {/* Centered Organization Title */}
             <div className="text-center space-y-2">
               <h1 className="text-2xl font-extrabold uppercase tracking-wider text-green-600">
-                {transaction.tenant?.name || 'SusuFlow Platform'}
+                {companyName}
               </h1>
               <h2 className="text-sm font-bold tracking-widest text-gray-800 border-b-2 border-gray-900 pb-1.5 inline-block px-4">
                 PAYMENT RECEIPT / INVOICE

@@ -36,10 +36,15 @@ export function StatusBadge({ status }: { status: string }) {
     failed: 'danger',
     rejected: 'danger',
     reversed: 'danger',
+    offline_pending: 'warning',
+    syncing: 'info',
   };
+
+  const label = status === 'offline_pending' ? 'Offline Queue' : status;
+
   return (
     <Badge variant={map[status] || 'neutral'}>
-      {status.charAt(0).toUpperCase() + status.slice(1)}
+      {label.charAt(0).toUpperCase() + label.slice(1).replace('_', ' ')}
     </Badge>
   );
 }

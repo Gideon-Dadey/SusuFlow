@@ -8,11 +8,13 @@ import { depositApi, withdrawalApi, Transaction, userApi } from '@/lib/api';
 import { TransactionListSkeleton } from '@/components/ui/skeleton';
 import { ReceiptModal } from '@/components/financial/receipt-modal';
 import { useAuthStore } from '@/stores/auth.store';
+import { useOfflineSync } from '@/components/offline-sync-provider';
 
 export default function TransactionsPage() {
   const user = useAuthStore((s) => s.user);
   const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
+  const { queuedDeposits } = useOfflineSync();
 
   // Query current user's profile to retrieve the associated customer account
   const { data: userProfile } = useQuery({
@@ -36,7 +38,30 @@ export default function TransactionsPage() {
 
   const isLoading = depositsLoading || withdrawalsLoading;
 
+  const mappedQueued: Transaction[] = queuedDeposits.map(q => ({
+    id: q.id,
+    reference: q.reference,
+    type: 'deposit',
+    status: q.status,
+    amount: q.amount,
+    currency: 'GHS',
+    createdAt: q.createdAt,
+    description: `Deposit via ${q.paymentMethod} (Queued Offline)`,
+    customer: {
+      customerNumber: 'Offline',
+      user: {
+        firstName: q.customerName.split(' ')[0] || 'Customer',
+        lastName: q.customerName.split(' ').slice(1).join(' ') || ''
+      }
+    },
+    payment: {
+      paymentMethod: q.paymentMethod,
+      status: q.status === 'syncing' ? 'pending' : 'initiated'
+    }
+  }));
+
   const transactions = [
+    ...mappedQueued,
     ...(depositsData?.items || []),
     ...(withdrawalsData?.items || []),
   ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());

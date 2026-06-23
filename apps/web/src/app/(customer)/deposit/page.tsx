@@ -9,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MoneyDisplay } from '@/components/financial/money-display';
 import { depositApi, userApi } from '@/lib/api';
 import { useAuthStore } from '@/stores/auth.store';
-import { CheckCircle, ArrowLeft } from 'lucide-react';
+import { useOfflineSync } from '@/components/offline-sync-provider';
+import { CheckCircle, ArrowLeft, Clock, WifiOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 const QUICK_AMOUNTS = [10, 50, 100, 500];
@@ -20,13 +21,14 @@ const PAYMENT_METHODS = [
 
 export default function DepositPage() {
   const router = useRouter();
+  const { queueDeposit, isOnline } = useOfflineSync();
   const [step, setStep] = useState(1);
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState('mtn_momo');
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [result, setResult] = useState<{ reference: string; paymentUrl?: string } | null>(null);
+  const [result, setResult] = useState<{ reference: string; paymentUrl?: string; isOfflineQueued?: boolean } | null>(null);
 
   // Query current user's profile to retrieve the associated customer account and details
   const { data: userProfile } = useQuery({
@@ -44,22 +46,64 @@ export default function DepositPage() {
   const handleDeposit = async () => {
     setLoading(true);
     setError('');
+    const idempotencyKey = `dep_${Date.now()}`;
+    const depositAmount = parseFloat(amount);
+
     try {
+      if (typeof window !== 'undefined' && !navigator.onLine) {
+        throw new TypeError('Failed to fetch');
+      }
+
       const profile = await userApi.getMe();
       const customer = profile.customer;
       if (!customer) throw new Error('Customer profile not found. Please contact support.');
 
       const res = await depositApi.initiate({
-        amount: parseFloat(amount),
+        amount: depositAmount,
         paymentMethod: method,
         customerId: customer.id,
         payerPhone: phone,
-        idempotencyKey: `dep_${Date.now()}`,
+        idempotencyKey,
       });
 
-      setResult({ reference: res.reference, paymentUrl: res.payment.paymentUrl });
+      setResult({ reference: res.reference, paymentUrl: res.payment.paymentUrl, isOfflineQueued: false });
       setStep(3);
     } catch (err) {
+      const errMsg = err instanceof Error ? err.message : '';
+      const isNetworkError = typeof window !== 'undefined' && (
+        !navigator.onLine || 
+        errMsg.toLowerCase().includes('reach') || 
+        errMsg.toLowerCase().includes('fetch') || 
+        errMsg.toLowerCase().includes('network') ||
+        errMsg.toLowerCase().includes('failed to fetch')
+      );
+
+      if (isNetworkError) {
+        try {
+          const customer = userProfile?.customer;
+          const customerName = userProfile ? `${userProfile.firstName} ${userProfile.lastName}`.trim() : 'Customer';
+
+          if (customer) {
+            const queuedItem = queueDeposit({
+              amount: depositAmount,
+              paymentMethod: method,
+              customerId: customer.id,
+              payerPhone: phone,
+              customerName,
+              idempotencyKey,
+            });
+
+            setResult({ 
+              reference: queuedItem.reference, 
+              isOfflineQueued: true 
+            });
+            setStep(3);
+            return;
+          }
+        } catch (queueErr) {
+          console.error('Failed to queue deposit offline', queueErr);
+        }
+      }
       setError(err instanceof Error ? err.message : 'Deposit failed');
     } finally {
       setLoading(false);
@@ -67,32 +111,58 @@ export default function DepositPage() {
   };
 
   if (step === 3 && result) {
+    const isOffline = result.isOfflineQueued;
+
     return (
-      <div className="space-y-6 text-center py-8">
+      <div className="space-y-6 text-center py-8 max-w-md mx-auto">
         <div className="flex justify-center">
-          <CheckCircle className="h-16 w-16 text-credit" />
+          {isOffline ? (
+            <div className="relative flex items-center justify-center h-20 w-20 rounded-full bg-amber-100 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400">
+              <Clock className="h-12 w-12 animate-pulse" />
+              <WifiOff className="absolute bottom-0 right-0 h-6 w-6 bg-card border-2 border-card rounded-full p-1" />
+            </div>
+          ) : (
+            <CheckCircle className="h-16 w-16 text-credit" />
+          )}
         </div>
-        <h2 className="dashboard-title">Payment Initiated!</h2>
-        <p className="text-muted-foreground">
-          Confirm the MoMo prompt on your phone to complete your deposit.
+        
+        <h2 className="dashboard-title text-xl font-extrabold tracking-tight">
+          {isOffline ? 'Deposit Saved Offline!' : 'Payment Initiated!'}
+        </h2>
+        
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          {isOffline 
+            ? 'Your connection is currently slow or offline. We have registered your deposit request locally. SusuFlow will automatically submit and execute it as soon as your network recovers.'
+            : 'Confirm the MoMo prompt on your phone to complete your deposit.'}
         </p>
-        <Card>
-          <CardContent className="p-4 space-y-2 text-left">
-            <div className="flex justify-between text-sm">
+
+        <Card className="border border-border bg-card shadow-sm">
+          <CardContent className="p-4 space-y-2.5 text-left text-sm">
+            <div className="flex justify-between border-b border-border/40 pb-2">
               <span className="text-muted-foreground">Amount</span>
               <MoneyDisplay amount={parseFloat(amount)} size="sm" />
             </div>
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between items-center pt-1.5">
               <span className="text-muted-foreground">Reference</span>
-              <span className="font-mono text-xs">{result.reference}</span>
+              <span className="font-mono text-xs font-semibold px-2 py-0.5 bg-muted rounded border border-border/60">{result.reference}</span>
             </div>
+            {isOffline && (
+              <div className="flex justify-between items-center border-t border-border/40 pt-2 text-xs">
+                <span className="text-muted-foreground">Sync Status</span>
+                <span className="inline-flex items-center gap-1 font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider text-[10px]">
+                  <Loader2 className="h-3 w-3 animate-spin" /> Awaiting Internet
+                </span>
+              </div>
+            )}
           </CardContent>
         </Card>
-        {result.paymentUrl ? (
+
+        {!isOffline && result.paymentUrl ? (
           <a href={result.paymentUrl} target="_blank" rel="noopener noreferrer">
             <Button className="w-full">Open Payment Page</Button>
           </a>
         ) : null}
+        
         <Button variant="outline" className="w-full" onClick={() => router.push('/dashboard')}>
           Back to Dashboard
         </Button>

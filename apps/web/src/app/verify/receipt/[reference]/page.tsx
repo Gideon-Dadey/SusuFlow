@@ -52,6 +52,28 @@ export default function ReceiptVerificationPage() {
       });
   }, [reference]);
 
+  const getDepositMethod = (transaction: any) => {
+    if (transaction.payment?.paymentMethod) {
+      return transaction.payment.paymentMethod;
+    }
+    if (transaction.description && transaction.description.toLowerCase().includes('via')) {
+      const parts = transaction.description.split(/via/i);
+      return parts[parts.length - 1].trim();
+    }
+    return 'Mobile Money';
+  };
+
+  const getWithdrawalMethod = (transaction: any) => {
+    if (transaction.withdrawal?.disbursementMethod) {
+      return transaction.withdrawal.disbursementMethod;
+    }
+    return 'Mobile Money';
+  };
+
+  const getMethodLabel = (transaction: any) => {
+    return transaction.type === 'deposit' ? getDepositMethod(transaction) : getWithdrawalMethod(transaction);
+  };
+
   const formatDate = (dateStr: string) => {
     try {
       const date = new Date(dateStr);
@@ -191,9 +213,7 @@ export default function ReceiptVerificationPage() {
                     <span>Type & Method</span>
                   </div>
                   <span className="font-semibold text-foreground uppercase text-right">
-                    {txn.type} ({txn.type === 'deposit' 
-                      ? txn.payment?.paymentMethod || 'Cash' 
-                      : txn.withdrawal?.disbursementMethod || 'Cash'})
+                    {txn.type} ({getMethodLabel(txn)})
                   </span>
                 </div>
 
