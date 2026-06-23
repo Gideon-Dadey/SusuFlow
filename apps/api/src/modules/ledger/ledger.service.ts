@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { AccountType, EntryType } from '@susuflow/database';
-import { AuditService } from '../audit/audit.service';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import { EntryType } from "@susuflow/database";
+import { AuditService } from "../audit/audit.service";
+import {
+  ensureTenantChartOfAccounts,
+  SYSTEM_ACCOUNT_CODES,
+} from "../../common/utils/chart-of-accounts";
 
 interface LedgerEntryInput {
   accountId: string;
@@ -18,21 +22,22 @@ export class LedgerService {
     private readonly audit: AuditService,
   ) {}
 
-
   async postEntries(
     tenantId: string,
     transactionId: string,
     entries: LedgerEntryInput[],
   ) {
     const totalDebits = entries
-      .filter((e) => e.entryType === 'debit')
+      .filter((e) => e.entryType === "debit")
       .reduce((sum, e) => sum + e.amount, 0);
     const totalCredits = entries
-      .filter((e) => e.entryType === 'credit')
+      .filter((e) => e.entryType === "credit")
       .reduce((sum, e) => sum + e.amount, 0);
 
     if (Math.abs(totalDebits - totalCredits) > 0.001) {
-      throw new Error(`Ledger imbalance: debits=${totalDebits}, credits=${totalCredits}`);
+      throw new Error(
+        `Ledger imbalance: debits=${totalDebits}, credits=${totalCredits}`,
+      );
     }
 
     return this.prisma.ledgerEntry.createMany({
@@ -49,24 +54,34 @@ export class LedgerService {
   }
 
   async getAccountBalance(accountId: string): Promise<number> {
-    const account = await this.prisma.account.findUnique({ where: { id: accountId } });
-    if (!account) throw new NotFoundException('Account not found');
+    const account = await this.prisma.account.findUnique({
+      where: { id: accountId },
+    });
+    if (!account) throw new NotFoundException("Account not found");
 
     const sums = await this.prisma.ledgerEntry.groupBy({
-      by: ['entryType'],
+      by: ["entryType"],
       where: { accountId },
       _sum: { amount: true },
     });
 
-    const debitTotal = Number(sums.find((s) => s.entryType === 'debit')?._sum?.amount ?? 0);
-    const creditTotal = Number(sums.find((s) => s.entryType === 'credit')?._sum?.amount ?? 0);
-    const isNormalCredit = ['liability', 'revenue', 'equity'].includes(account.accountType);
+    const debitTotal = Number(
+      sums.find((s) => s.entryType === "debit")?._sum?.amount ?? 0,
+    );
+    const creditTotal = Number(
+      sums.find((s) => s.entryType === "credit")?._sum?.amount ?? 0,
+    );
+    const isNormalCredit = ["liability", "revenue", "equity"].includes(
+      account.accountType,
+    );
 
     return isNormalCredit ? creditTotal - debitTotal : debitTotal - creditTotal;
   }
 
   async getWalletBalance(walletId: string): Promise<number> {
-    const accounts = await this.prisma.account.findMany({ where: { walletId } });
+    const accounts = await this.prisma.account.findMany({
+      where: { walletId },
+    });
     let total = 0;
     for (const account of accounts) {
       total += await this.getAccountBalance(account.id);
@@ -74,7 +89,15 @@ export class LedgerService {
     return Math.round(total * 100) / 100;
   }
 
+  async ensureChartOfAccounts(tenantId: string) {
+    await ensureTenantChartOfAccounts(this.prisma, tenantId);
+  }
+
   async getAccountByCode(tenantId: string, code: string) {
+    if (SYSTEM_ACCOUNT_CODES.has(code)) {
+      await this.ensureChartOfAccounts(tenantId);
+    }
+
     const account = await this.prisma.account.findUnique({
       where: { tenantId_code: { tenantId, code } },
     });
@@ -88,7 +111,7 @@ export class LedgerService {
     });
 
     const entrySums = await this.prisma.ledgerEntry.groupBy({
-      by: ['accountId', 'entryType'],
+      by: ["accountId", "entryType"],
       where: { tenantId },
       _sum: { amount: true },
     });
@@ -98,13 +121,19 @@ export class LedgerService {
       if (!sumMap[sum.accountId]) {
         sumMap[sum.accountId] = { debit: 0, credit: 0 };
       }
-      sumMap[sum.accountId][sum.entryType as 'debit' | 'credit'] = Number(sum._sum.amount || 0);
+      sumMap[sum.accountId][sum.entryType as "debit" | "credit"] = Number(
+        sum._sum.amount || 0,
+      );
     }
 
     return accounts.map((account) => {
       const sums = sumMap[account.id] || { debit: 0, credit: 0 };
-      const isNormalCredit = ['liability', 'revenue', 'equity'].includes(account.accountType);
-      const balance = isNormalCredit ? sums.credit - sums.debit : sums.debit - sums.credit;
+      const isNormalCredit = ["liability", "revenue", "equity"].includes(
+        account.accountType,
+      );
+      const balance = isNormalCredit
+        ? sums.credit - sums.debit
+        : sums.debit - sums.credit;
       return {
         ...account,
         debitSum: sums.debit,
@@ -119,11 +148,11 @@ export class LedgerService {
       where: {
         tenantId,
         OR: [
-          { type: 'commission' },
+          { type: "commission" },
           {
-            type: 'deposit',
+            type: "deposit",
             collectorId: { not: null },
-            status: 'completed',
+            status: "completed",
           },
         ],
       },
@@ -148,7 +177,7 @@ export class LedgerService {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
   }
@@ -161,31 +190,39 @@ export class LedgerService {
     description?: string,
   ) {
     const sums = await this.prisma.ledgerEntry.groupBy({
-      by: ['entryType'],
+      by: ["entryType"],
       where: {
         tenantId,
-        account: { code: '1200' },
+        account: { code: "1200" },
         transaction: { collectorId },
       },
       _sum: { amount: true },
     });
 
-    const debitTotal = Number(sums.find((s) => s.entryType === 'debit')?._sum?.amount ?? 0);
-    const creditTotal = Number(sums.find((s) => s.entryType === 'credit')?._sum?.amount ?? 0);
+    const debitTotal = Number(
+      sums.find((s) => s.entryType === "debit")?._sum?.amount ?? 0,
+    );
+    const creditTotal = Number(
+      sums.find((s) => s.entryType === "credit")?._sum?.amount ?? 0,
+    );
     const availableBalance = creditTotal - debitTotal;
 
     if (amount > availableBalance) {
-      throw new Error(`Insufficient commission balance. Available: GHS ${availableBalance}, Requested: GHS ${amount}`);
+      throw new Error(
+        `Insufficient commission balance. Available: GHS ${availableBalance}, Requested: GHS ${amount}`,
+      );
     }
 
     const ref = `PAY-COM-${Date.now()}`;
     return this.prisma.$transaction(async (tx) => {
+      await ensureTenantChartOfAccounts(tx, tenantId);
+
       const transaction = await tx.transaction.create({
         data: {
           tenantId,
           reference: ref,
-          type: 'commission',
-          status: 'completed',
+          type: "commission",
+          status: "completed",
           amount,
           collectorId,
           description: description || `Commission payout of GHS ${amount}`,
@@ -193,14 +230,14 @@ export class LedgerService {
       });
 
       const commissionsPayable = await tx.account.findFirst({
-        where: { tenantId, code: '1200' },
+        where: { tenantId, code: "1200" },
       });
       const platformCash = await tx.account.findFirst({
-        where: { tenantId, code: '1000' },
+        where: { tenantId, code: "1000" },
       });
 
       if (!commissionsPayable || !platformCash) {
-        throw new Error('Required chart of accounts (1000 or 1200) not found');
+        throw new Error("Required chart of accounts (1000 or 1200) not found");
       }
 
       await tx.ledgerEntry.createMany({
@@ -209,7 +246,7 @@ export class LedgerService {
             tenantId,
             transactionId: transaction.id,
             accountId: commissionsPayable.id,
-            entryType: 'debit',
+            entryType: "debit",
             amount,
             description: `Payout: ${ref}`,
           },
@@ -217,7 +254,7 @@ export class LedgerService {
             tenantId,
             transactionId: transaction.id,
             accountId: platformCash.id,
-            entryType: 'credit',
+            entryType: "credit",
             amount,
             description: `Payout: ${ref}`,
           },
@@ -227,8 +264,8 @@ export class LedgerService {
       await this.audit.log({
         tenantId,
         userId: actorId,
-        action: 'ledger:commission_payout',
-        resourceType: 'transaction',
+        action: "ledger:commission_payout",
+        resourceType: "transaction",
         resourceId: transaction.id,
         afterState: { collectorId, amount, description },
       });
@@ -237,4 +274,3 @@ export class LedgerService {
     });
   }
 }
-

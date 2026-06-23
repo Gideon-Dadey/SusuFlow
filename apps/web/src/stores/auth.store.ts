@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authApi, LoginResponse } from "@/lib/api";
-import { getDashboardPath } from "@/lib/utils";
+import { getDashboardPath, getTenantSlug } from "@/lib/utils";
 
 interface User {
   id: string;
@@ -80,7 +80,10 @@ export const useAuthStore = create<AuthState>()(
       login: async (email, password, tenantSlug) => {
         set({ isLoading: true, error: null });
         try {
-          const slug = tenantSlug !== undefined ? tenantSlug.trim() : "";
+          const slug =
+            tenantSlug !== undefined && tenantSlug.trim()
+              ? tenantSlug.trim()
+              : get().tenantSlug?.trim() || getTenantSlug();
           const data = await authApi.login(email, password, slug);
           get().hydrate(data);
           return getDashboardPath(data.user.roles);

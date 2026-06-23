@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  InternalServerErrorException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../../prisma/prisma.service";
@@ -13,6 +14,9 @@ import {
   encryptField,
   decryptField,
 } from "@susuflow/shared";
+import { Prisma } from "@susuflow/database";
+import { AuditService } from "../audit/audit.service";
+import { handlePrismaError } from "../../common/utils/prisma-errors";
 import * as bcrypt from "bcrypt";
 
 @Injectable()
@@ -20,6 +24,7 @@ export class CustomerService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
+    private readonly audit: AuditService,
   ) {}
 
   private get encryptionKey(): string {
@@ -49,13 +54,30 @@ export class CustomerService {
     return customer;
   }
 
+  private walletAccountCode(customerId: string): string {
+    const compact = customerId.replace(/-/g, "").slice(0, 8);
+    return `11${compact}`.slice(0, 10);
+  }
+
+  private async nextCustomerNumber(
+    tx: Prisma.TransactionClient,
+    tenantId: string,
+  ): Promise<string> {
+    const latest = await tx.customer.findFirst({
+      where: { tenantId },
+      orderBy: { createdAt: "desc" },
+      select: { customerNumber: true },
+    });
+    const match = latest?.customerNumber?.match(/(\d+)$/);
+    const next = match ? Number.parseInt(match[1], 10) + 1 : 1;
+    return `CUS-${String(next).padStart(6, "0")}`;
+  }
+
   async create(
     tenantId: string,
     dto: CreateCustomerDto,
     onboardedBy: AuthenticatedUser,
   ) {
-    const count = await this.prisma.customer.count({ where: { tenantId } });
-
     if (dto.email) {
       const existing = await this.prisma.user.findFirst({
         where: { tenantId, email: dto.email },
@@ -63,73 +85,101 @@ export class CustomerService {
       if (existing) throw new ConflictException("Email already registered");
     }
 
-    return this.prisma.$transaction(async (tx) => {
-      let userId: string | undefined = undefined;
+    try {
+      const result = await this.prisma.$transaction(async (tx) => {
+        const customerNumber = await this.nextCustomerNumber(tx, tenantId);
+        let userId: string | undefined = undefined;
 
-      if (dto.firstName || dto.lastName || dto.email) {
-        const passwordHash = await bcrypt.hash("ChangeMe123!", 12);
-        const customerRole = await tx.role.findUnique({
-          where: { name: ROLES.CUSTOMER },
-        });
-        if (!customerRole) throw new Error("Customer role not configured");
+        if (dto.firstName || dto.lastName || dto.email) {
+          const passwordHash = await bcrypt.hash("ChangeMe123!", 12);
+          const customerRole = await tx.role.findUnique({
+            where: { name: ROLES.CUSTOMER },
+          });
+          if (!customerRole) {
+            throw new InternalServerErrorException(
+              "Customer role is not configured. Contact your platform administrator.",
+            );
+          }
 
-        const tempEmail =
-          dto.email || `customer-${count + 1}@temp.susuflow.com`;
-        const user = await tx.user.create({
+          const tempEmail =
+            dto.email ||
+            `customer-${customerNumber.replace(/\D/g, "")}@temp.susuflow.com`;
+
+          const user = await tx.user.create({
+            data: {
+              tenantId,
+              email: tempEmail,
+              phone: dto.phone,
+              passwordHash,
+              firstName: dto.firstName || "Customer",
+              lastName: dto.lastName || customerNumber.replace("CUS-", ""),
+              status: "active",
+              emailVerified: !!dto.email,
+            },
+          });
+
+          await tx.userRole.create({
+            data: { userId: user.id, roleId: customerRole.id, tenantId },
+          });
+
+          userId = user.id;
+        }
+
+        const customer = await tx.customer.create({
           data: {
             tenantId,
-            email: tempEmail,
-            phone: dto.phone,
-            passwordHash,
-            firstName: dto.firstName || "Customer",
-            lastName: dto.lastName || String(count + 1),
+            userId,
+            customerNumber,
+            ghanaCardNumber: this.encryptPii(dto.ghanaCardNumber),
+            dateOfBirth: dto.dateOfBirth
+              ? new Date(dto.dateOfBirth)
+              : undefined,
+            address: dto.address,
+            collectorId:
+              dto.collectorId ||
+              (onboardedBy.roles.includes("collector")
+                ? onboardedBy.id
+                : undefined),
+            onboardedById: onboardedBy.id,
             status: "active",
-            emailVerified: !!dto.email,
+            kycLevel: 1,
           },
         });
 
-        await tx.userRole.create({
-          data: { userId: user.id, roleId: customerRole.id, tenantId },
+        const wallet = await tx.wallet.create({
+          data: { tenantId, customerId: customer.id, walletType: "customer" },
         });
 
-        userId = user.id;
-      }
+        await tx.account.create({
+          data: {
+            tenantId,
+            walletId: wallet.id,
+            code: this.walletAccountCode(customer.id),
+            name: `Wallet: ${dto.firstName || "Customer"} ${dto.lastName || customer.customerNumber}`,
+            accountType: "liability",
+          },
+        });
 
-      const customer = await tx.customer.create({
-        data: {
-          tenantId,
-          userId,
-          customerNumber: `CUS-${String(count + 1).padStart(6, "0")}`,
-          ghanaCardNumber: this.encryptPii(dto.ghanaCardNumber),
-          dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined,
-          address: dto.address,
-          collectorId:
-            dto.collectorId ||
-            (onboardedBy.roles.includes("collector")
-              ? onboardedBy.id
-              : undefined),
-          onboardedById: onboardedBy.id,
-          status: "active",
-          kycLevel: 1,
+        return customer;
+      });
+
+      await this.audit.log({
+        tenantId,
+        userId: onboardedBy.id,
+        action: "customer:create",
+        resourceType: "customer",
+        resourceId: result.id,
+        afterState: {
+          customerNumber: result.customerNumber,
+          collectorId: result.collectorId,
+          onboardedById: result.onboardedById,
         },
       });
 
-      const wallet = await tx.wallet.create({
-        data: { tenantId, customerId: customer.id, walletType: "customer" },
-      });
-
-      await tx.account.create({
-        data: {
-          tenantId,
-          walletId: wallet.id,
-          code: `1100-${customer.id.slice(0, 5)}`,
-          name: `Wallet: ${dto.firstName || "Customer"} ${dto.lastName || customer.customerNumber}`,
-          accountType: "liability",
-        },
-      });
-
-      return customer;
-    });
+      return result;
+    } catch (error) {
+      handlePrismaError(error, "customer:create");
+    }
   }
 
   async findAll(
@@ -195,7 +245,7 @@ export class CustomerService {
     };
   }
 
-  async findOne(tenantId: string, id: string) {
+  async findOne(tenantId: string, id: string, user?: AuthenticatedUser) {
     const customer = await this.prisma.customer.findFirst({
       where: { id, tenantId },
       include: {
@@ -213,6 +263,14 @@ export class CustomerService {
       },
     });
     if (!customer) throw new NotFoundException("Customer not found");
+
+    if (
+      user?.roles.includes(ROLES.COLLECTOR) &&
+      customer.collectorId !== user.id
+    ) {
+      throw new NotFoundException("Customer not found");
+    }
+
     return this.decryptCustomer(customer);
   }
 
@@ -231,7 +289,11 @@ export class CustomerService {
       if (customer.userId) {
         await tx.user.update({
           where: { id: customer.userId },
-          data: { status: "active" },
+          data: {
+            status: "active",
+            emailVerified: true,
+            phoneVerified: true,
+          },
         });
       }
 

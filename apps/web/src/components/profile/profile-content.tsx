@@ -1,62 +1,62 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useAuthStore } from '@/stores/auth.store';
-import { getInitials } from '@/lib/utils';
-import { userApi, tenantApi } from '@/lib/api';
-import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useAuthStore } from "@/stores/auth.store";
+import { getInitials } from "@/lib/utils";
+import { userApi, tenantApi } from "@/lib/api";
+import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 
-export function ProfileContent() {
+export function ProfileContent({ title = "Profile" }: { title?: string }) {
   const { user: authUser } = useAuthStore();
 
   const { data: user, refetch } = useQuery({
-    queryKey: ['user-profile', authUser?.id],
+    queryKey: ["user-profile", authUser?.id],
     queryFn: () => userApi.getMe(),
   });
 
   // Profile Form State
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [profileSuccess, setProfileSuccess] = useState('');
-  const [profileError, setProfileError] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [profileSuccess, setProfileSuccess] = useState("");
+  const [profileError, setProfileError] = useState("");
 
   // Password Form State
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordSuccess, setPasswordSuccess] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   // Company settings & branding states (for company_admin)
   const queryClient = useQueryClient();
   const { data: tenant, refetch: refetchTenant } = useQuery({
-    queryKey: ['tenant-settings', authUser?.tenantSlug],
+    queryKey: ["tenant-settings", authUser?.tenantSlug],
     queryFn: () => tenantApi.getMe(),
-    enabled: !!authUser?.roles.includes('company_admin'),
+    enabled: !!authUser?.roles.includes("company_admin"),
   });
 
-  const [companyName, setCompanyName] = useState('');
-  const [companyLogo, setCompanyLogo] = useState('');
-  const [companyPrimaryColor, setCompanyPrimaryColor] = useState('#1E40AF');
-  const [companyPhone, setCompanyPhone] = useState('');
-  const [companyEmail, setCompanyEmail] = useState('');
-  const [companySuccess, setCompanySuccess] = useState('');
-  const [companyError, setCompanyError] = useState('');
+  const [companyName, setCompanyName] = useState("");
+  const [companyLogo, setCompanyLogo] = useState("");
+  const [companyPrimaryColor, setCompanyPrimaryColor] = useState("#1E40AF");
+  const [companyPhone, setCompanyPhone] = useState("");
+  const [companyEmail, setCompanyEmail] = useState("");
+  const [companySuccess, setCompanySuccess] = useState("");
+  const [companyError, setCompanyError] = useState("");
 
   useEffect(() => {
     if (tenant) {
-      setCompanyName(tenant.name || '');
-      setCompanyLogo(tenant.logoUrl || '');
-      setCompanyPrimaryColor(tenant.primaryColor || '#1E40AF');
-      setCompanyPhone(tenant.phone || '');
-      setCompanyEmail(tenant.email || '');
+      setCompanyName(tenant.name || "");
+      setCompanyLogo(tenant.logoUrl || "");
+      setCompanyPrimaryColor(tenant.primaryColor || "#1E40AF");
+      setCompanyPhone(tenant.phone || "");
+      setCompanyEmail(tenant.email || "");
     }
   }, [tenant]);
 
@@ -64,13 +64,13 @@ export function ProfileContent() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        setCompanyError('Logo image must be smaller than 2MB.');
+        setCompanyError("Logo image must be smaller than 2MB.");
         return;
       }
       const reader = new FileReader();
       reader.onloadend = () => {
         setCompanyLogo(reader.result as string);
-        setCompanyError('');
+        setCompanyError("");
       };
       reader.readAsDataURL(file);
     }
@@ -87,32 +87,32 @@ export function ProfileContent() {
         settings: tenant?.settings || {},
       }),
     onSuccess: () => {
-      setCompanySuccess('Company branding settings updated successfully!');
-      setCompanyError('');
+      setCompanySuccess("Company branding settings updated successfully!");
+      setCompanyError("");
       refetchTenant();
-      queryClient.invalidateQueries({ queryKey: ['tenant-branding'] });
-      queryClient.invalidateQueries({ queryKey: ['tenant-settings'] });
+      queryClient.invalidateQueries({ queryKey: ["tenant-branding"] });
+      queryClient.invalidateQueries({ queryKey: ["tenant-settings"] });
     },
     onError: (err: any) => {
-      setCompanyError(err?.message || 'Failed to update company settings.');
-      setCompanySuccess('');
+      setCompanyError(err?.message || "Failed to update company settings.");
+      setCompanySuccess("");
     },
   });
 
   useEffect(() => {
     if (user) {
-      setFirstName(user.firstName || '');
-      setLastName(user.lastName || '');
-      setEmail(user.email || '');
-      setPhone(user.phone || '');
+      setFirstName(user.firstName || "");
+      setLastName(user.lastName || "");
+      setEmail(user.email || "");
+      setPhone(user.phone || "");
     }
   }, [user]);
 
   const updateProfileMutation = useMutation({
     mutationFn: () => userApi.updateMe({ firstName, lastName, email, phone }),
     onSuccess: (updatedUser) => {
-      setProfileSuccess('Profile updated successfully!');
-      setProfileError('');
+      setProfileSuccess("Profile updated successfully!");
+      setProfileError("");
       // Update state in Zustand store
       useAuthStore.setState((state) => ({
         user: state.user
@@ -127,30 +127,30 @@ export function ProfileContent() {
       refetch();
     },
     onError: (err: any) => {
-      setProfileError(err?.message || 'Failed to update profile.');
-      setProfileSuccess('');
+      setProfileError(err?.message || "Failed to update profile.");
+      setProfileSuccess("");
     },
   });
 
   const updatePasswordMutation = useMutation({
     mutationFn: () => userApi.updatePassword({ currentPassword, newPassword }),
     onSuccess: () => {
-      setPasswordSuccess('Password updated successfully!');
-      setPasswordError('');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
+      setPasswordSuccess("Password updated successfully!");
+      setPasswordError("");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
     },
     onError: (err: any) => {
-      setPasswordError(err?.message || 'Failed to update password.');
-      setPasswordSuccess('');
+      setPasswordError(err?.message || "Failed to update password.");
+      setPasswordSuccess("");
     },
   });
 
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!firstName || !lastName || !email) {
-      setProfileError('First name, last name, and email are required.');
+      setProfileError("First name, last name, and email are required.");
       return;
     }
     updateProfileMutation.mutate();
@@ -159,15 +159,15 @@ export function ProfileContent() {
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setPasswordError('All password fields are required.');
+      setPasswordError("All password fields are required.");
       return;
     }
     if (newPassword.length < 10) {
-      setPasswordError('New password must be at least 10 characters.');
+      setPasswordError("New password must be at least 10 characters.");
       return;
     }
     if (newPassword !== confirmPassword) {
-      setPasswordError('New password and confirm password do not match.');
+      setPasswordError("New password and confirm password do not match.");
       return;
     }
     updatePasswordMutation.mutate();
@@ -176,7 +176,7 @@ export function ProfileContent() {
   const handleCompanySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!companyName || !companyEmail) {
-      setCompanyError('Company display name and support email are required.');
+      setCompanyError("Company display name and support email are required.");
       return;
     }
     updateCompanyMutation.mutate();
@@ -185,9 +185,12 @@ export function ProfileContent() {
   return (
     <div className="space-y-6 max-w-6xl">
       <div className="flex items-center justify-between">
-        <h1 className="dashboard-title">Profile</h1>
-        <Badge variant={user?.status === 'active' ? 'success' : 'warning'} className="capitalize">
-          Status: {user?.status || 'Pending'}
+        <h1 className="dashboard-title">{title}</h1>
+        <Badge
+          variant={user?.status === "active" ? "success" : "warning"}
+          className="capitalize"
+        >
+          Status: {user?.status || "Pending"}
         </Badge>
       </div>
 
@@ -204,8 +207,11 @@ export function ProfileContent() {
             <p className="text-sm text-white/80 mt-1">{user?.email}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {authUser?.roles.map((r) => (
-                <Badge key={r} className="bg-white/20 hover:bg-white/30 text-white border-none capitalize text-xs">
-                  {r.replace('_', ' ')}
+                <Badge
+                  key={r}
+                  className="bg-white/20 hover:bg-white/30 text-white border-none capitalize text-xs"
+                >
+                  {r.replace("_", " ")}
                 </Badge>
               ))}
             </div>
@@ -271,7 +277,9 @@ export function ProfileContent() {
                 className="w-full flex items-center justify-center gap-2"
                 disabled={updateProfileMutation.isPending}
               >
-                {updateProfileMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                {updateProfileMutation.isPending && (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                )}
                 Save Changes
               </Button>
             </form>
@@ -330,18 +338,25 @@ export function ProfileContent() {
                 className="w-full flex items-center justify-center gap-2"
                 disabled={updatePasswordMutation.isPending}
               >
-                {updatePasswordMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                {updatePasswordMutation.isPending && (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                )}
                 Update Password
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        {authUser?.roles.includes('company_admin') && (
+        {authUser?.roles.includes("company_admin") && (
           <Card className="shadow-sm md:col-span-2">
             <CardHeader>
-              <CardTitle className="text-lg">Company Settings & Branding</CardTitle>
-              <p className="text-xs text-muted-foreground">Manage your organization's display name, support contacts, logo, and brand color.</p>
+              <CardTitle className="text-lg">
+                Company Settings & Branding
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">
+                Manage your organization's display name, support contacts, logo,
+                and brand color.
+              </p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleCompanySubmit} className="space-y-4">
@@ -384,7 +399,9 @@ export function ProfileContent() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-foreground">Company Logo</label>
+                  <label className="block text-sm font-medium text-foreground">
+                    Company Logo
+                  </label>
                   <div className="flex items-center gap-4">
                     {companyLogo ? (
                       <img
@@ -410,7 +427,11 @@ export function ProfileContent() {
                           type="button"
                           variant="outline"
                           size="sm"
-                          onClick={() => document.getElementById('company-logo-file')?.click()}
+                          onClick={() =>
+                            document
+                              .getElementById("company-logo-file")
+                              ?.click()
+                          }
                         >
                           Upload Image File
                         </Button>
@@ -420,49 +441,55 @@ export function ProfileContent() {
                             variant="ghost"
                             size="sm"
                             className="text-destructive hover:bg-destructive/10"
-                            onClick={() => setCompanyLogo('')}
+                            onClick={() => setCompanyLogo("")}
                           >
                             Remove Logo
-                        </Button>
-                      )}
+                          </Button>
+                        )}
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">
+                        Supported format: PNG, JPG, WebP. Max 2MB.
+                      </span>
                     </div>
-                    <span className="text-[10px] text-muted-foreground">Supported format: PNG, JPG, WebP. Max 2MB.</span>
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Primary Brand Color</label>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="color"
-                    value={companyPrimaryColor}
-                    onChange={(e) => setCompanyPrimaryColor(e.target.value)}
-                    className="h-10 w-20 cursor-pointer rounded-lg border border-border bg-card"
-                  />
-                  <Input
-                    value={companyPrimaryColor}
-                    onChange={(e) => setCompanyPrimaryColor(e.target.value)}
-                    placeholder="#1E40AF"
-                    className="flex-1 max-w-[150px]"
-                    maxLength={7}
-                  />
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-foreground">
+                    Primary Brand Color
+                  </label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="color"
+                      value={companyPrimaryColor}
+                      onChange={(e) => setCompanyPrimaryColor(e.target.value)}
+                      className="h-10 w-20 cursor-pointer rounded-lg border border-border bg-card"
+                    />
+                    <Input
+                      value={companyPrimaryColor}
+                      onChange={(e) => setCompanyPrimaryColor(e.target.value)}
+                      placeholder="#1E40AF"
+                      className="flex-1 max-w-[150px]"
+                      maxLength={7}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <Button
-                type="submit"
-                className="w-full md:w-auto flex items-center justify-center gap-2 font-bold px-6"
-                disabled={updateCompanyMutation.isPending}
-              >
-                {updateCompanyMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                Save Company Settings
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      )}
+                <Button
+                  type="submit"
+                  className="w-full md:w-auto flex items-center justify-center gap-2 font-bold px-6"
+                  disabled={updateCompanyMutation.isPending}
+                >
+                  {updateCompanyMutation.isPending && (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  )}
+                  Save Company Settings
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 }

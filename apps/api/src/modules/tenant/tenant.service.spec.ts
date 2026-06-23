@@ -1,14 +1,19 @@
-import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { TenantService } from './tenant.service';
-import { PrismaService } from '../../prisma/prisma.service';
-import { CacheService } from '../../cache/cache.service';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
+import { TenantService } from "./tenant.service";
+import { PrismaService } from "../../prisma/prisma.service";
+import { CacheService } from "../../cache/cache.service";
+import { PlanService } from "../plan/plan.service";
 
-jest.mock('bcrypt', () => ({
-  hash: jest.fn().mockResolvedValue('hashed-password'),
+jest.mock("bcrypt", () => ({
+  hash: jest.fn().mockResolvedValue("hashed-password"),
 }));
 
-describe('TenantService', () => {
+describe("TenantService", () => {
   let service: TenantService;
   const prisma = {
     tenant: {
@@ -25,6 +30,9 @@ describe('TenantService', () => {
     $transaction: jest.fn(),
   };
   const cache = { del: jest.fn() };
+  const planService = {
+    seedDefaultPlans: jest.fn().mockResolvedValue(undefined),
+  };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -33,55 +41,62 @@ describe('TenantService', () => {
         TenantService,
         { provide: PrismaService, useValue: prisma },
         { provide: CacheService, useValue: cache },
+        { provide: PlanService, useValue: planService },
       ],
     }).compile();
 
     service = module.get(TenantService);
   });
 
-  describe('assertTenantOperational', () => {
-    it('throws when tenant is suspended', async () => {
+  describe("assertTenantOperational", () => {
+    it("throws when tenant is suspended", async () => {
       prisma.tenant.findUnique.mockResolvedValue({
-        id: 't1',
-        status: 'suspended',
+        id: "t1",
+        status: "suspended",
         subscription: null,
       });
 
-      await expect(service.assertTenantOperational('t1')).rejects.toThrow(BadRequestException);
+      await expect(service.assertTenantOperational("t1")).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
-    it('throws when trial expired and not active', async () => {
+    it("throws when trial expired and not active", async () => {
       prisma.tenant.findUnique.mockResolvedValue({
-        id: 't1',
-        status: 'trial',
+        id: "t1",
+        status: "trial",
         subscription: {
-          status: 'trialing',
-          trialEnd: new Date('2020-01-01'),
+          status: "trialing",
+          trialEnd: new Date("2020-01-01"),
         },
       });
 
-      await expect(service.assertTenantOperational('t1')).rejects.toThrow(BadRequestException);
+      await expect(service.assertTenantOperational("t1")).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
-  describe('activate', () => {
-    it('throws when tenant not found', async () => {
+  describe("activate", () => {
+    it("throws when tenant not found", async () => {
       prisma.tenant.findUnique.mockResolvedValue(null);
-      await expect(service.activate('missing')).rejects.toThrow(NotFoundException);
+      await expect(service.activate("missing")).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
-  describe('create', () => {
-    it('throws when slug already exists', async () => {
-      prisma.tenant.findUnique.mockResolvedValue({ id: 'existing' });
+  describe("create", () => {
+    it("throws when slug already exists", async () => {
+      prisma.tenant.findUnique.mockResolvedValue({ id: "existing" });
       await expect(
         service.create({
-          slug: 'abc-susu',
-          name: 'ABC',
-          email: 'a@b.com',
-          adminFirstName: 'A',
-          adminLastName: 'B',
-          adminEmail: 'admin@abc.com',
+          slug: "abc-susu",
+          name: "ABC",
+          email: "a@b.com",
+          adminFirstName: "A",
+          adminLastName: "B",
+          adminEmail: "admin@abc.com",
         }),
       ).rejects.toThrow(ConflictException);
     });

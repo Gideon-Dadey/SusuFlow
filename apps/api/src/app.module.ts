@@ -22,6 +22,7 @@ import { AuditModule } from "./modules/audit/audit.module";
 import { HealthModule } from "./modules/health/health.module";
 import { BillingModule } from "./modules/billing/billing.module";
 import { PlanModule } from "./modules/plan/plan.module";
+import { OperationsModule } from "./modules/operations/operations.module";
 import { CommonModule } from "./common/common.module";
 import { TenantMiddleware } from "./common/middleware/tenant.middleware";
 import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
@@ -60,6 +61,7 @@ import { loggerConfig } from "./config/logger.config";
     HealthModule,
     BillingModule,
     PlanModule,
+    OperationsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

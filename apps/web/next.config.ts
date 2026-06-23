@@ -15,33 +15,7 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   async redirects() {
-    return [
-      {
-        source: "/collector/dashboard",
-        destination: "/dashboard",
-        permanent: true,
-      },
-      {
-        source: "/collector/deposit",
-        destination: "/deposit",
-        permanent: true,
-      },
-      {
-        source: "/collector/deposits",
-        destination: "/transactions",
-        permanent: true,
-      },
-      {
-        source: "/collector/profile",
-        destination: "/profile",
-        permanent: true,
-      },
-      {
-        source: "/collector/:path*",
-        destination: "/dashboard",
-        permanent: true,
-      },
-    ];
+    return [];
   },
   async rewrites() {
     const raw = process.env.API_URL?.trim();

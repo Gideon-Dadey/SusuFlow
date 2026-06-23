@@ -85,18 +85,18 @@ export function NotificationPanel() {
   const rootRef = useRef<HTMLDivElement>(null);
 
   const roles = user?.roles ?? [];
-  const isCustomer = roles.includes("customer") || roles.includes("saver");
+  const isCustomer = roles.includes("customer");
   const isStaff =
-    roles.includes("staff") ||
-    roles.includes("admin") ||
-    roles.includes("org_admin");
+    roles.includes("company_admin") ||
+    roles.includes("account_officer") ||
+    roles.includes("auditor");
 
   const fetchNotifications = useCallback(async () => {
     setLoading(true);
     try {
       const notifications: NotificationItem[] = [];
 
-      // Fetch recent deposits
+      // Fetch recent deposits (API scopes to current customer when role is customer)
       try {
         const deposits = await depositApi.list();
         const depositItems = (deposits.items || [])
@@ -115,8 +115,8 @@ export function NotificationPanel() {
         // Silently ignore if deposits endpoint fails
       }
 
-      // Fetch recent withdrawals (staff/admin only)
-      if (isStaff) {
+      // Customers see their own withdrawal activity; staff see all tenant withdrawals
+      if (isCustomer || isStaff) {
         try {
           const withdrawals = await withdrawalApi.list();
           const withdrawalItems = (withdrawals.items || [])
@@ -149,7 +149,7 @@ export function NotificationPanel() {
     } finally {
       setLoading(false);
     }
-  }, [isStaff]);
+  }, [isStaff, isCustomer]);
 
   // Close on outside click / Escape
   useEffect(() => {
