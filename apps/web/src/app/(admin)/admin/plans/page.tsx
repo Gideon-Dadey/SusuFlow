@@ -20,7 +20,6 @@ export default function AdminPlansPage() {
     <div className="space-y-6">
       <div className="page-header mb-0">
         <h1 className="text-2xl font-bold tracking-tight">Platform Savings Goals</h1>
-        <p className="text-sm text-muted-foreground">Monitor savings plan options, duration settings, and overall customer enrollment rates</p>
       </div>
 
       {isLoading ? (

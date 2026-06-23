@@ -739,6 +739,14 @@
     pointer-events: none;
     transform: translateY(-50%) translateX(calc(-100% - 0.5rem));
   }
+
+  /* Prevent duplicate headers on mobile dashboards */
+  @media (max-width: 1023px) {
+    .dashboard-shell main .page-header,
+    .dashboard-shell main h1.dashboard-title {
+      display: none !important;
+    }
+  }
 }
 
 @layer utilities {

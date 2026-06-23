@@ -20,7 +20,6 @@ export default function AdminBillingPage() {
     <div className="space-y-6">
       <div className="page-header mb-0">
         <h1 className="text-2xl font-bold tracking-tight">Platform Revenue & Billing</h1>
-        <p className="text-sm text-muted-foreground">Monitor Monthly/Annual Recurring Revenue (MRR/ARR) and tenant SaaS subscription plans</p>
       </div>
 
       {isLoading ? (

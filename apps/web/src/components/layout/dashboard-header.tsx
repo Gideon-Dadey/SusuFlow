@@ -7,18 +7,49 @@ import { Button } from '@/components/ui/button';
 import { DashboardUserMenu } from '@/components/layout/dashboard-user-menu';
 
 const titles: Record<string, string> = {
+  // Customer portal
+  '/dashboard': 'My Savings',
+  '/deposit': 'Deposit Funds',
+  '/withdraw': 'Withdraw Funds',
+  '/plans': 'Savings Goals',
+  '/transactions': 'Transaction History',
+  '/profile': 'Profile',
+
+  // Staff portal
   '/staff/dashboard': 'Dashboard',
   '/staff/customers': 'Customers',
-  '/staff/deposits': 'Deposits',
+  '/staff/customers/new': 'Onboard Customer',
+  '/staff/deposits': 'All Deposits',
   '/staff/withdrawals': 'Withdrawals',
-  '/staff/settings': 'Settings',
+  '/staff/plans': 'Customer Savings Goals',
+  '/staff/ledger': 'General Ledger',
+  '/staff/kyc': 'KYC Review',
+  '/staff/fraud': 'Fraud & Risk Alerts',
+  '/staff/commissions': 'Collector Commissions',
+  '/staff/audit': 'Audit Logs',
+  '/staff/reports': 'Reports & Analytics',
+  '/staff/settings': 'Profile & Settings',
   '/staff/profile': 'Profile',
-  '/admin/tenants': 'Tenants',
-  '/admin/profile': 'Profile',
-  '/dashboard': 'Home',
-  '/deposit': 'Deposit',
-  '/transactions': 'History',
-  '/profile': 'Profile',
+
+  // Admin portal
+  '/admin/dashboard': 'Admin Control Center',
+  '/admin/tenants': 'Platform Tenants',
+  '/admin/tenants/new': 'Create Organization',
+  '/admin/users': 'Platform Users',
+  '/admin/plans': 'Platform Savings Goals',
+  '/admin/ledger': 'Consolidated Ledger',
+  '/admin/audit': 'System Audit Trail',
+  '/admin/kyc': 'KYC Review Queue',
+  '/admin/fraud': 'Fraud Alerts',
+  '/admin/health': 'System Health',
+  '/admin/dev-ops': 'DevOps & Database Ops',
+  '/admin/billing': 'Revenue & Billing',
+  '/admin/commissions': 'Collector Commissions',
+  '/admin/deposits': 'Global Deposits',
+  '/admin/withdrawals': 'Global Withdrawals',
+  '/admin/customers': 'Savers Directory',
+  '/admin/profile': 'Admin Profile',
+  '/admin/settings': 'Platform Configuration',
 };
 
 interface DashboardHeaderProps {
@@ -29,13 +60,27 @@ interface DashboardHeaderProps {
 export function DashboardHeader({ onMenuClick, variant }: DashboardHeaderProps) {
   const pathname = usePathname();
 
-  const mobileTitle =
-    titles[pathname] ||
-    (variant === 'admin'
+  const getMobileTitle = () => {
+    if (titles[pathname]) return titles[pathname];
+
+    // Dynamic checks
+    if (pathname.startsWith('/staff/customers/')) return 'Customer Account';
+    if (pathname.startsWith('/admin/tenants/')) return 'Tenants';
+
+    for (const key of Object.keys(titles)) {
+      if (key !== '/' && pathname.startsWith(key)) {
+        return titles[key];
+      }
+    }
+
+    return variant === 'admin'
       ? 'Platform Admin'
       : variant === 'staff'
         ? 'Staff Portal'
-        : 'My Savings');
+        : 'My Savings';
+  };
+
+  const mobileTitle = getMobileTitle();
 
   return (
     <header className="dashboard-header flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-background px-4 sm:px-6 lg:px-8">

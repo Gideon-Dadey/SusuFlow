@@ -96,7 +96,6 @@ export default function AdminFraudPage() {
     <div className="space-y-6">
       <div className="page-header mb-0">
         <h1 className="text-2xl font-bold tracking-tight">Platform Fraud Alerts</h1>
-        <p className="text-sm text-muted-foreground">Global monitoring of transaction risks and abnormal behavior indicators</p>
       </div>
 
       {/* Filter panel */}

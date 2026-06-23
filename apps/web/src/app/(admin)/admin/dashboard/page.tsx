@@ -77,7 +77,6 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="page-header mb-0">
           <h1 className="text-2xl font-bold tracking-tight">Super Admin Control Center</h1>
-          <p className="text-sm text-muted-foreground">Platform-wide statistics, fraud defense, and system audit trail</p>
         </div>
         <div className="flex gap-2">
           <Link href="/admin/tenants/new">

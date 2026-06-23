@@ -52,7 +52,6 @@ export default function AdminDevOpsPage() {
     <div className="space-y-6">
       <div className="page-header mb-0">
         <h1 className="text-2xl font-bold tracking-tight">DevOps & Database Ops</h1>
-        <p className="text-sm text-muted-foreground">Force cache invalidations, verify database migration integrity, and populate staging records</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
