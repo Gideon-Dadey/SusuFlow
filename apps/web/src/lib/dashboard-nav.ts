@@ -16,6 +16,9 @@ import {
   faListUl,
   faChartPie,
   faGear,
+  faServer,
+  faTerminal,
+  faCreditCard,
 } from '@fortawesome/free-solid-svg-icons';
 
 export type NavItem = { href: string; label: string; icon: IconDefinition };
@@ -71,13 +74,38 @@ export const adminNavGroups: NavGroup[] = [
     items: [
       { href: '/admin/dashboard', label: 'Overview', icon: faGaugeHigh },
       { href: '/admin/tenants', label: 'Organizations', icon: faBuilding },
+      { href: '/admin/health', label: 'System Health', icon: faServer },
+      { href: '/admin/dev-ops', label: 'DevOps Control', icon: faTerminal },
+      { href: '/admin/settings', label: 'Configuration', icon: faGear },
     ],
   },
   {
-    groupLabel: 'GLOBAL ACTIVITY',
+    groupLabel: 'GLOBAL FINANCES',
     items: [
       { href: '/admin/deposits', label: 'All Deposits', icon: faWallet },
       { href: '/admin/withdrawals', label: 'All Withdrawals', icon: faHistory },
+      { href: '/admin/billing', label: 'Platform Revenue', icon: faCreditCard },
+      { href: '/admin/ledger', label: 'Consolidated Ledger', icon: faBook },
+      { href: '/admin/commissions', label: 'Collector Earnings', icon: faCoins },
+    ],
+  },
+  {
+    groupLabel: 'GLOBAL SAVINGS',
+    items: [
+      { href: '/admin/plans', label: 'Savings Goals', icon: faPiggyBank },
+    ],
+  },
+  {
+    groupLabel: 'GLOBAL DIRECTORY',
+    items: [
+      { href: '/admin/customers', label: 'Customers Directory', icon: faUsers },
+      { href: '/admin/users', label: 'Platform Users', icon: faUserPlus },
+      { href: '/admin/kyc', label: 'Identity Queue', icon: faUserCheck },
+    ],
+  },
+  {
+    groupLabel: 'SECURITY & AUDITS',
+    items: [
       { href: '/admin/fraud', label: 'Fraud Alerts', icon: faTriangleExclamation },
       { href: '/admin/audit', label: 'System Audit Logs', icon: faListUl },
     ],

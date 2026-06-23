@@ -325,6 +325,41 @@ export const adminApi = {
       { tenantSlug: '' },
     );
   },
+
+  getHealth: () =>
+    api.get<any>('/admin/health', { tenantSlug: '' }),
+
+  getBilling: () =>
+    api.get<any>('/admin/billing', { tenantSlug: '' }),
+
+  getLedger: () =>
+    api.get<any>('/admin/ledger', { tenantSlug: '' }),
+
+  getCommissions: () =>
+    api.get<any>('/admin/commissions', { tenantSlug: '' }),
+
+  getPlans: () =>
+    api.get<any>('/admin/plans', { tenantSlug: '' }),
+
+  getCustomers: (params?: { search?: string }) => {
+    const query = toQueryString(params);
+    return api.get<{ items: Customer[] }>(`/admin/customers${query}`, { tenantSlug: '' });
+  },
+
+  getUsers: () =>
+    api.get<{ items: User[] }>('/admin/users', { tenantSlug: '' }),
+
+  getKycQueue: () =>
+    api.get<{ items: KycDocument[] }>('/admin/kyc', { tenantSlug: '' }),
+
+  getSettings: () =>
+    api.get<any>('/admin/settings', { tenantSlug: '' }),
+
+  updateSettings: (data: any) =>
+    api.put<any>('/admin/settings', data, { tenantSlug: '' }),
+
+  clearCache: () =>
+    api.post<any>('/admin/dev-ops/clear-cache', {}, { tenantSlug: '' }),
 };
 
 export const depositApi = {
