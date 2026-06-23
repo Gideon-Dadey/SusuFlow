@@ -31,15 +31,15 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
   const formattedAmount = typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-fade-in print:bg-white print:p-0 print:static print:block">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 bg-background/80 backdrop-blur-sm animate-fade-in md:items-center print:bg-white print:p-0 print:static print:block">
       {/* Background click handler */}
       <div className="fixed inset-0 cursor-default" onClick={onClose} />
       
       {/* Card Content Container */}
-      <div className="relative z-10 w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-elevated animate-scale-in print:border-0 print:shadow-none print:p-0 print:static print:block">
+      <div className="relative z-10 w-full max-w-md my-auto rounded-xl border border-border bg-card p-5 shadow-elevated animate-scale-in print:border-0 print:shadow-none print:p-0 print:static print:block">
         
         {/* Header (Hidden on Print) */}
-        <div className="flex items-center justify-between pb-4 border-b border-border print:hidden">
+        <div className="flex items-center justify-between pb-3.5 border-b border-border print:hidden">
           <div className="flex items-center gap-2 text-foreground font-semibold">
             <Receipt className="h-5 w-5 text-primary" />
             Transaction Receipt
@@ -53,32 +53,28 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
         </div>
 
         {/* Printable Area */}
-        <div id="printable-receipt" className="space-y-6 pt-4 print:pt-0">
+        <div id="printable-receipt" className="space-y-4 pt-3 print:pt-0">
           {/* Header */}
-          <div className="text-center space-y-2 border-b border-dashed border-border pb-4">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 text-primary font-bold text-lg">
-              SF
-            </div>
-            <h3 className="text-lg font-bold text-foreground">SusuFlow Platform</h3>
-            <p className="text-xs text-muted-foreground">Digital Susu Savings System</p>
-            <p className="text-xs text-muted-foreground">{formatDate(transaction.createdAt)}</p>
+          <div className="text-center space-y-1 border-b border-dashed border-border pb-3">
+            <h3 className="text-base font-bold text-foreground">SusuFlow Platform</h3>
+            <p className="text-[11px] text-muted-foreground">{formatDate(transaction.createdAt)}</p>
           </div>
 
           {/* Amount Display */}
-          <div className="text-center bg-muted/40 rounded-xl p-4 border border-border">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <div className="text-center bg-muted/40 rounded-lg py-3 px-4 border border-border">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
               {isDeposit ? 'Amount Saved' : 'Amount Withdrawn'}
             </p>
             <div className="mt-1 flex justify-center text-foreground font-bold">
               <MoneyDisplay amount={formattedAmount} size="lg" />
             </div>
-            <div className="mt-2 flex justify-center">
+            <div className="mt-1.5 flex justify-center">
               <StatusBadge status={transaction.status} />
             </div>
           </div>
 
           {/* Transaction Metadata Details */}
-          <div className="space-y-3 text-sm">
+          <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Reference</span>
               <span className="font-mono text-xs font-semibold text-foreground uppercase">
@@ -116,21 +112,21 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
               </div>
             ) : null}
 
-            <div className="flex justify-between border-t border-border pt-3">
+            <div className="flex justify-between border-t border-border pt-2.5">
               <span className="text-muted-foreground">Currency</span>
               <span className="font-semibold text-foreground">{transaction.currency || 'GHS'}</span>
             </div>
           </div>
 
           {/* Footer Receipt Message */}
-          <div className="text-center border-t border-dashed border-border pt-4 space-y-1">
+          <div className="text-center border-t border-dashed border-border pt-3 space-y-0.5">
             <p className="text-xs text-muted-foreground font-medium">Thank you for saving with SusuFlow!</p>
             <p className="text-[10px] text-muted-foreground/60">This is a system-generated electronic receipt.</p>
           </div>
         </div>
 
         {/* Buttons */}
-        <div className="mt-6 flex gap-3 print:hidden">
+        <div className="mt-5 flex gap-3 print:hidden">
           <Button variant="outline" className="flex-1 flex items-center gap-2" onClick={handlePrint}>
             <Printer className="h-4 w-4" />
             Print Receipt

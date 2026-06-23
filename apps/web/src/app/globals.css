@@ -747,6 +747,34 @@
       display: none !important;
     }
   }
+
+  /* SaaS Production-Grade Receipt Print Styles */
+  @media print {
+    body {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+    }
+    /* Hide all page layouts, sidebars, and components */
+    body * {
+      visibility: hidden;
+    }
+    /* Render only the printable receipt segment and its children */
+    #printable-receipt,
+    #printable-receipt * {
+      visibility: visible;
+    }
+    /* Align receipt to the top-left of the printable area */
+    #printable-receipt {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      border: none !important;
+    }
+  }
 }
 
 @layer utilities {

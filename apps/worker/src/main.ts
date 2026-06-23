@@ -120,7 +120,7 @@ function generateSaaSEmailHtml({
   primaryColor?: string;
 }) {
   const webUrl = process.env.WEB_URL || 'http://localhost:3000';
-  const logoUrl = 'https://raw.githubusercontent.com/Gideon-Dadey/SusuFlow/main/apps/web/public/brand/logo-transparent.webp';
+  const logoUrl = 'https://raw.githubusercontent.com/Gideon-Dadey/SusuFlow/main/apps/web/public/brand/logo-transparent.png';
 
   const detailsHtml = details.map(d => `
     <tr>
