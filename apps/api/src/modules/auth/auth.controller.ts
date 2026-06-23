@@ -1,47 +1,99 @@
-import { Controller, Post, Body, Req, BadRequestException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiHeader } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
-import { Request } from 'express';
-import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto, RefreshTokenDto } from './dto/auth.dto';
-import { Public } from '../../common/decorators';
-import { TenantContext } from '@susuflow/shared';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  BadRequestException,
+  Get,
+  Param,
+} from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiHeader } from "@nestjs/swagger";
+import { Throttle } from "@nestjs/throttler";
+import { Request } from "express";
+import { AuthService } from "./auth.service";
+import { OtpService } from "./otp.service";
+import {
+  RegisterDto,
+  LoginDto,
+  RefreshTokenDto,
+  SendOtpDto,
+  VerifyOtpDto,
+} from "./dto/auth.dto";
+import { Public } from "../../common/decorators";
+import { TenantContext } from "@susuflow/shared";
 
-@ApiTags('auth')
-@Controller('auth')
+@ApiTags("auth")
+@Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly otpService: OtpService,
+  ) {}
 
   @Public()
   @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @Post('register')
-  @ApiOperation({ summary: 'Register a new customer' })
-  @ApiHeader({ name: 'x-tenant-slug', required: true })
+  @Post("register")
+  @ApiOperation({ summary: "Register a new customer" })
+  @ApiHeader({ name: "x-tenant-slug", required: true })
   register(@Body() dto: RegisterDto, @Req() req: Request) {
-    if (!req.tenant) throw new BadRequestException('Tenant context required');
+    if (!req.tenant) throw new BadRequestException("Tenant context required");
     return this.authService.register(dto, req.tenant as TenantContext);
   }
 
   @Public()
   @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @Post('login')
-  @ApiOperation({ summary: 'Login with email and password' })
-  @ApiHeader({ name: 'x-tenant-slug', required: false })
+  @Post("login")
+  @ApiOperation({ summary: "Login with email and password" })
+  @ApiHeader({ name: "x-tenant-slug", required: false })
   login(@Body() dto: LoginDto, @Req() req: Request) {
     return this.authService.login(dto, req.tenant as TenantContext | undefined);
   }
 
   @Public()
-  @Post('refresh')
-  @ApiOperation({ summary: 'Refresh access token' })
+  @Post("refresh")
+  @ApiOperation({ summary: "Refresh access token" })
   refresh(@Body() dto: RefreshTokenDto) {
     return this.authService.refresh(dto.refreshToken);
   }
 
   @Public()
-  @Post('logout')
-  @ApiOperation({ summary: 'Logout and revoke refresh token' })
+  @Post("logout")
+  @ApiOperation({ summary: "Logout and revoke refresh token" })
   logout(@Body() dto: RefreshTokenDto) {
     return this.authService.logout(dto.refreshToken);
+  }
+
+  @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Post("verify/send")
+  @ApiOperation({ summary: "Send OTP verification code" })
+  @ApiHeader({ name: "x-tenant-slug", required: true })
+  sendOtp(@Body() dto: SendOtpDto, @Req() req: Request) {
+    if (!req.tenant) throw new BadRequestException("Tenant context required");
+    return this.otpService.send(dto.userId, dto.channel, req.tenant.id);
+  }
+
+  @Public()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @Post("verify/confirm")
+  @ApiOperation({ summary: "Confirm OTP verification code" })
+  @ApiHeader({ name: "x-tenant-slug", required: true })
+  verifyOtp(@Body() dto: VerifyOtpDto, @Req() req: Request) {
+    if (!req.tenant) throw new BadRequestException("Tenant context required");
+    return this.otpService.verify(
+      dto.userId,
+      dto.channel,
+      dto.code,
+      req.tenant.id,
+    );
+  }
+
+  @Public()
+  @Get("verify/status/:userId")
+  @ApiOperation({ summary: "Get verification status for a user" })
+  @ApiHeader({ name: "x-tenant-slug", required: true })
+  verificationStatus(@Param("userId") userId: string, @Req() req: Request) {
+    if (!req.tenant) throw new BadRequestException("Tenant context required");
+    return this.otpService.getVerificationStatus(userId, req.tenant.id);
   }
 }

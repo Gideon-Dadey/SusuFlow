@@ -1,5 +1,5 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import Redis from 'ioredis';
+import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import Redis from "ioredis";
 
 @Injectable()
 export class CacheService implements OnModuleInit, OnModuleDestroy {
@@ -12,8 +12,8 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
       this.client = url
         ? new Redis(url, { maxRetriesPerRequest: 1, lazyConnect: true })
         : new Redis({
-            host: process.env.REDIS_HOST || 'localhost',
-            port: parseInt(process.env.REDIS_PORT || '6379', 10),
+            host: process.env.REDIS_HOST || "localhost",
+            port: parseInt(process.env.REDIS_PORT || "6379", 10),
             maxRetriesPerRequest: 1,
             lazyConnect: true,
           });
@@ -39,7 +39,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
   async ping(): Promise<boolean> {
     if (!this.client || !this.available) return false;
     try {
-      return (await this.client.ping()) === 'PONG';
+      return (await this.client.ping()) === "PONG";
     } catch {
       return false;
     }
@@ -58,7 +58,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
   async set(key: string, value: unknown, ttlSeconds: number): Promise<void> {
     if (!this.client || !this.available) return;
     try {
-      await this.client.set(key, JSON.stringify(value), 'EX', ttlSeconds);
+      await this.client.set(key, JSON.stringify(value), "EX", ttlSeconds);
     } catch {
       // Cache miss on write — non-fatal
     }
@@ -68,6 +68,33 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
     if (!this.client || !this.available) return;
     try {
       await this.client.del(key);
+    } catch {
+      // Non-fatal
+    }
+  }
+
+  async exists(key: string): Promise<boolean> {
+    if (!this.client || !this.available) return false;
+    try {
+      return (await this.client.exists(key)) === 1;
+    } catch {
+      return false;
+    }
+  }
+
+  async incr(key: string): Promise<number> {
+    if (!this.client || !this.available) return 0;
+    try {
+      return await this.client.incr(key);
+    } catch {
+      return 0;
+    }
+  }
+
+  async expire(key: string, ttlSeconds: number): Promise<void> {
+    if (!this.client || !this.available) return;
+    try {
+      await this.client.expire(key, ttlSeconds);
     } catch {
       // Non-fatal
     }

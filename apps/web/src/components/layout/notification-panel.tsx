@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useRef, useState, useCallback } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
   faArrowDown,
@@ -11,13 +11,14 @@ import {
   faTimesCircle,
   faSpinner,
   faInbox,
-} from '@fortawesome/free-solid-svg-icons';
-import { depositApi, withdrawalApi, type Transaction } from '@/lib/api';
-import { useAuthStore } from '@/stores/auth.store';
+} from "@fortawesome/free-solid-svg-icons";
+import { depositApi, withdrawalApi, type Transaction } from "@/lib/api";
+import { formatGhs } from "@/lib/utils";
+import { useAuthStore } from "@/stores/auth.store";
 
 interface NotificationItem {
   id: string;
-  type: 'deposit' | 'withdrawal';
+  type: "deposit" | "withdrawal";
   amount: number;
   currency: string;
   status: string;
@@ -27,14 +28,14 @@ interface NotificationItem {
 
 function getStatusIcon(status: string) {
   switch (status.toLowerCase()) {
-    case 'completed':
-    case 'confirmed':
+    case "completed":
+    case "confirmed":
       return faCheckCircle;
-    case 'failed':
-    case 'rejected':
+    case "failed":
+    case "rejected":
       return faTimesCircle;
-    case 'pending':
-    case 'pending_confirmation':
+    case "pending":
+    case "pending_confirmation":
       return faClock;
     default:
       return faSpinner;
@@ -43,32 +44,26 @@ function getStatusIcon(status: string) {
 
 function getStatusColor(status: string) {
   switch (status.toLowerCase()) {
-    case 'completed':
-    case 'confirmed':
-      return 'text-emerald-500';
-    case 'failed':
-    case 'rejected':
-      return 'text-red-500';
-    case 'pending':
-    case 'pending_confirmation':
-      return 'text-amber-500';
+    case "completed":
+    case "confirmed":
+      return "text-emerald-500";
+    case "failed":
+    case "rejected":
+      return "text-red-500";
+    case "pending":
+    case "pending_confirmation":
+      return "text-amber-500";
     default:
-      return 'text-blue-500';
+      return "text-blue-500";
   }
-}
-
-function formatAmount(amount: number, currency: string) {
-  return new Intl.NumberFormat('en-GH', {
-    style: 'currency',
-    currency: currency || 'GHS',
-    minimumFractionDigits: 2,
-  }).format(amount / 100);
 }
 
 function timeAgo(dateStr: string) {
   try {
-    const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-    if (seconds < 60) return 'just now';
+    const seconds = Math.floor(
+      (Date.now() - new Date(dateStr).getTime()) / 1000,
+    );
+    if (seconds < 60) return "just now";
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `${minutes}m ago`;
     const hours = Math.floor(minutes / 60);
@@ -77,7 +72,7 @@ function timeAgo(dateStr: string) {
     if (days < 7) return `${days}d ago`;
     return new Date(dateStr).toLocaleDateString();
   } catch {
-    return '';
+    return "";
   }
 }
 
@@ -90,8 +85,11 @@ export function NotificationPanel() {
   const rootRef = useRef<HTMLDivElement>(null);
 
   const roles = user?.roles ?? [];
-  const isCustomer = roles.includes('customer') || roles.includes('saver');
-  const isStaff = roles.includes('staff') || roles.includes('admin') || roles.includes('org_admin');
+  const isCustomer = roles.includes("customer") || roles.includes("saver");
+  const isStaff =
+    roles.includes("staff") ||
+    roles.includes("admin") ||
+    roles.includes("org_admin");
 
   const fetchNotifications = useCallback(async () => {
     setLoading(true);
@@ -101,15 +99,17 @@ export function NotificationPanel() {
       // Fetch recent deposits
       try {
         const deposits = await depositApi.list();
-        const depositItems = (deposits.items || []).slice(0, 10).map((t: Transaction) => ({
-          id: t.id,
-          type: 'deposit' as const,
-          amount: Number(t.amount),
-          currency: t.currency || 'GHS',
-          status: t.status,
-          createdAt: t.createdAt,
-          description: t.description,
-        }));
+        const depositItems = (deposits.items || [])
+          .slice(0, 10)
+          .map((t: Transaction) => ({
+            id: t.id,
+            type: "deposit" as const,
+            amount: Number(t.amount),
+            currency: t.currency || "GHS",
+            status: t.status,
+            createdAt: t.createdAt,
+            description: t.description,
+          }));
         notifications.push(...depositItems);
       } catch {
         // Silently ignore if deposits endpoint fails
@@ -119,15 +119,17 @@ export function NotificationPanel() {
       if (isStaff) {
         try {
           const withdrawals = await withdrawalApi.list();
-          const withdrawalItems = (withdrawals.items || []).slice(0, 10).map((t: Transaction) => ({
-            id: t.id,
-            type: 'withdrawal' as const,
-            amount: Number(t.amount),
-            currency: t.currency || 'GHS',
-            status: t.status,
-            createdAt: t.createdAt,
-            description: t.description,
-          }));
+          const withdrawalItems = (withdrawals.items || [])
+            .slice(0, 10)
+            .map((t: Transaction) => ({
+              id: t.id,
+              type: "withdrawal" as const,
+              amount: Number(t.amount),
+              currency: t.currency || "GHS",
+              status: t.status,
+              createdAt: t.createdAt,
+              description: t.description,
+            }));
           notifications.push(...withdrawalItems);
         } catch {
           // Silently ignore if withdrawals endpoint fails
@@ -135,8 +137,9 @@ export function NotificationPanel() {
       }
 
       // Sort by date (newest first)
-      notifications.sort((a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      notifications.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
 
       setItems(notifications.slice(0, 15));
@@ -159,14 +162,14 @@ export function NotificationPanel() {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === "Escape") setOpen(false);
     };
 
-    document.addEventListener('mousedown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener('mousedown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
 
@@ -181,7 +184,10 @@ export function NotificationPanel() {
   // Count recent (< 1 hour) pending items
   const recentPending = items.filter((n) => {
     const age = Date.now() - new Date(n.createdAt).getTime();
-    return age < 3600000 && ['pending', 'pending_confirmation'].includes(n.status.toLowerCase());
+    return (
+      age < 3600000 &&
+      ["pending", "pending_confirmation"].includes(n.status.toLowerCase())
+    );
   }).length;
 
   return (
@@ -197,21 +203,24 @@ export function NotificationPanel() {
         <FontAwesomeIcon icon={faBell} className="h-[1.05rem] w-[1.05rem]" />
         {recentPending > 0 && (
           <span className="absolute right-1.5 top-1.5 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-            {recentPending > 9 ? '9+' : recentPending}
+            {recentPending > 9 ? "9+" : recentPending}
           </span>
         )}
         {recentPending === 0 && (
-          <span className="absolute right-2 top-2 size-1.5 rounded-full bg-primary" aria-hidden />
+          <span
+            className="absolute right-2 top-2 size-1.5 rounded-full bg-primary"
+            aria-hidden
+          />
         )}
       </button>
 
       {open && (
-        <div
-          className="absolute right-0 top-full z-[300] mt-2 w-80 sm:w-96 overflow-hidden rounded-xl border border-border bg-popover shadow-elevated animate-in fade-in slide-in-from-top-2 duration-200"
-        >
+        <div className="absolute right-0 top-full z-[300] mt-2 w-80 sm:w-96 overflow-hidden rounded-xl border border-border bg-popover shadow-elevated animate-in fade-in slide-in-from-top-2 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
-            <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
+            <h3 className="text-sm font-semibold text-foreground">
+              Notifications
+            </h3>
             {hasLoaded && (
               <button
                 type="button"
@@ -227,15 +236,25 @@ export function NotificationPanel() {
           <div className="max-h-80 overflow-y-auto overscroll-contain">
             {loading && !hasLoaded ? (
               <div className="flex flex-col items-center justify-center gap-2 py-10">
-                <FontAwesomeIcon icon={faSpinner} className="h-5 w-5 animate-spin text-muted-foreground" />
-                <p className="text-xs text-muted-foreground">Loading notifications…</p>
+                <FontAwesomeIcon
+                  icon={faSpinner}
+                  className="h-5 w-5 animate-spin text-muted-foreground"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Loading notifications…
+                </p>
               </div>
             ) : items.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-2 py-10">
                 <div className="flex size-10 items-center justify-center rounded-full bg-muted">
-                  <FontAwesomeIcon icon={faInbox} className="h-5 w-5 text-muted-foreground" />
+                  <FontAwesomeIcon
+                    icon={faInbox}
+                    className="h-5 w-5 text-muted-foreground"
+                  />
                 </div>
-                <p className="text-sm font-medium text-muted-foreground">No notifications yet</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  No notifications yet
+                </p>
                 <p className="text-xs text-muted-foreground/70">
                   Activity will appear here as it happens
                 </p>
@@ -250,13 +269,13 @@ export function NotificationPanel() {
                     {/* Type icon */}
                     <div
                       className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full ${
-                        item.type === 'deposit'
-                          ? 'bg-emerald-500/10 text-emerald-500'
-                          : 'bg-orange-500/10 text-orange-500'
+                        item.type === "deposit"
+                          ? "bg-emerald-500/10 text-emerald-500"
+                          : "bg-orange-500/10 text-orange-500"
                       }`}
                     >
                       <FontAwesomeIcon
-                        icon={item.type === 'deposit' ? faArrowDown : faArrowUp}
+                        icon={item.type === "deposit" ? faArrowDown : faArrowUp}
                         className="h-3.5 w-3.5"
                       />
                     </div>
@@ -265,9 +284,9 @@ export function NotificationPanel() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <p className="truncate text-sm font-medium text-foreground">
-                          {item.type === 'deposit' ? 'Deposit' : 'Withdrawal'}
+                          {item.type === "deposit" ? "Deposit" : "Withdrawal"}
                           <span className="ml-1.5 font-semibold">
-                            {formatAmount(item.amount, item.currency)}
+                            {formatGhs(item.amount)}
                           </span>
                         </p>
                         <FontAwesomeIcon

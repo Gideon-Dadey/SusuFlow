@@ -3,22 +3,23 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { randomBytes } from 'crypto';
+} from "@nestjs/common";
+import * as bcrypt from "bcrypt";
+import { randomBytes } from "crypto";
 import {
   ROLES,
   SUBSCRIPTION_PLAN_PRICES_GHS,
   TENANT_CHART_OF_ACCOUNTS,
   TRIAL_PERIOD_DAYS,
-} from '@susuflow/shared';
-import { PrismaService } from '../../prisma/prisma.service';
-import { CacheService } from '../../cache/cache.service';
-import { TENANT_CACHE_PREFIX } from '../../cache/cache.constants';
-import { CreateTenantDto, UpdateTenantDto } from './dto/tenant.dto';
+  clampPageLimit,
+} from "@susuflow/shared";
+import { PrismaService } from "../../prisma/prisma.service";
+import { CacheService } from "../../cache/cache.service";
+import { TENANT_CACHE_PREFIX } from "../../cache/cache.constants";
+import { CreateTenantDto, UpdateTenantDto } from "./dto/tenant.dto";
 
 function generateTempPassword(): string {
-  const base = randomBytes(9).toString('base64url');
+  const base = randomBytes(9).toString("base64url");
   return `${base}A1!`;
 }
 
@@ -29,11 +30,12 @@ export class TenantService {
     private readonly cache: CacheService,
   ) {}
 
-  async findAll(cursor?: string, limit = 20) {
+  async findAll(cursor?: string, limit?: number) {
+    const pageLimit = clampPageLimit(limit);
     const tenants = await this.prisma.tenant.findMany({
-      take: limit + 1,
+      take: pageLimit + 1,
       ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       include: {
         subscription: {
           select: {
@@ -47,7 +49,7 @@ export class TenantService {
       },
     });
 
-    const hasMore = tenants.length > limit;
+    const hasMore = tenants.length > pageLimit;
     const data = hasMore ? tenants.slice(0, -1) : tenants;
 
     return {
@@ -65,7 +67,7 @@ export class TenantService {
         _count: { select: { users: true, customers: true } },
       },
     });
-    if (!tenant) throw new NotFoundException('Tenant not found');
+    if (!tenant) throw new NotFoundException("Tenant not found");
     return tenant;
   }
 
@@ -74,7 +76,7 @@ export class TenantService {
       where: { slug },
       include: { subscription: true },
     });
-    if (!tenant) throw new NotFoundException('Tenant not found');
+    if (!tenant) throw new NotFoundException("Tenant not found");
     return tenant;
   }
 
@@ -83,57 +85,63 @@ export class TenantService {
       where: { id: tenantId },
       include: { subscription: true },
     });
-    if (!tenant) throw new NotFoundException('Tenant not found');
+    if (!tenant) throw new NotFoundException("Tenant not found");
 
-    if (tenant.status === 'suspended') {
+    if (tenant.status === "suspended") {
       throw new BadRequestException(
-        'This organization has been suspended. Contact SusuFlow support.',
+        "This organization has been suspended. Contact SusuFlow support.",
       );
     }
-    if (tenant.status === 'closed') {
-      throw new BadRequestException('This organization is no longer active.');
+    if (tenant.status === "closed") {
+      throw new BadRequestException("This organization is no longer active.");
     }
 
     const sub = tenant.subscription;
     if (!sub) return;
 
-    if (sub.status === 'cancelled') {
-      throw new BadRequestException('Subscription cancelled. Contact SusuFlow to renew.');
+    if (sub.status === "cancelled") {
+      throw new BadRequestException(
+        "Subscription cancelled. Contact SusuFlow to renew.",
+      );
     }
 
     const now = new Date();
     if (
-      tenant.status === 'trial' &&
+      tenant.status === "trial" &&
       sub.trialEnd &&
       sub.trialEnd < now &&
-      sub.status !== 'active'
+      sub.status !== "active"
     ) {
       throw new BadRequestException(
-        'Trial period ended. Please complete subscription payment to continue.',
+        "Trial period ended. Please complete subscription payment to continue.",
       );
     }
 
-    if (sub.status === 'past_due') {
+    if (sub.status === "past_due") {
       throw new BadRequestException(
-        'Subscription payment is overdue. Contact your administrator or SusuFlow support.',
+        "Subscription payment is overdue. Contact your administrator or SusuFlow support.",
       );
     }
   }
 
   async create(dto: CreateTenantDto) {
-    const existingSlug = await this.prisma.tenant.findUnique({ where: { slug: dto.slug } });
-    if (existingSlug) throw new ConflictException(`Tenant slug '${dto.slug}' already exists`);
+    const existingSlug = await this.prisma.tenant.findUnique({
+      where: { slug: dto.slug },
+    });
+    if (existingSlug)
+      throw new ConflictException(`Tenant slug '${dto.slug}' already exists`);
 
     const companyAdminRole = await this.prisma.role.findUnique({
       where: { name: ROLES.COMPANY_ADMIN },
     });
-    if (!companyAdminRole) throw new BadRequestException('System roles not configured');
+    if (!companyAdminRole)
+      throw new BadRequestException("System roles not configured");
 
     const tempPassword = dto.adminPassword || generateTempPassword();
     const passwordHash = await bcrypt.hash(tempPassword, 12);
     const trialEnd = new Date();
     trialEnd.setDate(trialEnd.getDate() + TRIAL_PERIOD_DAYS);
-    const plan = dto.plan || 'starter';
+    const plan = dto.plan || "starter";
 
     const result = await this.prisma.$transaction(async (tx) => {
       const tenant = await tx.tenant.create({
@@ -142,10 +150,10 @@ export class TenantService {
           name: dto.name,
           email: dto.email,
           phone: dto.phone,
-          status: 'trial',
+          status: "trial",
           settings: {
-            currency: 'GHS',
-            timezone: 'Africa/Accra',
+            currency: "GHS",
+            timezone: "Africa/Accra",
           },
         },
       });
@@ -154,7 +162,7 @@ export class TenantService {
         data: {
           tenantId: tenant.id,
           plan,
-          status: 'trialing',
+          status: "trialing",
           currentPeriodStart: new Date(),
           currentPeriodEnd: trialEnd,
           trialEnd,
@@ -176,7 +184,9 @@ export class TenantService {
         where: { tenantId: tenant.id, email: dto.adminEmail },
       });
       if (existingAdmin) {
-        throw new ConflictException('Admin email already exists for this tenant');
+        throw new ConflictException(
+          "Admin email already exists for this tenant",
+        );
       }
 
       const admin = await tx.user.create({
@@ -187,7 +197,7 @@ export class TenantService {
           passwordHash,
           firstName: dto.adminFirstName,
           lastName: dto.adminLastName,
-          status: 'active',
+          status: "active",
           emailVerified: true,
         },
       });
@@ -225,10 +235,10 @@ export class TenantService {
         tenantSlug: result.tenant.slug,
         email: result.admin.email,
         temporaryPassword: dto.adminPassword ? undefined : tempPassword,
-        loginUrl: `${process.env.WEB_URL || 'http://localhost:3000'}/login`,
+        loginUrl: `${process.env.WEB_URL || "http://localhost:3000"}/login`,
       },
       message:
-        'Organization provisioned. Share the tenant slug and admin credentials with the company.',
+        "Organization provisioned. Share the tenant slug and admin credentials with the company.",
     };
   }
 
@@ -241,14 +251,14 @@ export class TenantService {
     const updated = await this.prisma.$transaction(async (tx) => {
       const t = await tx.tenant.update({
         where: { id },
-        data: { status: 'active' },
+        data: { status: "active" },
       });
 
       if (tenant.subscriptionId) {
         await tx.subscription.update({
           where: { id: tenant.subscriptionId },
           data: {
-            status: 'active',
+            status: "active",
             currentPeriodStart: now,
             currentPeriodEnd: periodEnd,
             cancelledAt: null,
@@ -260,42 +270,46 @@ export class TenantService {
     });
 
     await this.invalidateTenantCache(updated.slug);
-    return { tenant: updated, message: 'Tenant activated successfully' };
+    return { tenant: updated, message: "Tenant activated successfully" };
   }
 
   async suspend(id: string, reason?: string) {
     const tenant = await this.findById(id);
-    if (tenant.status === 'closed') {
-      throw new BadRequestException('Cannot suspend a closed tenant');
+    if (tenant.status === "closed") {
+      throw new BadRequestException("Cannot suspend a closed tenant");
     }
 
     const updated = await this.prisma.tenant.update({
       where: { id },
       data: {
-        status: 'suspended',
+        status: "suspended",
         settings: {
-          ...(typeof tenant.settings === 'object' && tenant.settings !== null
+          ...(typeof tenant.settings === "object" && tenant.settings !== null
             ? (tenant.settings as Record<string, unknown>)
             : {}),
-          suspendReason: reason || 'Suspended by platform administrator',
+          suspendReason: reason || "Suspended by platform administrator",
           suspendedAt: new Date().toISOString(),
         },
       },
     });
 
     await this.invalidateTenantCache(updated.slug);
-    return { tenant: updated, message: 'Tenant suspended' };
+    return { tenant: updated, message: "Tenant suspended" };
   }
 
-  async recordSubscriptionPayment(tenantId: string, reference: string, amountGhs: number) {
+  async recordSubscriptionPayment(
+    tenantId: string,
+    reference: string,
+    amountGhs: number,
+  ) {
     const tenant = await this.findById(tenantId);
     if (!tenant.subscriptionId) {
-      throw new BadRequestException('Tenant has no subscription record');
+      throw new BadRequestException("Tenant has no subscription record");
     }
 
     const expected = SUBSCRIPTION_PLAN_PRICES_GHS[tenant.subscription!.plan];
     if (expected > 0 && amountGhs < expected) {
-      throw new BadRequestException('Payment amount does not match plan price');
+      throw new BadRequestException("Payment amount does not match plan price");
     }
 
     const now = new Date();
@@ -306,7 +320,7 @@ export class TenantService {
       await tx.subscription.update({
         where: { id: tenant.subscriptionId! },
         data: {
-          status: 'active',
+          status: "active",
           paystackReference: reference,
           lastPaymentAt: now,
           currentPeriodStart: now,
@@ -317,12 +331,15 @@ export class TenantService {
 
       return tx.tenant.update({
         where: { id: tenantId },
-        data: { status: 'active' },
+        data: { status: "active" },
       });
     });
 
     await this.invalidateTenantCache(updated.slug);
-    return { tenant: updated, message: 'Subscription payment recorded; tenant activated' };
+    return {
+      tenant: updated,
+      message: "Subscription payment recorded; tenant activated",
+    };
   }
 
   async update(id: string, dto: UpdateTenantDto) {
@@ -338,7 +355,8 @@ export class TenantService {
         primaryColor: dto.primaryColor,
         settings: dto.settings
           ? {
-              ...(typeof tenant.settings === 'object' && tenant.settings !== null
+              ...(typeof tenant.settings === "object" &&
+              tenant.settings !== null
                 ? (tenant.settings as Record<string, unknown>)
                 : {}),
               ...dto.settings,
@@ -353,31 +371,33 @@ export class TenantService {
 
   async getGlobalSummary() {
     const totalTenants = await this.prisma.tenant.count();
-    const activeTenants = await this.prisma.tenant.count({ where: { status: 'active' } });
+    const activeTenants = await this.prisma.tenant.count({
+      where: { status: "active" },
+    });
 
     // Completed deposits sum
     const depositsResult = await this.prisma.transaction.aggregate({
-      where: { type: 'deposit', status: 'completed' },
+      where: { type: "deposit", status: "completed" },
       _sum: { amount: true },
     });
     const totalDeposits = Number(depositsResult._sum.amount || 0);
 
     // Completed withdrawals sum
     const withdrawalsResult = await this.prisma.transaction.aggregate({
-      where: { type: 'withdrawal', status: 'completed' },
+      where: { type: "withdrawal", status: "completed" },
       _sum: { amount: true },
     });
     const totalWithdrawals = Number(withdrawalsResult._sum.amount || 0);
 
     // Open fraud alerts count
     const openFraudAlerts = await this.prisma.fraudAlert.count({
-      where: { status: 'open' },
+      where: { status: "open" },
     });
 
     // Recent global transactions
     const recentTransactions = await this.prisma.transaction.findMany({
       take: 5,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       include: {
         tenant: { select: { name: true, slug: true } },
         customer: {
@@ -391,7 +411,7 @@ export class TenantService {
     // Recent global audit logs
     const recentAuditLogs = await this.prisma.auditLog.findMany({
       take: 10,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       include: {
         tenant: { select: { name: true, slug: true } },
         user: { select: { firstName: true, lastName: true, email: true } },
@@ -409,9 +429,14 @@ export class TenantService {
     };
   }
 
-  async getGlobalDeposits(options: { status?: string; tenantId?: string; cursor?: string; limit?: number }) {
-    const limit = options.limit || 20;
-    const where: Record<string, any> = { type: 'deposit' };
+  async getGlobalDeposits(options: {
+    status?: string;
+    tenantId?: string;
+    cursor?: string;
+    limit?: number;
+  }) {
+    const limit = clampPageLimit(options.limit);
+    const where: Record<string, any> = { type: "deposit" };
     if (options.status) where.status = options.status;
     if (options.tenantId) where.tenantId = options.tenantId;
 
@@ -419,7 +444,7 @@ export class TenantService {
       where,
       take: limit + 1,
       ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       include: {
         tenant: { select: { name: true, slug: true } },
         customer: {
@@ -441,9 +466,14 @@ export class TenantService {
     };
   }
 
-  async getGlobalWithdrawals(options: { status?: string; tenantId?: string; cursor?: string; limit?: number }) {
-    const limit = options.limit || 20;
-    const where: Record<string, any> = { type: 'withdrawal' };
+  async getGlobalWithdrawals(options: {
+    status?: string;
+    tenantId?: string;
+    cursor?: string;
+    limit?: number;
+  }) {
+    const limit = clampPageLimit(options.limit);
+    const where: Record<string, any> = { type: "withdrawal" };
     if (options.status) where.status = options.status;
     if (options.tenantId) where.tenantId = options.tenantId;
 
@@ -451,7 +481,7 @@ export class TenantService {
       where,
       take: limit + 1,
       ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       include: {
         tenant: { select: { name: true, slug: true } },
         customer: {
@@ -473,8 +503,13 @@ export class TenantService {
     };
   }
 
-  async getGlobalFraud(options: { status?: string; tenantId?: string; cursor?: string; limit?: number }) {
-    const limit = options.limit || 20;
+  async getGlobalFraud(options: {
+    status?: string;
+    tenantId?: string;
+    cursor?: string;
+    limit?: number;
+  }) {
+    const limit = clampPageLimit(options.limit);
     const where: Record<string, any> = {};
     if (options.status) where.status = options.status;
     if (options.tenantId) where.tenantId = options.tenantId;
@@ -483,7 +518,7 @@ export class TenantService {
       where,
       take: limit + 1,
       ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       include: {
         tenant: { select: { name: true, slug: true } },
         resolvedBy: { select: { firstName: true, lastName: true } },
@@ -500,8 +535,12 @@ export class TenantService {
     };
   }
 
-  async getGlobalAuditLogs(options: { tenantId?: string; cursor?: string; limit?: number }) {
-    const limit = options.limit || 20;
+  async getGlobalAuditLogs(options: {
+    tenantId?: string;
+    cursor?: string;
+    limit?: number;
+  }) {
+    const limit = clampPageLimit(options.limit);
     const where: Record<string, any> = {};
     if (options.tenantId) where.tenantId = options.tenantId;
 
@@ -509,7 +548,7 @@ export class TenantService {
       where,
       take: limit + 1,
       ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       include: {
         tenant: { select: { name: true, slug: true } },
         user: { select: { firstName: true, lastName: true, email: true } },
@@ -531,7 +570,7 @@ export class TenantService {
     await this.prisma.$queryRaw`SELECT 1`;
     const dbLatency = Date.now() - start;
 
-    const os = await import('os');
+    const os = await import("os");
     const cpus = os.cpus();
     const cpuLoad = Math.round((os.loadavg()[0] / (cpus.length || 1)) * 100);
     const totalMem = os.totalmem();
@@ -539,12 +578,12 @@ export class TenantService {
     const memUsage = Math.round(((totalMem - freeMem) / (totalMem || 1)) * 100);
 
     return {
-      status: 'healthy',
+      status: "healthy",
       uptime: Math.round(os.uptime()),
-      database: { status: 'connected', latencyMs: dbLatency },
-      redis: { status: 'connected', latencyMs: 1 },
-      paystack: { status: 'operational', latencyMs: 38 },
-      sms: { status: 'operational', balance: 9450 },
+      database: { status: "connected", latencyMs: dbLatency },
+      redis: { status: "connected", latencyMs: 1 },
+      paystack: { status: "operational", latencyMs: 38 },
+      sms: { status: "operational", balance: 9450 },
       hardware: {
         cpuLoad,
         memoryUsage: memUsage,
@@ -559,15 +598,19 @@ export class TenantService {
       include: {
         tenant: { select: { name: true, slug: true } },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
-    const activeCount = subscriptions.filter((s) => s.status === 'active').length;
-    const trialCount = subscriptions.filter((s) => s.status === 'trialing').length;
+    const activeCount = subscriptions.filter(
+      (s) => s.status === "active",
+    ).length;
+    const trialCount = subscriptions.filter(
+      (s) => s.status === "trialing",
+    ).length;
 
     let monthlyRevenue = 0;
     for (const sub of subscriptions) {
-      if (sub.status === 'active') {
+      if (sub.status === "active") {
         const price = SUBSCRIPTION_PLAN_PRICES_GHS[sub.plan] || 0;
         monthlyRevenue += price;
       }
@@ -590,7 +633,7 @@ export class TenantService {
     });
 
     const entrySums = await this.prisma.ledgerEntry.groupBy({
-      by: ['accountId', 'entryType'],
+      by: ["accountId", "entryType"],
       _sum: { amount: true },
     });
 
@@ -599,7 +642,9 @@ export class TenantService {
       if (!sumMap[sum.accountId]) {
         sumMap[sum.accountId] = { debit: 0, credit: 0 };
       }
-      sumMap[sum.accountId][sum.entryType as 'debit' | 'credit'] = Number(sum._sum.amount || 0);
+      sumMap[sum.accountId][sum.entryType as "debit" | "credit"] = Number(
+        sum._sum.amount || 0,
+      );
     }
 
     let totalAssetBalance = 0;
@@ -609,14 +654,21 @@ export class TenantService {
 
     const items = accounts.map((account) => {
       const sums = sumMap[account.id] || { debit: 0, credit: 0 };
-      const isNormalCredit = ['liability', 'revenue', 'equity'].includes(account.accountType);
-      const balance = isNormalCredit ? sums.credit - sums.debit : sums.debit - sums.credit;
+      const isNormalCredit = ["liability", "revenue", "equity"].includes(
+        account.accountType,
+      );
+      const balance = isNormalCredit
+        ? sums.credit - sums.debit
+        : sums.debit - sums.credit;
 
       const balanceVal = Math.round(balance * 100) / 100;
-      if (account.accountType === 'asset') totalAssetBalance += balanceVal;
-      else if (account.accountType === 'liability') totalLiabilityBalance += balanceVal;
-      else if (account.accountType === 'revenue') totalRevenueBalance += balanceVal;
-      else if (account.accountType === 'expense') totalExpenseBalance += balanceVal;
+      if (account.accountType === "asset") totalAssetBalance += balanceVal;
+      else if (account.accountType === "liability")
+        totalLiabilityBalance += balanceVal;
+      else if (account.accountType === "revenue")
+        totalRevenueBalance += balanceVal;
+      else if (account.accountType === "expense")
+        totalExpenseBalance += balanceVal;
 
       return {
         ...account,
@@ -639,11 +691,11 @@ export class TenantService {
     const transactions = await this.prisma.transaction.findMany({
       where: {
         OR: [
-          { type: 'commission' },
+          { type: "commission" },
           {
-            type: 'deposit',
+            type: "deposit",
             collectorId: { not: null },
-            status: 'completed',
+            status: "completed",
           },
         ],
       },
@@ -658,7 +710,7 @@ export class TenantService {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     const collectorMap: Record<
@@ -684,14 +736,14 @@ export class TenantService {
           firstName: tx.collector.firstName,
           lastName: tx.collector.lastName,
           email: tx.collector.email,
-          tenantName: tx.tenant?.name || 'Platform',
+          tenantName: tx.tenant?.name || "Platform",
           earned: 0,
           paid: 0,
           balance: 0,
         };
       }
       const amountVal = Number(tx.amount);
-      if (tx.type === 'commission') {
+      if (tx.type === "commission") {
         collectorMap[key].paid += amountVal;
       } else {
         const commissionEarned = amountVal * 0.01;
@@ -721,8 +773,11 @@ export class TenantService {
       },
     });
 
-    const activeCount = plans.filter((p) => p.status === 'active').length;
-    const totalEnrollments = plans.reduce((sum, p) => sum + p._count.customerPlans, 0);
+    const activeCount = plans.filter((p) => p.status === "active").length;
+    const totalEnrollments = plans.reduce(
+      (sum, p) => sum + p._count.customerPlans,
+      0,
+    );
 
     return {
       plans,
@@ -735,10 +790,16 @@ export class TenantService {
     const where: Record<string, any> = {};
     if (options?.search) {
       where.OR = [
-        { customerNumber: { contains: options.search, mode: 'insensitive' } },
-        { user: { email: { contains: options.search, mode: 'insensitive' } } },
-        { user: { firstName: { contains: options.search, mode: 'insensitive' } } },
-        { user: { lastName: { contains: options.search, mode: 'insensitive' } } },
+        { customerNumber: { contains: options.search, mode: "insensitive" } },
+        { user: { email: { contains: options.search, mode: "insensitive" } } },
+        {
+          user: {
+            firstName: { contains: options.search, mode: "insensitive" },
+          },
+        },
+        {
+          user: { lastName: { contains: options.search, mode: "insensitive" } },
+        },
       ];
     }
 
@@ -757,7 +818,7 @@ export class TenantService {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     return { items };
@@ -769,7 +830,7 @@ export class TenantService {
         tenant: { select: { name: true, slug: true } },
         userRoles: { include: { role: true } },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     return { items };
@@ -786,7 +847,7 @@ export class TenantService {
         },
         reviewedBy: { select: { firstName: true, lastName: true } },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     return { items };
@@ -794,7 +855,7 @@ export class TenantService {
 
   async getGlobalSettings() {
     const platformTenant = await this.prisma.tenant.findFirst({
-      where: { slug: 'abc-susu' },
+      where: { slug: "abc-susu" },
     });
 
     const settings = (platformTenant?.settings as Record<string, any>) || {};
@@ -802,16 +863,16 @@ export class TenantService {
     return {
       maintenanceMode: settings.maintenanceMode || false,
       globalRateLimit: settings.globalRateLimit || 100,
-      backupSchedule: settings.backupSchedule || 'daily',
-      smsProvider: settings.smsProvider || 'twilio',
+      backupSchedule: settings.backupSchedule || "daily",
+      smsProvider: settings.smsProvider || "twilio",
       transactionFeePercent: settings.transactionFeePercent || 1.0,
-      systemEmail: settings.systemEmail || 'system@susuflow.com',
+      systemEmail: settings.systemEmail || "system@susuflow.com",
     };
   }
 
   async updateGlobalSettings(dto: any) {
     const platformTenant = await this.prisma.tenant.findFirst({
-      where: { slug: 'abc-susu' },
+      where: { slug: "abc-susu" },
     });
 
     if (platformTenant) {
@@ -819,7 +880,7 @@ export class TenantService {
         where: { id: platformTenant.id },
         data: {
           settings: {
-            ...(typeof platformTenant.settings === 'object'
+            ...(typeof platformTenant.settings === "object"
               ? (platformTenant.settings as Record<string, any>)
               : {}),
             ...dto,
@@ -829,15 +890,19 @@ export class TenantService {
       await this.invalidateTenantCache(platformTenant.slug);
     }
 
-    return { message: 'Global configuration updated successfully' };
+    return { message: "Global configuration updated successfully" };
   }
 
   async clearPlatformCache() {
-    const tenants = await this.prisma.tenant.findMany({ select: { slug: true } });
+    const tenants = await this.prisma.tenant.findMany({
+      select: { slug: true },
+    });
     for (const tenant of tenants) {
       await this.invalidateTenantCache(tenant.slug);
     }
-    return { message: 'Redis cache keys invalidated successfully for all tenants' };
+    return {
+      message: "Redis cache keys invalidated successfully for all tenants",
+    };
   }
 
   private async invalidateTenantCache(slug: string) {

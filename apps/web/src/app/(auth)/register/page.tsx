@@ -1,33 +1,34 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Eye, EyeOff } from 'lucide-react';
-import { AuthShell } from '@/components/auth/auth-shell';
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import { AuthShell } from "@/components/auth/auth-shell";
 import {
   AuthFooterExtras,
   authInputClassName,
-} from '@/components/auth/auth-form-ui';
-import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/stores/auth.store';
-import { cn } from '@/lib/utils';
+} from "@/components/auth/auth-form-ui";
+import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores/auth.store";
+import { cn } from "@/lib/utils";
 
-import { Suspense, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { Suspense, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const tenantParam = searchParams.get('tenant') || '';
-  const { register, isLoading, error, clearError, tenantSlug, setTenantSlug } = useAuthStore();
+  const tenantParam = searchParams.get("tenant") || "";
+  const { register, isLoading, error, clearError, tenantSlug, setTenantSlug } =
+    useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
     tenant: tenantSlug || tenantParam,
   });
 
@@ -45,14 +46,14 @@ function RegisterContent() {
     clearError();
     setTenantSlug(form.tenant);
     try {
-      await register({
+      const result = await register({
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,
         phone: form.phone,
         password: form.password,
       });
-      router.push('/login?registered=1');
+      router.push(`/verify?userId=${result.userId}`);
     } catch {
       // error in store
     }
@@ -61,10 +62,15 @@ function RegisterContent() {
   return (
     <AuthShell>
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Join your susu</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          Join your susu
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          or{' '}
-          <Link href="/login" className="font-medium text-secondary hover:text-secondary/80">
+          or{" "}
+          <Link
+            href="/login"
+            className="font-medium text-secondary hover:text-secondary/80"
+          >
             Sign in
           </Link>
         </p>
@@ -72,7 +78,10 @@ function RegisterContent() {
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         <div className="space-y-1.5">
-          <label htmlFor="tenant" className="block text-sm font-medium text-foreground">
+          <label
+            htmlFor="tenant"
+            className="block text-sm font-medium text-foreground"
+          >
             Susu company <span className="text-destructive">*</span>
           </label>
           <input
@@ -82,7 +91,7 @@ function RegisterContent() {
             placeholder="Company slug"
             className={authInputClassName}
             value={form.tenant}
-            onChange={(e) => update('tenant', e.target.value)}
+            onChange={(e) => update("tenant", e.target.value)}
             required
             autoComplete="organization"
           />
@@ -90,7 +99,10 @@ function RegisterContent() {
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <label htmlFor="firstName" className="block text-sm font-medium text-foreground">
+            <label
+              htmlFor="firstName"
+              className="block text-sm font-medium text-foreground"
+            >
               First name <span className="text-destructive">*</span>
             </label>
             <input
@@ -100,13 +112,16 @@ function RegisterContent() {
               placeholder="First name"
               className={authInputClassName}
               value={form.firstName}
-              onChange={(e) => update('firstName', e.target.value)}
+              onChange={(e) => update("firstName", e.target.value)}
               required
               autoComplete="given-name"
             />
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="lastName" className="block text-sm font-medium text-foreground">
+            <label
+              htmlFor="lastName"
+              className="block text-sm font-medium text-foreground"
+            >
               Last name <span className="text-destructive">*</span>
             </label>
             <input
@@ -116,7 +131,7 @@ function RegisterContent() {
               placeholder="Last name"
               className={authInputClassName}
               value={form.lastName}
-              onChange={(e) => update('lastName', e.target.value)}
+              onChange={(e) => update("lastName", e.target.value)}
               required
               autoComplete="family-name"
             />
@@ -124,7 +139,10 @@ function RegisterContent() {
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="email" className="block text-sm font-medium text-foreground">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-foreground"
+          >
             Email address <span className="text-destructive">*</span>
           </label>
           <input
@@ -134,14 +152,17 @@ function RegisterContent() {
             placeholder="Email"
             className={authInputClassName}
             value={form.email}
-            onChange={(e) => update('email', e.target.value)}
+            onChange={(e) => update("email", e.target.value)}
             required
             autoComplete="email"
           />
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="phone" className="block text-sm font-medium text-foreground">
+          <label
+            htmlFor="phone"
+            className="block text-sm font-medium text-foreground"
+          >
             Phone <span className="text-destructive">*</span>
           </label>
           <input
@@ -151,25 +172,28 @@ function RegisterContent() {
             placeholder="Phone"
             className={authInputClassName}
             value={form.phone}
-            onChange={(e) => update('phone', e.target.value)}
+            onChange={(e) => update("phone", e.target.value)}
             required
             autoComplete="tel"
           />
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="password" className="block text-sm font-medium text-foreground">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-foreground"
+          >
             Password <span className="text-destructive">*</span>
           </label>
           <div className="relative">
             <input
               id="password"
               name="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
-              className={cn(authInputClassName, 'pr-10')}
+              className={cn(authInputClassName, "pr-10")}
               value={form.password}
-              onChange={(e) => update('password', e.target.value)}
+              onChange={(e) => update("password", e.target.value)}
               required
               autoComplete="new-password"
             />
@@ -177,15 +201,21 @@ function RegisterContent() {
               type="button"
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
               onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
         </div>
 
         {error ? (
-          <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>
+          <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            {error}
+          </p>
         ) : null}
 
         <Button
@@ -204,7 +234,13 @@ function RegisterContent() {
 
 export default function RegisterPage() {
   return (
-    <Suspense fallback={<div className="text-center py-8 text-sm text-muted-foreground animate-pulse">Loading registration settings...</div>}>
+    <Suspense
+      fallback={
+        <div className="text-center py-8 text-sm text-muted-foreground animate-pulse">
+          Loading registration settings...
+        </div>
+      }
+    >
       <RegisterContent />
     </Suspense>
   );

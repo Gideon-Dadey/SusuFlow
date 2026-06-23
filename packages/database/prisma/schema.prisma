@@ -51,7 +51,7 @@ model User {
   emailVerified       Boolean        @default(false) @map("email_verified")
   phoneVerified       Boolean        @default(false) @map("phone_verified")
   mfaEnabled          Boolean        @default(false) @map("mfa_enabled")
-  mfaSecret           String?        @map("mfa_secret") @db.VarChar(255)
+  mfaSecret           String?        @map("mfa_secret") @db.VarChar(512)
   lastLoginAt         DateTime?      @map("last_login_at") @db.Timestamptz(6)
   failedLoginCount    Int            @default(0) @map("failed_login_count")
   lockedUntil         DateTime?      @map("locked_until") @db.Timestamptz(6)
@@ -129,7 +129,7 @@ model Customer {
   userId          String?        @unique @map("user_id") @db.Uuid
   collectorId     String?        @map("collector_id") @db.Uuid
   customerNumber  String         @map("customer_number") @db.VarChar(20)
-  ghanaCardNumber String?        @map("ghana_card_number") @db.VarChar(20)
+  ghanaCardNumber String?        @map("ghana_card_number") @db.VarChar(512)
   dateOfBirth     DateTime?      @map("date_of_birth") @db.Date
   address         String?
   kycLevel        Int            @default(0) @map("kyc_level")

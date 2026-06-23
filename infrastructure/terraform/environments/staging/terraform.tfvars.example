@@ -10,3 +10,4 @@ redis_node_type       = "cache.t4g.micro"
 
 web_url = "https://staging.susuflow.com"
 api_url = "https://api-staging.susuflow.com"
+alarm_email = "ops@susuflow.com"

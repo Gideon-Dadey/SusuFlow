@@ -1,0 +1,98 @@
+# Production stack: API + Worker + Web + Postgres + Redis
+# Usage: docker compose -f infrastructure/docker/docker-compose.prod.yml up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: susuflow-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-susuflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-susuflow}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../scripts/db-backup.sh:/usr/local/bin/db-backup:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-susuflow}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: susuflow-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+      target: api
+    container_name: susuflow-api
+    env_file:
+      - ../../.env
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-susuflow}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-susuflow}?schema=public
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "${API_PORT:-4000}:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+      target: worker
+    container_name: susuflow-worker
+    env_file:
+      - ../../.env
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-susuflow}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-susuflow}?schema=public
+      REDIS_URL: redis://redis:6379
+      WORKER_HEALTH_PORT: 4001
+    ports:
+      - "${WORKER_HEALTH_PORT:-4001}:4001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_started
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+      target: web
+    container_name: susuflow-web
+    env_file:
+      - ../../.env
+    environment:
+      NODE_ENV: production
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

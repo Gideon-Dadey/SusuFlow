@@ -62,3 +62,8 @@ variable "api_url" {
   type    = string
   default = "https://api.susuflow.com"
 }
+
+variable "alarm_email" {
+  type        = string
+  description = "Email for CloudWatch alarm notifications (SNS subscription)"
+}

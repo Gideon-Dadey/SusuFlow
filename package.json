@@ -27,6 +27,9 @@
     "optimize:images": "pnpm --filter @susuflow/web optimize:images",
     "docker:up": "docker compose -f infrastructure/docker/docker-compose.yml up -d",
     "docker:down": "docker compose -f infrastructure/docker/docker-compose.yml down",
+    "docker:prod": "docker compose -f infrastructure/docker/docker-compose.prod.yml up -d --build",
+    "db:backup": "bash scripts/db-backup.sh",
+    "prepare": "husky || true",
     "setup": "pnpm install && pnpm db:generate && pnpm docker:up"
   },
   "engines": {
@@ -35,6 +38,11 @@
   },
   "packageManager": "pnpm@9.15.0",
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "prettier": "^3.8.4",
     "turbo": "^2.3.3"
   }
 }
