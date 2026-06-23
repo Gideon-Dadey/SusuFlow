@@ -46,7 +46,7 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
       <div className="fixed inset-0 cursor-default print:hidden" onClick={onClose} />
       
       {/* Card Content Container */}
-      <div className="relative z-10 w-full max-w-md my-auto rounded-xl border border-border bg-card p-5 shadow-elevated animate-scale-in print:border-0 print:shadow-none print:p-0 print:static print:block">
+      <div className="relative z-10 w-full max-w-md my-auto rounded-xl border border-border bg-card p-5 shadow-elevated animate-scale-in print:border-0 print:shadow-none print:p-0 print:static print:block print:max-w-none">
         
         {/* Header (Hidden on Print) */}
         <div className="flex items-center justify-between pb-3.5 border-b border-border print:hidden">
@@ -217,23 +217,23 @@ export function ReceiptModal({ transaction, open, onClose }: ReceiptModalProps) 
             <div className="pt-6">
               <table className="w-full text-left border-collapse text-[13px]">
                 <thead>
-                  <tr className="bg-green-50/80 border-b border-gray-300">
-                    <th className="py-2.5 px-4 font-bold text-gray-700 w-12 text-center">No.</th>
-                    <th className="py-2.5 px-4 font-bold text-gray-700">Service Description</th>
-                    <th className="py-2.5 px-4 font-bold text-gray-700 w-16 text-center">Qty</th>
-                    <th className="py-2.5 px-4 font-bold text-gray-700 w-28 text-right">Unit Price</th>
+                  <tr className="bg-gray-100 border-b border-gray-300">
+                    <th className="py-2.5 px-4 font-bold text-gray-700 w-12 text-left">No.</th>
+                    <th className="py-2.5 px-4 font-bold text-gray-700 text-left">Service</th>
+                    <th className="py-2.5 px-4 font-bold text-gray-700 w-16 text-right">Qty</th>
+                    <th className="py-2.5 px-4 font-bold text-gray-700 w-28 text-right">Unit</th>
                     <th className="py-2.5 px-4 font-bold text-gray-700 w-28 text-right">Subtotal</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 border-b border-gray-200">
                   <tr>
-                    <td className="py-3 px-4 text-center text-gray-600">1</td>
-                    <td className="py-3 px-4 font-medium text-gray-900">
+                    <td className="py-3 px-4 text-left text-gray-600">1</td>
+                    <td className="py-3 px-4 font-medium text-gray-900 text-left">
                       {isDeposit 
                         ? 'Susu Gateway-Confirmed Deposit Contribution' 
                         : 'Susu Ledger-Authorized Account Cash Payout'}
                     </td>
-                    <td className="py-3 px-4 text-center text-gray-800">1</td>
+                    <td className="py-3 px-4 text-right text-gray-800">1</td>
                     <td className="py-3 px-4 text-right font-mono text-gray-800">GH¢ {formattedAmount.toFixed(2)}</td>
                     <td className="py-3 px-4 text-right font-mono text-gray-900">GH¢ {formattedAmount.toFixed(2)}</td>
                   </tr>
