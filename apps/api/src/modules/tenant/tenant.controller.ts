@@ -6,11 +6,15 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles, Public } from '../../common/decorators';
 import { ROLES } from '@susuflow/shared';
 import { CreateTenantDto, SuspendTenantDto } from './dto/tenant.dto';
+import { DemoSeederService } from './demo-seeder.service';
 
 @ApiTags('tenants')
 @Controller()
 export class TenantController {
-  constructor(private readonly tenantService: TenantService) {}
+  constructor(
+    private readonly tenantService: TenantService,
+    private readonly demoSeeder: DemoSeederService,
+  ) {}
 
   @Public()
   @Get('tenants/:slug')
@@ -18,6 +22,14 @@ export class TenantController {
   getBySlug(@Param('slug') slug: string) {
     return this.tenantService.findBySlug(slug);
   }
+
+  @Public()
+  @Post('tenants/:slug/seed-demo')
+  @ApiOperation({ summary: 'Seed robust mock transaction and audit data for demonstration' })
+  seedDemo(@Param('slug') slug: string) {
+    return this.demoSeeder.seedDemoData(slug);
+  }
+
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(ROLES.SUPER_ADMIN)

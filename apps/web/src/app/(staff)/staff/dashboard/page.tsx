@@ -2,6 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { StatCard } from '@/components/dashboard/stat-card';
+import { CollectionTrendChart } from '@/components/dashboard/collection-trend-chart';
+import { CollectionsByStatusChart } from '@/components/dashboard/collections-by-status-chart';
 import { TransactionRow } from '@/components/financial/transaction-row';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { depositApi, customerApi } from '@/lib/api';
@@ -35,6 +37,7 @@ export default function StaffDashboard() {
         <p>Real-time overview of your susu operations</p>
       </div>
 
+      {/* KPI stat cards */}
       <div className="portal-metric-grid">
         <StatCard
           title="Deposits Today"
@@ -72,6 +75,13 @@ export default function StaffDashboard() {
         />
       </div>
 
+      {/* Charts row */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <CollectionTrendChart transactions={transactions} />
+        <CollectionsByStatusChart transactions={transactions} />
+      </div>
+
+      {/* Recent deposits table */}
       <Card>
         <CardHeader>
           <CardTitle>Recent Deposits</CardTitle>

@@ -21,6 +21,7 @@ import { PaymentModule } from './modules/payment/payment.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { HealthModule } from './modules/health/health.module';
 import { BillingModule } from './modules/billing/billing.module';
+import { PlanModule } from './modules/plan/plan.module';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { getRedisConnectionOptions } from '@susuflow/shared';
@@ -54,6 +55,7 @@ import { loggerConfig } from './config/logger.config';
     AuditModule,
     HealthModule,
     BillingModule,
+    PlanModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

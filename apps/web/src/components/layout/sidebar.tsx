@@ -8,7 +8,9 @@ import {
   adminLinks,
   customerLinks,
   staffLinks,
+  staffNavGroups,
   type NavItem,
+  type NavGroup,
 } from '@/lib/dashboard-nav';
 
 interface SidebarProps {
@@ -42,6 +44,14 @@ function NavLink({
   );
 }
 
+function SectionLabel({ label }: { label: string }) {
+  return (
+    <span className="mt-4 mb-1 block px-2.5 text-[0.6875rem] font-semibold tracking-wider text-muted-foreground/60 uppercase first:mt-0">
+      {label}
+    </span>
+  );
+}
+
 export function Sidebar({
   variant = 'staff',
   customerMode = false,
@@ -52,6 +62,8 @@ export function Sidebar({
 
   const brandLabel =
     variant === 'admin' ? 'SusuFlow Admin' : customerMode ? 'My Susu' : 'SusuFlow';
+
+  const isGrouped = variant === 'staff' && !customerMode;
 
   const flatLinks = customerMode
     ? customerLinks
@@ -74,10 +86,31 @@ export function Sidebar({
       </div>
 
       <nav className="flex-1 overflow-y-auto p-2.5">
-        {flatLinks?.map((item) => {
-          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-          return <NavLink key={item.href} {...item} active={active} onClose={onClose} />;
-        })}
+        {isGrouped
+          ? staffNavGroups.map((group) => (
+              <div key={group.groupLabel}>
+                <SectionLabel label={group.groupLabel} />
+                {group.items.map((item) => {
+                  const active =
+                    pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  return (
+                    <NavLink
+                      key={item.href}
+                      {...item}
+                      active={active}
+                      onClose={onClose}
+                    />
+                  );
+                })}
+              </div>
+            ))
+          : flatLinks?.map((item) => {
+              const active =
+                pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return (
+                <NavLink key={item.href} {...item} active={active} onClose={onClose} />
+              );
+            })}
       </nav>
     </aside>
   );

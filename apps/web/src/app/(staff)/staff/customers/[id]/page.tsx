@@ -33,6 +33,23 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
 
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
+  const [activateLoading, setActivateLoading] = useState(false);
+
+  const handleActivate = async () => {
+    setActivateLoading(true);
+    setFormError('');
+    setFormSuccess('');
+    try {
+      await customerApi.activate(id);
+      setFormSuccess('Customer account successfully activated!');
+      queryClient.invalidateQueries({ queryKey: ['staff-customer', id] });
+      setTimeout(() => setFormSuccess(''), 4000);
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : 'Activation failed');
+    } finally {
+      setActivateLoading(false);
+    }
+  };
 
   // Fetch customer details
   const { data: customer, isLoading: customerLoading } = useQuery({
@@ -159,6 +176,29 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
     });
   };
 
+  const handleExportLedgerCsv = () => {
+    if (!customer) return;
+    const headers = ['Date', 'Reference', 'Transaction Type', 'Amount (GHS)', 'Status'];
+    const rows = allTransactions.map((t) => [
+      new Date(t.createdAt).toLocaleDateString(),
+      t.reference,
+      t.type,
+      t.type === 'deposit' ? `+${t.amount}` : `-${t.amount}`,
+      t.status,
+    ]);
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `customer_ledger_${customer.customerNumber}_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (customerLoading) {
     return <CustomerListSkeleton count={1} />;
   }
@@ -197,11 +237,21 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
               {getInitials(customer.user?.firstName, customer.user?.lastName)}
             </div>
             <div className="space-y-1 flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2.5 flex-wrap">
                 <h2 className="text-xl font-bold text-foreground">
                   {customer.user?.firstName || 'Pending'} {customer.user?.lastName || 'Onboarding'}
                 </h2>
                 <StatusBadge status={customer.status} />
+                {customer.status === 'pending' && (
+                  <Button
+                    size="sm"
+                    onClick={handleActivate}
+                    loading={activateLoading}
+                    className="bg-green-600 hover:bg-green-700 text-white text-xs h-7 py-1 px-3 font-semibold"
+                  >
+                    Approve Account
+                  </Button>
+                )}
               </div>
               <p className="text-sm font-mono text-muted-foreground">{customer.customerNumber}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 pt-2 text-sm">
@@ -281,9 +331,20 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
       {/* Tab Contents */}
       {activeTab === 'overview' && (
         <Card>
-          <CardHeader>
-            <CardTitle className="text-base font-semibold">Account History</CardTitle>
-            <p className="text-sm text-muted-foreground">Recent deposits and withdrawals for this account</p>
+          <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
+            <div>
+              <CardTitle className="text-base font-semibold">Account History</CardTitle>
+              <p className="text-sm text-muted-foreground">Recent deposits and withdrawals for this account</p>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleExportLedgerCsv}
+              className="text-xs font-semibold"
+              disabled={allTransactions.length === 0}
+            >
+              Download CSV
+            </Button>
           </CardHeader>
           <CardContent className="divide-y divide-gray-100 dark:divide-border/40 p-0">
             {allTransactions.length === 0 ? (

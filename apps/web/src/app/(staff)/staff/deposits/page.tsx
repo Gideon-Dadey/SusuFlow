@@ -36,9 +36,44 @@ export default function StaffDepositsPage() {
     }
   };
 
+  const handleExportCsv = () => {
+    const items = data?.items || [];
+    const headers = ['Date', 'Reference', 'Customer Name', 'Amount (GHS)', 'Method', 'Status'];
+    const rows = items.map((t) => [
+      new Date(t.createdAt).toLocaleDateString(),
+      t.reference,
+      t.customer?.user ? `"${t.customer.user.firstName} ${t.customer.user.lastName}"` : 'N/A',
+      t.amount,
+      t.payment?.paymentMethod || 'momo',
+      t.status,
+    ]);
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `deposits_report_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-6">
-      <h1 className="dashboard-title">All Deposits</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="dashboard-title">All Deposits</h1>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handleExportCsv}
+          className="text-xs font-semibold"
+          disabled={!data?.items?.length}
+        >
+          Download CSV
+        </Button>
+      </div>
       <Card>
         <CardContent className="p-4">
           {isLoading ? (
