@@ -1,4 +1,6 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { PrismaService } from '../../prisma/prisma.service';
 import { LedgerService } from '../ledger/ledger.service';
 import { CreateWithdrawalDto, CreateWithdrawalRequestDto } from './dto/withdrawal.dto';
@@ -10,6 +12,7 @@ export class WithdrawalService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly ledger: LedgerService,
+    @InjectQueue('notifications') private readonly notificationQueue: Queue,
   ) {}
 
   async create(tenantId: string, dto: CreateWithdrawalDto, initiatedBy: AuthenticatedUser) {
@@ -79,6 +82,13 @@ export class WithdrawalService {
       { accountId: customerAccount.id, entryType: 'debit', amount: dto.amount, description: `Withdrawal ${reference}` },
       { accountId: platformCash.id, entryType: 'credit', amount: dto.amount, description: `Withdrawal ${reference}` },
     ]);
+
+    await this.notificationQueue.add('withdrawal-completed', {
+      tenantId,
+      transactionId: result.transaction.id,
+      reference,
+      amount: dto.amount,
+    });
 
     return this.prisma.transaction.findUnique({
       where: { id: result.transaction.id },
@@ -184,6 +194,13 @@ export class WithdrawalService {
       return { transaction, withdrawal };
     });
 
+    await this.notificationQueue.add('withdrawal-requested', {
+      tenantId,
+      transactionId: result.transaction.id,
+      reference,
+      amount: dto.amount,
+    });
+
     return this.prisma.transaction.findUnique({
       where: { id: result.transaction.id },
       include: { withdrawal: true },
@@ -248,6 +265,13 @@ export class WithdrawalService {
       { accountId: platformCash.id, entryType: 'credit', amount, description: `Withdrawal ${reference}` },
     ]);
 
+    await this.notificationQueue.add('withdrawal-approved', {
+      tenantId,
+      transactionId,
+      reference,
+      amount,
+    });
+
     return this.prisma.transaction.findUnique({
       where: { id: transactionId },
       include: { withdrawal: true },
@@ -266,8 +290,8 @@ export class WithdrawalService {
       throw new BadRequestException('Withdrawal request not in pending state');
     }
 
-    return this.prisma.$transaction(async (tx) => {
-      const updatedTxn = await tx.transaction.update({
+    await this.prisma.$transaction(async (tx) => {
+      await tx.transaction.update({
         where: { id: transactionId },
         data: {
           status: 'failed',
@@ -275,7 +299,7 @@ export class WithdrawalService {
         },
       });
 
-      const updatedWd = await tx.withdrawal.update({
+      await tx.withdrawal.update({
         where: { id: withdrawal.id },
         data: {
           status: 'rejected',
@@ -284,8 +308,19 @@ export class WithdrawalService {
           approvedAt: new Date(),
         },
       });
+    });
 
-      return { transaction: updatedTxn, withdrawal: updatedWd };
+    await this.notificationQueue.add('withdrawal-rejected', {
+      tenantId,
+      transactionId,
+      rejectionReason,
+      reference: transaction.reference,
+      amount: Number(transaction.amount),
+    });
+
+    return this.prisma.transaction.findUnique({
+      where: { id: transactionId },
+      include: { withdrawal: true },
     });
   }
 }

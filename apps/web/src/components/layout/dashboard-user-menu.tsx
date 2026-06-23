@@ -8,17 +8,13 @@ import {
   faBell,
   faRightFromBracket,
   faUser,
-  faWallet,
 } from '@fortawesome/free-solid-svg-icons';
 import { getRoleLabel } from '@/lib/dashboard-nav';
 import { useAuthStore } from '@/stores/auth.store';
 import { getInitials, getProfilePath } from '@/lib/utils';
 import { ThemeToggle } from '@/components/theme-toggle';
 
-function getWalletHref(roles: string[]): string {
-  if (roles.includes('collector')) return '/collector/commissions';
-  return '/profile';
-}
+
 
 export function DashboardUserMenu() {
   const router = useRouter();
@@ -86,7 +82,7 @@ export function DashboardUserMenu() {
         {open ? (
           <div
             role="menu"
-            className="absolute right-0 top-full z-[300] mt-2 w-64 overflow-hidden rounded-xl border border-border bg-popover shadow-elevated"
+            className="absolute right-0 top-full z-[300] mt-2 w-52 overflow-hidden rounded-xl border border-border bg-popover shadow-elevated"
           >
             <div className="border-b border-border px-4 py-3">
               <p className="truncate text-sm font-semibold text-foreground">
@@ -105,15 +101,6 @@ export function DashboardUserMenu() {
               >
                 <FontAwesomeIcon icon={faUser} className="h-4 w-4 text-muted-foreground" />
                 Profile
-              </Link>
-              <Link
-                href={getWalletHref(roles)}
-                role="menuitem"
-                onClick={() => setOpen(false)}
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
-              >
-                <FontAwesomeIcon icon={faWallet} className="h-4 w-4 text-muted-foreground" />
-                {roles.includes('collector') ? 'Commissions' : 'Wallet'}
               </Link>
             </div>
 
