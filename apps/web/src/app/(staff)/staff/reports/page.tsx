@@ -84,9 +84,6 @@ export default function ReportsHubPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="dashboard-title">Reports & Analytics Hub</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            General microfinance operations, cash reserves, and liabilities ledger audits
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

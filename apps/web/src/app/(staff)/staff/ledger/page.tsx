@@ -46,9 +46,6 @@ export default function TrialBalancePage() {
     <div className="space-y-6">
       <div>
         <h1 className="dashboard-title">General Ledger & Trial Balance</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Double-entry trial balance sheet verifying accounting integrity
-        </p>
       </div>
 
       {/* Trial balance health alert */}

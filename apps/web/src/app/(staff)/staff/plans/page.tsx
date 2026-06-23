@@ -15,9 +15,6 @@ export default function SavingsGoalsTrackerPage() {
     <div className="space-y-6">
       <div>
         <h1 className="dashboard-title">Customer Savings Goals</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Monitor customer progress towards daily and target savings plans
-        </p>
       </div>
 
       {isLoading ? (

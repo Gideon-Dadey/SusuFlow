@@ -88,7 +88,6 @@ export default function StaffWithdrawalsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="dashboard-title">Withdrawals</h1>
-          <p className="text-xs text-muted-foreground">History of payouts and client withdrawals</p>
         </div>
         <Button
           size="sm"

@@ -139,9 +139,6 @@ export default function CommissionsLedgerPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="dashboard-title">Collector Commissions</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Track and disburse commissions accrued by cashless field agents
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

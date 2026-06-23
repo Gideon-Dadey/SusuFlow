@@ -53,7 +53,6 @@ export default function StaffCustomersPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="dashboard-title">Customers</h1>
-          <p className="text-xs text-muted-foreground">Manage and onboard Susu company customers</p>
         </div>
         <div className="flex items-center gap-2">
           <Button

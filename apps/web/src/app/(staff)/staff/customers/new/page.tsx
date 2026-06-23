@@ -70,7 +70,6 @@ export default function OnboardCustomerPage() {
         </Link>
         <div>
           <h1 className="dashboard-title">Onboard Customer</h1>
-          <p className="text-xs text-muted-foreground">Register a new customer and open their Susu savings wallet</p>
         </div>
       </div>
 

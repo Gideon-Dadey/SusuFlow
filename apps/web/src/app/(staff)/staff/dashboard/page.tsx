@@ -34,7 +34,6 @@ export default function StaffDashboard() {
     <div className="space-y-6">
       <div className="page-header">
         <h1>Admin Dashboard</h1>
-        <p>Real-time overview of your susu operations</p>
       </div>
 
       {/* KPI stat cards */}
