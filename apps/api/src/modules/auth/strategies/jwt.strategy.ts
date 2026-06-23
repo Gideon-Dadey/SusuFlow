@@ -26,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       },
     });
 
-    if (!user || user.status !== 'active') {
+    if (!user || (user.status !== 'active' && user.status !== 'pending')) {
       throw new UnauthorizedException('User not found or inactive');
     }
 

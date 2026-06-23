@@ -178,6 +178,7 @@ export interface User {
   status: string;
   emailVerified: boolean;
   createdAt: string;
+  customer?: Customer;
 }
 
 export interface DepositInitResponse {

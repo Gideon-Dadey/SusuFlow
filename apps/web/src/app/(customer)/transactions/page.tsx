@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { TransactionRow } from '@/components/financial/transaction-row';
 import { Card, CardContent } from '@/components/ui/card';
-import { depositApi, withdrawalApi, Transaction } from '@/lib/api';
+import { depositApi, withdrawalApi, Transaction, userApi } from '@/lib/api';
 import { TransactionListSkeleton } from '@/components/ui/skeleton';
 import { ReceiptModal } from '@/components/financial/receipt-modal';
 import { useAuthStore } from '@/stores/auth.store';
@@ -14,15 +14,13 @@ export default function TransactionsPage() {
   const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
 
-  // Query customers to find matching customer profile
-  const { data: customersData } = useQuery({
-    queryKey: ['customers-list'],
-    queryFn: () => import('@/lib/api').then((m) => m.customerApi.list()),
+  // Query current user's profile to retrieve the associated customer account
+  const { data: userProfile } = useQuery({
+    queryKey: ['user-profile-me'],
+    queryFn: () => userApi.getMe(),
   });
 
-  const activeCustomer =
-    customersData?.items?.find((c) => c.user?.id === user?.id) ||
-    customersData?.items?.[0];
+  const activeCustomer = userProfile?.customer;
 
   const { data: depositsData, isLoading: depositsLoading } = useQuery({
     queryKey: ['deposits', activeCustomer?.id],

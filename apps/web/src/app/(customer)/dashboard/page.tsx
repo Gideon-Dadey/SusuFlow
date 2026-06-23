@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { BalanceCard } from '@/components/financial/balance-card';
 import { TransactionRow } from '@/components/financial/transaction-row';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { depositApi, Transaction } from '@/lib/api';
+import { depositApi, Transaction, userApi } from '@/lib/api';
 import { getGreeting } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import { TransactionListSkeleton } from '@/components/ui/skeleton';
@@ -18,15 +18,13 @@ export default function CustomerDashboard() {
   const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
 
-  // Query customers to find matching customer profile
-  const { data: customersData } = useQuery({
-    queryKey: ['customers-list'],
-    queryFn: () => import('@/lib/api').then((m) => m.customerApi.list()),
+  // Query current user's profile to retrieve the associated customer account
+  const { data: userProfile } = useQuery({
+    queryKey: ['user-profile-me'],
+    queryFn: () => userApi.getMe(),
   });
 
-  const activeCustomer =
-    customersData?.items?.find((c) => c.user?.id === user?.id) ||
-    customersData?.items?.[0];
+  const activeCustomer = userProfile?.customer;
 
   // Query actual wallet balance from ledger
   const { data: walletData } = useQuery({

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MoneyDisplay } from '@/components/financial/money-display';
-import { customerApi, withdrawalApi } from '@/lib/api';
+import { customerApi, withdrawalApi, userApi } from '@/lib/api';
 import { useAuthStore } from '@/stores/auth.store';
 import { CheckCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -31,22 +31,20 @@ export default function WithdrawRequestPage() {
   const [error, setError] = useState('');
   const [result, setResult] = useState<{ reference: string } | null>(null);
 
-  // Query customers to find matching customer profile
-  const { data: customersData } = useQuery({
-    queryKey: ['customers-list'],
-    queryFn: () => customerApi.list(),
+  // Query current user's profile to retrieve the associated customer account
+  const { data: userProfile } = useQuery({
+    queryKey: ['user-profile-me'],
+    queryFn: () => userApi.getMe(),
   });
 
-  const activeCustomer =
-    customersData?.items?.find((c) => c.user?.id === user?.id) ||
-    customersData?.items?.[0];
+  const activeCustomer = userProfile?.customer;
 
   // Pre-fill phone number with customer profile phone
   useEffect(() => {
-    if (activeCustomer?.user?.phone && !phone) {
-      setPhone(activeCustomer.user.phone);
+    if (userProfile?.phone && !phone) {
+      setPhone(userProfile.phone);
     }
-  }, [activeCustomer, phone]);
+  }, [userProfile, phone]);
 
   // Query actual wallet balance from ledger
   const { data: walletData } = useQuery({
