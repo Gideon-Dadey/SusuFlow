@@ -9,6 +9,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@sentry/node": "^10.60.0",
     "@susuflow/database": "workspace:*",
     "@susuflow/shared": "workspace:*",
     "bullmq": "^5.34.3",
@@ -16,8 +17,8 @@
     "ioredis": "^5.4.2"
   },
   "devDependencies": {
+    "@types/node": "^22.10.2",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
-    "@types/node": "^22.10.2"
+    "typescript": "^5.7.2"
   }
 }

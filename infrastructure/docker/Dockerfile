@@ -66,9 +66,14 @@ FROM build AS worker-deploy
 RUN pnpm deploy --filter=@susuflow/worker --prod /prod/worker
 
 FROM node:20-alpine AS worker
+RUN apk add --no-cache curl
 ENV NODE_ENV=production
 WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 worker
 COPY --from=worker-deploy --chown=worker:nodejs /prod/worker .
 USER worker
+EXPOSE 4001
+ENV WORKER_HEALTH_PORT=4001
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD curl -f http://localhost:4001/health/live || exit 1
 CMD ["node", "dist/main.js"]

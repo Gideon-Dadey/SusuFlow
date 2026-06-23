@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { authApi, LoginResponse } from '@/lib/api';
-import { getDashboardPath } from '@/lib/utils';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { authApi, LoginResponse } from "@/lib/api";
+import { getDashboardPath } from "@/lib/utils";
 
 interface User {
   id: string;
@@ -22,14 +22,18 @@ interface AuthState {
   error: string | null;
 
   setTenantSlug: (slug: string) => void;
-  login: (email: string, password: string, tenantSlug?: string) => Promise<string>;
+  login: (
+    email: string,
+    password: string,
+    tenantSlug?: string,
+  ) => Promise<string>;
   register: (data: {
     firstName: string;
     lastName: string;
     email: string;
     phone: string;
     password: string;
-  }) => Promise<void>;
+  }) => Promise<{ userId: string; customerId: string; message: string }>;
   logout: () => Promise<void>;
   clearError: () => void;
   hydrate: (data: LoginResponse) => void;
@@ -41,7 +45,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       accessToken: null,
       refreshToken: null,
-      tenantSlug: 'abc-susu',
+      tenantSlug: "abc-susu",
       isAuthenticated: false,
       isLoading: false,
       error: null,
@@ -49,20 +53,20 @@ export const useAuthStore = create<AuthState>()(
       setTenantSlug: (slug) => {
         const trimmed = slug.trim();
         if (trimmed) {
-          localStorage.setItem('tenant_slug', trimmed);
+          localStorage.setItem("tenant_slug", trimmed);
           set({ tenantSlug: trimmed });
         } else {
-          localStorage.removeItem('tenant_slug');
-          set({ tenantSlug: '' });
+          localStorage.removeItem("tenant_slug");
+          set({ tenantSlug: "" });
         }
       },
 
       hydrate: (data) => {
-        localStorage.setItem('access_token', data.accessToken);
-        localStorage.setItem('refresh_token', data.refreshToken);
-        const resolvedSlug = data.user.tenantSlug || '';
+        localStorage.setItem("access_token", data.accessToken);
+        localStorage.setItem("refresh_token", data.refreshToken);
+        const resolvedSlug = data.user.tenantSlug || "";
         if (resolvedSlug) {
-          localStorage.setItem('tenant_slug', resolvedSlug);
+          localStorage.setItem("tenant_slug", resolvedSlug);
         }
         set({
           user: data.user,
@@ -76,12 +80,12 @@ export const useAuthStore = create<AuthState>()(
       login: async (email, password, tenantSlug) => {
         set({ isLoading: true, error: null });
         try {
-          const slug = tenantSlug !== undefined ? tenantSlug.trim() : '';
+          const slug = tenantSlug !== undefined ? tenantSlug.trim() : "";
           const data = await authApi.login(email, password, slug);
           get().hydrate(data);
           return getDashboardPath(data.user.roles);
         } catch (err) {
-          const message = err instanceof Error ? err.message : 'Login failed';
+          const message = err instanceof Error ? err.message : "Login failed";
           set({ error: message });
           throw err;
         } finally {
@@ -92,9 +96,10 @@ export const useAuthStore = create<AuthState>()(
       register: async (data) => {
         set({ isLoading: true, error: null });
         try {
-          await authApi.register(data);
+          return await authApi.register(data);
         } catch (err) {
-          const message = err instanceof Error ? err.message : 'Registration failed';
+          const message =
+            err instanceof Error ? err.message : "Registration failed";
           set({ error: message });
           throw err;
         } finally {
@@ -111,23 +116,23 @@ export const useAuthStore = create<AuthState>()(
             // ignore
           }
         }
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
         });
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
         }
       },
 
       clearError: () => set({ error: null }),
     }),
     {
-      name: 'susuflow-auth',
+      name: "susuflow-auth",
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,
@@ -137,7 +142,7 @@ export const useAuthStore = create<AuthState>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (state?.accessToken) {
-          localStorage.setItem('access_token', state.accessToken);
+          localStorage.setItem("access_token", state.accessToken);
         }
       },
     },

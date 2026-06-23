@@ -3,16 +3,18 @@ import {
   UnauthorizedException,
   ConflictException,
   BadRequestException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
-import { createHash, randomBytes } from 'crypto';
-import { PrismaService } from '../../prisma/prisma.service';
-import { TenantService } from '../tenant/tenant.service';
-import { RegisterDto, LoginDto } from './dto/auth.dto';
-import { ROLES, MAX_FAILED_LOGINS, LOCKOUT_MINUTES } from '@susuflow/shared';
-import { TenantContext } from '@susuflow/shared';
+  ForbiddenException,
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import * as bcrypt from "bcrypt";
+import { createHash, randomBytes } from "crypto";
+import { PrismaService } from "../../prisma/prisma.service";
+import { TenantService } from "../tenant/tenant.service";
+import { RegisterDto, LoginDto } from "./dto/auth.dto";
+import { ROLES, MAX_FAILED_LOGINS, LOCKOUT_MINUTES } from "@susuflow/shared";
+import { TenantContext } from "@susuflow/shared";
+import { OtpService } from "./otp.service";
 
 @Injectable()
 export class AuthService {
@@ -21,6 +23,7 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
     private readonly tenantService: TenantService,
+    private readonly otpService: OtpService,
   ) {}
 
   async register(dto: RegisterDto, tenant: TenantContext) {
@@ -29,13 +32,17 @@ export class AuthService {
     const existing = await this.prisma.user.findFirst({
       where: { tenantId: tenant.id, email: dto.email },
     });
-    if (existing) throw new ConflictException('Email already registered');
+    if (existing) throw new ConflictException("Email already registered");
 
     const passwordHash = await bcrypt.hash(dto.password, 12);
-    const customerRole = await this.prisma.role.findUnique({ where: { name: ROLES.CUSTOMER } });
-    if (!customerRole) throw new BadRequestException('System not configured');
+    const customerRole = await this.prisma.role.findUnique({
+      where: { name: ROLES.CUSTOMER },
+    });
+    if (!customerRole) throw new BadRequestException("System not configured");
 
-    const customerCount = await this.prisma.customer.count({ where: { tenantId: tenant.id } });
+    const customerCount = await this.prisma.customer.count({
+      where: { tenantId: tenant.id },
+    });
 
     const result = await this.prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
@@ -46,7 +53,7 @@ export class AuthService {
           passwordHash,
           firstName: dto.firstName,
           lastName: dto.lastName,
-          status: 'pending',
+          status: "pending",
         },
       });
 
@@ -58,18 +65,22 @@ export class AuthService {
         data: {
           tenantId: tenant.id,
           userId: user.id,
-          customerNumber: `CUS-${String(customerCount + 1).padStart(6, '0')}`,
-          status: 'pending',
+          customerNumber: `CUS-${String(customerCount + 1).padStart(6, "0")}`,
+          status: "pending",
           kycLevel: 0,
         },
       });
 
       const wallet = await tx.wallet.create({
-        data: { tenantId: tenant.id, customerId: customer.id, walletType: 'customer' },
+        data: {
+          tenantId: tenant.id,
+          customerId: customer.id,
+          walletType: "customer",
+        },
       });
 
       const liabilityAccount = await tx.account.findUnique({
-        where: { tenantId_code: { tenantId: tenant.id, code: '1100' } },
+        where: { tenantId_code: { tenantId: tenant.id, code: "1100" } },
       });
 
       if (liabilityAccount) {
@@ -79,7 +90,7 @@ export class AuthService {
             walletId: wallet.id,
             code: `1100-${customer.id.slice(0, 5)}`,
             name: `Wallet: ${dto.firstName} ${dto.lastName}`,
-            accountType: 'liability',
+            accountType: "liability",
           },
         });
       }
@@ -87,10 +98,17 @@ export class AuthService {
       return { user, customer };
     });
 
+    await Promise.allSettled([
+      this.otpService.send(result.user.id, "email", tenant.id),
+      this.otpService.send(result.user.id, "phone", tenant.id),
+    ]);
+
     return {
       userId: result.user.id,
       customerId: result.customer.id,
-      message: 'Registration successful. Please verify your email and phone.',
+      message:
+        "Registration successful. Verification codes sent to your email and phone.",
+      verificationRequired: true,
     };
   }
 
@@ -101,18 +119,27 @@ export class AuthService {
       },
       include: {
         tenant: { select: { slug: true } },
-        userRoles: { include: { role: { include: { rolePermissions: { include: { permission: true } } } } } },
+        userRoles: {
+          include: {
+            role: {
+              include: { rolePermissions: { include: { permission: true } } },
+            },
+          },
+        },
       },
     });
 
     if (users.length === 0) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
     // Filter valid password matching candidates
     const validCandidates: typeof users = [];
     for (const candidate of users) {
-      const isMatch = await bcrypt.compare(dto.password, candidate.passwordHash);
+      const isMatch = await bcrypt.compare(
+        dto.password,
+        candidate.passwordHash,
+      );
       if (isMatch) {
         validCandidates.push(candidate);
       }
@@ -122,13 +149,20 @@ export class AuthService {
       // Increment failed count for all candidate users with this email
       for (const candidate of users) {
         const failedCount = candidate.failedLoginCount + 1;
-        const updateData: { failedLoginCount: number; lockedUntil?: Date } = { failedLoginCount: failedCount };
+        const updateData: { failedLoginCount: number; lockedUntil?: Date } = {
+          failedLoginCount: failedCount,
+        };
         if (failedCount >= MAX_FAILED_LOGINS) {
-          updateData.lockedUntil = new Date(Date.now() + LOCKOUT_MINUTES * 60 * 1000);
+          updateData.lockedUntil = new Date(
+            Date.now() + LOCKOUT_MINUTES * 60 * 1000,
+          );
         }
-        await this.prisma.user.update({ where: { id: candidate.id }, data: updateData });
+        await this.prisma.user.update({
+          where: { id: candidate.id },
+          data: updateData,
+        });
       }
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
     // Resolve the active candidate user using a prioritized selection strategy
@@ -148,7 +182,32 @@ export class AuthService {
     }
 
     if (user.lockedUntil && user.lockedUntil > new Date()) {
-      throw new UnauthorizedException('Account temporarily locked. Try again later.');
+      throw new UnauthorizedException(
+        "Account temporarily locked. Try again later.",
+      );
+    }
+
+    const isCustomer = user.userRoles.some(
+      (ur) => ur.role.name === ROLES.CUSTOMER,
+    );
+    if (isCustomer && (!user.emailVerified || !user.phoneVerified)) {
+      throw new ForbiddenException({
+        message: "Please verify your email and phone before logging in",
+        code: "VERIFICATION_REQUIRED",
+        userId: user.id,
+        emailVerified: user.emailVerified,
+        phoneVerified: user.phoneVerified,
+      });
+    }
+
+    if (isCustomer && user.status === "pending") {
+      throw new ForbiddenException({
+        message: "Account activation pending verification",
+        code: "VERIFICATION_REQUIRED",
+        userId: user.id,
+        emailVerified: user.emailVerified,
+        phoneVerified: user.phoneVerified,
+      });
     }
 
     await this.prisma.user.update({
@@ -158,7 +217,11 @@ export class AuthService {
 
     const roles = user.userRoles.map((ur) => ur.role.name);
     const permissions = [
-      ...new Set(user.userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission.name))),
+      ...new Set(
+        user.userRoles.flatMap((ur) =>
+          ur.role.rolePermissions.map((rp) => rp.permission.name),
+        ),
+      ),
     ];
 
     const payload = {
@@ -169,11 +232,11 @@ export class AuthService {
     };
 
     const accessToken = this.jwt.sign(payload, {
-      expiresIn: this.config.get('JWT_ACCESS_EXPIRY', '15m'),
+      expiresIn: this.config.get("JWT_ACCESS_EXPIRY", "15m"),
     });
 
-    const refreshToken = randomBytes(48).toString('hex');
-    const tokenHash = createHash('sha256').update(refreshToken).digest('hex');
+    const refreshToken = randomBytes(48).toString("hex");
+    const tokenHash = createHash("sha256").update(refreshToken).digest("hex");
 
     await this.prisma.refreshToken.create({
       data: {
@@ -193,48 +256,60 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         roles,
-        tenantSlug: user.tenant?.slug || '',
+        tenantSlug: user.tenant?.slug || "",
       },
     };
   }
 
   async refresh(refreshToken: string) {
-    const tokenHash = createHash('sha256').update(refreshToken).digest('hex');
+    const tokenHash = createHash("sha256").update(refreshToken).digest("hex");
     const stored = await this.prisma.refreshToken.findUnique({
       where: { tokenHash },
       include: {
         user: {
           include: {
-            userRoles: { include: { role: { include: { rolePermissions: { include: { permission: true } } } } } },
+            userRoles: {
+              include: {
+                role: {
+                  include: {
+                    rolePermissions: { include: { permission: true } },
+                  },
+                },
+              },
+            },
           },
         },
       },
     });
 
     if (!stored || stored.revokedAt || stored.expiresAt < new Date()) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException("Invalid refresh token");
     }
 
     const user = stored.user;
     const roles = user.userRoles.map((ur) => ur.role.name);
     const permissions = [
-      ...new Set(user.userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission.name))),
+      ...new Set(
+        user.userRoles.flatMap((ur) =>
+          ur.role.rolePermissions.map((rp) => rp.permission.name),
+        ),
+      ),
     ];
 
     const accessToken = this.jwt.sign(
       { sub: user.id, tenant_id: user.tenantId, roles, permissions },
-      { expiresIn: this.config.get('JWT_ACCESS_EXPIRY', '15m') },
+      { expiresIn: this.config.get("JWT_ACCESS_EXPIRY", "15m") },
     );
 
     return { accessToken, expiresIn: 900 };
   }
 
   async logout(refreshToken: string) {
-    const tokenHash = createHash('sha256').update(refreshToken).digest('hex');
+    const tokenHash = createHash("sha256").update(refreshToken).digest("hex");
     await this.prisma.refreshToken.updateMany({
       where: { tokenHash },
       data: { revokedAt: new Date() },
     });
-    return { message: 'Logged out successfully' };
+    return { message: "Logged out successfully" };
   }
 }

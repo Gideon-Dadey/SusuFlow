@@ -10,3 +10,4 @@ redis_node_type       = "cache.r6g.large"
 
 web_url = "https://susuflow.com"
 api_url = "https://api.susuflow.com"
+alarm_email = "ops@susuflow.com"

@@ -107,6 +107,14 @@ module "assets" {
   tags               = local.tags
 }
 
+module "monitoring" {
+  source = "../../modules/monitoring"
+
+  name_prefix = local.name_prefix
+  alarm_email = var.alarm_email
+  tags        = local.tags
+}
+
 resource "random_password" "jwt_secret" {
   length  = 64
   special = false
@@ -157,5 +165,6 @@ resource "aws_cloudwatch_metric_alarm" "api_5xx" {
   threshold           = 10
   alarm_description   = "API 5xx error rate elevated"
   treat_missing_data  = "notBreaching"
+  alarm_actions       = [module.monitoring.sns_topic_arn]
   tags                = local.tags
 }
