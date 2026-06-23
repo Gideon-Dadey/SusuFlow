@@ -750,29 +750,58 @@
 
   /* SaaS Production-Grade Receipt Print Styles */
   @media print {
+    /* Hide the entire application shell layout completely */
+    .dashboard-shell {
+      display: none !important;
+    }
+
+    /* Reset page and body constraints for printing */
+    html,
     body {
+      height: auto !important;
+      min-height: auto !important;
+      overflow: visible !important;
       background-color: #ffffff !important;
       color: #000000 !important;
     }
-    /* Hide all page layouts, sidebars, and components */
-    body * {
-      visibility: hidden;
+
+    /* Make sure the portaled modal wrapper behaves as a static document block */
+    body > div.z-50 {
+      position: static !important;
+      display: block !important;
+      width: 100% !important;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
     }
-    /* Render only the printable receipt segment and its children */
-    #printable-receipt,
-    #printable-receipt * {
-      visibility: visible;
+
+    /* Hide individual print-excluded elements */
+    .print\:hidden,
+    button {
+      display: none !important;
     }
-    /* Align receipt to the top-left of the printable area */
+
+    /* Ensure receipt modal backdrop is hidden */
+    .fixed.inset-0.cursor-default {
+      display: none !important;
+    }
+
+    /* Render the receipt container perfectly */
     #printable-receipt {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      max-width: 420px;
-      margin: 0 auto !important;
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
       padding: 0 !important;
       border: none !important;
+      border-radius: 0 !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
     }
   }
 }

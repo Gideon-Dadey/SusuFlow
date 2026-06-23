@@ -124,20 +124,20 @@ export function CollectionTrendChart({ transactions }: CollectionTrendChartProps
               <CartesianGrid
                 strokeDasharray="3 3"
                 vertical={false}
-                stroke="hsl(var(--border))"
+                stroke="var(--border)"
                 strokeOpacity={0.5}
               />
               <XAxis
                 dataKey="name"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
                 dy={8}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
                 tickFormatter={(v) =>
                   v >= 1000 ? `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}K` : String(v)
                 }
@@ -154,7 +154,7 @@ export function CollectionTrendChart({ transactions }: CollectionTrendChartProps
                   r: 5,
                   strokeWidth: 2,
                   fill: 'hsl(160, 84%, 50%)',
-                  stroke: 'hsl(var(--background))',
+                  stroke: 'var(--background)',
                 }}
               />
             </AreaChart>
