@@ -11,17 +11,12 @@ import { useAuthStore } from '@/stores/auth.store';
 import { TransactionListSkeleton } from '@/components/ui/skeleton';
 import { ReceiptModal } from '@/components/financial/receipt-modal';
 import Link from 'next/link';
-import { Wallet, FileText, ArrowRight } from 'lucide-react';
+import { Wallet, FileText, ArrowRight, ArrowUpRight, Target } from 'lucide-react';
 
 export default function CustomerDashboard() {
   const user = useAuthStore((s) => s.user);
   const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
-
-  const { data: deposits, isLoading } = useQuery({
-    queryKey: ['deposits'],
-    queryFn: () => depositApi.list({ status: 'completed' }),
-  });
 
   // Query customers to find matching customer profile
   const { data: customersData } = useQuery({
@@ -43,11 +38,30 @@ export default function CustomerDashboard() {
     enabled: !!activeCustomer,
   });
 
+  // Query customer transactions (both deposits and withdrawals)
+  const { data: depositsData, isLoading: depositsLoading } = useQuery({
+    queryKey: ['deposits', activeCustomer?.id],
+    queryFn: () => depositApi.list({ customer_id: activeCustomer?.id }),
+    enabled: !!activeCustomer,
+  });
+
+  const { data: withdrawalsData, isLoading: withdrawalsLoading } = useQuery({
+    queryKey: ['withdrawals', activeCustomer?.id],
+    queryFn: () => import('@/lib/api').then((m) => m.withdrawalApi.list({ customer_id: activeCustomer?.id })),
+    enabled: !!activeCustomer,
+  });
+
+  const isLoading = depositsLoading || withdrawalsLoading;
+
   const balance = walletData?.balance || 0;
 
-  const transactions = deposits?.items || [];
+  const transactions = [
+    ...(depositsData?.items || []),
+    ...(withdrawalsData?.items || []),
+  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
   const todayTotal = transactions
-    .filter((t) => new Date(t.createdAt).toDateString() === new Date().toDateString())
+    .filter((t) => t.type === 'deposit' && t.status === 'completed' && new Date(t.createdAt).toDateString() === new Date().toDateString())
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
   return (
@@ -61,15 +75,17 @@ export default function CustomerDashboard() {
 
       <div className="grid grid-cols-2 gap-3">
         {[
-          { href: '/deposit', label: 'Deposit', icon: Wallet },
-          { href: '/transactions', label: 'History', icon: FileText },
-        ].map(({ href, label, icon: Icon }) => (
+          { href: '/deposit', label: 'Deposit', icon: Wallet, color: 'bg-primary-100 text-primary' },
+          { href: '/withdraw', label: 'Withdraw', icon: ArrowUpRight, color: 'bg-red-50 text-red-600 dark:bg-red-950/20' },
+          { href: '/plans', label: 'Goals', icon: Target, color: 'bg-green-50 text-green-600 dark:bg-green-950/20' },
+          { href: '/transactions', label: 'History', icon: FileText, color: 'bg-blue-50 text-blue-600 dark:bg-blue-950/20' },
+        ].map(({ href, label, icon: Icon, color }) => (
           <Link
             key={href}
             href={href}
             className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-4 transition-all hover:border-secondary/40 hover:shadow-card"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary">
+            <div className={`flex h-10 w-10 items-center justify-center rounded-full ${color}`}>
               <Icon className="h-5 w-5" />
             </div>
             <span className="text-sm font-medium text-foreground">{label}</span>

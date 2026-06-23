@@ -21,6 +21,31 @@ export default function StaffCustomersPage() {
     queryFn: () => customerApi.list({ search: search || undefined, status: status || undefined }),
   });
 
+  const handleExportCsv = () => {
+    const items = data?.items || [];
+    const headers = ['Customer ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Ghana Card', 'Status'];
+    const rows = items.map((c) => [
+      c.customerNumber,
+      c.user?.firstName || 'Pending',
+      c.user?.lastName || 'Onboarding',
+      c.user?.email || 'N/A',
+      c.user?.phone || 'N/A',
+      c.ghanaCardNumber || 'Not verified',
+      c.status,
+    ]);
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `customers_report_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const customers = data?.items || [];
 
   return (
@@ -30,12 +55,23 @@ export default function StaffCustomersPage() {
           <h1 className="dashboard-title">Customers</h1>
           <p className="text-xs text-muted-foreground">Manage and onboard Susu company customers</p>
         </div>
-        <Link href="/staff/customers/new">
-          <Button className="flex items-center gap-1.5 font-semibold text-xs py-1.5">
-            <Plus className="h-4 w-4" />
-            Onboard Customer
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleExportCsv}
+            className="text-xs font-semibold py-1.5"
+            disabled={!data?.items?.length}
+          >
+            Download CSV
           </Button>
-        </Link>
+          <Link href="/staff/customers/new">
+            <Button className="flex items-center gap-1.5 font-semibold text-xs py-1.5">
+              <Plus className="h-4 w-4" />
+              Onboard Customer
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Search and Filters */}

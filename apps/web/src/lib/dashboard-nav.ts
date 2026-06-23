@@ -8,17 +8,62 @@ import {
   faUserPlus,
   faUsers,
   faWallet,
+  faUserCheck,
+  faTriangleExclamation,
+  faPiggyBank,
+  faCoins,
+  faBook,
+  faListUl,
+  faChartPie,
+  faGear,
 } from '@fortawesome/free-solid-svg-icons';
 
 export type NavItem = { href: string; label: string; icon: IconDefinition };
 
-export const staffLinks: NavItem[] = [
-  { href: '/staff/dashboard', label: 'Dashboard', icon: faGaugeHigh },
-  { href: '/staff/customers', label: 'Customers', icon: faUsers },
-  { href: '/staff/deposits', label: 'Deposits', icon: faWallet },
-  { href: '/staff/withdrawals', label: 'Withdrawals', icon: faHistory },
-  { href: '/staff/settings', label: 'Settings', icon: faChartLine },
+export type NavGroup = { groupLabel: string; items: NavItem[] };
+
+export const staffNavGroups: NavGroup[] = [
+  {
+    groupLabel: 'PLATFORM',
+    items: [
+      { href: '/staff/dashboard', label: 'Overview', icon: faGaugeHigh },
+    ],
+  },
+  {
+    groupLabel: 'FINANCE',
+    items: [
+      { href: '/staff/deposits', label: 'Deposits', icon: faWallet },
+      { href: '/staff/withdrawals', label: 'Withdrawals', icon: faHistory },
+      { href: '/staff/commissions', label: 'Commissions', icon: faCoins },
+      { href: '/staff/ledger', label: 'Trial Balance', icon: faBook },
+    ],
+  },
+  {
+    groupLabel: 'OPERATIONS',
+    items: [
+      { href: '/staff/plans', label: 'Savings Goals', icon: faPiggyBank },
+      { href: '/staff/reports', label: 'Reports', icon: faChartPie },
+      { href: '/staff/audit', label: 'Audit Logs', icon: faListUl },
+    ],
+  },
+  {
+    groupLabel: 'PEOPLE',
+    items: [
+      { href: '/staff/customers', label: 'Customers', icon: faUsers },
+      { href: '/staff/kyc', label: 'KYC Documents', icon: faUserCheck },
+    ],
+  },
+  {
+    groupLabel: 'SECURITY',
+    items: [
+      { href: '/staff/fraud', label: 'Fraud Alerts', icon: faTriangleExclamation },
+      { href: '/staff/settings', label: 'Settings', icon: faGear },
+    ],
+  },
 ];
+
+/* flat list kept for backward compat (bottom-nav, etc.) */
+export const staffLinks: NavItem[] = staffNavGroups.flatMap((g) => g.items);
 
 export const adminLinks: NavItem[] = [
   { href: '/admin/tenants', label: 'Tenants', icon: faBuilding },
@@ -28,7 +73,8 @@ export const adminLinks: NavItem[] = [
 export const customerLinks: NavItem[] = [
   { href: '/dashboard', label: 'Home', icon: faGaugeHigh },
   { href: '/deposit', label: 'Deposit', icon: faWallet },
-  { href: '/transactions', label: 'History', icon: faHistory },
+  { href: '/withdraw', label: 'Withdraw', icon: faWallet },
+  { href: '/plans', label: 'Goals', icon: faChartLine },
   { href: '/profile', label: 'Profile', icon: faUser },
 ];
 

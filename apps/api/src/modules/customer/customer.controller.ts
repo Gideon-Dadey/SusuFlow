@@ -54,4 +54,11 @@ export class CustomerController {
   findOne(@Tenant() tenant: TenantContext, @Param('id') id: string) {
     return this.customerService.findOne(tenant.id, id);
   }
+
+  @Roles(ROLES.COMPANY_ADMIN, ROLES.ACCOUNT_OFFICER)
+  @Post(':id/activate')
+  @ApiOperation({ summary: 'Activate a customer account' })
+  activate(@Tenant() tenant: TenantContext, @Param('id') id: string) {
+    return this.customerService.activate(tenant.id, id);
+  }
 }

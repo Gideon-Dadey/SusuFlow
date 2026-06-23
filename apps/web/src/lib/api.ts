@@ -147,7 +147,10 @@ export const authApi = {
 export const tenantApi = {
   getBySlug: (slug: string) =>
     api.get<TenantInfo>(`/tenants/${slug}`, { skipAuth: true, tenantSlug: slug }),
+  seedDemo: (slug: string) =>
+    api.post<{ message: string }>(`/tenants/${slug}/seed-demo`, {}, { skipAuth: true, tenantSlug: slug }),
 };
+
 
 export interface AdminTenant {
   id: string;
@@ -285,6 +288,8 @@ export const customerApi = {
 
   getWallet: (id: string) =>
     api.get<{ walletId: string; balance: number; currency: string }>(`/customers/${id}/wallet`),
+
+  activate: (id: string) => api.post<Customer>(`/customers/${id}/activate`, {}),
 };
 
 export const withdrawalApi = {
@@ -301,6 +306,54 @@ export const withdrawalApi = {
       `/withdrawals${query ? `?${query}` : ''}`,
     );
   },
+
+  requestWithdrawal: (data: {
+    amount: number;
+    disbursementMethod: string;
+    disbursementPhone: string;
+  }) => api.post<Transaction>('/withdrawals/request', data),
+
+  approveWithdrawal: (id: string) =>
+    api.post<{ message: string }>(`/withdrawals/${id}/approve`, {}),
+
+  rejectWithdrawal: (id: string, reason: string) =>
+    api.post<{ message: string }>(`/withdrawals/${id}/reject`, { rejectionReason: reason }),
+};
+
+export interface SavingsPlan {
+  id: string;
+  name: string;
+  description?: string;
+  frequency: 'daily' | 'weekly' | 'biweekly' | 'monthly';
+  minAmount: number;
+  maxAmount?: number;
+  durationMonths?: number;
+}
+
+export interface CustomerPlan {
+  id: string;
+  customerId: string;
+  planId: string;
+  targetAmount: number | string;
+  status: string;
+  startedAt: string;
+  endsAt?: string;
+  plan: SavingsPlan;
+}
+
+export interface CustomerPlanWithProgress extends CustomerPlan {
+  savedAmount: number;
+  progressPercent: number;
+}
+
+export const planApi = {
+  listPlans: () => api.get<SavingsPlan[]>('/plans'),
+  
+  enroll: (data: { planId: string; targetAmount?: number }) =>
+    api.post<CustomerPlan>('/plans/enroll', data),
+    
+  listEnrollments: () =>
+    api.get<CustomerPlanWithProgress[]>('/plans/my-enrollments'),
 };
 
 export interface Transaction {
@@ -341,3 +394,109 @@ export interface Customer {
   };
   collector?: { firstName: string; lastName: string };
 }
+
+export interface KycDocument {
+  id: string;
+  customerId: string;
+  documentType: 'ghana_card' | 'passport' | 'utility_bill' | 'selfie';
+  fileUrl: string;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewedById?: string;
+  reviewedAt?: string;
+  rejectionReason?: string;
+  createdAt: string;
+  customer?: Customer;
+  reviewedBy?: { firstName: string; lastName: string };
+}
+
+export interface FraudAlert {
+  id: string;
+  rule: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  status: 'open' | 'investigating' | 'resolved' | 'false_positive';
+  resourceType?: string;
+  resourceId?: string;
+  details: Record<string, any>;
+  resolvedById?: string;
+  resolvedAt?: string;
+  createdAt: string;
+  resolvedBy?: { firstName: string; lastName: string };
+}
+
+export interface LedgerAccount {
+  id: string;
+  code: string;
+  name: string;
+  accountType: 'asset' | 'liability' | 'revenue' | 'expense' | 'equity';
+  status: string;
+  debitSum: number;
+  creditSum: number;
+  balance: number;
+}
+
+export interface AuditLogEntry {
+  id: string;
+  action: string;
+  resourceType: string;
+  resourceId?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  createdAt: string;
+  user?: { firstName: string; lastName: string; email: string };
+}
+
+export interface OperationsReport {
+  summary: {
+    totalDeposits: number;
+    totalWithdrawals: number;
+    outstandingLiability: number;
+    collectorCommissionsPayable: number;
+    totalCommissionExpense: number;
+    platformCash: number;
+    netOperationsBalance: number;
+  };
+  dailyTrends: { date: string; deposits: number; withdrawals: number }[];
+}
+
+export const kycApi = {
+  list: (status?: string) =>
+    api.get<KycDocument[]>(`/kyc${status ? `?status=${status}` : ''}`),
+  review: (id: string, status: 'approved' | 'rejected', rejectionReason?: string) =>
+    api.post<KycDocument>(`/kyc/${id}/review`, { status, rejectionReason }),
+};
+
+export const fraudApi = {
+  list: (status?: string) =>
+    api.get<FraudAlert[]>(`/fraud${status ? `?status=${status}` : ''}`),
+  resolve: (id: string, status: 'resolved' | 'false_positive', resolutionNotes?: string) =>
+    api.post<FraudAlert>(`/fraud/${id}/resolve`, { status, resolutionNotes }),
+};
+
+export const ledgerApi = {
+  listAccounts: () => api.get<LedgerAccount[]>('/ledger/accounts'),
+  listCommissions: () => api.get<any[]>('/ledger/commissions'),
+  payoutCommission: (data: { collectorId: string; amount: number; description?: string }) =>
+    api.post<any>('/ledger/commissions/payout', data),
+};
+
+export const auditApi = {
+  list: (params?: { userId?: string; action?: string; resourceType?: string; cursor?: string; limit?: number }) => {
+    const query = new URLSearchParams(params as Record<string, string>).toString();
+    return api.get<{ items: AuditLogEntry[]; hasMore: boolean; cursor?: string }>(
+      `/audit${query ? `?${query}` : ''}`,
+    );
+  },
+};
+
+export const reportApi = {
+  getSummary: () => api.get<OperationsReport>('/reports/summary'),
+};
+
+// Extend existing planApi to include listing all enrollments for staff
+const originalPlanApi = planApi;
+export const staffPlanApi = {
+  ...originalPlanApi,
+  listAllEnrollments: () =>
+    api.get<CustomerPlanWithProgress[]>('/plans/enrollments'),
+};
+

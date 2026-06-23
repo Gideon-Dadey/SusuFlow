@@ -130,4 +130,27 @@ export class CustomerService {
     if (!customer) throw new NotFoundException('Customer not found');
     return customer;
   }
+
+  async activate(tenantId: string, id: string) {
+    const customer = await this.prisma.customer.findFirst({
+      where: { id, tenantId },
+    });
+    if (!customer) throw new NotFoundException('Customer profile not found');
+
+    return this.prisma.$transaction(async (tx) => {
+      const updatedCustomer = await tx.customer.update({
+        where: { id },
+        data: { status: 'active' },
+      });
+
+      if (customer.userId) {
+        await tx.user.update({
+          where: { id: customer.userId },
+          data: { status: 'active' },
+        });
+      }
+
+      return updatedCustomer;
+    });
+  }
 }
