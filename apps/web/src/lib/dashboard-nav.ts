@@ -65,10 +65,32 @@ export const staffNavGroups: NavGroup[] = [
 /* flat list kept for backward compat (bottom-nav, etc.) */
 export const staffLinks: NavItem[] = staffNavGroups.flatMap((g) => g.items);
 
-export const adminLinks: NavItem[] = [
-  { href: '/admin/tenants', label: 'Tenants', icon: faBuilding },
-  { href: '/admin/tenants/new', label: 'New organization', icon: faUserPlus },
+export const adminNavGroups: NavGroup[] = [
+  {
+    groupLabel: 'PLATFORM',
+    items: [
+      { href: '/admin/dashboard', label: 'Overview', icon: faGaugeHigh },
+      { href: '/admin/tenants', label: 'Organizations', icon: faBuilding },
+    ],
+  },
+  {
+    groupLabel: 'GLOBAL ACTIVITY',
+    items: [
+      { href: '/admin/deposits', label: 'All Deposits', icon: faWallet },
+      { href: '/admin/withdrawals', label: 'All Withdrawals', icon: faHistory },
+      { href: '/admin/fraud', label: 'Fraud Alerts', icon: faTriangleExclamation },
+      { href: '/admin/audit', label: 'System Audit Logs', icon: faListUl },
+    ],
+  },
+  {
+    groupLabel: 'ACCOUNT',
+    items: [
+      { href: '/admin/profile', label: 'Profile', icon: faUser },
+    ],
+  },
 ];
+
+export const adminLinks: NavItem[] = adminNavGroups.flatMap((g) => g.items);
 
 export const customerLinks: NavItem[] = [
   { href: '/dashboard', label: 'Home', icon: faGaugeHigh },

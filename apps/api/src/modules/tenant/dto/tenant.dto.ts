@@ -7,6 +7,7 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  IsObject,
 } from 'class-validator';
 
 export class CreateTenantDto {
@@ -71,4 +72,39 @@ export class SuspendTenantDto {
   @IsString()
   @MaxLength(500)
   reason?: string;
+}
+
+export class UpdateTenantDto {
+  @ApiPropertyOptional({ example: 'XYZ Susu Company' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  name?: string;
+
+  @ApiPropertyOptional({ example: 'admin@xyzsusu.com' })
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @ApiPropertyOptional({ example: '+233201234567' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  phone?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  logoUrl?: string;
+
+  @ApiPropertyOptional({ example: '#1E40AF' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(7)
+  primaryColor?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsObject()
+  settings?: Record<string, any>;
 }

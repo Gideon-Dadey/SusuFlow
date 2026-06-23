@@ -47,7 +47,7 @@ export function getTenantSlug(): string {
 }
 
 export function getDashboardPath(roles: string[]): string {
-  if (roles.includes('super_admin')) return '/admin/tenants';
+  if (roles.includes('super_admin')) return '/admin/dashboard';
   if (roles.includes('company_admin') || roles.includes('account_officer')) return '/staff/dashboard';
   return '/dashboard';
 }

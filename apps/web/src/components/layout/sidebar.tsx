@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cn } from '@/lib/utils';
 import {
   adminLinks,
+  adminNavGroups,
   customerLinks,
   staffLinks,
   staffNavGroups,
@@ -63,7 +64,8 @@ export function Sidebar({
   const brandLabel =
     variant === 'admin' ? 'SusuFlow Admin' : customerMode ? 'My Susu' : 'SusuFlow';
 
-  const isGrouped = variant === 'staff' && !customerMode;
+  const isGrouped = (variant === 'staff' || variant === 'admin') && !customerMode;
+  const navGroups = variant === 'admin' ? adminNavGroups : staffNavGroups;
 
   const flatLinks = customerMode
     ? customerLinks
@@ -87,7 +89,7 @@ export function Sidebar({
 
       <nav className="flex-1 overflow-y-auto p-2.5">
         {isGrouped
-          ? staffNavGroups.map((group) => (
+          ? navGroups.map((group) => (
               <div key={group.groupLabel}>
                 <SectionLabel label={group.groupLabel} />
                 {group.items.map((item) => {

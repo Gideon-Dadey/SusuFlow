@@ -15,7 +15,7 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import { CacheService } from '../../cache/cache.service';
 import { TENANT_CACHE_PREFIX } from '../../cache/cache.constants';
-import { CreateTenantDto } from './dto/tenant.dto';
+import { CreateTenantDto, UpdateTenantDto } from './dto/tenant.dto';
 
 function generateTempPassword(): string {
   const base = randomBytes(9).toString('base64url');
@@ -323,6 +323,207 @@ export class TenantService {
 
     await this.invalidateTenantCache(updated.slug);
     return { tenant: updated, message: 'Subscription payment recorded; tenant activated' };
+  }
+
+  async update(id: string, dto: UpdateTenantDto) {
+    const tenant = await this.findById(id);
+
+    const updated = await this.prisma.tenant.update({
+      where: { id },
+      data: {
+        name: dto.name,
+        email: dto.email,
+        phone: dto.phone,
+        logoUrl: dto.logoUrl,
+        primaryColor: dto.primaryColor,
+        settings: dto.settings
+          ? {
+              ...(typeof tenant.settings === 'object' && tenant.settings !== null
+                ? (tenant.settings as Record<string, unknown>)
+                : {}),
+              ...dto.settings,
+            }
+          : undefined,
+      },
+    });
+
+    await this.invalidateTenantCache(updated.slug);
+    return updated;
+  }
+
+  async getGlobalSummary() {
+    const totalTenants = await this.prisma.tenant.count();
+    const activeTenants = await this.prisma.tenant.count({ where: { status: 'active' } });
+
+    // Completed deposits sum
+    const depositsResult = await this.prisma.transaction.aggregate({
+      where: { type: 'deposit', status: 'completed' },
+      _sum: { amount: true },
+    });
+    const totalDeposits = Number(depositsResult._sum.amount || 0);
+
+    // Completed withdrawals sum
+    const withdrawalsResult = await this.prisma.transaction.aggregate({
+      where: { type: 'withdrawal', status: 'completed' },
+      _sum: { amount: true },
+    });
+    const totalWithdrawals = Number(withdrawalsResult._sum.amount || 0);
+
+    // Open fraud alerts count
+    const openFraudAlerts = await this.prisma.fraudAlert.count({
+      where: { status: 'open' },
+    });
+
+    // Recent global transactions
+    const recentTransactions = await this.prisma.transaction.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        tenant: { select: { name: true, slug: true } },
+        customer: {
+          select: {
+            user: { select: { firstName: true, lastName: true } },
+          },
+        },
+      },
+    });
+
+    // Recent global audit logs
+    const recentAuditLogs = await this.prisma.auditLog.findMany({
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        tenant: { select: { name: true, slug: true } },
+        user: { select: { firstName: true, lastName: true, email: true } },
+      },
+    });
+
+    return {
+      totalTenants,
+      activeTenants,
+      totalDeposits,
+      totalWithdrawals,
+      openFraudAlerts,
+      recentTransactions,
+      recentAuditLogs,
+    };
+  }
+
+  async getGlobalDeposits(options: { status?: string; tenantId?: string; cursor?: string; limit?: number }) {
+    const limit = options.limit || 20;
+    const where: Record<string, any> = { type: 'deposit' };
+    if (options.status) where.status = options.status;
+    if (options.tenantId) where.tenantId = options.tenantId;
+
+    const items = await this.prisma.transaction.findMany({
+      where,
+      take: limit + 1,
+      ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
+      orderBy: { createdAt: 'desc' },
+      include: {
+        tenant: { select: { name: true, slug: true } },
+        customer: {
+          select: {
+            customerNumber: true,
+            user: { select: { firstName: true, lastName: true } },
+          },
+        },
+      },
+    });
+
+    const hasMore = items.length > limit;
+    const data = hasMore ? items.slice(0, -1) : items;
+
+    return {
+      items: data,
+      cursor: hasMore ? data[data.length - 1]?.id : undefined,
+      hasMore,
+    };
+  }
+
+  async getGlobalWithdrawals(options: { status?: string; tenantId?: string; cursor?: string; limit?: number }) {
+    const limit = options.limit || 20;
+    const where: Record<string, any> = { type: 'withdrawal' };
+    if (options.status) where.status = options.status;
+    if (options.tenantId) where.tenantId = options.tenantId;
+
+    const items = await this.prisma.transaction.findMany({
+      where,
+      take: limit + 1,
+      ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
+      orderBy: { createdAt: 'desc' },
+      include: {
+        tenant: { select: { name: true, slug: true } },
+        customer: {
+          select: {
+            customerNumber: true,
+            user: { select: { firstName: true, lastName: true } },
+          },
+        },
+      },
+    });
+
+    const hasMore = items.length > limit;
+    const data = hasMore ? items.slice(0, -1) : items;
+
+    return {
+      items: data,
+      cursor: hasMore ? data[data.length - 1]?.id : undefined,
+      hasMore,
+    };
+  }
+
+  async getGlobalFraud(options: { status?: string; tenantId?: string; cursor?: string; limit?: number }) {
+    const limit = options.limit || 20;
+    const where: Record<string, any> = {};
+    if (options.status) where.status = options.status;
+    if (options.tenantId) where.tenantId = options.tenantId;
+
+    const items = await this.prisma.fraudAlert.findMany({
+      where,
+      take: limit + 1,
+      ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
+      orderBy: { createdAt: 'desc' },
+      include: {
+        tenant: { select: { name: true, slug: true } },
+        resolvedBy: { select: { firstName: true, lastName: true } },
+      },
+    });
+
+    const hasMore = items.length > limit;
+    const data = hasMore ? items.slice(0, -1) : items;
+
+    return {
+      items: data,
+      cursor: hasMore ? data[data.length - 1]?.id : undefined,
+      hasMore,
+    };
+  }
+
+  async getGlobalAuditLogs(options: { tenantId?: string; cursor?: string; limit?: number }) {
+    const limit = options.limit || 20;
+    const where: Record<string, any> = {};
+    if (options.tenantId) where.tenantId = options.tenantId;
+
+    const items = await this.prisma.auditLog.findMany({
+      where,
+      take: limit + 1,
+      ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
+      orderBy: { createdAt: 'desc' },
+      include: {
+        tenant: { select: { name: true, slug: true } },
+        user: { select: { firstName: true, lastName: true, email: true } },
+      },
+    });
+
+    const hasMore = items.length > limit;
+    const data = hasMore ? items.slice(0, -1) : items;
+
+    return {
+      items: data,
+      cursor: hasMore ? data[data.length - 1]?.id : undefined,
+      hasMore,
+    };
   }
 
   private async invalidateTenantCache(slug: string) {

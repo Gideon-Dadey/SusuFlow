@@ -90,6 +90,18 @@ export const api = {
     }),
 };
 
+function toQueryString(params?: Record<string, any>): string {
+  if (!params) return '';
+  const cleanParams: Record<string, string> = {};
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== '') {
+      cleanParams[key] = String(value);
+    }
+  }
+  const query = new URLSearchParams(cleanParams).toString();
+  return query ? `?${query}` : '';
+}
+
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
@@ -110,6 +122,18 @@ export interface TenantInfo {
   primaryColor?: string;
   logoUrl?: string;
   status: string;
+}
+
+export interface User {
+  id: string;
+  tenantId: string | null;
+  email: string;
+  phone?: string | null;
+  firstName: string;
+  lastName: string;
+  status: string;
+  emailVerified: boolean;
+  createdAt: string;
 }
 
 export interface DepositInitResponse {
@@ -149,6 +173,19 @@ export const tenantApi = {
     api.get<TenantInfo>(`/tenants/${slug}`, { skipAuth: true, tenantSlug: slug }),
   seedDemo: (slug: string) =>
     api.post<{ message: string }>(`/tenants/${slug}/seed-demo`, {}, { skipAuth: true, tenantSlug: slug }),
+  getMe: () =>
+    api.get<TenantInfo & { phone?: string; email?: string; settings?: Record<string, any> }>('/tenants/me'),
+  updateMe: (data: Partial<TenantInfo & { phone?: string; email?: string; settings?: Record<string, any> }>) =>
+    api.put<TenantInfo>('/tenants/me', data),
+};
+
+export const userApi = {
+  getMe: () =>
+    api.get<User>('/users/me'),
+  updateMe: (data: { firstName?: string; lastName?: string; phone?: string; email?: string }) =>
+    api.put<User>('/users/me', data),
+  updatePassword: (data: { currentPassword?: string; newPassword?: string }) =>
+    api.put<{ message: string }>('/users/me/password', data),
 };
 
 
@@ -245,6 +282,49 @@ export const adminApi = {
       { reference, tenantId },
       { skipAuth: true, tenantSlug: '' },
     ),
+
+  getGlobalSummary: () =>
+    api.get<{
+      totalTenants: number;
+      activeTenants: number;
+      totalDeposits: number;
+      totalWithdrawals: number;
+      openFraudAlerts: number;
+      recentTransactions: any[];
+      recentAuditLogs: any[];
+    }>('/admin/dashboard/summary', { tenantSlug: '' }),
+
+  listDeposits: (params?: { tenant_id?: string; status?: string }) => {
+    const query = toQueryString(params);
+    return api.get<{ items: Transaction[]; hasMore: boolean }>(
+      `/admin/deposits${query}`,
+      { tenantSlug: '' },
+    );
+  },
+
+  listWithdrawals: (params?: { tenant_id?: string; status?: string }) => {
+    const query = toQueryString(params);
+    return api.get<{ items: Transaction[]; hasMore: boolean }>(
+      `/admin/withdrawals${query}`,
+      { tenantSlug: '' },
+    );
+  },
+
+  listFraud: (params?: { tenant_id?: string; status?: string }) => {
+    const query = toQueryString(params);
+    return api.get<{ items: FraudAlert[]; hasMore: boolean }>(
+      `/admin/fraud${query}`,
+      { tenantSlug: '' },
+    );
+  },
+
+  listAuditLogs: (params?: { tenant_id?: string }) => {
+    const query = toQueryString(params);
+    return api.get<{ items: AuditLogEntry[]; hasMore: boolean }>(
+      `/admin/audit${query}`,
+      { tenantSlug: '' },
+    );
+  },
 };
 
 export const depositApi = {
@@ -257,9 +337,8 @@ export const depositApi = {
   }) => api.post<DepositInitResponse>('/deposits', data),
 
   list: (params?: { status?: string; customer_id?: string }) => {
-    const query = new URLSearchParams(params as Record<string, string>).toString();
     return api.get<{ items: Transaction[]; hasMore: boolean }>(
-      `/deposits${query ? `?${query}` : ''}`,
+      `/deposits${toQueryString(params)}`,
     );
   },
 
@@ -270,9 +349,8 @@ export const depositApi = {
 
 export const customerApi = {
   list: (params?: { search?: string; status?: string }) => {
-    const query = new URLSearchParams(params as Record<string, string>).toString();
     return api.get<{ items: Customer[]; hasMore: boolean }>(
-      `/customers${query ? `?${query}` : ''}`,
+      `/customers${toQueryString(params)}`,
     );
   },
 
@@ -301,9 +379,8 @@ export const withdrawalApi = {
   }) => api.post<Transaction>('/withdrawals', data),
 
   list: (params?: { customer_id?: string }) => {
-    const query = new URLSearchParams(params as Record<string, string>).toString();
     return api.get<{ items: Transaction[]; hasMore: boolean }>(
-      `/withdrawals${query ? `?${query}` : ''}`,
+      `/withdrawals${toQueryString(params)}`,
     );
   },
 
@@ -339,6 +416,7 @@ export interface CustomerPlan {
   startedAt: string;
   endsAt?: string;
   plan: SavingsPlan;
+  customer?: Customer;
 }
 
 export interface CustomerPlanWithProgress extends CustomerPlan {
@@ -366,6 +444,7 @@ export interface Transaction {
   createdAt: string;
   completedAt?: string;
   customer?: {
+    customerNumber?: string;
     user?: { firstName: string; lastName: string };
   };
   payment?: {
@@ -377,6 +456,7 @@ export interface Transaction {
     disbursementPhone: string;
     status: string;
   };
+  tenant?: { name: string; slug: string } | null;
 }
 
 export interface Customer {
@@ -421,6 +501,7 @@ export interface FraudAlert {
   resolvedAt?: string;
   createdAt: string;
   resolvedBy?: { firstName: string; lastName: string };
+  tenant?: { name: string; slug: string } | null;
 }
 
 export interface LedgerAccount {
@@ -443,6 +524,7 @@ export interface AuditLogEntry {
   userAgent?: string;
   createdAt: string;
   user?: { firstName: string; lastName: string; email: string };
+  tenant?: { name: string; slug: string } | null;
 }
 
 export interface OperationsReport {
@@ -481,9 +563,8 @@ export const ledgerApi = {
 
 export const auditApi = {
   list: (params?: { userId?: string; action?: string; resourceType?: string; cursor?: string; limit?: number }) => {
-    const query = new URLSearchParams(params as Record<string, string>).toString();
     return api.get<{ items: AuditLogEntry[]; hasMore: boolean; cursor?: string }>(
-      `/audit${query ? `?${query}` : ''}`,
+      `/audit${toQueryString(params)}`,
     );
   },
 };
