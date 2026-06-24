@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authApi, LoginResponse } from "@/lib/api";
-import { getDashboardPath, getTenantSlug } from "@/lib/utils";
+import { getDashboardPath, resolveLoginTenantSlug } from "@/lib/utils";
 
 interface User {
   id: string;
@@ -45,7 +45,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       accessToken: null,
       refreshToken: null,
-      tenantSlug: "abc-susu",
+      tenantSlug: "",
       isAuthenticated: false,
       isLoading: false,
       error: null,
@@ -67,12 +67,14 @@ export const useAuthStore = create<AuthState>()(
         const resolvedSlug = data.user.tenantSlug || "";
         if (resolvedSlug) {
           localStorage.setItem("tenant_slug", resolvedSlug);
+        } else {
+          localStorage.removeItem("tenant_slug");
         }
         set({
           user: data.user,
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
-          tenantSlug: resolvedSlug || get().tenantSlug,
+          tenantSlug: resolvedSlug,
           isAuthenticated: true,
         });
       },
@@ -80,12 +82,10 @@ export const useAuthStore = create<AuthState>()(
       login: async (email, password, tenantSlug) => {
         set({ isLoading: true, error: null });
         try {
-          const slug =
-            tenantSlug !== undefined && tenantSlug.trim()
-              ? tenantSlug.trim()
-              : get().tenantSlug?.trim() || getTenantSlug();
+          const slug = resolveLoginTenantSlug(email, tenantSlug);
           const data = await authApi.login(email, password, slug);
           get().hydrate(data);
+          get().setTenantSlug(slug);
           return getDashboardPath(data.user.roles);
         } catch (err) {
           const message = err instanceof Error ? err.message : "Login failed";

@@ -5,6 +5,7 @@ import {
   getGreeting,
   getInitials,
   getPortalFromPathname,
+  inferTenantSlugFromEmail,
 } from "./utils";
 
 describe("web utils", () => {
@@ -30,6 +31,28 @@ describe("web utils", () => {
 
     it("routes customer to customer dashboard", () => {
       expect(getDashboardPath(["customer"])).toBe("/dashboard");
+    });
+  });
+
+  describe("inferTenantSlugFromEmail", () => {
+    it("maps Apex Susu emails to apex-susu", () => {
+      expect(inferTenantSlugFromEmail("apex.admin@apexsusu.com")).toBe(
+        "apex-susu",
+      );
+    });
+
+    it("returns empty for platform super admin emails", () => {
+      expect(inferTenantSlugFromEmail("admin@susuflow.com")).toBe("");
+    });
+
+    it("returns empty for temp susuflow customer emails", () => {
+      expect(
+        inferTenantSlugFromEmail("customer-000003@temp.susuflow.com"),
+      ).toBe("");
+    });
+
+    it("does not guess tenant from generic email domains", () => {
+      expect(inferTenantSlugFromEmail("user@gmail.com")).toBe("");
     });
   });
 

@@ -72,8 +72,66 @@ export function getRoleLabelForPortal(
   return "Customer account";
 }
 
+/** Map known company email domains to tenant slugs. */
+const EMAIL_DOMAIN_TENANT_SLUG: Record<string, string> = {
+  "apexsusu.com": "apex-susu",
+};
+
+/** Platform operator domains — no tenant context on login. */
+const PLATFORM_EMAIL_DOMAINS = new Set(["susuflow.com"]);
+
+function isPlatformEmailDomain(domain: string): boolean {
+  if (PLATFORM_EMAIL_DOMAINS.has(domain)) return true;
+  // e.g. customer-000003@temp.susuflow.com — tenant comes from URL/storage, not email
+  return domain.endsWith(".susuflow.com");
+}
+
+export function inferTenantSlugFromEmail(email: string): string {
+  const domain = email.split("@")[1]?.toLowerCase().trim();
+  if (!domain) return "";
+
+  if (isPlatformEmailDomain(domain)) return "";
+
+  if (EMAIL_DOMAIN_TENANT_SLUG[domain]) {
+    return EMAIL_DOMAIN_TENANT_SLUG[domain];
+  }
+
+  const hostPart = domain.split(".")[0];
+  const susuMatch = hostPart.match(/^(.+?)susu$/);
+  if (susuMatch?.[1]) {
+    return `${susuMatch[1]}-susu`;
+  }
+
+  return "";
+}
+
+export function resolveLoginTenantSlug(
+  email: string,
+  explicit?: string,
+): string {
+  if (explicit?.trim()) return explicit.trim();
+
+  const inferred = inferTenantSlugFromEmail(email);
+  if (inferred) return inferred;
+
+  if (typeof window !== "undefined") {
+    const fromQuery = new URLSearchParams(window.location.search).get("tenant");
+    if (fromQuery?.trim()) return fromQuery.trim();
+
+    const stored = localStorage.getItem("tenant_slug")?.trim();
+    if (stored && stored !== "abc-susu") return stored;
+  }
+
+  const envDefault = process.env.NEXT_PUBLIC_DEFAULT_TENANT?.trim();
+  if (envDefault && envDefault !== "abc-susu") return envDefault;
+
+  return "";
+}
+
 export function getTenantSlug(): string {
-  if (typeof window === "undefined") return "abc-susu";
+  if (typeof window === "undefined") {
+    return process.env.NEXT_PUBLIC_DEFAULT_TENANT?.trim() || "";
+  }
   const params = new URLSearchParams(window.location.search);
   const fromQuery = params.get("tenant");
   if (fromQuery) return fromQuery;
@@ -83,7 +141,8 @@ export function getTenantSlug(): string {
   if (host.includes(".") && !host.startsWith("localhost")) {
     return host.split(".")[0];
   }
-  return process.env.NEXT_PUBLIC_DEFAULT_TENANT || "abc-susu";
+  const envDefault = process.env.NEXT_PUBLIC_DEFAULT_TENANT?.trim();
+  return envDefault && envDefault !== "abc-susu" ? envDefault : "";
 }
 
 export function getDashboardPath(roles: string[]): string {
