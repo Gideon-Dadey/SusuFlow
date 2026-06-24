@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { CheckCircle, Eye, EyeOff } from "lucide-react";
 import { AuthShell } from "@/components/auth/auth-shell";
 import {
   AuthFooterExtras,
@@ -24,12 +24,14 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const tenantParam = searchParams.get("tenant") || "";
   const queryClient = useQueryClient();
-  const { login, isLoading, error, clearError, setTenantSlug, tenantSlug } =
+  const { login, error, clearError, setTenantSlug, tenantSlug } =
     useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     const saved = localStorage.getItem(REMEMBER_EMAIL_KEY);
@@ -48,6 +50,7 @@ function LoginContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError();
+    setSuccessMessage("");
 
     if (rememberMe) {
       localStorage.setItem(REMEMBER_EMAIL_KEY, email);
@@ -55,12 +58,18 @@ function LoginContent() {
       localStorage.removeItem(REMEMBER_EMAIL_KEY);
     }
 
+    setIsSubmitting(true);
     try {
-      const path = await login(email, password, tenantSlug || tenantParam);
-      queryClient.clear();
-      router.push(path);
+      const path = await login(email, password, tenantParam || tenantSlug);
+      setIsSubmitting(false);
+      setSuccessMessage("You are logged in successfully");
+      router.prefetch(path);
+      window.setTimeout(() => {
+        queryClient.clear();
+        router.replace(path);
+      }, 450);
     } catch {
-      // error set in store
+      setIsSubmitting(false);
     }
   };
 
@@ -154,6 +163,13 @@ function LoginContent() {
           <span className="text-sm text-foreground">Remember me</span>
         </label>
 
+        {successMessage ? (
+          <p className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
+            <CheckCircle className="h-4 w-4 shrink-0" aria-hidden />
+            <span>{successMessage}</span>
+          </p>
+        ) : null}
+
         {error ? (
           <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {error}
@@ -163,7 +179,9 @@ function LoginContent() {
         <Button
           type="submit"
           className="h-11 w-full rounded-lg text-sm font-semibold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
-          loading={isLoading}
+          loading={isSubmitting}
+          loadingText="Signing in..."
+          disabled={!!successMessage}
         >
           Sign in
         </Button>

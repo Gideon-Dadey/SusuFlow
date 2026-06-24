@@ -10,6 +10,7 @@ import { useAuthStore } from "@/stores/auth.store";
 import { getInitials } from "@/lib/utils";
 import { userApi, tenantApi } from "@/lib/api";
 import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { MIN_PASSWORD_LENGTH } from "@susuflow/shared";
 
 export function ProfileContent({ title = "Profile" }: { title?: string }) {
   const { user: authUser } = useAuthStore();
@@ -162,8 +163,10 @@ export function ProfileContent({ title = "Profile" }: { title?: string }) {
       setPasswordError("All password fields are required.");
       return;
     }
-    if (newPassword.length < 10) {
-      setPasswordError("New password must be at least 10 characters.");
+    if (newPassword.length < MIN_PASSWORD_LENGTH) {
+      setPasswordError(
+        `New password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
+      );
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -320,7 +323,7 @@ export function ProfileContent({ title = "Profile" }: { title?: string }) {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="At least 10 characters"
+                placeholder={`At least ${MIN_PASSWORD_LENGTH} characters`}
                 required
               />
 

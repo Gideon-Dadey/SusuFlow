@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { tenantApi, userApi } from '@/lib/api';
-import { useAuthStore } from '@/stores/auth.store';
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { tenantApi, userApi } from "@/lib/api";
+import { useAuthStore } from "@/stores/auth.store";
 import {
   Loader2,
   CheckCircle,
@@ -16,12 +16,15 @@ import {
   ShieldCheck,
   User,
   Lock,
-} from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+} from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { MIN_PASSWORD_LENGTH } from "@susuflow/shared";
 
 function hexToRgba(hex: string, alpha: number): string {
-  const cleanHex = hex.replace('#', '');
-  let r = 0, g = 0, b = 0;
+  const cleanHex = hex.replace("#", "");
+  let r = 0,
+    g = 0,
+    b = 0;
   if (cleanHex.length === 3) {
     r = parseInt(cleanHex[0] + cleanHex[0], 16);
     g = parseInt(cleanHex[1] + cleanHex[1], 16);
@@ -41,79 +44,89 @@ export default function StaffSettingsPage() {
   const queryClient = useQueryClient();
 
   // Active navigation tab
-  const [activeTab, setActiveTab] = useState<'profile' | 'branding' | 'operations' | 'commissions'>('profile');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [activeTab, setActiveTab] = useState<
+    "profile" | "branding" | "operations" | "commissions"
+  >("profile");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   // 1. User Profile Queries & States
-  const { data: userProfile, isLoading: isProfileLoading, refetch: refetchProfile } = useQuery({
-    queryKey: ['user-profile', user?.id],
+  const {
+    data: userProfile,
+    isLoading: isProfileLoading,
+    refetch: refetchProfile,
+  } = useQuery({
+    queryKey: ["user-profile", user?.id],
     queryFn: () => userApi.getMe(),
   });
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [profileEmail, setProfileEmail] = useState('');
-  const [profilePhone, setProfilePhone] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [profileEmail, setProfileEmail] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
 
   // Password States
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
     if (userProfile) {
-      setFirstName(userProfile.firstName || '');
-      setLastName(userProfile.lastName || '');
-      setProfileEmail(userProfile.email || '');
-      setProfilePhone(userProfile.phone || '');
+      setFirstName(userProfile.firstName || "");
+      setLastName(userProfile.lastName || "");
+      setProfileEmail(userProfile.email || "");
+      setProfilePhone(userProfile.phone || "");
     }
   }, [userProfile]);
 
   // 2. Tenant Settings Queries & States
-  const isCompanyAdmin = user?.roles.includes('company_admin');
+  const isCompanyAdmin = user?.roles.includes("company_admin");
 
-  const { data: tenant, isLoading: isTenantLoading, refetch: refetchTenant } = useQuery({
-    queryKey: ['tenant-settings', user?.tenantSlug],
+  const {
+    data: tenant,
+    isLoading: isTenantLoading,
+    refetch: refetchTenant,
+  } = useQuery({
+    queryKey: ["tenant-settings", user?.tenantSlug],
     queryFn: () => tenantApi.getMe(),
     enabled: !!isCompanyAdmin,
   });
 
   // Branding states
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [logoUrl, setLogoUrl] = useState('');
-  const [primaryColor, setPrimaryColor] = useState('#1E40AF');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [primaryColor, setPrimaryColor] = useState("#1E40AF");
 
   // Operations states
-  const [currency, setCurrency] = useState('GHS');
-  const [timezone, setTimezone] = useState('Africa/Accra');
-  const [minDeposit, setMinDeposit] = useState('5');
-  const [maxDeposit, setMaxDeposit] = useState('10000');
-  const [minWithdrawal, setMinWithdrawal] = useState('10');
-  const [maxWithdrawal, setMaxWithdrawal] = useState('5000');
+  const [currency, setCurrency] = useState("GHS");
+  const [timezone, setTimezone] = useState("Africa/Accra");
+  const [minDeposit, setMinDeposit] = useState("5");
+  const [maxDeposit, setMaxDeposit] = useState("10000");
+  const [minWithdrawal, setMinWithdrawal] = useState("10");
+  const [maxWithdrawal, setMaxWithdrawal] = useState("5000");
 
   // Commissions & Fees states
-  const [transactionFee, setTransactionFee] = useState('0.50');
-  const [commissionRate, setCommissionRate] = useState('1.5');
+  const [transactionFee, setTransactionFee] = useState("0.50");
+  const [commissionRate, setCommissionRate] = useState("1.5");
 
   useEffect(() => {
     if (tenant) {
-      setName(tenant.name || '');
-      setEmail(tenant.email || '');
-      setPhone(tenant.phone || '');
-      setLogoUrl(tenant.logoUrl || '');
-      setPrimaryColor(tenant.primaryColor || '#1E40AF');
+      setName(tenant.name || "");
+      setEmail(tenant.email || "");
+      setPhone(tenant.phone || "");
+      setLogoUrl(tenant.logoUrl || "");
+      setPrimaryColor(tenant.primaryColor || "#1E40AF");
 
       const settings = (tenant.settings || {}) as Record<string, any>;
-      setCurrency(settings.currency || 'GHS');
-      setTimezone(settings.timezone || 'Africa/Accra');
-      setMinDeposit(String(settings.min_deposit ?? '5'));
-      setMaxDeposit(String(settings.max_deposit ?? '10000'));
-      setMinWithdrawal(String(settings.min_withdrawal ?? '10'));
-      setMaxWithdrawal(String(settings.max_withdrawal ?? '5000'));
-      setTransactionFee(String(settings.transaction_fee ?? '0.50'));
+      setCurrency(settings.currency || "GHS");
+      setTimezone(settings.timezone || "Africa/Accra");
+      setMinDeposit(String(settings.min_deposit ?? "5"));
+      setMaxDeposit(String(settings.max_deposit ?? "10000"));
+      setMinWithdrawal(String(settings.min_withdrawal ?? "10"));
+      setMaxWithdrawal(String(settings.max_withdrawal ?? "5000"));
+      setTransactionFee(String(settings.transaction_fee ?? "0.50"));
       setCommissionRate(String((settings.commission_rate ?? 0.015) * 100));
     }
   }, [tenant]);
@@ -121,16 +134,22 @@ export default function StaffSettingsPage() {
   // Tab switcher
   const handleTabChange = (tab: typeof activeTab) => {
     setActiveTab(tab);
-    setSuccessMessage('');
-    setErrorMessage('');
+    setSuccessMessage("");
+    setErrorMessage("");
   };
 
   // 3. Mutation Operations
   const updateProfileMutation = useMutation({
-    mutationFn: () => userApi.updateMe({ firstName, lastName, email: profileEmail, phone: profilePhone }),
+    mutationFn: () =>
+      userApi.updateMe({
+        firstName,
+        lastName,
+        email: profileEmail,
+        phone: profilePhone,
+      }),
     onSuccess: (updatedUser) => {
-      setSuccessMessage('Profile updated successfully!');
-      setErrorMessage('');
+      setSuccessMessage("Profile updated successfully!");
+      setErrorMessage("");
       useAuthStore.setState((state) => ({
         user: state.user
           ? {
@@ -144,54 +163,55 @@ export default function StaffSettingsPage() {
       refetchProfile();
     },
     onError: (err: any) => {
-      setErrorMessage(err?.message || 'Failed to update profile.');
-      setSuccessMessage('');
+      setErrorMessage(err?.message || "Failed to update profile.");
+      setSuccessMessage("");
     },
   });
 
   const updatePasswordMutation = useMutation({
     mutationFn: () => userApi.updatePassword({ currentPassword, newPassword }),
     onSuccess: () => {
-      setSuccessMessage('Password changed successfully!');
-      setErrorMessage('');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
+      setSuccessMessage("Password changed successfully!");
+      setErrorMessage("");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
     },
     onError: (err: any) => {
-      setErrorMessage(err?.message || 'Failed to change password.');
-      setSuccessMessage('');
+      setErrorMessage(err?.message || "Failed to change password.");
+      setSuccessMessage("");
     },
   });
 
   const updateTenantMutation = useMutation({
     mutationFn: (data: any) => tenantApi.updateMe(data),
     onSuccess: () => {
-      setSuccessMessage('Tenant settings updated successfully!');
-      setErrorMessage('');
+      setSuccessMessage("Tenant settings updated successfully!");
+      setErrorMessage("");
       refetchTenant();
-      queryClient.invalidateQueries({ queryKey: ['tenant-branding'] });
-      queryClient.invalidateQueries({ queryKey: ['tenant-settings'] });
+      queryClient.invalidateQueries({ queryKey: ["tenant-branding"] });
+      queryClient.invalidateQueries({ queryKey: ["tenant-settings"] });
     },
     onError: (err: any) => {
-      setErrorMessage(err?.message || 'Failed to update settings.');
-      setSuccessMessage('');
+      setErrorMessage(err?.message || "Failed to update settings.");
+      setSuccessMessage("");
     },
   });
 
   // 4. Form Handlers
-  const isValidEmail = (emailStr: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailStr);
+  const isValidEmail = (emailStr: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailStr);
 
   const handleProfileSave = (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage('');
-    setErrorMessage('');
+    setSuccessMessage("");
+    setErrorMessage("");
     if (!firstName.trim() || !lastName.trim() || !profileEmail.trim()) {
-      setErrorMessage('First Name, Last Name, and Email are required.');
+      setErrorMessage("First Name, Last Name, and Email are required.");
       return;
     }
     if (!isValidEmail(profileEmail)) {
-      setErrorMessage('Please enter a valid email address.');
+      setErrorMessage("Please enter a valid email address.");
       return;
     }
     updateProfileMutation.mutate();
@@ -199,18 +219,20 @@ export default function StaffSettingsPage() {
 
   const handlePasswordSave = (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage('');
-    setErrorMessage('');
+    setSuccessMessage("");
+    setErrorMessage("");
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setErrorMessage('All password fields are required.');
+      setErrorMessage("All password fields are required.");
       return;
     }
-    if (newPassword.length < 10) {
-      setErrorMessage('New password must be at least 10 characters.');
+    if (newPassword.length < MIN_PASSWORD_LENGTH) {
+      setErrorMessage(
+        `New password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
+      );
       return;
     }
     if (newPassword !== confirmPassword) {
-      setErrorMessage('New password and confirm password do not match.');
+      setErrorMessage("New password and confirm password do not match.");
       return;
     }
     updatePasswordMutation.mutate();
@@ -220,13 +242,13 @@ export default function StaffSettingsPage() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        setErrorMessage('Logo image must be smaller than 2MB.');
+        setErrorMessage("Logo image must be smaller than 2MB.");
         return;
       }
       const reader = new FileReader();
       reader.onloadend = () => {
         setLogoUrl(reader.result as string);
-        setErrorMessage('');
+        setErrorMessage("");
       };
       reader.readAsDataURL(file);
     }
@@ -234,14 +256,14 @@ export default function StaffSettingsPage() {
 
   const handleBrandingSave = (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage('');
-    setErrorMessage('');
+    setSuccessMessage("");
+    setErrorMessage("");
     if (!name.trim() || !email.trim()) {
-      setErrorMessage('Company Name and Support Email are required.');
+      setErrorMessage("Company Name and Support Email are required.");
       return;
     }
     if (!isValidEmail(email)) {
-      setErrorMessage('Please enter a valid support email address.');
+      setErrorMessage("Please enter a valid support email address.");
       return;
     }
 
@@ -257,8 +279,8 @@ export default function StaffSettingsPage() {
 
   const handleOperationsSave = (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage('');
-    setErrorMessage('');
+    setSuccessMessage("");
+    setErrorMessage("");
 
     const parsedMinDep = parseFloat(minDeposit);
     const parsedMaxDep = parseFloat(maxDeposit);
@@ -266,19 +288,23 @@ export default function StaffSettingsPage() {
     const parsedMaxWd = parseFloat(maxWithdrawal);
 
     if (isNaN(parsedMinDep) || parsedMinDep <= 0) {
-      setErrorMessage('Minimum deposit must be greater than 0.');
+      setErrorMessage("Minimum deposit must be greater than 0.");
       return;
     }
     if (isNaN(parsedMaxDep) || parsedMaxDep < parsedMinDep) {
-      setErrorMessage('Maximum deposit must be greater than or equal to minimum deposit.');
+      setErrorMessage(
+        "Maximum deposit must be greater than or equal to minimum deposit.",
+      );
       return;
     }
     if (isNaN(parsedMinWd) || parsedMinWd <= 0) {
-      setErrorMessage('Minimum withdrawal must be greater than 0.');
+      setErrorMessage("Minimum withdrawal must be greater than 0.");
       return;
     }
     if (isNaN(parsedMaxWd) || parsedMaxWd < parsedMinWd) {
-      setErrorMessage('Maximum withdrawal must be greater than or equal to minimum withdrawal.');
+      setErrorMessage(
+        "Maximum withdrawal must be greater than or equal to minimum withdrawal.",
+      );
       return;
     }
 
@@ -304,18 +330,18 @@ export default function StaffSettingsPage() {
 
   const handleCommissionsSave = (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage('');
-    setErrorMessage('');
+    setSuccessMessage("");
+    setErrorMessage("");
 
     const parsedFee = parseFloat(transactionFee);
     const parsedComm = parseFloat(commissionRate);
 
     if (isNaN(parsedFee) || parsedFee < 0) {
-      setErrorMessage('Transaction fee must be 0 or greater.');
+      setErrorMessage("Transaction fee must be 0 or greater.");
       return;
     }
     if (isNaN(parsedComm) || parsedComm < 0 || parsedComm > 100) {
-      setErrorMessage('Commission rate must be between 0% and 100%.');
+      setErrorMessage("Commission rate must be between 0% and 100%.");
       return;
     }
 
@@ -391,11 +417,11 @@ export default function StaffSettingsPage() {
         {/* Navigation Sidebar */}
         <div className="w-full md:w-64 shrink-0 flex flex-row md:flex-col gap-1.5 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
           <button
-            onClick={() => handleTabChange('profile')}
+            onClick={() => handleTabChange("profile")}
             className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
-              activeTab === 'profile'
-                ? 'bg-primary text-white font-bold'
-                : 'bg-card text-foreground hover:bg-muted/50 border border-border/50'
+              activeTab === "profile"
+                ? "bg-primary text-white font-bold"
+                : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
             }`}
           >
             <User className="h-4 w-4" />
@@ -404,33 +430,33 @@ export default function StaffSettingsPage() {
           {isCompanyAdmin && (
             <>
               <button
-                onClick={() => handleTabChange('branding')}
+                onClick={() => handleTabChange("branding")}
                 className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
-                  activeTab === 'branding'
-                    ? 'bg-primary text-white font-bold'
-                    : 'bg-card text-foreground hover:bg-muted/50 border border-border/50'
+                  activeTab === "branding"
+                    ? "bg-primary text-white font-bold"
+                    : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
                 }`}
               >
                 <Sparkles className="h-4 w-4" />
                 Branding & Company
               </button>
               <button
-                onClick={() => handleTabChange('operations')}
+                onClick={() => handleTabChange("operations")}
                 className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
-                  activeTab === 'operations'
-                    ? 'bg-primary text-white font-bold'
-                    : 'bg-card text-foreground hover:bg-muted/50 border border-border/50'
+                  activeTab === "operations"
+                    ? "bg-primary text-white font-bold"
+                    : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
                 }`}
               >
                 <Sliders className="h-4 w-4" />
                 Operations & Limits
               </button>
               <button
-                onClick={() => handleTabChange('commissions')}
+                onClick={() => handleTabChange("commissions")}
                 className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
-                  activeTab === 'commissions'
-                    ? 'bg-primary text-white font-bold'
-                    : 'bg-card text-foreground hover:bg-muted/50 border border-border/50'
+                  activeTab === "commissions"
+                    ? "bg-primary text-white font-bold"
+                    : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
                 }`}
               >
                 <ShieldCheck className="h-4 w-4" />
@@ -455,7 +481,7 @@ export default function StaffSettingsPage() {
             </div>
           )}
 
-          {activeTab === 'profile' && (
+          {activeTab === "profile" && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Personal Details */}
               <Card className="shadow-sm border-none bg-card">
@@ -500,7 +526,9 @@ export default function StaffSettingsPage() {
                       className="w-full flex items-center justify-center gap-2 font-bold"
                       disabled={updateProfileMutation.isPending}
                     >
-                      {updateProfileMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                      {updateProfileMutation.isPending && (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      )}
                       Save Profile Changes
                     </Button>
                   </form>
@@ -530,7 +558,7 @@ export default function StaffSettingsPage() {
                       type="password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Minimum 10 characters"
+                      placeholder={`Minimum ${MIN_PASSWORD_LENGTH} characters`}
                       required
                     />
                     <Input
@@ -547,7 +575,9 @@ export default function StaffSettingsPage() {
                       className="w-full flex items-center justify-center gap-2 border-primary text-primary hover:bg-primary/5 font-bold"
                       disabled={updatePasswordMutation.isPending}
                     >
-                      {updatePasswordMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                      {updatePasswordMutation.isPending && (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      )}
                       Update Password
                     </Button>
                   </form>
@@ -556,11 +586,14 @@ export default function StaffSettingsPage() {
             </div>
           )}
 
-          {isCompanyAdmin && activeTab === 'branding' && (
+          {isCompanyAdmin && activeTab === "branding" && (
             <Card className="shadow-sm border-none bg-card">
               <CardHeader>
                 <CardTitle className="text-lg">General & Branding</CardTitle>
-                <p className="text-xs text-muted-foreground">Update your company details and logo for organization branding.</p>
+                <p className="text-xs text-muted-foreground">
+                  Update your company details and logo for organization
+                  branding.
+                </p>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleBrandingSave} className="space-y-4">
@@ -590,7 +623,9 @@ export default function StaffSettingsPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-foreground">Company Logo</label>
+                    <label className="block text-sm font-medium text-foreground">
+                      Company Logo
+                    </label>
                     <div className="flex items-center gap-4">
                       {logoUrl ? (
                         <img
@@ -616,7 +651,11 @@ export default function StaffSettingsPage() {
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={() => document.getElementById('settings-logo-file')?.click()}
+                            onClick={() =>
+                              document
+                                .getElementById("settings-logo-file")
+                                ?.click()
+                            }
                           >
                             Upload Image File
                           </Button>
@@ -626,13 +665,15 @@ export default function StaffSettingsPage() {
                               variant="ghost"
                               size="sm"
                               className="text-destructive hover:bg-destructive/10"
-                              onClick={() => setLogoUrl('')}
+                              onClick={() => setLogoUrl("")}
                             >
                               Remove Logo
                             </Button>
                           )}
                         </div>
-                        <span className="text-[10px] text-muted-foreground">Supported format: PNG, JPG, WebP. Max 2MB.</span>
+                        <span className="text-[10px] text-muted-foreground">
+                          Supported format: PNG, JPG, WebP. Max 2MB.
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -643,7 +684,9 @@ export default function StaffSettingsPage() {
                       className="w-full sm:w-auto font-bold px-6"
                       disabled={updateTenantMutation.isPending}
                     >
-                      {updateTenantMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                      {updateTenantMutation.isPending && (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      )}
                       Save Branding Settings
                     </Button>
                   </div>
@@ -652,17 +695,21 @@ export default function StaffSettingsPage() {
             </Card>
           )}
 
-          {isCompanyAdmin && activeTab === 'operations' && (
+          {isCompanyAdmin && activeTab === "operations" && (
             <Card className="shadow-sm border-none bg-card">
               <CardHeader>
                 <CardTitle className="text-lg">Operations & Limits</CardTitle>
-                <p className="text-xs text-muted-foreground">Configure transactional requirements and operating boundaries.</p>
+                <p className="text-xs text-muted-foreground">
+                  Configure transactional requirements and operating boundaries.
+                </p>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleOperationsSave} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="block text-sm font-medium text-foreground">Currency</label>
+                      <label className="block text-sm font-medium text-foreground">
+                        Currency
+                      </label>
                       <select
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value)}
@@ -675,14 +722,18 @@ export default function StaffSettingsPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block text-sm font-medium text-foreground">Timezone</label>
+                      <label className="block text-sm font-medium text-foreground">
+                        Timezone
+                      </label>
                       <select
                         value={timezone}
                         onChange={(e) => setTimezone(e.target.value)}
                         className="flex h-11 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0"
                       >
                         <option value="Africa/Accra">Africa/Accra (GMT)</option>
-                        <option value="UTC">UTC (Coordinated Universal Time)</option>
+                        <option value="UTC">
+                          UTC (Coordinated Universal Time)
+                        </option>
                         <option value="Europe/London">Europe/London</option>
                       </select>
                     </div>
@@ -732,7 +783,9 @@ export default function StaffSettingsPage() {
                       className="w-full sm:w-auto font-bold px-6"
                       disabled={updateTenantMutation.isPending}
                     >
-                      {updateTenantMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                      {updateTenantMutation.isPending && (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      )}
                       Save Operations Settings
                     </Button>
                   </div>
@@ -741,11 +794,14 @@ export default function StaffSettingsPage() {
             </Card>
           )}
 
-          {isCompanyAdmin && activeTab === 'commissions' && (
+          {isCompanyAdmin && activeTab === "commissions" && (
             <Card className="shadow-sm border-none bg-card">
               <CardHeader>
                 <CardTitle className="text-lg">Commissions & Fees</CardTitle>
-                <p className="text-xs text-muted-foreground">Adjust transaction-level fees and internal agent commission rates.</p>
+                <p className="text-xs text-muted-foreground">
+                  Adjust transaction-level fees and internal agent commission
+                  rates.
+                </p>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleCommissionsSave} className="space-y-4">
@@ -769,7 +825,10 @@ export default function StaffSettingsPage() {
                     min="0"
                     max="100"
                   />
-                  <p className="text-[11px] text-muted-foreground">This percentage is paid out directly to field agent collectors from deposit volumes collected.</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    This percentage is paid out directly to field agent
+                    collectors from deposit volumes collected.
+                  </p>
 
                   <div className="flex justify-end pt-2">
                     <Button
@@ -777,7 +836,9 @@ export default function StaffSettingsPage() {
                       className="w-full sm:w-auto font-bold px-6"
                       disabled={updateTenantMutation.isPending}
                     >
-                      {updateTenantMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                      {updateTenantMutation.isPending && (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      )}
                       Save Fees Settings
                     </Button>
                   </div>

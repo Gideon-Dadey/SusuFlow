@@ -9,6 +9,7 @@ import {
   Length,
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { MIN_PASSWORD_LENGTH } from "@susuflow/shared";
 
 export class RegisterDto {
   @ApiProperty({ example: "Kwame" })
@@ -31,7 +32,7 @@ export class RegisterDto {
 
   @ApiProperty({ example: "12345678" })
   @IsString()
-  @MinLength(8)
+  @MinLength(MIN_PASSWORD_LENGTH)
   password!: string;
 
   @ApiPropertyOptional()

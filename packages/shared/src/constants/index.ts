@@ -26,6 +26,7 @@ export const MAX_DEPOSIT_AMOUNT = 50000;
 export const MIN_WITHDRAWAL_AMOUNT = 10;
 export const MAX_DAILY_WITHDRAWAL = 10000;
 export const DEPOSIT_EXPIRY_MINUTES = 15;
+export const MIN_PASSWORD_LENGTH = 8;
 export const MAX_FAILED_LOGINS = 5;
 export const LOCKOUT_MINUTES = 30;
 export const JWT_ACCESS_EXPIRY = "15m";

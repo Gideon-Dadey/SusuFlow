@@ -7,6 +7,8 @@
     "dev": "turbo dev",
     "dev:api": "pnpm --filter @susuflow/api dev",
     "dev:web": "pnpm --filter @susuflow/web dev",
+    "dev:mobile": "pnpm --filter @susuflow/mobile start",
+    "dev:mobile:tunnel": "pnpm --filter @susuflow/mobile start:tunnel",
     "build": "turbo build",
     "build:web": "pnpm --filter @susuflow/web... build",
     "build:api": "pnpm --filter @susuflow/database db:generate && pnpm --filter @susuflow/api... build",
