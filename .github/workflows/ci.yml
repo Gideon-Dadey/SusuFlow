@@ -36,6 +36,8 @@ jobs:
       - run: pnpm --filter @susuflow/shared build
       - run: pnpm --filter @susuflow/database build
       - run: pnpm lint
+      - run: pnpm --filter @susuflow/mobile lint
+      - run: pnpm --filter @susuflow/mobile test
 
   test:
     runs-on: ubuntu-latest

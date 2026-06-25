@@ -6,17 +6,22 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "susuflow",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.susuflow.app"
+      "bundleIdentifier": "com.susuflow.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Allow SusuFlow to use Face ID for quick and secure sign in."
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#22c55e",
+        "backgroundColor": "#059669",
         "foregroundImage": "./assets/images/android-icon-foreground.png"
       },
-      "package": "com.susuflow.app"
+      "package": "com.susuflow.app",
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
@@ -25,16 +30,39 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store",
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "Allow SusuFlow to use Face ID for quick and secure sign in."
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow SusuFlow to use Face ID for quick and secure sign in."
+        }
+      ],
       [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#1a365d",
+          "dark": {
+            "image": "./assets/images/splash-icon.png",
+            "backgroundColor": "#09090b"
+          }
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#059669",
+          "defaultChannel": "transactions"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

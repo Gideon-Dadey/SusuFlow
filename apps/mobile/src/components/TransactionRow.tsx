@@ -1,58 +1,76 @@
-import { Feather } from "@expo/vector-icons";
+import { TransactionTypeIcon } from "@/components/activity/TransactionTypeIcon";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { formatGhs } from "@susuflow/shared/client";
-import { Transaction } from "@/lib/api";
-import { colors, radius, typography } from "@/theme/tokens";
+import { formatGhs } from "@/lib/currency";
+import { StatusBadge } from "@/components/activity/StatusBadge";
+import {
+  formatActivityDateShort,
+  getTransactionTitle,
+} from "@/components/activity/transactionUtils";
+import type { Transaction } from "@/lib/api";
+import { useTheme } from "@/theme/ThemeProvider";
+import { spacing, typography } from "@/theme/tokens";
 
 interface TransactionRowProps {
   transaction: Transaction;
   onPress?: () => void;
+  showDivider?: boolean;
 }
 
-export function TransactionRow({ transaction, onPress }: TransactionRowProps) {
+export function TransactionRow({
+  transaction,
+  onPress,
+  showDivider = true,
+}: TransactionRowProps) {
+  const { colors } = useTheme();
   const isCredit = transaction.type === "deposit";
   const amount = Number(transaction.amount);
 
   return (
     <Pressable
+      accessibilityRole="button"
       onPress={onPress}
-      style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+      disabled={!onPress}
+      style={({ pressed }) => [
+        styles.row,
+        pressed && onPress ? styles.pressed : null,
+      ]}
     >
-      <View
-        style={[
-          styles.iconWrap,
-          { backgroundColor: isCredit ? "#dcfce7" : "#fee2e2" },
-        ]}
-      >
-        <Feather
-          name={isCredit ? "arrow-down-left" : "arrow-up-right"}
-          size={18}
-          color={isCredit ? colors.primary700 : colors.destructive}
-        />
-      </View>
+      <TransactionTypeIcon kind={isCredit ? "deposit" : "withdrawal"} />
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={1}>
-          {transaction.description || (isCredit ? "Deposit" : "Withdrawal")}
+        <Text
+          style={[styles.title, { color: colors.foreground }]}
+          numberOfLines={1}
+        >
+          {getTransactionTitle(transaction)}
         </Text>
-        <Text style={styles.meta}>
-          {new Date(transaction.createdAt).toLocaleString("en-GH", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
+        <Text style={[styles.meta, { color: colors.mutedForeground }]}>
+          {formatActivityDateShort(transaction.createdAt)}
         </Text>
       </View>
       <View style={styles.right}>
         <Text
           style={[
             styles.amount,
-            { color: isCredit ? colors.primary700 : colors.destructive },
+            { color: isCredit ? colors.primary : colors.destructive },
           ]}
         >
           {isCredit ? "+" : "-"}
           {formatGhs(amount)}
         </Text>
-        <Text style={styles.status}>{transaction.status}</Text>
+        <StatusBadge status={transaction.status} />
       </View>
+      {onPress ? (
+        <AppIcon
+          name="chevron-right"
+          size={16}
+          color={colors.mutedForeground}
+          style={styles.chevron}
+        />
+      ) : null}
+      {showDivider ? (
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      ) : null}
     </Pressable>
   );
 }
@@ -61,47 +79,45 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    gap: spacing.md,
+    paddingVertical: 14,
+    paddingHorizontal: spacing.md,
+    minHeight: 52,
+    position: "relative",
   },
   pressed: {
-    opacity: 0.85,
-  },
-  iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.full,
-    alignItems: "center",
-    justifyContent: "center",
+    opacity: 0.82,
   },
   content: {
     flex: 1,
-    gap: 2,
+    gap: 3,
+    minWidth: 0,
   },
   title: {
-    fontFamily: typography.fontFamily.semibold,
+    fontFamily: typography.roles.title,
     fontSize: typography.size.sm,
-    color: colors.foreground,
   },
   meta: {
-    fontFamily: typography.fontFamily.regular,
+    fontFamily: typography.roles.caption,
     fontSize: typography.size.xs,
-    color: colors.mutedForeground,
   },
   right: {
     alignItems: "flex-end",
-    gap: 2,
+    gap: 6,
   },
   amount: {
-    fontFamily: typography.fontFamily.semibold,
+    fontFamily: typography.roles.amount,
     fontSize: typography.size.sm,
+    letterSpacing: -0.1,
   },
-  status: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: typography.size.xs,
-    color: colors.mutedForeground,
-    textTransform: "capitalize",
+  chevron: {
+    marginLeft: -4,
+  },
+  divider: {
+    position: "absolute",
+    left: spacing.md + 40 + spacing.md,
+    right: 0,
+    bottom: 0,
+    height: StyleSheet.hairlineWidth,
   },
 });

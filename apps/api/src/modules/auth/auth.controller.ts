@@ -18,6 +18,8 @@ import {
   RefreshTokenDto,
   SendOtpDto,
   VerifyOtpDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
 } from "./dto/auth.dto";
 import { Public } from "../../common/decorators";
 import { TenantContext } from "@susuflow/shared";
@@ -61,6 +63,32 @@ export class AuthController {
   @ApiOperation({ summary: "Logout and revoke refresh token" })
   logout(@Body() dto: RefreshTokenDto) {
     return this.authService.logout(dto.refreshToken);
+  }
+
+  @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Post("password/forgot")
+  @ApiOperation({ summary: "Request a password reset code" })
+  @ApiHeader({ name: "x-tenant-slug", required: false })
+  forgotPassword(@Body() dto: ForgotPasswordDto, @Req() req: Request) {
+    return this.authService.requestPasswordReset(
+      dto.email,
+      req.tenant as TenantContext | undefined,
+    );
+  }
+
+  @Public()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @Post("password/reset")
+  @ApiOperation({ summary: "Reset password with email code" })
+  @ApiHeader({ name: "x-tenant-slug", required: false })
+  resetPassword(@Body() dto: ResetPasswordDto, @Req() req: Request) {
+    return this.authService.resetPassword(
+      dto.email,
+      dto.code,
+      dto.newPassword,
+      req.tenant as TenantContext | undefined,
+    );
   }
 
   @Public()

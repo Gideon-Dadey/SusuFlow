@@ -86,3 +86,25 @@ export class VerifyOtpDto {
   @Length(4, 8)
   code!: string;
 }
+
+export class ForgotPasswordDto {
+  @ApiProperty({ example: "kwame@example.com" })
+  @IsEmail()
+  email!: string;
+}
+
+export class ResetPasswordDto {
+  @ApiProperty({ example: "kwame@example.com" })
+  @IsEmail()
+  email!: string;
+
+  @ApiProperty({ example: "123456" })
+  @IsString()
+  @Length(4, 8)
+  code!: string;
+
+  @ApiProperty({ example: "NewPassword123!" })
+  @IsString()
+  @MinLength(MIN_PASSWORD_LENGTH)
+  newPassword!: string;
+}

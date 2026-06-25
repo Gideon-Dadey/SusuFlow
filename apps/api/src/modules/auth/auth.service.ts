@@ -8,13 +8,25 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import * as bcrypt from "bcrypt";
-import { createHash, randomBytes } from "crypto";
+import { createHash, randomBytes, randomInt } from "crypto";
 import { PrismaService } from "../../prisma/prisma.service";
 import { TenantService } from "../tenant/tenant.service";
 import { RegisterDto, LoginDto } from "./dto/auth.dto";
-import { ROLES, MAX_FAILED_LOGINS, LOCKOUT_MINUTES } from "@susuflow/shared";
+import {
+  ROLES,
+  MAX_FAILED_LOGINS,
+  LOCKOUT_MINUTES,
+  OTP_LENGTH,
+  OTP_MAX_ATTEMPTS,
+  OTP_MAX_SENDS_PER_HOUR,
+  OTP_SEND_COOLDOWN_SECONDS,
+  OTP_TTL_SECONDS,
+} from "@susuflow/shared";
 import { TenantContext } from "@susuflow/shared";
 import { OtpService } from "./otp.service";
+import { CacheService } from "../../cache/cache.service";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 
 @Injectable()
 export class AuthService {
@@ -24,6 +36,8 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly tenantService: TenantService,
     private readonly otpService: OtpService,
+    private readonly cache: CacheService,
+    @InjectQueue("notifications") private readonly notificationQueue: Queue,
   ) {}
 
   async register(dto: RegisterDto, tenant: TenantContext) {
@@ -302,5 +316,161 @@ export class AuthService {
       data: { revokedAt: new Date() },
     });
     return { message: "Logged out successfully" };
+  }
+
+  private passwordResetKey(userId: string) {
+    return `password-reset:${userId}`;
+  }
+
+  private passwordResetCooldownKey(userId: string) {
+    return `password-reset:cooldown:${userId}`;
+  }
+
+  private passwordResetHourlyKey(userId: string) {
+    return `password-reset:hourly:${userId}`;
+  }
+
+  private hashResetCode(code: string) {
+    return createHash("sha256").update(code).digest("hex");
+  }
+
+  private generateResetCode() {
+    const length = Number(this.config.get("OTP_LENGTH", OTP_LENGTH));
+    const max = 10 ** length;
+    return String(randomInt(0, max)).padStart(length, "0");
+  }
+
+  private async resolveUserByEmail(email: string, tenant?: TenantContext) {
+    const users = await this.prisma.user.findMany({
+      where: { email },
+      include: { tenant: { select: { id: true, name: true, slug: true } } },
+    });
+    if (users.length === 0) return null;
+    if (tenant) {
+      return users.find((u) => u.tenantId === tenant.id) ?? null;
+    }
+    return users.find((u) => u.tenantId !== null) ?? users[0];
+  }
+
+  async requestPasswordReset(email: string, tenant?: TenantContext) {
+    const generic = {
+      message:
+        "If an account exists for this email, a reset code has been sent.",
+    };
+
+    if (!this.cache.isAvailable()) {
+      throw new BadRequestException(
+        "Password reset is temporarily unavailable. Try again later.",
+      );
+    }
+
+    const user = await this.resolveUserByEmail(email, tenant);
+    if (!user || !user.tenantId) return generic;
+
+    const onCooldown = await this.cache.exists(
+      this.passwordResetCooldownKey(user.id),
+    );
+    if (onCooldown) {
+      throw new BadRequestException(
+        `Wait ${OTP_SEND_COOLDOWN_SECONDS}s before requesting another code`,
+      );
+    }
+
+    const sendCount = await this.cache.incr(
+      this.passwordResetHourlyKey(user.id),
+    );
+    if (sendCount === 1) {
+      await this.cache.expire(this.passwordResetHourlyKey(user.id), 3600);
+    }
+    if (sendCount > OTP_MAX_SENDS_PER_HOUR) {
+      throw new BadRequestException(
+        "Too many reset requests. Try again later.",
+      );
+    }
+
+    const code = this.generateResetCode();
+    await this.cache.set(
+      this.passwordResetKey(user.id),
+      { hash: this.hashResetCode(code), attempts: 0 },
+      OTP_TTL_SECONDS,
+    );
+    await this.cache.set(
+      this.passwordResetCooldownKey(user.id),
+      true,
+      OTP_SEND_COOLDOWN_SECONDS,
+    );
+
+    await this.notificationQueue.add("send-password-reset", {
+      tenantId: user.tenantId,
+      userId: user.id,
+      recipient: user.email,
+      code,
+      tenantName: user.tenant?.name || "SusuFlow",
+      firstName: user.firstName,
+    });
+
+    return generic;
+  }
+
+  async resetPassword(
+    email: string,
+    code: string,
+    newPassword: string,
+    tenant?: TenantContext,
+  ) {
+    if (!this.cache.isAvailable()) {
+      throw new BadRequestException(
+        "Password reset is temporarily unavailable. Try again later.",
+      );
+    }
+
+    const user = await this.resolveUserByEmail(email, tenant);
+    if (!user) {
+      throw new BadRequestException("Invalid reset code or email");
+    }
+
+    const stored = await this.cache.get<{
+      hash: string;
+      attempts: number;
+    }>(this.passwordResetKey(user.id));
+
+    if (!stored) {
+      throw new BadRequestException(
+        "Reset code expired or not found. Request a new one.",
+      );
+    }
+
+    if (stored.attempts >= OTP_MAX_ATTEMPTS) {
+      await this.cache.del(this.passwordResetKey(user.id));
+      throw new ForbiddenException(
+        "Too many failed attempts. Request a new code.",
+      );
+    }
+
+    if (stored.hash !== this.hashResetCode(code)) {
+      stored.attempts += 1;
+      await this.cache.set(
+        this.passwordResetKey(user.id),
+        stored,
+        OTP_TTL_SECONDS,
+      );
+      throw new BadRequestException("Invalid reset code");
+    }
+
+    await this.cache.del(this.passwordResetKey(user.id));
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: user.id },
+        data: { passwordHash, failedLoginCount: 0, lockedUntil: null },
+      });
+      await tx.refreshToken.updateMany({
+        where: { userId: user.id, revokedAt: null },
+        data: { revokedAt: new Date() },
+      });
+    });
+
+    return { message: "Password reset successfully. You can sign in now." };
   }
 }

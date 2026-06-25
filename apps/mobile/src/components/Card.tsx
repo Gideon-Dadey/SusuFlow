@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { colors, radius, shadows, typography } from "@/theme/tokens";
+import { CardSurface } from "@/components/ui/CardSurface";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export function Card({
   title,
@@ -11,25 +12,34 @@ export function Card({
   children: ReactNode;
   action?: ReactNode;
 }) {
+  const { colors, typography } = useTheme();
+
   return (
-    <View style={[styles.card, shadows.card]}>
+    <CardSurface innerStyle={styles.card}>
       {title ? (
         <View style={styles.header}>
-          <Text style={styles.title}>{title}</Text>
+          <Text
+            style={[
+              styles.title,
+              {
+                fontFamily: typography.fontFamily.semibold,
+                fontSize: typography.size.base,
+                color: colors.foreground,
+              },
+            ]}
+          >
+            {title}
+          </Text>
           {action}
         </View>
       ) : null}
       {children}
-    </View>
+    </CardSurface>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
     padding: 16,
     gap: 12,
   },
@@ -38,9 +48,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  title: {
-    fontFamily: typography.fontFamily.semibold,
-    fontSize: typography.size.base,
-    color: colors.foreground,
-  },
+  title: {},
 });

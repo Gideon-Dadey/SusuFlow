@@ -57,6 +57,24 @@ Scan the new QR code (slower but works across networks).
 
 ## Troubleshooting
 
+**iPhone won't open the app but Android works:** You are probably running Expo with `--offline`. iOS Expo Go **requires** a signed manifest and will fail with:
+
+`Offline and no cached development certificate found, unable to sign manifest`
+
+Stop the server (`Ctrl+C`) and start **without** `--offline`:
+
+```bash
+pnpm dev:mobile
+```
+
+If same Wi‑Fi still fails on iPhone, use tunnel mode:
+
+```bash
+pnpm dev:mobile:tunnel
+```
+
+**Never use `--offline` for iPhone testing** — Android may still bundle, but iOS will not connect.
+
 **Project not showing inside Expo Go home screen:** Normal on iOS — scan the terminal QR or enter the `exp://` URL manually.
 
 **`Body has already been read` on start:** Run `pnpm dev:mobile` again; if it persists, use `start:tunnel` instead.
@@ -93,3 +111,38 @@ Scan the QR code with Expo Go, or press `a` (Android) / `i` (iOS).
 - Savings goals
 - Profile & password
 - Transaction history
+
+## Production builds (EAS)
+
+1. Install EAS CLI: `npm i -g eas-cli`
+2. Log in: `eas login`
+3. Link project: `eas init` (from `apps/mobile`)
+4. Set secrets in the [Expo dashboard](https://expo.dev) or `eas.json` env for:
+   - `EXPO_PUBLIC_API_URL` — HTTPS API (e.g. `https://api.susuflow.com`)
+   - `EXPO_PUBLIC_WEB_URL` — web app (e.g. `https://susuflow.com`)
+5. Build:
+   ```bash
+   pnpm --filter @susuflow/mobile build:preview    # internal testing
+   pnpm --filter @susuflow/mobile build:production
+   ```
+6. Submit to stores (configure Apple/Google credentials interactively via `eas submit`):
+   ```bash
+   pnpm --filter @susuflow/mobile submit:production
+   ```
+
+## Production checklist
+
+Before shipping to real users:
+
+- [ ] `eas init` linked to your Expo account (updates `app.json` `projectId`)
+- [ ] EAS env: `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_WEB_URL`, optional support contacts
+- [ ] API deployed with password reset + OTP email/SMS workers running
+- [ ] Test full flows: register → verify → login → deposit → withdraw → logout → biometric login
+- [ ] Store listings: privacy policy, terms, support URL (linked from Profile → About)
+
+## Tests
+
+```bash
+pnpm --filter @susuflow/mobile test
+pnpm --filter @susuflow/mobile lint
+```

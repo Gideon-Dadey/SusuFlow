@@ -46,3 +46,32 @@ export class UpdateUserPasswordDto {
   @MinLength(MIN_PASSWORD_LENGTH)
   newPassword!: string;
 }
+
+export class DeleteAccountDto {
+  @ApiProperty({ example: "CurrentPassword123!" })
+  @IsNotEmpty()
+  @IsString()
+  currentPassword!: string;
+}
+
+export class RegisterPushTokenDto {
+  @ApiProperty({ example: "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]" })
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(512)
+  token!: string;
+
+  @ApiPropertyOptional({ example: "ios", enum: ["ios", "android"] })
+  @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  platform?: string;
+}
+
+export class RemovePushTokenDto {
+  @ApiProperty({ example: "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]" })
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(512)
+  token!: string;
+}

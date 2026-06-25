@@ -1,29 +1,39 @@
 import { useQuery } from "@tanstack/react-query";
-import { Stack } from "expo-router";
-import { ActivityIndicator, StyleSheet, Text } from "react-native";
-import { Screen } from "@/components/Screen";
+import { StyleSheet, Text } from "react-native";
 import { TransactionRow } from "@/components/TransactionRow";
-import { depositApi, userApi, withdrawalApi } from "@/lib/api";
-import { colors, typography } from "@/theme/tokens";
+import { SettingsDetailLayout } from "@/components/settings/SettingsDetailLayout";
+import { TransactionListSkeleton } from "@/components/ui/Skeleton";
+import { useRefreshFinancialsOnFocus } from "@/hooks/useRefreshFinancialsOnFocus";
+import { useCustomerSession } from "@/hooks/useCustomerSession";
+import { depositApi, withdrawalApi } from "@/lib/api";
+import { financialQueryOptions } from "@/lib/financial-queries";
+import { queryKeys } from "@/lib/query-keys";
+import { useTheme } from "@/theme/ThemeProvider";
+import { typography } from "@/theme/tokens";
 
 export default function TransactionsScreen() {
-  const { data: profile } = useQuery({
-    queryKey: ["user-profile"],
-    queryFn: () => userApi.getMe(),
-  });
+  const { colors } = useTheme();
 
-  const customerId = profile?.customer?.id;
+  const { sessionKey } = useCustomerSession();
+
+  useRefreshFinancialsOnFocus(sessionKey);
 
   const { data: deposits, isLoading: dLoading } = useQuery({
-    queryKey: ["deposits", customerId],
-    queryFn: () => depositApi.list({ customer_id: customerId }),
-    enabled: !!customerId,
+    queryKey: sessionKey
+      ? queryKeys.deposits(sessionKey.userId, sessionKey.customerId)
+      : ["deposits", "inactive"],
+    queryFn: () => depositApi.list({ customer_id: sessionKey!.customerId }),
+    enabled: !!sessionKey,
+    ...financialQueryOptions,
   });
 
   const { data: withdrawals, isLoading: wLoading } = useQuery({
-    queryKey: ["withdrawals", customerId],
-    queryFn: () => withdrawalApi.list({ customer_id: customerId }),
-    enabled: !!customerId,
+    queryKey: sessionKey
+      ? queryKeys.withdrawals(sessionKey.userId, sessionKey.customerId)
+      : ["withdrawals", "inactive"],
+    queryFn: () => withdrawalApi.list({ customer_id: sessionKey!.customerId }),
+    enabled: !!sessionKey,
+    ...financialQueryOptions,
   });
 
   const transactions = [
@@ -33,25 +43,20 @@ export default function TransactionsScreen() {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 
+  const isLoading = dLoading || wLoading || !sessionKey;
+
   return (
-    <>
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          title: "Transaction History",
-          headerTintColor: colors.primary,
-        }}
-      />
-      <Screen scroll>
-        {dLoading || wLoading ? (
-          <ActivityIndicator color={colors.primary} />
-        ) : transactions.length === 0 ? (
-          <Text style={styles.empty}>No transactions yet</Text>
-        ) : (
-          transactions.map((t) => <TransactionRow key={t.id} transaction={t} />)
-        )}
-      </Screen>
-    </>
+    <SettingsDetailLayout title="Transaction History">
+      {isLoading ? (
+        <TransactionListSkeleton rows={8} />
+      ) : transactions.length === 0 ? (
+        <Text style={[styles.empty, { color: colors.mutedForeground }]}>
+          No transactions yet
+        </Text>
+      ) : (
+        transactions.map((t) => <TransactionRow key={t.id} transaction={t} />)
+      )}
+    </SettingsDetailLayout>
   );
 }
 
@@ -59,7 +64,6 @@ const styles = StyleSheet.create({
   empty: {
     fontFamily: typography.fontFamily.regular,
     fontSize: typography.size.sm,
-    color: colors.mutedForeground,
     textAlign: "center",
     paddingVertical: 24,
   },

@@ -66,6 +66,7 @@ model User {
   reviewedDocuments   KycDocument[]  @relation("ReviewedBy")
   notifications       Notification[]
   refreshTokens       RefreshToken[]
+  pushTokens          UserPushToken[]
   collectorTxns       Transaction[]  @relation("CollectorTxns")
   initiatedTxns       Transaction[]  @relation("InitiatedBy")
   userRoles           UserRole[]
@@ -442,6 +443,19 @@ model Device {
 
   @@unique([userId, fingerprint])
   @@map("devices")
+}
+
+model UserPushToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  token     String   @unique @db.VarChar(512)
+  platform  String?  @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_push_tokens")
 }
 
 model RefreshToken {
