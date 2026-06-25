@@ -4,6 +4,9 @@ const KEYS = {
   accessToken: "access_token",
   refreshToken: "refresh_token",
   tenantSlug: "tenant_slug",
+  colorScheme: "color_scheme",
+  notificationsLastSeenAt: "notifications_last_seen_at",
+  expoPushToken: "expo_push_token",
 } as const;
 
 export const storage = {

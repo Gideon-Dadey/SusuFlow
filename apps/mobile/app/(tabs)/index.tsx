@@ -1,151 +1,205 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { BalanceCard } from "@/components/BalanceCard";
-import { Card } from "@/components/Card";
-import { QuickActionGrid } from "@/components/QuickActionGrid";
-import { Screen } from "@/components/Screen";
-import { TransactionRow } from "@/components/TransactionRow";
-import {
-  customerApi,
-  depositApi,
-  Transaction,
-  userApi,
-  withdrawalApi,
-} from "@/lib/api";
-import { useAuthStore } from "@/stores/auth.store";
-import { colors, typography } from "@/theme/tokens";
+import { useMemo } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { HomeActionGrid } from "@/components/home/HomeActionGrid";
+import { HomeBalanceCard } from "@/components/home/HomeBalanceCard";
+import { HomeDepositButton } from "@/components/home/HomeDepositButton";
+import { HomeHeader } from "@/components/home/HomeHeader";
+import { HomePromoCarousel } from "@/components/home/HomePromoCarousel";
+import { HomeRecentActivity } from "@/components/home/HomeRecentActivity";
+import { TabScreenLayout } from "@/components/layout/TabScreen";
+import { useProfileData } from "@/components/settings/useProfileData";
+import { HomeBalanceSkeleton } from "@/components/ui/Skeleton";
+import { useCustomerSession } from "@/hooks/useCustomerSession";
+import { useRefreshFinancialsOnFocus } from "@/hooks/useRefreshFinancialsOnFocus";
+import { fetchCustomerWallet } from "@/lib/customer-wallet";
+import { depositApi, withdrawalApi } from "@/lib/api";
+import { financialQueryOptions } from "@/lib/financial-queries";
+import { queryKeys } from "@/lib/query-keys";
+import { useTheme } from "@/theme/ThemeProvider";
+import { radius, spacing, typography } from "@/theme/tokens";
+import { Button } from "@/components/Button";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const user = useAuthStore((s) => s.user);
+  const { colors } = useTheme();
+  const { groupName } = useProfileData();
+  const { sessionKey, isProfileReady, profileQuery } = useCustomerSession();
 
-  const { data: profile } = useQuery({
-    queryKey: ["user-profile"],
-    queryFn: () => userApi.getMe(),
+  useRefreshFinancialsOnFocus(sessionKey);
+
+  const {
+    data: wallet,
+    isPending: walletPending,
+    isFetching: walletFetching,
+    isError: walletError,
+    refetch: refetchWallet,
+  } = useQuery({
+    queryKey: sessionKey
+      ? queryKeys.wallet(sessionKey.userId, sessionKey.customerId)
+      : ["wallet", "inactive"],
+    queryFn: () => fetchCustomerWallet(sessionKey!.customerId),
+    enabled: !!sessionKey,
+    ...financialQueryOptions,
   });
 
-  const customerId = profile?.customer?.id;
-
-  const { data: wallet } = useQuery({
-    queryKey: ["wallet", customerId],
-    queryFn: () => customerApi.getWallet(customerId!),
-    enabled: !!customerId,
+  const { data: deposits } = useQuery({
+    queryKey: sessionKey
+      ? queryKeys.deposits(sessionKey.userId, sessionKey.customerId)
+      : ["deposits", "inactive"],
+    queryFn: () =>
+      depositApi.list({ customer_id: sessionKey!.customerId, limit: 100 }),
+    enabled: !!sessionKey,
+    ...financialQueryOptions,
   });
 
-  const { data: deposits, isLoading: depositsLoading } = useQuery({
-    queryKey: ["deposits", customerId],
-    queryFn: () => depositApi.list({ customer_id: customerId }),
-    enabled: !!customerId,
+  const { data: withdrawals } = useQuery({
+    queryKey: sessionKey
+      ? queryKeys.withdrawals(sessionKey.userId, sessionKey.customerId)
+      : ["withdrawals", "inactive"],
+    queryFn: () =>
+      withdrawalApi.list({ customer_id: sessionKey!.customerId, limit: 100 }),
+    enabled: !!sessionKey,
+    ...financialQueryOptions,
   });
 
-  const { data: withdrawals, isLoading: withdrawalsLoading } = useQuery({
-    queryKey: ["withdrawals", customerId],
-    queryFn: () => withdrawalApi.list({ customer_id: customerId }),
-    enabled: !!customerId,
-  });
-
-  const transactions: Transaction[] = [
-    ...(deposits?.items || []),
-    ...(withdrawals?.items || []),
-  ].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  const allTransactions = useMemo(
+    () =>
+      [...(deposits?.items || []), ...(withdrawals?.items || [])].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      ),
+    [deposits?.items, withdrawals?.items],
   );
 
-  const todayTotal = transactions
-    .filter(
-      (t) =>
-        t.type === "deposit" &&
-        t.status === "completed" &&
-        new Date(t.createdAt).toDateString() === new Date().toDateString(),
-    )
-    .reduce((sum, t) => sum + Number(t.amount), 0);
+  const showBalanceSkeleton =
+    !isProfileReady ||
+    !sessionKey ||
+    walletPending ||
+    (walletFetching && wallet === undefined);
 
-  const greetingName = user?.firstName || profile?.firstName || "there";
+  const showBalanceError = walletError && !walletFetching && !walletPending;
 
   return (
-    <Screen
-      title={`Welcome back, ${greetingName}!`}
-      subtitle="Save together. Grow together."
-    >
-      <BalanceCard
-        balance={wallet?.balance || 0}
-        todayChange={todayTotal}
+    <TabScreenLayout header={<HomeHeader />}>
+      {profileQuery.isError ? (
+        <View
+          style={[
+            styles.errorCard,
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}
+        >
+          <Text style={[styles.errorTitle, { color: colors.foreground }]}>
+            Could not load your account
+          </Text>
+          <Text style={[styles.errorCopy, { color: colors.mutedForeground }]}>
+            Check your connection and try again.
+          </Text>
+          <Button
+            title="Retry"
+            variant="outline"
+            onPress={() => profileQuery.refetch()}
+          />
+        </View>
+      ) : showBalanceSkeleton ? (
+        <View
+          style={[
+            styles.balanceSkeletonWrap,
+            { backgroundColor: colors.muted },
+          ]}
+        >
+          <HomeBalanceSkeleton />
+        </View>
+      ) : showBalanceError ? (
+        <View
+          style={[
+            styles.errorCard,
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}
+        >
+          <Text style={[styles.errorTitle, { color: colors.foreground }]}>
+            Could not load balance
+          </Text>
+          <Button
+            title="Retry"
+            variant="outline"
+            onPress={() => refetchWallet()}
+          />
+        </View>
+      ) : (
+        <HomeBalanceCard
+          balance={wallet?.balance ?? 0}
+          groupName={groupName}
+          transactions={allTransactions}
+        />
+      )}
+
+      <HomePromoCarousel
+        groupName={groupName}
         onDeposit={() => router.push("/(tabs)/deposit")}
+        onGoals={() => router.push("/(tabs)/plans")}
+        onActivity={() => router.push("/(tabs)/activity")}
       />
 
-      <QuickActionGrid
+      <HomeDepositButton onPress={() => router.push("/(tabs)/deposit")} />
+
+      <HomeActionGrid
         actions={[
           {
-            label: "Deposit",
-            icon: "plus-circle",
-            tint: colors.primary700,
-            bg: "#dcfce7",
-            onPress: () => router.push("/(tabs)/deposit"),
+            label: "Deposit History",
+            subtitle: "View all deposits",
+            icon: "receipt",
+            onPress: () => router.push("/(tabs)/activity"),
           },
           {
-            label: "Withdraw",
-            icon: "arrow-up-right",
-            tint: colors.destructive,
-            bg: "#fee2e2",
-            onPress: () => router.push("/(tabs)/withdraw"),
-          },
-          {
-            label: "Goals",
+            label: "Savings goals",
+            subtitle: "Track your targets",
             icon: "target",
-            tint: colors.primary700,
-            bg: "#dcfce7",
             onPress: () => router.push("/(tabs)/plans"),
           },
           {
-            label: "History",
+            label: "Withdraw",
+            subtitle: "Request a withdrawal",
+            icon: "arrow-up-right",
+            onPress: () => router.push("/(tabs)/withdraw"),
+          },
+          {
+            label: "Statements",
+            subtitle: "View your statements",
             icon: "file-text",
-            tint: "#2563eb",
-            bg: "#dbeafe",
             onPress: () => router.push("/transactions"),
           },
         ]}
       />
 
-      <Card
-        title="Recent Transactions"
-        action={
-          <Pressable onPress={() => router.push("/transactions")}>
-            <Text style={styles.link}>View all</Text>
-          </Pressable>
-        }
-      >
-        {depositsLoading || withdrawalsLoading ? (
-          <ActivityIndicator color={colors.primary} />
-        ) : transactions.length === 0 ? (
-          <Text style={styles.empty}>No transactions yet</Text>
-        ) : (
-          transactions
-            .slice(0, 5)
-            .map((t) => <TransactionRow key={t.id} transaction={t} />)
-        )}
-      </Card>
-    </Screen>
+      <HomeRecentActivity
+        transactions={allTransactions}
+        totalCount={allTransactions.length}
+        groupName={groupName}
+        onViewAll={() => router.push("/(tabs)/activity")}
+      />
+    </TabScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  link: {
+  balanceSkeletonWrap: {
+    overflow: "hidden",
+    borderRadius: radius.lg,
+  },
+  errorCard: {
+    borderWidth: 1,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    gap: spacing.md,
+  },
+  errorTitle: {
     fontFamily: typography.fontFamily.semibold,
     fontSize: typography.size.sm,
-    color: colors.primary,
   },
-  empty: {
+  errorCopy: {
     fontFamily: typography.fontFamily.regular,
     fontSize: typography.size.sm,
-    color: colors.mutedForeground,
-    textAlign: "center",
-    paddingVertical: 16,
   },
 });

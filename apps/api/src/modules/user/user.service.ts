@@ -1,7 +1,19 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { UpdateUserProfileDto, UpdateUserPasswordDto } from './dto/user.dto';
-import * as bcrypt from 'bcrypt';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import {
+  UpdateUserProfileDto,
+  UpdateUserPasswordDto,
+  DeleteAccountDto,
+  RegisterPushTokenDto,
+  RemovePushTokenDto,
+} from "./dto/user.dto";
+import * as bcrypt from "bcrypt";
+import { randomBytes } from "crypto";
 
 @Injectable()
 export class UserService {
@@ -30,13 +42,13 @@ export class UserService {
         },
       },
     });
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException("User not found");
     return user;
   }
 
   async updateProfile(id: string, dto: UpdateUserProfileDto) {
     const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException("User not found");
 
     if (dto.email && dto.email !== user.email) {
       // Check if email already registered in the tenant
@@ -47,7 +59,7 @@ export class UserService {
           id: { not: id },
         },
       });
-      if (existing) throw new ConflictException('Email already in use');
+      if (existing) throw new ConflictException("Email already in use");
     }
 
     return this.prisma.user.update({
@@ -73,10 +85,13 @@ export class UserService {
 
   async updatePassword(id: string, dto: UpdateUserPasswordDto) {
     const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException("User not found");
 
-    const isValid = await bcrypt.compare(dto.currentPassword, user.passwordHash);
-    if (!isValid) throw new BadRequestException('Incorrect current password');
+    const isValid = await bcrypt.compare(
+      dto.currentPassword,
+      user.passwordHash,
+    );
+    if (!isValid) throw new BadRequestException("Incorrect current password");
 
     const passwordHash = await bcrypt.hash(dto.newPassword, 12);
     await this.prisma.user.update({
@@ -84,6 +99,81 @@ export class UserService {
       data: { passwordHash },
     });
 
-    return { message: 'Password updated successfully' };
+    return { message: "Password updated successfully" };
+  }
+
+  async deleteAccount(id: string, dto: DeleteAccountDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: { customer: true },
+    });
+    if (!user) throw new NotFoundException("User not found");
+
+    const isValid = await bcrypt.compare(
+      dto.currentPassword,
+      user.passwordHash,
+    );
+    if (!isValid) throw new BadRequestException("Incorrect password");
+
+    const tombstoneEmail = `deleted-${id}@removed.susuflow.local`;
+    const randomPasswordHash = await bcrypt.hash(
+      randomBytes(32).toString("hex"),
+      12,
+    );
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.refreshToken.updateMany({
+        where: { userId: id, revokedAt: null },
+        data: { revokedAt: new Date() },
+      });
+
+      await tx.userPushToken.deleteMany({ where: { userId: id } });
+
+      if (user.customer) {
+        await tx.customer.update({
+          where: { id: user.customer.id },
+          data: { status: "closed", userId: null },
+        });
+      }
+
+      await tx.user.update({
+        where: { id },
+        data: {
+          status: "suspended",
+          email: tombstoneEmail,
+          phone: null,
+          firstName: "Deleted",
+          lastName: "Account",
+          passwordHash: randomPasswordHash,
+          emailVerified: false,
+          phoneVerified: false,
+        },
+      });
+    });
+
+    return { message: "Account deleted successfully" };
+  }
+
+  async registerPushToken(userId: string, dto: RegisterPushTokenDto) {
+    await this.prisma.userPushToken.upsert({
+      where: { token: dto.token },
+      create: {
+        userId,
+        token: dto.token,
+        platform: dto.platform,
+      },
+      update: {
+        userId,
+        platform: dto.platform,
+      },
+    });
+    return { registered: true };
+  }
+
+  async removePushToken(userId: string, dto: RemovePushTokenDto) {
+    await this.prisma.userPushToken.deleteMany({
+      where: { userId, token: dto.token },
+    });
+    return { removed: true };
   }
 }

@@ -5,6 +5,7 @@ import { Worker } from "bullmq";
 import * as Sentry from "@sentry/node";
 import { getRedisConnectionOptions } from "@susuflow/shared";
 import { db } from "@susuflow/database";
+import { buildTransactionPushContent, sendPushToUser } from "./push";
 
 config({ path: resolve(__dirname, "../../../.env") });
 
@@ -272,6 +273,21 @@ const notificationWorker = new Worker(
           tenantId,
         );
       }
+      return { sent: true, event: job.name };
+    }
+
+    if (job.name === "send-password-reset") {
+      const { recipient, code, firstName, tenantName } = job.data;
+      const html = generateSaaSEmailHtml({
+        title: "Reset Your Password",
+        preheader: `Your password reset code is ${code}`,
+        greeting: `Hello ${firstName}`,
+        message:
+          "Use the code below to reset your SusuFlow password. This code expires in 10 minutes.",
+        details: [{ label: "Reset Code", value: code }],
+        tenantName: tenantName || "SusuFlow",
+      });
+      await sendEmail(recipient, `Reset your ${tenantName} password`, html);
       return { sent: true, event: job.name };
     }
 
@@ -576,6 +592,19 @@ const notificationWorker = new Worker(
           await sendEmail(admin.email, adminEmailSubject, adminEmailHtml);
         }
       }
+    }
+
+    const pushContent = buildTransactionPushContent(
+      job.name,
+      customerUser.firstName,
+      tenantName,
+      formattedAmount,
+      reference,
+      formattedBalance,
+      transactionId,
+    );
+    if (pushContent) {
+      await sendPushToUser(db, customerUser.id, pushContent);
     }
 
     return { sent: true, event: job.name };

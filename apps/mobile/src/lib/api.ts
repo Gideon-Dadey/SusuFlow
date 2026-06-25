@@ -1,11 +1,14 @@
+import { getApiBaseUrl } from "./config";
 import { storage } from "./storage";
 
-const API_BASE = `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000"}/api/v1`;
+const API_ROOT = `${getApiBaseUrl()}/api/v1`;
 
 export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
+    public code?: string,
+    public details?: Record<string, unknown>,
   ) {
     super(message);
     this.name = "ApiError";
@@ -15,6 +18,25 @@ export class ApiError extends Error {
 interface RequestOptions extends RequestInit {
   skipAuth?: boolean;
   tenantSlug?: string;
+  _retry?: boolean;
+}
+
+let refreshInFlight: Promise<boolean> | null = null;
+let onSessionExpired: (() => void) | null = null;
+let onTokenRefreshed: ((accessToken: string) => void) | null = null;
+
+export function setSessionExpiredHandler(handler: () => void) {
+  onSessionExpired = handler;
+}
+
+export function setTokenRefreshedHandler(
+  handler: (accessToken: string) => void,
+) {
+  onTokenRefreshed = handler;
+}
+
+export async function refreshSessionFromStorage(): Promise<boolean> {
+  return tryRefreshSession();
 }
 
 async function getAccessToken(): Promise<string | null> {
@@ -25,11 +47,56 @@ async function getTenantSlug(): Promise<string> {
   return (await storage.getItem(storage.keys.tenantSlug)) || "";
 }
 
+async function clearLocalSession() {
+  await storage.removeItem(storage.keys.accessToken);
+  await storage.removeItem(storage.keys.refreshToken);
+  onSessionExpired?.();
+}
+
+async function tryRefreshSession(): Promise<boolean> {
+  if (refreshInFlight) return refreshInFlight;
+
+  refreshInFlight = (async () => {
+    const refreshToken = await storage.getItem(storage.keys.refreshToken);
+    if (!refreshToken) return false;
+
+    try {
+      const response = await fetch(`${API_ROOT}/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (!response.ok) return false;
+
+      const json = await response.json();
+      const data = json.data ?? json;
+      if (!data?.accessToken) return false;
+
+      await storage.setItem(storage.keys.accessToken, data.accessToken);
+      onTokenRefreshed?.(data.accessToken);
+      return true;
+    } catch {
+      return false;
+    } finally {
+      refreshInFlight = null;
+    }
+  })();
+
+  return refreshInFlight;
+}
+
 async function request<T>(
   endpoint: string,
   options: RequestOptions = {},
 ): Promise<T> {
-  const { skipAuth, tenantSlug, headers: customHeaders, ...init } = options;
+  const {
+    skipAuth,
+    tenantSlug,
+    headers: customHeaders,
+    _retry,
+    ...init
+  } = options;
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -49,18 +116,37 @@ async function request<T>(
 
   let response: Response;
   try {
-    response = await fetch(`${API_BASE}${endpoint}`, { ...init, headers });
+    response = await fetch(`${API_ROOT}${endpoint}`, { ...init, headers });
   } catch {
     throw new ApiError(
-      "Unable to reach the server. Start the API with: pnpm dev:api",
+      "Unable to connect. Check your internet connection and try again.",
       0,
     );
   }
 
+  if (response.status === 401 && !skipAuth && !_retry) {
+    const refreshed = await tryRefreshSession();
+    if (refreshed) {
+      return request<T>(endpoint, { ...options, _retry: true });
+    }
+    await clearLocalSession();
+    throw new ApiError("Your session has expired. Please sign in again.", 401);
+  }
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    const detail = error.detail || error.title || "Request failed";
-    throw new ApiError(detail, response.status);
+    const nested =
+      typeof error.message === "object" && error.message !== null
+        ? (error.message as Record<string, unknown>)
+        : null;
+    const detail =
+      (nested?.message as string) ||
+      error.detail ||
+      (typeof error.message === "string" ? error.message : null) ||
+      error.title ||
+      "Request failed";
+    const code = (nested?.code as string) || (error.code as string);
+    throw new ApiError(detail, response.status, code, nested ?? undefined);
   }
 
   const json = await response.json();
@@ -82,9 +168,17 @@ export const api = {
       method: "PUT",
       body: body ? JSON.stringify(body) : undefined,
     }),
+  delete: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
+    request<T>(endpoint, {
+      ...options,
+      method: "DELETE",
+      body: body ? JSON.stringify(body) : undefined,
+    }),
 };
 
-function toQueryString(params?: Record<string, string | undefined>): string {
+function toQueryString(
+  params?: Record<string, string | number | undefined>,
+): string {
   if (!params) return "";
   const clean: Record<string, string> = {};
   for (const [key, value] of Object.entries(params)) {
@@ -134,7 +228,33 @@ export interface Transaction {
   amount: string | number;
   currency: string;
   createdAt: string;
+  completedAt?: string;
   description?: string;
+  customer?: {
+    customerNumber?: string;
+    user?: {
+      firstName: string;
+      lastName: string;
+      phone?: string;
+      email?: string;
+    };
+  };
+  payment?: {
+    paymentMethod: string;
+    status: string;
+    payerPhone?: string;
+  };
+  withdrawal?: {
+    disbursementMethod: string;
+    disbursementPhone: string;
+    status: string;
+  };
+  tenant?: { name: string; slug: string } | null;
+}
+
+export interface TenantInfo {
+  name: string;
+  slug: string;
 }
 
 export interface SavingsPlan {
@@ -162,7 +282,65 @@ export const authApi = {
       { email, password },
       { skipAuth: true, tenantSlug },
     ),
+  register: (
+    data: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      password: string;
+    },
+    tenantSlug = "",
+  ) =>
+    api.post<{
+      userId: string;
+      customerId: string;
+      message: string;
+      verificationRequired?: boolean;
+    }>("/auth/register", data, { skipAuth: true, tenantSlug }),
+  refresh: (refreshToken: string) =>
+    api.post<{ accessToken: string; expiresIn: number }>(
+      "/auth/refresh",
+      { refreshToken },
+      { skipAuth: true },
+    ),
   logout: (refreshToken: string) => api.post("/auth/logout", { refreshToken }),
+  forgotPassword: (email: string, tenantSlug = "") =>
+    api.post<{ message: string }>(
+      "/auth/password/forgot",
+      { email },
+      { skipAuth: true, tenantSlug },
+    ),
+  resetPassword: (
+    data: { email: string; code: string; newPassword: string },
+    tenantSlug = "",
+  ) =>
+    api.post<{ message: string }>("/auth/password/reset", data, {
+      skipAuth: true,
+      tenantSlug,
+    }),
+  sendOtp: (userId: string, channel: "email" | "phone", tenantSlug: string) =>
+    api.post<{ message: string }>(
+      "/auth/verify/send",
+      { userId, channel },
+      { skipAuth: true, tenantSlug },
+    ),
+  verifyOtp: (
+    data: { userId: string; channel: "email" | "phone"; code: string },
+    tenantSlug: string,
+  ) =>
+    api.post<{
+      message: string;
+      accountActive?: boolean;
+      emailVerified?: boolean;
+      phoneVerified?: boolean;
+    }>("/auth/verify/confirm", data, { skipAuth: true, tenantSlug }),
+  verificationStatus: (userId: string, tenantSlug: string) =>
+    api.get<{
+      emailVerified: boolean;
+      phoneVerified: boolean;
+      status: string;
+    }>(`/auth/verify/status/${userId}`, { skipAuth: true, tenantSlug }),
 };
 
 export const userApi = {
@@ -175,6 +353,12 @@ export const userApi = {
   }) => api.put<User>("/users/me", data),
   updatePassword: (data: { currentPassword: string; newPassword: string }) =>
     api.put<{ message: string }>("/users/me/password", data),
+  deleteAccount: (data: { currentPassword: string }) =>
+    api.delete<{ message: string }>("/users/me", data),
+  registerPushToken: (data: { token: string; platform?: string }) =>
+    api.put<{ registered: boolean }>("/users/me/push-token", data),
+  removePushToken: (data: { token: string }) =>
+    api.delete<{ removed: boolean }>("/users/me/push-token", data),
 };
 
 export const customerApi = {
@@ -196,7 +380,7 @@ export const depositApi = {
       reference: string;
       payment: { paymentUrl?: string };
     }>("/deposits", data),
-  list: (params?: { customer_id?: string }) =>
+  list: (params?: { customer_id?: string; limit?: number }) =>
     api.get<{ items: Transaction[] }>(`/deposits${toQueryString(params)}`),
 };
 
@@ -206,7 +390,7 @@ export const withdrawalApi = {
     disbursementMethod: string;
     disbursementPhone: string;
   }) => api.post<Transaction>("/withdrawals/request", data),
-  list: (params?: { customer_id?: string }) =>
+  list: (params?: { customer_id?: string; limit?: number }) =>
     api.get<{ items: Transaction[] }>(`/withdrawals${toQueryString(params)}`),
 };
 
@@ -216,4 +400,12 @@ export const planApi = {
     api.post("/plans/enroll", data),
   listEnrollments: () =>
     api.get<CustomerPlanWithProgress[]>("/plans/my-enrollments"),
+};
+
+export const tenantApi = {
+  getBySlug: (slug: string) =>
+    api.get<TenantInfo>(`/tenants/${slug}`, {
+      skipAuth: true,
+      tenantSlug: slug,
+    }),
 };

@@ -4,12 +4,21 @@
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start --port 8083 --lan",
-    "start:tunnel": "expo start --port 8083 --tunnel",
+    "start": "node scripts/expo-dev.mjs",
+    "dev:mobile": "node scripts/expo-dev.mjs",
+    "start:lan": "node scripts/expo-dev.mjs",
+    "start:tunnel": "node scripts/expo-dev.mjs --tunnel",
+    "dev:mobile:tunnel": "node scripts/expo-dev.mjs --tunnel",
+    "start:clear": "node scripts/expo-dev.mjs --clear",
     "android": "expo start --android --port 8083 --lan",
     "ios": "expo start --ios --port 8083 --lan",
     "web": "expo start --web --port 8083",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build:preview": "eas build --profile preview --platform all",
+    "build:production": "eas build --profile production --platform all",
+    "submit:production": "eas submit --profile production --platform all"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.2.3",
@@ -19,27 +28,37 @@
     "@tanstack/react-query": "^5.62.8",
     "expo": "~54.0.35",
     "expo-constants": "~18.0.13",
+    "expo-device": "^56.0.4",
+    "expo-file-system": "~19.0.23",
     "expo-font": "~14.0.12",
     "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.12",
+    "expo-local-authentication": "~17.0.8",
+    "expo-notifications": "^56.0.18",
+    "expo-print": "~15.0.8",
     "expo-router": "~6.0.24",
     "expo-secure-store": "~15.0.8",
+    "expo-sharing": "~14.0.8",
     "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.9",
     "expo-web-browser": "~15.0.11",
+    "lucide-react-native": "^1.21.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-reanimated": "4.1.7",
     "react-native-safe-area-context": "~5.6.2",
     "react-native-screens": "4.16.0",
+    "react-native-svg": "15.12.1",
     "react-native-web": "~0.21.2",
     "react-native-worklets": "0.5.1",
     "whatwg-fetch": "^3.6.20",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@expo/ngrok": "^4.1.0",
     "@types/react": "~19.1.17",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "vitest": "^2.1.8"
   }
 }

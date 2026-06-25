@@ -1,106 +1,193 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as WebBrowser from "expo-web-browser";
-import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Alert, StyleSheet, View } from "react-native";
 import { Button } from "@/components/Button";
-import { Card } from "@/components/Card";
-import { Input } from "@/components/Input";
-import { Screen } from "@/components/Screen";
-import { depositApi, userApi } from "@/lib/api";
-import { colors, typography } from "@/theme/tokens";
-
-const METHODS = [
-  { id: "mtn_momo", label: "MTN MoMo" },
-  { id: "telecel_cash", label: "Telecel Cash" },
-];
+import { DepositAmountStep } from "@/components/deposit/DepositAmountStep";
+import { DepositConfirmStep } from "@/components/deposit/DepositConfirmStep";
+import { DepositMethodStep } from "@/components/deposit/DepositMethodStep";
+import { DepositStepIndicator } from "@/components/deposit/DepositStepIndicator";
+import {
+  parseDepositAmount,
+  type DepositStep,
+} from "@/components/deposit/depositUtils";
+import {
+  TabScreenHeader,
+  TabScreenLayout,
+} from "@/components/layout/TabScreen";
+import { useProfileData } from "@/components/settings/useProfileData";
+import { useRefreshFinancialsOnFocus } from "@/hooks/useRefreshFinancialsOnFocus";
+import { useCustomerSession } from "@/hooks/useCustomerSession";
+import { depositApi } from "@/lib/api";
+import { fetchCustomerWallet } from "@/lib/customer-wallet";
+import {
+  financialQueryOptions,
+  invalidateCustomerFinancials,
+} from "@/lib/financial-queries";
+import { queryKeys } from "@/lib/query-keys";
+import { spacing } from "@/theme/tokens";
 
 export default function DepositScreen() {
+  const queryClient = useQueryClient();
+  const [step, setStep] = useState<DepositStep>(0);
   const [amount, setAmount] = useState("");
   const [phone, setPhone] = useState("");
   const [method, setMethod] = useState("mtn_momo");
 
-  const { data: profile } = useQuery({
-    queryKey: ["user-profile"],
-    queryFn: () => userApi.getMe(),
+  const { phone: profilePhone } = useProfileData();
+
+  const { sessionKey } = useCustomerSession();
+  const customerId = sessionKey?.customerId;
+
+  useRefreshFinancialsOnFocus(sessionKey);
+
+  const { data: wallet, isLoading: walletLoading } = useQuery({
+    queryKey: sessionKey
+      ? queryKeys.wallet(sessionKey.userId, sessionKey.customerId)
+      : ["wallet", "inactive"],
+    queryFn: () => fetchCustomerWallet(sessionKey!.customerId),
+    enabled: !!sessionKey,
+    ...financialQueryOptions,
   });
+
+  useEffect(() => {
+    if (profilePhone && !phone) {
+      setPhone(profilePhone);
+    }
+  }, [profilePhone, phone]);
+
+  const parsedAmount = useMemo(() => parseDepositAmount(amount), [amount]);
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const customerId = profile?.customer?.id;
       if (!customerId) throw new Error("Customer account not found");
-
-      const parsed = parseFloat(amount);
-      if (!parsed || parsed <= 0) throw new Error("Enter a valid amount");
+      if (!parsedAmount) throw new Error("Enter a valid amount");
+      if (!phone.trim()) throw new Error("Enter your mobile money number");
 
       return depositApi.initiate({
-        amount: parsed,
+        amount: parsedAmount,
         paymentMethod: method,
         customerId,
-        payerPhone: phone,
+        payerPhone: phone.trim(),
       });
     },
     onSuccess: async (data) => {
       if (data.payment?.paymentUrl) {
         await WebBrowser.openBrowserAsync(data.payment.paymentUrl);
       }
-      Alert.alert("Deposit started", `Reference: ${data.reference}`);
+      if (sessionKey) {
+        invalidateCustomerFinancials(queryClient, sessionKey);
+      }
+      Alert.alert(
+        "Deposit started",
+        `We sent a payment request to your phone.\n\nReference: ${data.reference}`,
+      );
+      setStep(0);
+      setAmount("");
     },
     onError: (err: Error) => {
       Alert.alert("Deposit failed", err.message);
     },
   });
 
+  const goNext = () => {
+    if (step === 0) {
+      if (!parsedAmount) {
+        Alert.alert("Enter an amount", "Choose how much you want to save.");
+        return;
+      }
+      setStep(1);
+      return;
+    }
+
+    if (step === 1) {
+      setStep(2);
+      return;
+    }
+
+    mutation.mutate();
+  };
+
+  const goBack = () => {
+    if (step === 0) return;
+    setStep((current) => (current - 1) as DepositStep);
+  };
+
+  const primaryLabel =
+    step === 2 ? "Confirm & pay" : step === 1 ? "Continue" : "Continue";
+
   return (
-    <Screen title="Deposit" subtitle="Add money to your savings wallet">
-      <Card>
-        <Input
-          label="Amount (GHS)"
-          value={amount}
-          onChangeText={setAmount}
-          keyboardType="decimal-pad"
-          placeholder="0.00"
-        />
-        <Input
-          label="MoMo number"
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-          placeholder="+233..."
-        />
-
-        <Text style={styles.label}>Payment method</Text>
-        <View style={styles.methods}>
-          {METHODS.map((m) => (
-            <Button
-              key={m.id}
-              title={m.label}
-              variant={method === m.id ? "primary" : "outline"}
-              onPress={() => setMethod(m.id)}
-              style={styles.methodBtn}
-            />
-          ))}
+    <TabScreenLayout
+      header={
+        <View style={styles.header}>
+          <TabScreenHeader title="Deposit" />
+          <DepositStepIndicator step={step} />
         </View>
+      }
+    >
+      <View style={styles.content}>
+        {step === 0 ? (
+          <DepositAmountStep
+            amount={amount}
+            onChangeAmount={setAmount}
+            balance={wallet?.balance}
+            balanceLoading={walletLoading}
+          />
+        ) : null}
 
+        {step === 1 ? (
+          <DepositMethodStep method={method} onSelectMethod={setMethod} />
+        ) : null}
+
+        {step === 2 && parsedAmount ? (
+          <DepositConfirmStep
+            amount={parsedAmount}
+            method={method}
+            phone={phone}
+            onChangePhone={setPhone}
+          />
+        ) : null}
+      </View>
+
+      <View style={styles.footer}>
+        {step > 0 ? (
+          <Button
+            title="Back"
+            variant="secondary"
+            onPress={goBack}
+            style={styles.back}
+          />
+        ) : null}
         <Button
-          title="Continue to payment"
+          title={primaryLabel}
           loading={mutation.isPending}
-          onPress={() => mutation.mutate()}
+          onPress={goNext}
+          style={step > 0 ? styles.primary : styles.full}
         />
-      </Card>
-    </Screen>
+      </View>
+    </TabScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontFamily: typography.fontFamily.medium,
-    fontSize: typography.size.sm,
-    color: colors.foreground,
+  header: {
+    gap: spacing.xs,
   },
-  methods: {
-    gap: 8,
+  content: {
+    flex: 1,
   },
-  methodBtn: {
-    width: "100%",
+  footer: {
+    flexDirection: "row",
+    gap: spacing.sm,
+    paddingTop: spacing.md,
+  },
+  back: {
+    flex: 1,
+  },
+  primary: {
+    flex: 2,
+  },
+  full: {
+    flex: 1,
   },
 });

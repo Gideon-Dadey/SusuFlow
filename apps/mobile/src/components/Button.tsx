@@ -6,7 +6,7 @@ import {
   Text,
   ViewStyle,
 } from "react-native";
-import { colors, radius, typography } from "@/theme/tokens";
+import { useTheme } from "@/theme/ThemeProvider";
 
 interface ButtonProps extends PressableProps {
   title: string;
@@ -23,6 +23,7 @@ export function Button({
   style,
   ...props
 }: ButtonProps) {
+  const { colors, radius, typography } = useTheme();
   const isPrimary = variant === "primary";
   const isOutline = variant === "outline";
 
@@ -32,9 +33,14 @@ export function Button({
       disabled={disabled || loading}
       style={({ pressed }) => [
         styles.base,
-        isPrimary && styles.primary,
-        variant === "secondary" && styles.secondary,
-        isOutline && styles.outline,
+        { borderRadius: radius.lg },
+        isPrimary && { backgroundColor: colors.primary },
+        variant === "secondary" && { backgroundColor: colors.muted },
+        isOutline && {
+          backgroundColor: colors.card,
+          borderWidth: 1,
+          borderColor: colors.border,
+        },
         (disabled || loading) && styles.disabled,
         pressed && !disabled && !loading && styles.pressed,
         style,
@@ -50,8 +56,13 @@ export function Button({
         <Text
           style={[
             styles.label,
-            isPrimary && styles.primaryLabel,
-            isOutline && styles.outlineLabel,
+            {
+              fontFamily: typography.roles.label,
+              fontSize: typography.size.sm,
+            },
+            isPrimary && { color: colors.primaryForeground },
+            isOutline && { color: colors.primary },
+            !isPrimary && !isOutline && { color: colors.foreground },
           ]}
         >
           {title}
@@ -64,21 +75,9 @@ export function Button({
 const styles = StyleSheet.create({
   base: {
     minHeight: 48,
-    borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 16,
-  },
-  primary: {
-    backgroundColor: colors.primary,
-  },
-  secondary: {
-    backgroundColor: colors.muted,
-  },
-  outline: {
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   disabled: {
     opacity: 0.6,
@@ -86,15 +85,5 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.9,
   },
-  label: {
-    fontFamily: typography.fontFamily.semibold,
-    fontSize: typography.size.sm,
-    color: colors.foreground,
-  },
-  primaryLabel: {
-    color: colors.primaryForeground,
-  },
-  outlineLabel: {
-    color: colors.primary,
-  },
+  label: {},
 });

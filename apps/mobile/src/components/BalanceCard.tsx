@@ -2,7 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { formatGhs } from "@susuflow/shared/client";
+import { formatGhs } from "@/lib/currency";
 import { colors, radius, shadows, typography } from "@/theme/tokens";
 
 interface BalanceCardProps {
@@ -48,7 +48,7 @@ export function BalanceCard({
         <View style={styles.changeRow}>
           <Feather name="trending-up" size={14} color="#86efac" />
           <Text style={styles.changeText}>
-            +{todayChange.toFixed(2)} GHS today
+            +₵{todayChange.toFixed(2)} today
           </Text>
         </View>
       ) : null}

@@ -7,11 +7,12 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatGhs(amount: number | string): string {
   const num = typeof amount === "string" ? parseFloat(amount) : amount;
-  return new Intl.NumberFormat("en-GH", {
-    style: "currency",
-    currency: "GHS",
+  const safe = Number.isFinite(num) ? num : 0;
+  const formatted = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 2,
-  }).format(num || 0);
+    maximumFractionDigits: 2,
+  }).format(safe);
+  return `₵${formatted}`;
 }
 
 export function formatDate(date: string | Date): string {

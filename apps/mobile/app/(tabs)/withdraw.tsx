@@ -1,28 +1,62 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/Button";
-import { Card } from "@/components/Card";
 import { Input } from "@/components/Input";
-import { Screen } from "@/components/Screen";
+import {
+  TabScreenDivider,
+  TabScreenHeader,
+  TabScreenLayout,
+  TabScreenSection,
+} from "@/components/layout/TabScreen";
+import { ProfileRow } from "@/components/profile/ProfileSections";
+import type { AppIconName } from "@/components/icons/AppIcon";
+import { useRefreshFinancialsOnFocus } from "@/hooks/useRefreshFinancialsOnFocus";
+import { useCustomerSession } from "@/hooks/useCustomerSession";
 import { withdrawalApi } from "@/lib/api";
-import { colors, typography } from "@/theme/tokens";
+import { fetchCustomerWallet } from "@/lib/customer-wallet";
+import {
+  financialQueryOptions,
+  invalidateCustomerFinancials,
+} from "@/lib/financial-queries";
+import { queryKeys } from "@/lib/query-keys";
+import { formatGhs } from "@/lib/currency";
+import { useTheme } from "@/theme/ThemeProvider";
+import { radius, spacing, typography } from "@/theme/tokens";
 
-const METHODS = [
-  { id: "mtn_momo", label: "MTN MoMo" },
-  { id: "telecel_cash", label: "Telecel Cash" },
+const METHODS: { id: string; label: string; icon: AppIconName }[] = [
+  { id: "mtn_momo", label: "MTN MoMo", icon: "smartphone" },
+  { id: "telecel_cash", label: "Telecel Cash", icon: "credit-card" },
 ];
 
 export default function WithdrawScreen() {
+  const { colors } = useTheme();
+  const queryClient = useQueryClient();
   const [amount, setAmount] = useState("");
   const [phone, setPhone] = useState("");
   const [method, setMethod] = useState("mtn_momo");
+
+  const { sessionKey } = useCustomerSession();
+
+  useRefreshFinancialsOnFocus(sessionKey);
+
+  const { data: wallet, isLoading: walletLoading } = useQuery({
+    queryKey: sessionKey
+      ? queryKeys.wallet(sessionKey.userId, sessionKey.customerId)
+      : ["wallet", "inactive"],
+    queryFn: () => fetchCustomerWallet(sessionKey!.customerId),
+    enabled: !!sessionKey,
+    ...financialQueryOptions,
+  });
 
   const mutation = useMutation({
     mutationFn: async () => {
       const parsed = parseFloat(amount);
       if (!parsed || parsed <= 0) throw new Error("Enter a valid amount");
       if (!phone.trim()) throw new Error("Enter your MoMo number");
+      if (wallet && parsed > wallet.balance) {
+        throw new Error("Amount exceeds your available balance");
+      }
 
       return withdrawalApi.requestWithdrawal({
         amount: parsed,
@@ -31,6 +65,9 @@ export default function WithdrawScreen() {
       });
     },
     onSuccess: () => {
+      if (sessionKey) {
+        invalidateCustomerFinancials(queryClient, sessionKey);
+      }
       Alert.alert(
         "Withdrawal requested",
         "Your request has been submitted for approval.",
@@ -43,56 +80,121 @@ export default function WithdrawScreen() {
   });
 
   return (
-    <Screen title="Withdraw" subtitle="Request a payout to your mobile money">
-      <Card>
-        <Input
-          label="Amount (GHS)"
-          value={amount}
-          onChangeText={setAmount}
-          keyboardType="decimal-pad"
-          placeholder="0.00"
-        />
-        <Input
-          label="MoMo number"
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-          placeholder="+233..."
-        />
-
-        <Text style={styles.label}>Disbursement method</Text>
-        <View style={styles.methods}>
-          {METHODS.map((m) => (
-            <Button
-              key={m.id}
-              title={m.label}
-              variant={method === m.id ? "primary" : "outline"}
-              onPress={() => setMethod(m.id)}
-              style={styles.methodBtn}
-            />
-          ))}
+    <TabScreenLayout header={<TabScreenHeader title="Withdraw" />}>
+      <TabScreenSection title="Available balance">
+        <View style={styles.balanceWrap}>
+          {walletLoading ? (
+            <Text
+              style={[styles.balanceLabel, { color: colors.mutedForeground }]}
+            >
+              Loading balance…
+            </Text>
+          ) : (
+            <Text style={[styles.balanceValue, { color: colors.foreground }]}>
+              {formatGhs(wallet?.balance ?? 0)}
+            </Text>
+          )}
         </View>
+      </TabScreenSection>
 
+      <TabScreenSection title="Amount">
+        <View style={styles.fieldWrap}>
+          <Input
+            label="Amount (₵)"
+            value={amount}
+            onChangeText={setAmount}
+            keyboardType="decimal-pad"
+            placeholder="0.00"
+          />
+        </View>
+      </TabScreenSection>
+
+      <TabScreenSection title="MoMo number">
+        <View style={styles.fieldWrap}>
+          <Input
+            label="Mobile money number"
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+            placeholder="+233..."
+          />
+        </View>
+      </TabScreenSection>
+
+      <TabScreenSection title="Disbursement method">
+        {METHODS.map((item, index) => (
+          <View key={item.id}>
+            {index > 0 ? <TabScreenDivider /> : null}
+            <ProfileRow
+              icon={item.icon}
+              label={item.label}
+              onPress={() => setMethod(item.id)}
+              right={
+                <View
+                  style={[
+                    styles.radio,
+                    {
+                      borderColor:
+                        method === item.id ? colors.primary : colors.border,
+                    },
+                  ]}
+                >
+                  {method === item.id ? (
+                    <View
+                      style={[
+                        styles.radioFill,
+                        { backgroundColor: colors.primary },
+                      ]}
+                    />
+                  ) : null}
+                </View>
+              }
+            />
+          </View>
+        ))}
+      </TabScreenSection>
+
+      <View style={styles.ctaWrap}>
         <Button
           title="Request withdrawal"
           loading={mutation.isPending}
           onPress={() => mutation.mutate()}
         />
-      </Card>
-    </Screen>
+      </View>
+    </TabScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontFamily: typography.fontFamily.medium,
+  balanceWrap: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  balanceLabel: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.size.sm,
-    color: colors.foreground,
   },
-  methods: {
-    gap: 8,
+  balanceValue: {
+    fontFamily: typography.fontFamily.bold,
+    fontSize: typography.size.xl,
   },
-  methodBtn: {
-    width: "100%",
+  fieldWrap: {
+    padding: spacing.md,
+  },
+  radio: {
+    width: 20,
+    height: 20,
+    borderRadius: radius.full,
+    borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  radioFill: {
+    width: 10,
+    height: 10,
+    borderRadius: radius.full,
+  },
+  ctaWrap: {
+    paddingHorizontal: spacing.xs,
   },
 });
