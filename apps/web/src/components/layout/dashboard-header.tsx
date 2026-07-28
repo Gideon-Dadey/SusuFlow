@@ -108,7 +108,9 @@ export function DashboardHeader({
         >
           <FontAwesomeIcon icon={faBars} className="h-4 w-4" />
         </Button>
-        <p className="dashboard-title min-w-0 truncate">{mobileTitle}</p>
+        <p className="mobile-header-title min-w-0 truncate font-bold text-foreground">
+          {mobileTitle}
+        </p>
       </div>
 
       <div className="ml-auto flex shrink-0 items-center">
