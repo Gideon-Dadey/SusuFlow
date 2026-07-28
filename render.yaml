@@ -1,16 +1,72 @@
-# SusuFlow on Render — frontend (marketing site) only.
-# Login, dashboards, and MoMo features need a separate API deploy later.
-# See https://render.com/docs/blueprint-spec
 services:
+  # ---------------------------------------------------------------------------
+  # 1. NestJS Backend API Service
+  # ---------------------------------------------------------------------------
   - type: web
-    name: susuflow
-    runtime: node
+    name: susuflow-api
+    env: node
     plan: free
-    branch: main
-    buildCommand: pnpm install --frozen-lockfile --prod=false && pnpm run build:web
-    startCommand: pnpm run start:web
+    region: oregon
+    buildCommand: pnpm install && pnpm db:generate && pnpm build:api
+    startCommand: pnpm start:api
+    healthCheckPath: /api/v1/health
     envVars:
       - key: NODE_ENV
         value: production
-      - key: NEXT_PUBLIC_DEFAULT_TENANT
-        value: abc-susu
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: susuflow-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: susuflow-redis
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: HUBTEL_CLIENT_ID
+        sync: false
+      - key: HUBTEL_CLIENT_SECRET
+        sync: false
+      - key: HUBTEL_MERCHANT_ACCOUNT_NUMBER
+        sync: false
+
+  # ---------------------------------------------------------------------------
+  # 2. Next.js 15 Web Portal Service
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: susuflow-web
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: pnpm install && pnpm db:generate && pnpm build:web
+    startCommand: pnpm start:web
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: susuflow-api
+          property: url
+
+# -----------------------------------------------------------------------------
+# Managed Databases & Caching Services
+# -----------------------------------------------------------------------------
+databases:
+  - name: susuflow-db
+    databaseName: susuflow
+    user: susuflow_user
+    plan: free
+    region: oregon
+
+kv:
+  - name: susuflow-redis
+    plan: free
+    region: oregon
