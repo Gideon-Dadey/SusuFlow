@@ -33,10 +33,10 @@ export function MarketingFooter() {
   };
 
   return (
-    <footer className="relative overflow-hidden border-t border-white/10 bg-[#08080a] text-slate-100">
+    <footer className="relative overflow-hidden bg-[#08080a] text-slate-100">
       <MarketingContainer className="relative z-10 pt-16 pb-8">
         {/* Top Section: Demo & Newsletter Bar */}
-        <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pb-12 border-b border-white/10">
+        <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-6 space-y-2">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
               Digitize your Susu enterprise with confidence
@@ -90,7 +90,7 @@ export function MarketingFooter() {
         </div>
 
         {/* Main Grid: Domain Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
           {/* Column 1: Brand & Office Information */}
           <div className="lg:col-span-4 space-y-5">
             <Link href="/" className="inline-flex items-center">
@@ -138,7 +138,7 @@ export function MarketingFooter() {
 
           {/* Column 2: Product Suite */}
           <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest border-b border-emerald-500/30 pb-2 inline-block">
+            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
               Product Suite
             </h3>
             <ul className="space-y-2.5 text-sm">
@@ -190,7 +190,7 @@ export function MarketingFooter() {
 
           {/* Column 3: Company */}
           <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest border-b border-emerald-500/30 pb-2 inline-block">
+            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
               Company
             </h3>
             <ul className="space-y-2.5 text-sm">
@@ -231,7 +231,7 @@ export function MarketingFooter() {
 
           {/* Column 4: Regulatory Compliance */}
           <div className="lg:col-span-4 space-y-4">
-            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest border-b border-emerald-500/30 pb-2 inline-block">
+            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
               Regulatory & Compliance
             </h3>
             <p className="text-xs text-slate-400 leading-relaxed">
@@ -258,7 +258,7 @@ export function MarketingFooter() {
         </div>
 
         {/* System Status & Copyright Row */}
-        <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div className="flex items-center gap-2">
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -318,7 +318,7 @@ export function MarketingFooter() {
         </div>
 
         {/* GIANT ORGANIC BRAND WORDMARK BANNER (Hims-inspired luxury brand seal) */}
-        <div className="relative mt-12 pt-6 border-t border-white/10 overflow-hidden select-none pointer-events-none text-center">
+        <div className="relative mt-12 overflow-hidden select-none pointer-events-none text-center">
           <span className="block text-[13vw] sm:text-[15vw] font-extrabold tracking-tighter leading-none text-white/[0.06] uppercase font-sans">
             SusuFlow
           </span>
