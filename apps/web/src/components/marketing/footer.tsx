@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   Building2,
   MessageSquare,
-  Globe,
   Github,
   Linkedin,
   Twitter,
@@ -35,41 +34,42 @@ export function MarketingFooter() {
 
   return (
     <footer className="relative overflow-hidden border-t border-slate-800/80 bg-slate-950 text-slate-100 dark:bg-[#030712]">
-      {/* Background Subtle Radial Glow & Gradient */}
+      {/* Organic Radial Ambient Glow */}
       <div
         className="pointer-events-none absolute -top-40 left-1/2 h-96 w-full -translate-x-1/2 rounded-full bg-emerald-500/10 blur-[120px]"
         aria-hidden="true"
       />
 
-      <MarketingContainer className="relative z-10 pt-16 pb-12">
-        {/* Top Section: Interactive Demo / Newsletter Banner */}
-        <div className="mb-16 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-emerald-950/40 p-6 sm:p-10 backdrop-blur-md shadow-2xl shadow-emerald-950/20">
+      <MarketingContainer className="relative z-10 pt-16 pb-8">
+        {/* Top Section: Organic Demo & Newsletter Card */}
+        <div className="mb-16 rounded-3xl border border-slate-800/80 bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-emerald-950/30 p-6 sm:p-10 backdrop-blur-md shadow-2xl shadow-emerald-950/20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-6 space-y-2">
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400">
+            <div className="lg:col-span-6 space-y-3">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-semibold text-emerald-400">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                Enterprise Fintech Platform
+                Enterprise Fintech Standard
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                Transform your Susu operations today
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
+                Digitize your Susu enterprise with confidence
               </h2>
-              <p className="text-sm text-slate-400 max-w-lg">
-                Join modern microfinance companies digitizing daily savings
-                across Ghana with cashless gateway verification.
+              <p className="text-sm text-slate-400 max-w-lg leading-relaxed">
+                Empowering modern Ghanaian microfinance institutions and susu
+                companies with gateway-confirmed deposits and 100% cashless
+                audit logs.
               </p>
             </div>
 
             <div className="lg:col-span-6">
               {subscribed ? (
-                <div className="flex items-center gap-3 rounded-xl border border-emerald-500/40 bg-emerald-500/15 p-4 text-emerald-300">
+                <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/40 bg-emerald-500/15 p-4 text-emerald-300">
                   <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
                   <div>
                     <p className="font-semibold text-sm">
                       Thank you for subscribing!
                     </p>
                     <p className="text-xs text-emerald-400/80">
-                      We&apos;ve sent product updates and compliance guides to
-                      your inbox.
+                      We&apos;ve dispatched product documentation and compliance
+                      guides to your email.
                     </p>
                   </div>
                 </div>
@@ -83,32 +83,32 @@ export function MarketingFooter() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your work email..."
+                      placeholder="Enter your work email address..."
                       required
-                      className="w-full h-12 rounded-xl border border-slate-700 bg-slate-950/80 px-4 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
+                      className="w-full h-12 rounded-2xl border border-slate-700/80 bg-slate-950/90 px-4 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="h-12 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all duration-200 shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 shrink-0"
+                    className="h-12 px-6 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all duration-200 shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 shrink-0"
                   >
-                    <span>Get Product Demo</span>
+                    <span>Request Demo</span>
                     <ArrowRight className="h-4 w-4" />
                   </button>
                 </form>
               )}
               <p className="mt-2.5 text-[11px] text-slate-500 flex items-center gap-2">
                 <Lock className="h-3 w-3 text-emerald-400" />
-                Zero spam guarantee. Bank-grade 256-bit SSL encrypted
+                Zero spam policy. Bank-grade 256-bit SSL encrypted
                 communication.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Main Grid: Brand & Navigation Domain Columns */}
+        {/* Main Grid: Organic Domain Columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-800/80">
-          {/* Column 1: Brand & Contact */}
+          {/* Column 1: Brand & Office Information */}
           <div className="lg:col-span-4 space-y-5">
             <Link href="/" className="inline-flex items-center">
               <BrandLockup onDark wordmarkClassName="text-2xl" />
@@ -117,9 +117,9 @@ export function MarketingFooter() {
               {APP_TAGLINE}
             </p>
             <p className="text-xs text-slate-400/80 leading-relaxed">
-              Empowering traditional susu enterprises, cashless field
-              collectors, and market traders across Ghana with instant gateway
-              deposits.
+              Designed for Ghanaian microfinance enterprises, cashless field
+              agents, and market traders with instant gateway deposit
+              verification.
             </p>
 
             {/* Direct Contact Links */}
@@ -128,7 +128,7 @@ export function MarketingFooter() {
                 href={`mailto:${SUPPORT_EMAIL}`}
                 className="flex items-center gap-3 text-xs text-slate-300 hover:text-emerald-400 transition-colors"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
                   <Mail className="h-3.5 w-3.5" />
                 </div>
                 {SUPPORT_EMAIL}
@@ -139,13 +139,13 @@ export function MarketingFooter() {
                 rel="noreferrer"
                 className="flex items-center gap-3 text-xs text-slate-300 hover:text-emerald-400 transition-colors"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
                   <MessageSquare className="h-3.5 w-3.5" />
                 </div>
                 +233 (0) 50 000 0000 (WhatsApp Support)
               </a>
               <div className="flex items-center gap-3 text-xs text-slate-400">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
                   <MapPin className="h-3.5 w-3.5" />
                 </div>
                 Accra Financial Centre, Ridge, Accra - Ghana
@@ -246,7 +246,7 @@ export function MarketingFooter() {
             </ul>
           </div>
 
-          {/* Column 4: Regulatory & Compliance Badges */}
+          {/* Column 4: Regulatory Compliance */}
           <div className="lg:col-span-4 space-y-4">
             <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest border-b border-emerald-500/30 pb-2 inline-block">
               Regulatory & Compliance
@@ -256,14 +256,14 @@ export function MarketingFooter() {
               (Act 987) and Data Protection Act, 2012 (Act 843).
             </p>
             <div className="grid grid-cols-2 gap-2.5 pt-1">
-              <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-center">
+              <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3 text-center">
                 <Building2 className="h-4 w-4 text-emerald-400 mx-auto mb-1" />
                 <p className="text-[10px] font-bold text-slate-300">
                   BoG Act 987
                 </p>
                 <p className="text-[9px] text-slate-500">Licensed Standard</p>
               </div>
-              <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-center">
+              <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3 text-center">
                 <Lock className="h-4 w-4 text-emerald-400 mx-auto mb-1" />
                 <p className="text-[10px] font-bold text-slate-300">
                   DPC Act 843
@@ -274,7 +274,7 @@ export function MarketingFooter() {
           </div>
         </div>
 
-        {/* Bottom Section: Live System Status, Copyright & Social Icons */}
+        {/* System Status & Copyright Row */}
         <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div className="flex items-center gap-2">
             <span className="relative flex h-2.5 w-2.5">
@@ -332,6 +332,13 @@ export function MarketingFooter() {
               <Github className="h-4 w-4" />
             </a>
           </div>
+        </div>
+
+        {/* GIANT ORGANIC BRAND WORDMARK BANNER (Hims-inspired luxury brand seal) */}
+        <div className="relative mt-12 pt-6 border-t border-slate-900/90 overflow-hidden select-none pointer-events-none text-center">
+          <span className="block text-[13vw] sm:text-[15vw] font-extrabold tracking-tighter leading-none text-slate-800/25 dark:text-slate-900/40 uppercase opacity-35 font-sans">
+            SusuFlow
+          </span>
         </div>
       </MarketingContainer>
     </footer>
