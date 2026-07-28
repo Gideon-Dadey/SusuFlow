@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type DashboardPageBarProps = {
   title: string;
@@ -20,8 +20,8 @@ export function DashboardPageBar({
   return (
     <div
       className={cn(
-        'flex items-center justify-between gap-3',
-        !actions && 'hidden lg:flex',
+        "flex items-center justify-between gap-3",
+        !actions && "hidden lg:flex",
         className,
       )}
     >
@@ -30,7 +30,7 @@ export function DashboardPageBar({
           <Link href={backHref} className="hidden lg:block">
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-muted"
+              className="flex h-9 w-9 items-center justify-center rounded-none hover:bg-muted"
               aria-label="Go back"
             >
               <ArrowLeft className="h-5 w-5" />

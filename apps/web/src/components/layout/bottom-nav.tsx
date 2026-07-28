@@ -34,7 +34,7 @@ export function BottomNav() {
               key={href}
               href={href}
               className={cn(
-                "flex min-w-[64px] flex-col items-center gap-1 rounded-lg px-3 py-2 transition-colors",
+                "flex min-w-[64px] flex-col items-center gap-1 rounded-none px-3 py-2 transition-colors",
                 active ? "text-primary" : "text-muted-foreground",
               )}
             >

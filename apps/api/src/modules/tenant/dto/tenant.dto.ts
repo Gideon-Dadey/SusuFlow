@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsEmail,
   IsEnum,
@@ -8,57 +8,58 @@ import {
   MaxLength,
   MinLength,
   IsObject,
-} from 'class-validator';
+  ValidateIf,
+} from "class-validator";
 
 export class CreateTenantDto {
-  @ApiProperty({ example: 'xyz-susu' })
+  @ApiProperty({ example: "xyz-susu" })
   @IsString()
   @MaxLength(30)
   @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
-    message: 'Slug must be lowercase letters, numbers, and hyphens only',
+    message: "Slug must be lowercase letters, numbers, and hyphens only",
   })
   slug!: string;
 
-  @ApiProperty({ example: 'XYZ Susu Company' })
+  @ApiProperty({ example: "XYZ Susu Company" })
   @IsString()
   @MaxLength(255)
   name!: string;
 
-  @ApiProperty({ example: 'admin@xyzsusu.com' })
+  @ApiProperty({ example: "admin@xyzsusu.com" })
   @IsEmail()
   email!: string;
 
-  @ApiPropertyOptional({ example: '+233201234567' })
+  @ApiPropertyOptional({ example: "+233201234567" })
   @IsOptional()
   @IsString()
   phone?: string;
 
-  @ApiPropertyOptional({ enum: ['starter', 'growth', 'enterprise'] })
+  @ApiPropertyOptional({ enum: ["starter", "growth", "enterprise"] })
   @IsOptional()
-  @IsEnum(['starter', 'growth', 'enterprise'])
-  plan?: 'starter' | 'growth' | 'enterprise';
+  @IsEnum(["starter", "growth", "enterprise"])
+  plan?: "starter" | "growth" | "enterprise";
 
-  @ApiProperty({ example: 'Ama' })
+  @ApiProperty({ example: "Ama" })
   @IsString()
   @MaxLength(100)
   adminFirstName!: string;
 
-  @ApiProperty({ example: 'Asante' })
+  @ApiProperty({ example: "Asante" })
   @IsString()
   @MaxLength(100)
   adminLastName!: string;
 
-  @ApiProperty({ example: 'admin@xyzsusu.com' })
+  @ApiProperty({ example: "admin@xyzsusu.com" })
   @IsEmail()
   adminEmail!: string;
 
-  @ApiPropertyOptional({ example: '+233201234567' })
+  @ApiPropertyOptional({ example: "+233201234567" })
   @IsOptional()
   @IsString()
   adminPhone?: string;
 
   @ApiPropertyOptional({
-    description: 'Leave blank to auto-generate a secure temporary password',
+    description: "Leave blank to auto-generate a secure temporary password",
   })
   @IsOptional()
   @IsString()
@@ -75,29 +76,30 @@ export class SuspendTenantDto {
 }
 
 export class UpdateTenantDto {
-  @ApiPropertyOptional({ example: 'XYZ Susu Company' })
+  @ApiPropertyOptional({ example: "XYZ Susu Company" })
   @IsOptional()
   @IsString()
   @MaxLength(255)
   name?: string;
 
-  @ApiPropertyOptional({ example: 'admin@xyzsusu.com' })
+  @ApiPropertyOptional({ example: "admin@xyzsusu.com" })
   @IsOptional()
   @IsEmail()
   email?: string;
 
-  @ApiPropertyOptional({ example: '+233201234567' })
+  @ApiPropertyOptional({ example: "+233201234567" })
   @IsOptional()
   @IsString()
   @MaxLength(20)
   phone?: string;
 
   @ApiPropertyOptional()
+  @ValidateIf((o) => o.logoUrl !== null)
   @IsOptional()
   @IsString()
-  logoUrl?: string;
+  logoUrl?: string | null;
 
-  @ApiPropertyOptional({ example: '#1E40AF' })
+  @ApiPropertyOptional({ example: "#1E40AF" })
   @IsOptional()
   @IsString()
   @MaxLength(7)

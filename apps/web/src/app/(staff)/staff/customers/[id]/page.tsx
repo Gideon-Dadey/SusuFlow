@@ -1,51 +1,64 @@
-'use client';
+"use client";
 
-import { use, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { StatusBadge } from '@/components/ui/badge';
-import { customerApi, depositApi, withdrawalApi, Transaction } from '@/lib/api';
-import { getInitials, formatGhs, formatDate } from '@/lib/utils';
-import { ArrowLeft, Wallet, ArrowDownLeft, ArrowUpRight, Check, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
-import { ReceiptModal } from '@/components/financial/receipt-modal';
-import { CustomerListSkeleton } from '@/components/ui/skeleton';
+import { use, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { StatusBadge } from "@/components/ui/badge";
+import { customerApi, depositApi, withdrawalApi, Transaction } from "@/lib/api";
+import { getInitials, formatGhs, formatDate } from "@/lib/utils";
+import {
+  ArrowLeft,
+  Wallet,
+  ArrowDownLeft,
+  ArrowUpRight,
+  Check,
+  AlertCircle,
+} from "lucide-react";
+import Link from "next/link";
+import { ReceiptModal } from "@/components/financial/receipt-modal";
+import { CustomerListSkeleton } from "@/components/ui/skeleton";
 
-export default function CustomerDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function CustomerDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = use(params);
   const queryClient = useQueryClient();
   const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
 
   // Tabs: overview, deposit, withdraw
-  const [activeTab, setActiveTab] = useState<'overview' | 'deposit' | 'withdraw'>('overview');
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "deposit" | "withdraw"
+  >("overview");
 
   // Forms
-  const [depositAmount, setDepositAmount] = useState('');
-  const [depositPhone, setDepositPhone] = useState('');
-  const [depositMethod, setDepositMethod] = useState('cash');
+  const [depositAmount, setDepositAmount] = useState("");
+  const [depositPhone, setDepositPhone] = useState("");
+  const [depositMethod, setDepositMethod] = useState("cash");
 
-  const [withdrawAmount, setWithdrawAmount] = useState('');
-  const [withdrawPhone, setWithdrawPhone] = useState('');
-  const [withdrawMethod, setWithdrawMethod] = useState('cash');
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [withdrawPhone, setWithdrawPhone] = useState("");
+  const [withdrawMethod, setWithdrawMethod] = useState("cash");
 
-  const [formError, setFormError] = useState('');
-  const [formSuccess, setFormSuccess] = useState('');
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
   const [activateLoading, setActivateLoading] = useState(false);
 
   const handleActivate = async () => {
     setActivateLoading(true);
-    setFormError('');
-    setFormSuccess('');
+    setFormError("");
+    setFormSuccess("");
     try {
       await customerApi.activate(id);
-      setFormSuccess('Customer account successfully activated!');
-      queryClient.invalidateQueries({ queryKey: ['staff-customer', id] });
-      setTimeout(() => setFormSuccess(''), 4000);
+      setFormSuccess("Customer account successfully activated!");
+      queryClient.invalidateQueries({ queryKey: ["staff-customer", id] });
+      setTimeout(() => setFormSuccess(""), 4000);
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'Activation failed');
+      setFormError(err instanceof Error ? err.message : "Activation failed");
     } finally {
       setActivateLoading(false);
     }
@@ -53,25 +66,25 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
 
   // Fetch customer details
   const { data: customer, isLoading: customerLoading } = useQuery({
-    queryKey: ['staff-customer', id],
+    queryKey: ["staff-customer", id],
     queryFn: () => customerApi.get(id),
   });
 
   // Fetch customer wallet balance
   const { data: wallet, isLoading: walletLoading } = useQuery({
-    queryKey: ['staff-customer-wallet', id],
+    queryKey: ["staff-customer-wallet", id],
     queryFn: () => customerApi.getWallet(id),
   });
 
   // Fetch deposits
   const { data: depositsData } = useQuery({
-    queryKey: ['staff-customer-deposits', id],
+    queryKey: ["staff-customer-deposits", id],
     queryFn: () => depositApi.list({ customer_id: id }),
   });
 
   // Fetch withdrawals
   const { data: withdrawalsData } = useQuery({
-    queryKey: ['staff-customer-withdrawals', id],
+    queryKey: ["staff-customer-withdrawals", id],
     queryFn: () => withdrawalApi.list({ customer_id: id }),
   });
 
@@ -84,69 +97,90 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
 
   // Deposit Mutation
   const depositMutation = useMutation({
-    mutationFn: async (vars: { amount: number; phone: string; method: string }) => {
+    mutationFn: async (vars: {
+      amount: number;
+      phone: string;
+      method: string;
+    }) => {
       // 1. Initiate deposit
       const res = await depositApi.initiate({
         amount: vars.amount,
         paymentMethod: vars.method,
         customerId: id,
-        payerPhone: vars.phone || customer?.user?.phone || '+233241234567',
+        payerPhone: vars.phone || customer?.user?.phone || "+233241234567",
         idempotencyKey: `staff_dep_${id}_${Date.now()}`,
       });
 
       // 2. If dev environment, immediately auto-confirm mock payment to update balance
       // If paymentMethod is cash or momo, we hit the mock confirm webhook
       await fetch(`/api/v1/webhooks/mock/confirm/${res.reference}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reference: res.reference, amount: vars.amount }),
       }).catch(() => {});
 
       return res;
     },
     onSuccess: () => {
-      setFormSuccess('Deposit successfully recorded and credited!');
-      setDepositAmount('');
-      setDepositPhone('');
-      queryClient.invalidateQueries({ queryKey: ['staff-customer-wallet', id] });
-      queryClient.invalidateQueries({ queryKey: ['staff-customer-deposits', id] });
-      setTimeout(() => setFormSuccess(''), 4000);
+      setFormSuccess("Deposit successfully recorded and credited!");
+      setDepositAmount("");
+      setDepositPhone("");
+      queryClient.invalidateQueries({
+        queryKey: ["staff-customer-wallet", id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["staff-customer-deposits", id],
+      });
+      setTimeout(() => setFormSuccess(""), 4000);
     },
     onError: (err) => {
-      setFormError(err instanceof Error ? err.message : 'Failed to record deposit');
+      setFormError(
+        err instanceof Error ? err.message : "Failed to record deposit",
+      );
     },
   });
 
   // Withdrawal Mutation
   const withdrawMutation = useMutation({
-    mutationFn: async (vars: { amount: number; phone: string; method: string }) => {
+    mutationFn: async (vars: {
+      amount: number;
+      phone: string;
+      method: string;
+    }) => {
       return withdrawalApi.create({
         customerId: id,
         amount: vars.amount,
         disbursementMethod: vars.method,
-        disbursementPhone: vars.phone || customer?.user?.phone || '+233241234567',
+        disbursementPhone:
+          vars.phone || customer?.user?.phone || "+233241234567",
       });
     },
     onSuccess: () => {
-      setFormSuccess('Withdrawal successfully processed and debited!');
-      setWithdrawAmount('');
-      setWithdrawPhone('');
-      queryClient.invalidateQueries({ queryKey: ['staff-customer-wallet', id] });
-      queryClient.invalidateQueries({ queryKey: ['staff-customer-withdrawals', id] });
-      setTimeout(() => setFormSuccess(''), 4000);
+      setFormSuccess("Withdrawal successfully processed and debited!");
+      setWithdrawAmount("");
+      setWithdrawPhone("");
+      queryClient.invalidateQueries({
+        queryKey: ["staff-customer-wallet", id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["staff-customer-withdrawals", id],
+      });
+      setTimeout(() => setFormSuccess(""), 4000);
     },
     onError: (err) => {
-      setFormError(err instanceof Error ? err.message : 'Failed to record withdrawal');
+      setFormError(
+        err instanceof Error ? err.message : "Failed to record withdrawal",
+      );
     },
   });
 
   const handleDepositSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setFormError('');
-    setFormSuccess('');
+    setFormError("");
+    setFormSuccess("");
     const amt = parseFloat(depositAmount);
     if (isNaN(amt) || amt <= 0) {
-      setFormError('Please enter a valid positive amount.');
+      setFormError("Please enter a valid positive amount.");
       return;
     }
     depositMutation.mutate({
@@ -158,15 +192,17 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
 
   const handleWithdrawSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setFormError('');
-    setFormSuccess('');
+    setFormError("");
+    setFormSuccess("");
     const amt = parseFloat(withdrawAmount);
     if (isNaN(amt) || amt <= 0) {
-      setFormError('Please enter a valid positive amount.');
+      setFormError("Please enter a valid positive amount.");
       return;
     }
     if (wallet && wallet.balance < amt) {
-      setFormError(`Insufficient funds. Wallet balance is GHS ${wallet.balance.toFixed(2)}`);
+      setFormError(
+        `Insufficient funds. Wallet balance is GHS ${wallet.balance.toFixed(2)}`,
+      );
       return;
     }
     withdrawMutation.mutate({
@@ -178,22 +214,31 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
 
   const handleExportLedgerCsv = () => {
     if (!customer) return;
-    const headers = ['Date', 'Reference', 'Transaction Type', 'Amount (GHS)', 'Status'];
+    const headers = [
+      "Date",
+      "Reference",
+      "Transaction Type",
+      "Amount (GHS)",
+      "Status",
+    ];
     const rows = allTransactions.map((t) => [
       new Date(t.createdAt).toLocaleDateString(),
       t.reference,
       t.type,
-      t.type === 'deposit' ? `+${t.amount}` : `-${t.amount}`,
+      t.type === "deposit" ? `+${t.amount}` : `-${t.amount}`,
       t.status,
     ]);
 
     const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `customer_ledger_${customer.customerNumber}_${Date.now()}.csv`);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute(
+      "download",
+      `customer_ledger_${customer.customerNumber}_${Date.now()}.csv`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -208,7 +253,10 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
       <div className="py-12 text-center text-muted-foreground">
         <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-2" />
         <p>Customer profile not found.</p>
-        <Link href="/staff/customers" className="text-primary hover:underline mt-2 inline-block">
+        <Link
+          href="/staff/customers"
+          className="text-primary hover:underline mt-2 inline-block"
+        >
           Back to Customers
         </Link>
       </div>
@@ -232,16 +280,25 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-2">
           <CardContent className="p-6 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary font-bold text-xl">
-              {getInitials(customer.user?.firstName, customer.user?.lastName)}
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-primary font-bold text-xl border border-primary/20">
+              {customer.user?.avatarUrl ? (
+                <img
+                  src={customer.user.avatarUrl}
+                  alt={`${customer.user?.firstName || "Customer"} Avatar`}
+                  className="size-full object-cover"
+                />
+              ) : (
+                getInitials(customer.user?.firstName, customer.user?.lastName)
+              )}
             </div>
             <div className="space-y-1 flex-1 min-w-0">
               <div className="flex items-center gap-2.5 flex-wrap">
                 <h2 className="text-xl font-bold text-foreground">
-                  {customer.user?.firstName || 'Pending'} {customer.user?.lastName || 'Onboarding'}
+                  {customer.user?.firstName || "Pending"}{" "}
+                  {customer.user?.lastName || "Onboarding"}
                 </h2>
                 <StatusBadge status={customer.status} />
-                {customer.status === 'pending' && (
+                {customer.status === "pending" && (
                   <Button
                     size="sm"
                     onClick={handleActivate}
@@ -252,23 +309,33 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                   </Button>
                 )}
               </div>
-              <p className="text-sm font-mono text-muted-foreground">{customer.customerNumber}</p>
+              <p className="text-sm font-mono text-muted-foreground">
+                {customer.customerNumber}
+              </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 pt-2 text-sm">
                 <div>
-                  <span className="text-muted-foreground">Phone:</span>{' '}
-                  <span className="font-medium text-foreground">{customer.user?.phone || 'N/A'}</span>
+                  <span className="text-muted-foreground">Phone:</span>{" "}
+                  <span className="font-medium text-foreground">
+                    {customer.user?.phone || "N/A"}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Email:</span>{' '}
-                  <span className="font-medium text-foreground">{customer.user?.email || 'N/A'}</span>
+                  <span className="text-muted-foreground">Email:</span>{" "}
+                  <span className="font-medium text-foreground">
+                    {customer.user?.email || "N/A"}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">KYC Level:</span>{' '}
-                  <span className="font-medium text-foreground">Level {customer.kycLevel}</span>
+                  <span className="text-muted-foreground">KYC Level:</span>{" "}
+                  <span className="font-medium text-foreground">
+                    Level {customer.kycLevel}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Ghana Card:</span>{' '}
-                  <span className="font-medium text-foreground">{customer.ghanaCardNumber || 'Not verified'}</span>
+                  <span className="text-muted-foreground">Ghana Card:</span>{" "}
+                  <span className="font-medium text-foreground">
+                    {customer.ghanaCardNumber || "Not verified"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -279,13 +346,16 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
         <Card className="bg-gradient-to-br from-brand-dark via-primary-800 to-secondary text-primary-foreground border-0 shadow-elevated">
           <CardContent className="p-6 flex flex-col justify-between h-full min-h-[140px]">
             <div>
-              <p className="text-sm font-medium text-slate-300">Savings Wallet Balance</p>
+              <p className="text-sm font-medium text-slate-300">
+                Savings Wallet Balance
+              </p>
               <div className="mt-2 text-3xl font-bold">
-                {walletLoading ? '...' : formatGhs(wallet?.balance || 0)}
+                {walletLoading ? "..." : formatGhs(wallet?.balance || 0)}
               </div>
             </div>
             <div className="text-xs text-slate-300 font-mono mt-4">
-              Wallet ID: {wallet?.walletId ? `${wallet.walletId.slice(0, 8)}...` : 'N/A'}
+              Wallet ID:{" "}
+              {wallet?.walletId ? `${wallet.walletId.slice(0, 8)}...` : "N/A"}
             </div>
           </CardContent>
         </Card>
@@ -293,16 +363,18 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
 
       {/* Tabs Menu */}
       <div className="flex border-b border-border gap-6">
-        {(['overview', 'deposit', 'withdraw'] as const).map((t) => (
+        {(["overview", "deposit", "withdraw"] as const).map((t) => (
           <button
             key={t}
             onClick={() => {
               setActiveTab(t);
-              setFormError('');
-              setFormSuccess('');
+              setFormError("");
+              setFormSuccess("");
             }}
             className={`pb-3 text-sm font-semibold capitalize relative transition-colors ${
-              activeTab === t ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+              activeTab === t
+                ? "text-primary"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             {t}
@@ -328,12 +400,16 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
       ) : null}
 
       {/* Tab Contents */}
-      {activeTab === 'overview' && (
+      {activeTab === "overview" && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
             <div>
-              <CardTitle className="text-base font-semibold">Account History</CardTitle>
-              <p className="text-sm text-muted-foreground">Recent deposits and withdrawals for this account</p>
+              <CardTitle className="text-base font-semibold">
+                Account History
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Recent deposits and withdrawals for this account
+              </p>
             </div>
             <Button
               size="sm"
@@ -347,11 +423,16 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
           </CardHeader>
           <CardContent className="divide-y divide-gray-100 dark:divide-border/40 p-0">
             {allTransactions.length === 0 ? (
-              <p className="text-center py-12 text-muted-foreground text-sm">No transactions on record</p>
+              <p className="text-center py-12 text-muted-foreground text-sm">
+                No transactions on record
+              </p>
             ) : (
               allTransactions.map((t) => {
-                const isDeposit = t.type === 'deposit';
-                const amt = typeof t.amount === 'string' ? parseFloat(t.amount) : t.amount;
+                const isDeposit = t.type === "deposit";
+                const amt =
+                  typeof t.amount === "string"
+                    ? parseFloat(t.amount)
+                    : t.amount;
                 return (
                   <div
                     key={t.id}
@@ -363,20 +444,35 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                   >
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                        isDeposit ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'
+                        isDeposit
+                          ? "bg-emerald-100 text-emerald-600"
+                          : "bg-red-100 text-red-600"
                       }`}
                     >
-                      {isDeposit ? <ArrowDownLeft className="h-5 w-5" /> : <ArrowUpRight className="h-5 w-5" />}
+                      {isDeposit ? (
+                        <ArrowDownLeft className="h-5 w-5" />
+                      ) : (
+                        <ArrowUpRight className="h-5 w-5" />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm text-foreground capitalize">{t.type}</p>
-                      <p className="text-xs text-muted-foreground">{formatDate(t.createdAt)}</p>
+                      <p className="font-semibold text-sm text-foreground capitalize">
+                        {t.type}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDate(t.createdAt)}
+                      </p>
                     </div>
                     <div className="text-right">
-                      <p className={`font-bold text-sm ${isDeposit ? 'text-emerald-600' : 'text-red-600'}`}>
-                        {isDeposit ? '+' : '-'}{formatGhs(amt)}
+                      <p
+                        className={`font-bold text-sm ${isDeposit ? "text-emerald-600" : "text-red-600"}`}
+                      >
+                        {isDeposit ? "+" : "-"}
+                        {formatGhs(amt)}
                       </p>
-                      <span className="text-[10px] text-muted-foreground uppercase font-semibold">{t.reference}</span>
+                      <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                        {t.reference}
+                      </span>
                     </div>
                   </div>
                 );
@@ -386,11 +482,16 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
         </Card>
       )}
 
-      {activeTab === 'deposit' && (
+      {activeTab === "deposit" && (
         <Card className="max-w-xl">
           <CardHeader>
-            <CardTitle className="text-base font-semibold">Record Deposit</CardTitle>
-            <p className="text-sm text-muted-foreground">Initiate and credit a payment (Cash or MoMo) directly to this wallet.</p>
+            <CardTitle className="text-base font-semibold">
+              Record Deposit
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Initiate and credit a payment (Cash or MoMo) directly to this
+              wallet.
+            </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleDepositSubmit} className="space-y-4">
@@ -405,12 +506,14 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
               />
 
               <div className="space-y-2">
-                <span className="text-sm font-semibold text-muted-foreground">Payment Mode *</span>
+                <span className="text-sm font-semibold text-muted-foreground">
+                  Payment Mode *
+                </span>
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { id: 'cash', label: 'Physical Cash' },
-                    { id: 'mtn_momo', label: 'MTN MoMo' },
-                    { id: 'telecel_cash', label: 'Telecel Cash' },
+                    { id: "cash", label: "Physical Cash" },
+                    { id: "mtn_momo", label: "MTN MoMo" },
+                    { id: "telecel_cash", label: "Telecel Cash" },
                   ].map((m) => (
                     <button
                       key={m.id}
@@ -418,8 +521,8 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                       onClick={() => setDepositMethod(m.id)}
                       className={`py-2.5 px-3 text-xs font-semibold rounded-lg border transition-colors ${
                         depositMethod === m.id
-                          ? 'border-primary bg-primary-100 text-primary'
-                          : 'border-border bg-card text-muted-foreground hover:text-foreground'
+                          ? "border-primary bg-primary-100 text-primary"
+                          : "border-border bg-card text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {m.label}
@@ -428,7 +531,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                 </div>
               </div>
 
-              {depositMethod !== 'cash' ? (
+              {depositMethod !== "cash" ? (
                 <Input
                   label="MoMo Payer Number *"
                   type="tel"
@@ -452,11 +555,15 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
         </Card>
       )}
 
-      {activeTab === 'withdraw' && (
+      {activeTab === "withdraw" && (
         <Card className="max-w-xl">
           <CardHeader>
-            <CardTitle className="text-base font-semibold">Process Withdrawal</CardTitle>
-            <p className="text-sm text-muted-foreground">Debit customer savings balance and pay out (via Cash or MoMo).</p>
+            <CardTitle className="text-base font-semibold">
+              Process Withdrawal
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Debit customer savings balance and pay out (via Cash or MoMo).
+            </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleWithdrawSubmit} className="space-y-4">
@@ -471,12 +578,14 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
               />
 
               <div className="space-y-2">
-                <span className="text-sm font-semibold text-muted-foreground">Disbursement Method *</span>
+                <span className="text-sm font-semibold text-muted-foreground">
+                  Disbursement Method *
+                </span>
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { id: 'cash', label: 'Cash Out' },
-                    { id: 'mtn_momo', label: 'MTN MoMo' },
-                    { id: 'telecel_cash', label: 'Telecel Cash' },
+                    { id: "cash", label: "Cash Out" },
+                    { id: "mtn_momo", label: "MTN MoMo" },
+                    { id: "telecel_cash", label: "Telecel Cash" },
                   ].map((m) => (
                     <button
                       key={m.id}
@@ -484,8 +593,8 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                       onClick={() => setWithdrawMethod(m.id)}
                       className={`py-2.5 px-3 text-xs font-semibold rounded-lg border transition-colors ${
                         withdrawMethod === m.id
-                          ? 'border-primary bg-primary-100 text-primary'
-                          : 'border-border bg-card text-muted-foreground hover:text-foreground'
+                          ? "border-primary bg-primary-100 text-primary"
+                          : "border-border bg-card text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {m.label}
@@ -494,7 +603,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                 </div>
               </div>
 
-              {withdrawMethod !== 'cash' ? (
+              {withdrawMethod !== "cash" ? (
                 <Input
                   label="MoMo Payee Number *"
                   type="tel"
@@ -519,7 +628,11 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
       )}
 
       {/* Receipt Modal */}
-      <ReceiptModal transaction={selectedTxn} open={receiptOpen} onClose={() => setReceiptOpen(false)} />
+      <ReceiptModal
+        transaction={selectedTxn}
+        open={receiptOpen}
+        onClose={() => setReceiptOpen(false)}
+      />
     </div>
   );
 }

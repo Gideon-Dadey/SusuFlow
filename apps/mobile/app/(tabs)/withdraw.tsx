@@ -11,7 +11,6 @@ import {
 } from "@/components/layout/TabScreen";
 import { ProfileRow } from "@/components/profile/ProfileSections";
 import type { AppIconName } from "@/components/icons/AppIcon";
-import { useRefreshFinancialsOnFocus } from "@/hooks/useRefreshFinancialsOnFocus";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
 import { withdrawalApi } from "@/lib/api";
 import { fetchCustomerWallet } from "@/lib/customer-wallet";
@@ -38,9 +37,7 @@ export default function WithdrawScreen() {
 
   const { sessionKey } = useCustomerSession();
 
-  useRefreshFinancialsOnFocus(sessionKey);
-
-  const { data: wallet, isLoading: walletLoading } = useQuery({
+  const { data: wallet, isPending: walletPending } = useQuery({
     queryKey: sessionKey
       ? queryKeys.wallet(sessionKey.userId, sessionKey.customerId)
       : ["wallet", "inactive"],
@@ -83,7 +80,7 @@ export default function WithdrawScreen() {
     <TabScreenLayout header={<TabScreenHeader title="Withdraw" />}>
       <TabScreenSection title="Available balance">
         <View style={styles.balanceWrap}>
-          {walletLoading ? (
+          {walletPending && wallet === undefined ? (
             <Text
               style={[styles.balanceLabel, { color: colors.mutedForeground }]}
             >

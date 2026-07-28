@@ -1,20 +1,26 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { BrandLockup } from '@/components/marketing/brand-logo';
-import { NAV_LINKS } from '@/lib/marketing-data';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BrandLockup } from "@/components/marketing/brand-logo";
+import { NAV_LINKS } from "@/lib/marketing-data";
+import { cn } from "@/lib/utils";
 
-const LIGHT_HERO_PATHS = ['/', '/how-it-works', '/pricing', '/about', '/contact'] as const;
+const LIGHT_HERO_PATHS = [
+  "/",
+  "/how-it-works",
+  "/pricing",
+  "/about",
+  "/contact",
+] as const;
 
 function hasLightHero(pathname: string) {
   return LIGHT_HERO_PATHS.some((path) =>
-    path === '/' ? pathname === '/' : pathname.startsWith(path),
+    path === "/" ? pathname === "/" : pathname.startsWith(path),
   );
 }
 const TOP_THRESHOLD = 24;
@@ -25,20 +31,20 @@ function MenuIcon({ open }: { open: boolean }) {
     <span className="relative block h-5 w-[18px]" aria-hidden>
       <span
         className={cn(
-          'absolute left-0 top-1 h-0.5 w-full rounded-full bg-current transition-all duration-200',
-          open && 'top-[9px] rotate-45',
+          "absolute left-0 top-1 h-0.5 w-full rounded-full bg-current transition-all duration-200",
+          open && "top-[9px] rotate-45",
         )}
       />
       <span
         className={cn(
-          'absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 rounded-full bg-current transition-opacity duration-200',
-          open && 'opacity-0',
+          "absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 rounded-full bg-current transition-opacity duration-200",
+          open && "opacity-0",
         )}
       />
       <span
         className={cn(
-          'absolute bottom-1 left-0 h-0.5 w-full rounded-full bg-current transition-all duration-200',
-          open && 'bottom-[9px] -rotate-45',
+          "absolute bottom-1 left-0 h-0.5 w-full rounded-full bg-current transition-all duration-200",
+          open && "bottom-[9px] -rotate-45",
         )}
       />
     </span>
@@ -75,8 +81,8 @@ export function MarketingNavbar() {
     };
 
     onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -84,9 +90,9 @@ export function MarketingNavbar() {
   }, [pathname]);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [menuOpen]);
 
@@ -98,21 +104,24 @@ export function MarketingNavbar() {
     <>
       <header
         className={cn(
-          'marketing-header-gap pointer-events-none fixed inset-x-0 top-0 z-[200]',
-          'transition-[transform,opacity] duration-300 ease-out',
-          !showBar && '-translate-y-[calc(100%+1rem)] opacity-0',
+          "marketing-header-gap pointer-events-none fixed inset-x-0 top-0 z-[200]",
+          "transition-[transform,opacity] duration-300 ease-out",
+          !showBar && "-translate-y-[calc(100%+1rem)] opacity-0",
         )}
       >
         <div className="marketing-container pointer-events-auto">
           <div
             className={cn(
-              'marketing-nav-bar relative flex h-14 items-center justify-between gap-3 sm:h-[3.75rem]',
-              spread ? 'px-0' : 'marketing-nav-pill px-4 sm:px-6 lg:px-8',
-              !spread && showBar && !menuOpen && 'marketing-nav-pill--active',
-              menuOpen && 'z-[201]',
+              "marketing-nav-bar relative flex h-14 items-center justify-between gap-3 sm:h-[3.75rem]",
+              spread ? "px-0" : "marketing-nav-pill px-4 sm:px-6 lg:px-8",
+              !spread && showBar && !menuOpen && "marketing-nav-pill--active",
+              menuOpen && "z-[201]",
             )}
           >
-            <Link href="/" className="relative z-10 flex min-w-0 shrink-0 items-center">
+            <Link
+              href="/"
+              className="relative z-10 flex min-w-0 shrink-0 items-center"
+            >
               <BrandLockup priority onDark={onDarkNav} />
             </Link>
 
@@ -121,24 +130,25 @@ export function MarketingNavbar() {
               aria-label="Main"
             >
               {NAV_LINKS.map(({ href, label }) => {
-                const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
+                const active =
+                  href === "/" ? pathname === "/" : pathname.startsWith(href);
                 return (
                   <Link
                     key={href}
                     href={href}
                     className={cn(
-                      'rounded-full px-3.5 py-2 text-sm font-medium transition-colors',
+                      "px-3.5 py-2 text-[18px] font-normal leading-[30.6px] transition-colors",
                       spread
                         ? onDarkNav
                           ? active
-                            ? 'text-white'
-                            : 'text-white/75 hover:bg-white/10 hover:text-white'
+                            ? "text-white font-medium"
+                            : "text-white/75 hover:bg-white/10 hover:text-white"
                           : active
-                            ? 'text-foreground'
-                            : 'text-muted-foreground hover:text-foreground'
+                            ? "text-foreground font-medium"
+                            : "text-muted-foreground hover:text-foreground"
                         : active
-                          ? 'text-secondary'
-                          : 'text-muted-foreground hover:text-foreground',
+                          ? "text-secondary font-medium"
+                          : "text-muted-foreground hover:text-foreground",
                     )}
                   >
                     {label}
@@ -151,12 +161,12 @@ export function MarketingNavbar() {
               <Link
                 href="/login"
                 className={cn(
-                  'inline-flex px-1 py-2 text-sm font-medium transition-colors lg:hidden',
+                  "inline-flex px-1 py-2 text-[18px] font-normal leading-[30.6px] transition-colors lg:hidden",
                   spread
                     ? onDarkNav
-                      ? 'text-white/90 hover:text-white'
-                      : 'text-muted-foreground hover:text-foreground'
-                    : 'text-muted-foreground hover:text-foreground',
+                      ? "text-white/90 hover:text-white"
+                      : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 Sign in
@@ -164,12 +174,12 @@ export function MarketingNavbar() {
               <Link
                 href="/login"
                 className={cn(
-                  'hidden rounded-full px-3 py-2 text-sm font-medium transition-colors lg:inline-flex',
+                  "hidden px-3 py-2 text-[18px] font-normal leading-[30.6px] transition-colors lg:inline-flex",
                   spread
                     ? onDarkNav
-                      ? 'text-white/90 hover:bg-white/10 hover:text-white'
-                      : 'text-muted-foreground hover:text-foreground'
-                    : 'text-muted-foreground hover:text-foreground',
+                      ? "text-white/90 hover:bg-white/10 hover:text-white"
+                      : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 Sign in
@@ -178,12 +188,12 @@ export function MarketingNavbar() {
                 <Button
                   size="sm"
                   className={cn(
-                    'h-10 rounded-full px-4 text-sm font-semibold',
+                    "h-10 rounded-none px-4 text-[15px] font-bold",
                     spread
                       ? onDarkNav
-                        ? 'border-0 bg-white text-brand-dark shadow-lg hover:bg-white/95'
-                        : 'shadow-[0_6px_18px_rgba(34,197,94,0.28)]'
-                      : 'shadow-[0_6px_18px_rgba(34,197,94,0.28)]',
+                        ? "border-0 bg-white text-brand-dark shadow-lg hover:bg-white/95"
+                        : "shadow-[0_6px_18px_rgba(34,197,94,0.28)]"
+                      : "shadow-[0_6px_18px_rgba(34,197,94,0.28)]",
                   )}
                 >
                   Get started
@@ -193,12 +203,12 @@ export function MarketingNavbar() {
               <button
                 type="button"
                 className={cn(
-                  'inline-flex size-11 items-center justify-center rounded-lg transition-colors lg:hidden',
+                  "inline-flex size-11 items-center justify-center rounded-none transition-colors lg:hidden",
                   spread && onDarkNav
-                    ? 'text-white hover:text-white/90'
-                    : 'text-foreground hover:text-foreground/80',
+                    ? "text-white hover:text-white/90"
+                    : "text-foreground hover:text-foreground/80",
                 )}
-                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={menuOpen}
                 onClick={() => setMenuOpen((o) => !o)}
               >
@@ -214,19 +224,20 @@ export function MarketingNavbar() {
             <div
               id="mobile-nav"
               className="fixed inset-x-0 bottom-0 z-[190] bg-white dark:bg-background lg:hidden"
-              style={{ top: 'var(--marketing-header-height, 4.5rem)' }}
+              style={{ top: "var(--marketing-header-height, 4.5rem)" }}
             >
               <nav className="h-full overflow-y-auto" aria-label="Mobile">
                 {NAV_LINKS.map(({ href, label }, index) => {
-                  const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
+                  const active =
+                    href === "/" ? pathname === "/" : pathname.startsWith(href);
                   return (
                     <Link
                       key={href}
                       href={href}
                       className={cn(
-                        'flex items-center px-6 py-4 text-base font-bold text-foreground transition-colors hover:bg-muted/40',
-                        index > 0 && 'border-t border-border',
-                        active && 'text-secondary',
+                        "flex items-center px-6 py-4 text-[18px] font-bold text-foreground transition-colors hover:bg-muted/40",
+                        index > 0 && "border-t border-border",
+                        active && "text-secondary",
                       )}
                       onClick={() => setMenuOpen(false)}
                     >
@@ -237,7 +248,7 @@ export function MarketingNavbar() {
 
                 <div className="border-t border-border px-6 py-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
                   <Link href="/register" onClick={() => setMenuOpen(false)}>
-                    <Button className="h-12 w-full rounded-lg text-sm font-semibold shadow-[0_4px_14px_rgba(34,197,94,0.25)]">
+                    <Button className="h-12 w-full rounded-none text-[15px] font-bold shadow-[0_4px_14px_rgba(34,197,94,0.25)]">
                       Get started
                       <ArrowRight className="size-4" aria-hidden />
                     </Button>

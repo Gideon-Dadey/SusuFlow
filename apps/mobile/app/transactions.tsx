@@ -3,10 +3,12 @@ import { StyleSheet, Text } from "react-native";
 import { TransactionRow } from "@/components/TransactionRow";
 import { SettingsDetailLayout } from "@/components/settings/SettingsDetailLayout";
 import { TransactionListSkeleton } from "@/components/ui/Skeleton";
-import { useRefreshFinancialsOnFocus } from "@/hooks/useRefreshFinancialsOnFocus";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
-import { depositApi, withdrawalApi } from "@/lib/api";
-import { financialQueryOptions } from "@/lib/financial-queries";
+import {
+  fetchCustomerDeposits,
+  fetchCustomerWithdrawals,
+  financialQueryOptions,
+} from "@/lib/financial-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { useTheme } from "@/theme/ThemeProvider";
 import { typography } from "@/theme/tokens";
@@ -16,22 +18,20 @@ export default function TransactionsScreen() {
 
   const { sessionKey } = useCustomerSession();
 
-  useRefreshFinancialsOnFocus(sessionKey);
-
-  const { data: deposits, isLoading: dLoading } = useQuery({
+  const { data: deposits, isPending: depositsPending } = useQuery({
     queryKey: sessionKey
       ? queryKeys.deposits(sessionKey.userId, sessionKey.customerId)
       : ["deposits", "inactive"],
-    queryFn: () => depositApi.list({ customer_id: sessionKey!.customerId }),
+    queryFn: () => fetchCustomerDeposits(sessionKey!.customerId),
     enabled: !!sessionKey,
     ...financialQueryOptions,
   });
 
-  const { data: withdrawals, isLoading: wLoading } = useQuery({
+  const { data: withdrawals, isPending: withdrawalsPending } = useQuery({
     queryKey: sessionKey
       ? queryKeys.withdrawals(sessionKey.userId, sessionKey.customerId)
       : ["withdrawals", "inactive"],
-    queryFn: () => withdrawalApi.list({ customer_id: sessionKey!.customerId }),
+    queryFn: () => fetchCustomerWithdrawals(sessionKey!.customerId),
     enabled: !!sessionKey,
     ...financialQueryOptions,
   });
@@ -43,11 +43,14 @@ export default function TransactionsScreen() {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 
-  const isLoading = dLoading || wLoading || !sessionKey;
+  const showSkeleton =
+    !sessionKey ||
+    (depositsPending && deposits === undefined) ||
+    (withdrawalsPending && withdrawals === undefined);
 
   return (
     <SettingsDetailLayout title="Transaction History">
-      {isLoading ? (
+      {showSkeleton ? (
         <TransactionListSkeleton rows={8} />
       ) : transactions.length === 0 ? (
         <Text style={[styles.empty, { color: colors.mutedForeground }]}>

@@ -21,11 +21,13 @@ import {
   TabScreenHeader,
 } from "@/components/layout/TabScreen";
 import { ActivityScreenSkeleton } from "@/components/ui/Skeleton";
-import { useRefreshFinancialsOnFocus } from "@/hooks/useRefreshFinancialsOnFocus";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
 import type { Transaction } from "@/lib/api";
-import { depositApi, withdrawalApi } from "@/lib/api";
-import { financialQueryOptions } from "@/lib/financial-queries";
+import {
+  fetchCustomerDeposits,
+  fetchCustomerWithdrawals,
+  financialQueryOptions,
+} from "@/lib/financial-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { spacing } from "@/theme/tokens";
 
@@ -37,22 +39,20 @@ export default function ActivityScreen() {
 
   const { sessionKey } = useCustomerSession();
 
-  useRefreshFinancialsOnFocus(sessionKey);
-
-  const { data: deposits, isLoading: dLoading } = useQuery({
+  const { data: deposits, isPending: depositsPending } = useQuery({
     queryKey: sessionKey
       ? queryKeys.deposits(sessionKey.userId, sessionKey.customerId)
       : ["deposits", "inactive"],
-    queryFn: () => depositApi.list({ customer_id: sessionKey!.customerId }),
+    queryFn: () => fetchCustomerDeposits(sessionKey!.customerId),
     enabled: !!sessionKey,
     ...financialQueryOptions,
   });
 
-  const { data: withdrawals, isLoading: wLoading } = useQuery({
+  const { data: withdrawals, isPending: withdrawalsPending } = useQuery({
     queryKey: sessionKey
       ? queryKeys.withdrawals(sessionKey.userId, sessionKey.customerId)
       : ["withdrawals", "inactive"],
-    queryFn: () => withdrawalApi.list({ customer_id: sessionKey!.customerId }),
+    queryFn: () => fetchCustomerWithdrawals(sessionKey!.customerId),
     enabled: !!sessionKey,
     ...financialQueryOptions,
   });
@@ -92,7 +92,9 @@ export default function ActivityScreen() {
     return filtered.filter((t) => !attentionIds.has(t.id));
   }, [filtered, attentionItems]);
 
-  const isLoading = dLoading || wLoading;
+  const showSkeleton =
+    (depositsPending && deposits === undefined) ||
+    (withdrawalsPending && withdrawals === undefined);
 
   const openReceipt = (transaction: Transaction) => {
     setSelectedTxn(transaction);
@@ -109,7 +111,7 @@ export default function ActivityScreen() {
   return (
     <>
       <TabScreenLayout header={<TabScreenHeader title="Activity" />}>
-        {isLoading ? (
+        {showSkeleton ? (
           <ActivityScreenSkeleton />
         ) : !hasAnyTransactions ? (
           <ActivityEmptyState filter="all" />

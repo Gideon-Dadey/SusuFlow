@@ -7,16 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { tenantApi, userApi } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth.store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  Loader2,
-  CheckCircle,
-  AlertCircle,
-  Sparkles,
-  Sliders,
-  ShieldCheck,
-  User,
-  Lock,
-} from "lucide-react";
+  faUser,
+  faLock,
+  faWandMagicSparkles,
+  faSliders,
+  faShieldHalved,
+  faSpinner,
+  faCircleCheck,
+  faCircleExclamation,
+} from "@fortawesome/free-solid-svg-icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MIN_PASSWORD_LENGTH } from "@susuflow/shared";
 
@@ -241,14 +242,50 @@ export default function StaffSettingsPage() {
   const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        setErrorMessage("Logo image must be smaller than 2MB.");
+      if (file.size > 5 * 1024 * 1024) {
+        setErrorMessage("Logo image must be smaller than 5MB.");
         return;
       }
       const reader = new FileReader();
       reader.onloadend = () => {
-        setLogoUrl(reader.result as string);
-        setErrorMessage("");
+        const rawResult = reader.result as string;
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const maxDim = 400;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressed = canvas.toDataURL("image/png", 0.9);
+            setLogoUrl(compressed);
+            setErrorMessage("");
+          } else {
+            setLogoUrl(rawResult);
+            setErrorMessage("");
+          }
+        };
+        img.onerror = () => {
+          setLogoUrl(rawResult);
+          setErrorMessage("");
+        };
+        img.src = rawResult;
       };
       reader.readAsDataURL(file);
     }
@@ -271,7 +308,7 @@ export default function StaffSettingsPage() {
       name,
       email,
       phone,
-      logoUrl: logoUrl || null,
+      logoUrl: logoUrl ? logoUrl : null,
       primaryColor,
       settings: tenant?.settings || {},
     });
@@ -365,19 +402,19 @@ export default function StaffSettingsPage() {
     return (
       <div className="space-y-6 max-w-6xl">
         <div>
-          <Skeleton className="h-8 w-48 rounded" />
-          <Skeleton className="h-4 w-72 rounded mt-2" />
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-72 mt-2" />
         </div>
 
         <div className="flex flex-col md:flex-row gap-6 animate-pulse">
           {/* Navigation Sidebar Skeleton */}
           <div className="w-full md:w-64 shrink-0 flex flex-row md:flex-col gap-1.5 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
-            <Skeleton className="h-11 w-full rounded-lg" />
+            <Skeleton className="h-11 w-full" />
             {isCompanyAdmin && (
               <>
-                <Skeleton className="h-11 w-full rounded-lg" />
-                <Skeleton className="h-11 w-full rounded-lg" />
-                <Skeleton className="h-11 w-full rounded-lg" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-11 w-full" />
               </>
             )}
           </div>
@@ -385,20 +422,20 @@ export default function StaffSettingsPage() {
           {/* Content Panel Skeleton */}
           <div className="flex-1 space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-4 rounded-xl border border-border/50 bg-card p-6">
-                <Skeleton className="h-6 w-32 rounded animate-pulse" />
-                <Skeleton className="h-11 w-full rounded-lg" />
-                <Skeleton className="h-11 w-full rounded-lg" />
-                <Skeleton className="h-11 w-full rounded-lg" />
-                <Skeleton className="h-11 w-full rounded-lg" />
-                <Skeleton className="h-11 w-full rounded-lg" />
+              <div className="space-y-4 border border-border/50 bg-card p-6">
+                <Skeleton className="h-6 w-32 animate-pulse" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-11 w-full" />
               </div>
-              <div className="space-y-4 rounded-xl border border-border/50 bg-card p-6">
-                <Skeleton className="h-6 w-32 rounded animate-pulse" />
-                <Skeleton className="h-11 w-full rounded-lg" />
-                <Skeleton className="h-11 w-full rounded-lg" />
-                <Skeleton className="h-11 w-full rounded-lg" />
-                <Skeleton className="h-11 w-full rounded-lg" />
+              <div className="space-y-4 border border-border/50 bg-card p-6">
+                <Skeleton className="h-6 w-32 animate-pulse" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-11 w-full" />
               </div>
             </div>
           </div>
@@ -418,48 +455,51 @@ export default function StaffSettingsPage() {
         <div className="w-full md:w-64 shrink-0 flex flex-row md:flex-col gap-1.5 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
           <button
             onClick={() => handleTabChange("profile")}
-            className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
+            className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
               activeTab === "profile"
                 ? "bg-primary text-white font-bold"
                 : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
             }`}
           >
-            <User className="h-4 w-4" />
+            <FontAwesomeIcon icon={faUser} className="h-4 w-4" />
             My Profile
           </button>
           {isCompanyAdmin && (
             <>
               <button
                 onClick={() => handleTabChange("branding")}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
                   activeTab === "branding"
                     ? "bg-primary text-white font-bold"
                     : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
                 }`}
               >
-                <Sparkles className="h-4 w-4" />
+                <FontAwesomeIcon
+                  icon={faWandMagicSparkles}
+                  className="h-4 w-4"
+                />
                 Branding & Company
               </button>
               <button
                 onClick={() => handleTabChange("operations")}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
                   activeTab === "operations"
                     ? "bg-primary text-white font-bold"
                     : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
                 }`}
               >
-                <Sliders className="h-4 w-4" />
+                <FontAwesomeIcon icon={faSliders} className="h-4 w-4" />
                 Operations & Limits
               </button>
               <button
                 onClick={() => handleTabChange("commissions")}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
                   activeTab === "commissions"
                     ? "bg-primary text-white font-bold"
                     : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
                 }`}
               >
-                <ShieldCheck className="h-4 w-4" />
+                <FontAwesomeIcon icon={faShieldHalved} className="h-4 w-4" />
                 Commissions & Fees
               </button>
             </>
@@ -469,14 +509,20 @@ export default function StaffSettingsPage() {
         {/* Content Form Panel */}
         <div className="flex-1 space-y-6">
           {successMessage && (
-            <div className="flex items-center gap-2 p-3 text-xs bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400 rounded-lg border border-green-200 dark:border-green-900/50">
-              <CheckCircle className="h-4 w-4 shrink-0" />
+            <div className="flex items-center gap-2 p-3 text-xs bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400 border border-green-200 dark:border-green-900/50">
+              <FontAwesomeIcon
+                icon={faCircleCheck}
+                className="h-4 w-4 shrink-0"
+              />
               <span>{successMessage}</span>
             </div>
           )}
           {errorMessage && (
-            <div className="flex items-center gap-2 p-3 text-xs bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-900/50">
-              <AlertCircle className="h-4 w-4 shrink-0" />
+            <div className="flex items-center gap-2 p-3 text-xs bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400 border border-red-200 dark:border-red-900/50">
+              <FontAwesomeIcon
+                icon={faCircleExclamation}
+                className="h-4 w-4 shrink-0"
+              />
               <span>{errorMessage}</span>
             </div>
           )}
@@ -487,7 +533,10 @@ export default function StaffSettingsPage() {
               <Card className="shadow-sm border-none bg-card">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <User className="h-4 w-4 text-primary" />
+                    <FontAwesomeIcon
+                      icon={faUser}
+                      className="h-4 w-4 text-primary"
+                    />
                     Personal Details
                   </CardTitle>
                 </CardHeader>
@@ -527,7 +576,10 @@ export default function StaffSettingsPage() {
                       disabled={updateProfileMutation.isPending}
                     >
                       {updateProfileMutation.isPending && (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <FontAwesomeIcon
+                          icon={faSpinner}
+                          className="h-4 w-4 animate-spin"
+                        />
                       )}
                       Save Profile Changes
                     </Button>
@@ -539,7 +591,10 @@ export default function StaffSettingsPage() {
               <Card className="shadow-sm border-none bg-card">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Lock className="h-4 w-4 text-primary" />
+                    <FontAwesomeIcon
+                      icon={faLock}
+                      className="h-4 w-4 text-primary"
+                    />
                     Security & Password
                   </CardTitle>
                 </CardHeader>
@@ -576,7 +631,10 @@ export default function StaffSettingsPage() {
                       disabled={updatePasswordMutation.isPending}
                     >
                       {updatePasswordMutation.isPending && (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <FontAwesomeIcon
+                          icon={faSpinner}
+                          className="h-4 w-4 animate-spin"
+                        />
                       )}
                       Update Password
                     </Button>
@@ -631,10 +689,10 @@ export default function StaffSettingsPage() {
                         <img
                           src={logoUrl}
                           alt="Logo preview"
-                          className="h-16 w-16 rounded-lg object-contain bg-muted border border-border"
+                          className="h-16 w-16 object-contain bg-muted border border-border"
                         />
                       ) : (
-                        <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-muted text-xs text-muted-foreground font-semibold border border-border">
+                        <div className="flex h-16 w-16 items-center justify-center bg-muted text-xs text-muted-foreground font-semibold border border-border">
                           No Logo
                         </div>
                       )}
@@ -685,7 +743,10 @@ export default function StaffSettingsPage() {
                       disabled={updateTenantMutation.isPending}
                     >
                       {updateTenantMutation.isPending && (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <FontAwesomeIcon
+                          icon={faSpinner}
+                          className="h-4 w-4 animate-spin"
+                        />
                       )}
                       Save Branding Settings
                     </Button>
@@ -713,7 +774,7 @@ export default function StaffSettingsPage() {
                       <select
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value)}
-                        className="flex h-11 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0"
+                        className="flex h-11 w-full border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0"
                       >
                         <option value="GHS">GHS (Ghana Cedi)</option>
                         <option value="USD">USD (US Dollar)</option>
@@ -728,7 +789,7 @@ export default function StaffSettingsPage() {
                       <select
                         value={timezone}
                         onChange={(e) => setTimezone(e.target.value)}
-                        className="flex h-11 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0"
+                        className="flex h-11 w-full border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0"
                       >
                         <option value="Africa/Accra">Africa/Accra (GMT)</option>
                         <option value="UTC">
@@ -784,7 +845,10 @@ export default function StaffSettingsPage() {
                       disabled={updateTenantMutation.isPending}
                     >
                       {updateTenantMutation.isPending && (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <FontAwesomeIcon
+                          icon={faSpinner}
+                          className="h-4 w-4 animate-spin"
+                        />
                       )}
                       Save Operations Settings
                     </Button>
@@ -837,7 +901,10 @@ export default function StaffSettingsPage() {
                       disabled={updateTenantMutation.isPending}
                     >
                       {updateTenantMutation.isPending && (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <FontAwesomeIcon
+                          icon={faSpinner}
+                          className="h-4 w-4 animate-spin"
+                        />
                       )}
                       Save Fees Settings
                     </Button>

@@ -10,6 +10,7 @@ interface User {
   lastName: string;
   roles: string[];
   tenantSlug?: string;
+  avatarUrl?: string | null;
 }
 
 interface AuthState {
@@ -27,13 +28,16 @@ interface AuthState {
     password: string,
     tenantSlug?: string,
   ) => Promise<string>;
-  register: (data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    password: string;
-  }) => Promise<{ userId: string; customerId: string; message: string }>;
+  register: (
+    data: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      password: string;
+    },
+    tenantSlug?: string,
+  ) => Promise<{ userId: string; customerId: string; message: string }>;
   logout: () => Promise<void>;
   clearError: () => void;
   hydrate: (data: LoginResponse) => void;
@@ -96,10 +100,11 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      register: async (data) => {
+      register: async (data, tenantSlug) => {
         set({ isLoading: true, error: null });
         try {
-          return await authApi.register(data);
+          const slug = tenantSlug || get().tenantSlug;
+          return await authApi.register(data, slug);
         } catch (err) {
           const message =
             err instanceof Error ? err.message : "Registration failed";
@@ -144,8 +149,13 @@ export const useAuthStore = create<AuthState>()(
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
-        if (state?.accessToken) {
-          localStorage.setItem("access_token", state.accessToken);
+        if (state) {
+          if (state.accessToken)
+            localStorage.setItem("access_token", state.accessToken);
+          if (state.refreshToken)
+            localStorage.setItem("refresh_token", state.refreshToken);
+          if (state.tenantSlug)
+            localStorage.setItem("tenant_slug", state.tenantSlug);
         }
       },
     },

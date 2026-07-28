@@ -71,7 +71,13 @@ function VerifyContent() {
 
   if (!userId) {
     return (
-      <AuthShell title="Verify account" subtitle="Missing user reference.">
+      <AuthShell>
+        <div className="mb-6 space-y-1">
+          <h1 className="text-2xl font-bold text-foreground">Verify account</h1>
+          <p className="text-sm text-muted-foreground">
+            Missing user reference.
+          </p>
+        </div>
         <p className="text-sm text-slate-600">
           Register first, then open the verification link from your email.
         </p>
@@ -86,10 +92,16 @@ function VerifyContent() {
   }
 
   return (
-    <AuthShell
-      title="Verify your account"
-      subtitle="Enter the codes sent to your email and phone to activate your savings account."
-    >
+    <AuthShell>
+      <div className="mb-6 space-y-1">
+        <h1 className="text-2xl font-bold text-foreground">
+          Verify your account
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Enter the codes sent to your email and phone to activate your savings
+          account.
+        </p>
+      </div>
       <div className="space-y-4">
         <label className="block text-sm font-medium text-slate-700">
           Susu company slug
@@ -108,7 +120,7 @@ function VerifyContent() {
           </p>
         )}
 
-        <div className="space-y-2 rounded-lg border border-slate-200 p-4">
+        <div className="space-y-2 rounded-none border border-slate-200 p-4">
           <p className="text-sm font-semibold text-slate-800">
             Email verification
           </p>
@@ -138,7 +150,7 @@ function VerifyContent() {
           </div>
         </div>
 
-        <div className="space-y-2 rounded-lg border border-slate-200 p-4">
+        <div className="space-y-2 rounded-none border border-slate-200 p-4">
           <p className="text-sm font-semibold text-slate-800">
             Phone verification
           </p>

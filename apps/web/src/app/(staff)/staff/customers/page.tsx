@@ -1,22 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { customerApi } from "@/lib/api";
-import { getInitials } from "@/lib/utils";
+import { getInitials, cn } from "@/lib/utils";
 import Link from "next/link";
 import { CustomerListSkeleton } from "@/components/ui/skeleton";
 import { Plus, Search, Filter } from "lucide-react";
 
 export default function StaffCustomersPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState(searchParams.get("status") || "");
+
+  useEffect(() => {
+    const urlStatus = searchParams.get("status");
+    setStatus(urlStatus || "");
+  }, [searchParams]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["staff-customers", search, status],
@@ -25,6 +30,8 @@ export default function StaffCustomersPage() {
         search: search || undefined,
         status: status || undefined,
       }),
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   const handleExportCsv = () => {
@@ -62,6 +69,15 @@ export default function StaffCustomersPage() {
 
   const customers = data?.items || [];
 
+  const handleStatusChange = (newStatus: string) => {
+    setStatus(newStatus);
+    if (newStatus) {
+      router.push(`/staff/customers?status=${newStatus}`);
+    } else {
+      router.push("/staff/customers");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
@@ -87,24 +103,48 @@ export default function StaffCustomersPage() {
         </div>
       </div>
 
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-2 border-b border-border pb-1">
+        {[
+          { label: "All Customers", value: "" },
+          { label: "Active", value: "active" },
+          { label: "Pending", value: "pending" },
+          { label: "Suspended", value: "suspended" },
+        ].map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            onClick={() => handleStatusChange(tab.value)}
+            className={cn(
+              "px-3 py-1.5 text-xs font-semibold rounded-none border-b-2 transition-colors",
+              status === tab.value
+                ? "border-primary text-primary font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search by name or customer ID..."
+            placeholder="Search by name, email, phone, or customer ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-border bg-card text-foreground focus:outline-none focus:border-primary"
+            className="w-full pl-9 pr-4 py-2 text-sm rounded-none border border-border bg-card text-foreground focus:outline-none focus:border-primary"
           />
         </div>
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground shrink-0" />
           <select
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="py-2 px-3 text-sm rounded-lg border border-border bg-card text-foreground focus:outline-none focus:border-primary"
+            onChange={(e) => handleStatusChange(e.target.value)}
+            className="py-2 px-3 text-sm rounded-none border border-border bg-card text-foreground focus:outline-none focus:border-primary"
           >
             <option value="">All Statuses</option>
             <option value="active">Active</option>
@@ -119,9 +159,25 @@ export default function StaffCustomersPage() {
           {isLoading ? (
             <CustomerListSkeleton count={4} />
           ) : customers.length === 0 ? (
-            <p className="text-center text-muted-foreground py-12 text-sm">
-              No customers found
-            </p>
+            <div className="text-center py-12 px-4 space-y-3">
+              <p className="text-muted-foreground text-sm">
+                No customers found matching current filters
+                {status ? ` (Status: "${status}")` : ""}.
+              </p>
+              {(status || search) && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearch("");
+                    handleStatusChange("");
+                  }}
+                  className="text-xs font-semibold"
+                >
+                  Show All Customers
+                </Button>
+              )}
+            </div>
           ) : (
             <div className="divide-y divide-gray-100 dark:divide-border/40">
               {customers.map((c) => (
@@ -130,17 +186,33 @@ export default function StaffCustomersPage() {
                   href={`/staff/customers/${c.id}`}
                   className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors"
                 >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary font-semibold text-sm">
-                    {getInitials(c.user?.firstName, c.user?.lastName)}
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-primary font-semibold text-sm">
+                    {c.user?.avatarUrl ? (
+                      <img
+                        src={c.user.avatarUrl}
+                        alt={`${c.user?.firstName || "Customer"} Avatar`}
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      getInitials(c.user?.firstName, c.user?.lastName)
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-foreground">
                       {c.user?.firstName || "Pending"}{" "}
                       {c.user?.lastName || "Onboarding"}
                     </p>
-                    <p className="text-xs text-muted-foreground font-mono mt-0.5">
-                      {c.customerNumber}
-                    </p>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                      <span className="font-mono">{c.customerNumber}</span>
+                      {c.user?.email && (
+                        <span className="truncate">• {c.user.email}</span>
+                      )}
+                      {c.user?.phone && (
+                        <span className="truncate hidden sm:inline">
+                          • {c.user.phone}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="text-right">
                     <StatusBadge status={c.status} />

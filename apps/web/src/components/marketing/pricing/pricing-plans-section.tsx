@@ -1,9 +1,9 @@
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { PRICING_PLANS } from '@/lib/marketing-data';
-import { Button } from '@/components/ui/button';
-import { MarketingContainer } from '../marketing-container';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { PRICING_PLANS } from "@/lib/marketing-data";
+import { Button } from "@/components/ui/button";
+import { MarketingContainer } from "../marketing-container";
+import { cn } from "@/lib/utils";
 
 export function PricingPlansSection() {
   return (
@@ -14,9 +14,9 @@ export function PricingPlansSection() {
             Plans to suit your susu company, no matter the size.
           </h1>
           <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground lg:mx-auto lg:max-w-2xl">
-            Start with a free trial, scale with verified MoMo collections, and grow into multi
-            branch operations. No per deposit fees. You pay for the platform, not every
-            transaction.
+            Start with a free trial, scale with verified MoMo collections, and
+            grow into multi branch operations. No per deposit fees. You pay for
+            the platform, not every transaction.
           </p>
         </div>
 
@@ -24,7 +24,7 @@ export function PricingPlansSection() {
           {PRICING_PLANS.map((plan) => (
             <article
               key={plan.name}
-              className="flex flex-col rounded-[20px] border border-border/80 bg-white p-6 text-center shadow-sm dark:border-border dark:bg-card dark:shadow-none sm:p-8"
+              className="flex flex-col rounded-none border border-border/80 bg-white p-6 text-center shadow-sm dark:border-border dark:bg-card dark:shadow-none sm:p-8"
             >
               {plan.popular ? (
                 <p className="mb-4">
@@ -48,18 +48,20 @@ export function PricingPlansSection() {
                   {plan.price}
                 </p>
                 {plan.period ? (
-                  <p className="mt-1 text-sm text-muted-foreground">{plan.period}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {plan.period}
+                  </p>
                 ) : null}
               </div>
 
               <Link href={plan.ctaHref} className="mt-8 block">
                 <Button
-                  variant={plan.name === 'Enterprise' ? 'secondary' : 'primary'}
+                  variant={plan.name === "Enterprise" ? "secondary" : "primary"}
                   className={cn(
-                    'h-12 w-full rounded-lg text-sm font-semibold',
-                    plan.name === 'Enterprise'
-                      ? 'bg-[#1a1a1a] text-white hover:bg-[#1a1a1a]/90 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200'
-                      : 'shadow-[0_4px_14px_rgba(34,197,94,0.25)]',
+                    "h-12 w-full rounded-none text-[15px] font-bold",
+                    plan.name === "Enterprise"
+                      ? "bg-[#1a1a1a] text-white hover:bg-[#1a1a1a]/90 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                      : "shadow-[0_4px_14px_rgba(34,197,94,0.25)]",
                   )}
                 >
                   {plan.cta}
@@ -68,16 +70,28 @@ export function PricingPlansSection() {
               </Link>
 
               <div className="mt-8 flex-1 border-t border-border/70 pt-8 text-left">
-                <p className="text-sm font-bold text-foreground">{plan.featureLabel}</p>
+                <p className="text-sm font-bold text-foreground">
+                  {plan.featureLabel}
+                </p>
                 <ul className="mt-4 space-y-5">
                   {plan.featureGroups.map((group) => (
-                    <li key={group.title ?? 'features'}>
+                    <li key={group.title ?? "features"}>
                       {group.title ? (
-                        <p className="text-sm font-semibold text-foreground">{group.title}</p>
+                        <p className="text-sm font-semibold text-foreground">
+                          {group.title}
+                        </p>
                       ) : null}
-                      <ul className={cn('list-disc space-y-1.5 pl-4', group.title && 'mt-2')}>
+                      <ul
+                        className={cn(
+                          "list-disc space-y-1.5 pl-4",
+                          group.title && "mt-2",
+                        )}
+                      >
                         {group.items.map((item) => (
-                          <li key={item} className="text-sm leading-snug text-muted-foreground">
+                          <li
+                            key={item}
+                            className="text-sm leading-snug text-muted-foreground"
+                          >
                             {item}
                           </li>
                         ))}

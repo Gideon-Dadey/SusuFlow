@@ -29,6 +29,7 @@ export class UserService {
         phone: true,
         firstName: true,
         lastName: true,
+        avatarUrl: true,
         status: true,
         emailVerified: true,
         createdAt: true,
@@ -69,6 +70,7 @@ export class UserService {
         lastName: dto.lastName,
         phone: dto.phone,
         email: dto.email,
+        avatarUrl: dto.avatarUrl,
       },
       select: {
         id: true,
@@ -77,6 +79,7 @@ export class UserService {
         phone: true,
         firstName: true,
         lastName: true,
+        avatarUrl: true,
         status: true,
         emailVerified: true,
       },

@@ -1,6 +1,6 @@
-import { Check } from 'lucide-react';
-import { ABOUT_COMPLIANCE_POINTS } from '@/lib/marketing-data';
-import { MarketingContainer } from '../marketing-container';
+import { Check } from "lucide-react";
+import { ABOUT_COMPLIANCE_POINTS } from "@/lib/marketing-data";
+import { MarketingContainer } from "../marketing-container";
 
 export function AboutComplianceSection() {
   return (
@@ -11,8 +11,9 @@ export function AboutComplianceSection() {
             Secure, auditable, and built for verified collections
           </h2>
           <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground lg:mx-auto">
-            SusuFlow is designed around gateway confirmed Mobile Money deposits and transparent
-            ledger records. Your team sees the same numbers your savers expect.
+            SusuFlow is designed around gateway confirmed Mobile Money deposits
+            and transparent ledger records. Your team sees the same numbers your
+            savers expect.
           </p>
         </div>
 
@@ -20,12 +21,14 @@ export function AboutComplianceSection() {
           {ABOUT_COMPLIANCE_POINTS.map((point) => (
             <li
               key={point}
-              className="flex items-start gap-3 rounded-lg border border-border/80 bg-white p-5 dark:border-border dark:bg-card"
+              className="flex items-start gap-3 rounded-none border border-border/80 bg-white p-5 dark:border-border dark:bg-card"
             >
               <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-[#22c55e] text-white">
                 <Check className="size-4" strokeWidth={2.5} aria-hidden />
               </span>
-              <span className="text-sm leading-relaxed text-foreground sm:text-base">{point}</span>
+              <span className="text-sm leading-relaxed text-foreground sm:text-base">
+                {point}
+              </span>
             </li>
           ))}
         </ul>

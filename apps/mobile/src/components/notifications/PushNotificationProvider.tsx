@@ -46,7 +46,7 @@ export function PushNotificationProvider({
   useEffect(() => {
     const refresh = () => {
       if (sessionKey) {
-        refreshCustomerFinancials(queryClient, sessionKey);
+        refreshCustomerFinancials(queryClient, sessionKey, { force: true });
       }
     };
 

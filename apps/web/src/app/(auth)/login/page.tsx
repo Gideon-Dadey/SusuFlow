@@ -158,27 +158,27 @@ function LoginContent() {
             type="checkbox"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
-            className="size-4 rounded border-input text-secondary focus:ring-ring"
+            className="size-4 rounded-none border-input text-secondary focus:ring-ring"
           />
           <span className="text-sm text-foreground">Remember me</span>
         </label>
 
         {successMessage ? (
-          <p className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
+          <p className="flex items-center gap-2 rounded-none bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
             <CheckCircle className="h-4 w-4 shrink-0" aria-hidden />
             <span>{successMessage}</span>
           </p>
         ) : null}
 
         {error ? (
-          <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <p className="rounded-none bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {error}
           </p>
         ) : null}
 
         <Button
           type="submit"
-          className="h-11 w-full rounded-lg text-sm font-semibold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
+          className="h-[48px] w-full rounded-none text-[15px] font-bold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
           loading={isSubmitting}
           loadingText="Signing in..."
           disabled={!!successMessage}

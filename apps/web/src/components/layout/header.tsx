@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useAuthStore } from '@/stores/auth.store';
-import { getInitials } from '@/lib/utils';
-import { LogOut } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useAuthStore } from "@/stores/auth.store";
+import { getInitials } from "@/lib/utils";
+import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   title?: string;
@@ -16,15 +16,19 @@ export function Header({ title, subtitle }: HeaderProps) {
 
   const handleLogout = async () => {
     await logout();
-    router.push('/login');
+    router.push("/login");
   };
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <div className="flex h-14 items-center justify-between px-4 md:px-6">
         <div>
-          {title ? <h1 className="text-lg font-semibold text-foreground">{title}</h1> : null}
-          {subtitle ? <p className="text-xs text-muted-foreground">{subtitle}</p> : null}
+          {title ? (
+            <h1 className="text-lg font-semibold text-foreground">{title}</h1>
+          ) : null}
+          {subtitle ? (
+            <p className="text-xs text-muted-foreground">{subtitle}</p>
+          ) : null}
         </div>
         <div className="flex items-center gap-3">
           <div className="hidden sm:block text-right">
@@ -37,7 +41,7 @@ export function Header({ title, subtitle }: HeaderProps) {
           </div>
           <button
             onClick={handleLogout}
-            className="hidden md:flex items-center justify-center h-9 w-9 rounded-lg text-muted-foreground hover:bg-muted"
+            className="hidden md:flex items-center justify-center h-9 w-9 rounded-none text-muted-foreground hover:bg-muted"
             aria-label="Sign out"
           >
             <LogOut className="h-4 w-4" />

@@ -6,6 +6,7 @@ import {
   MaxLength,
   MinLength,
   IsNotEmpty,
+  ValidateIf,
 } from "class-validator";
 import { MIN_PASSWORD_LENGTH } from "@susuflow/shared";
 
@@ -32,6 +33,12 @@ export class UpdateUserProfileDto {
   @IsOptional()
   @IsEmail()
   email?: string;
+
+  @ApiPropertyOptional()
+  @ValidateIf((o) => o.avatarUrl !== null)
+  @IsOptional()
+  @IsString()
+  avatarUrl?: string | null;
 }
 
 export class UpdateUserPasswordDto {

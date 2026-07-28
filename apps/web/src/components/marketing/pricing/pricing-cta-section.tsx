@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { MarketingContainer } from '../marketing-container';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { MarketingContainer } from "../marketing-container";
 
 export function PricingCtaSection() {
   return (
@@ -11,14 +11,17 @@ export function PricingCtaSection() {
             Have you picked your plan? Start your free trial.
           </h2>
           <p className="mt-4 text-pretty text-base text-muted-foreground">
-            We will help you set up your tenant, onboard collectors, and run your first verified MoMo
-            collection cycle.
+            We will help you set up your tenant, onboard collectors, and run
+            your first verified MoMo collection cycle.
           </p>
           <div className="mt-8 lg:flex lg:justify-center">
-            <Link href="/contact?intent=demo" className="inline-block w-full sm:w-auto">
+            <Link
+              href="/contact?intent=demo"
+              className="inline-block w-full sm:w-auto"
+            >
               <Button
                 size="lg"
-                className="h-12 w-full rounded-lg px-8 text-base font-semibold shadow-[0_8px_24px_rgba(34,197,94,0.28)] sm:min-w-[12rem]"
+                className="h-12 w-full rounded-none px-8 text-[15px] font-bold shadow-[0_8px_24px_rgba(34,197,94,0.28)] sm:min-w-[12rem]"
               >
                 Get started
               </Button>

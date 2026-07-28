@@ -1,7 +1,7 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export const authInputClassName =
-  'flex h-11 w-full rounded-lg border border-input bg-card px-3 py-2 text-base text-foreground shadow-sm placeholder:text-muted-foreground transition-colors focus:border-secondary/40 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm';
+  "flex h-[48px] w-full rounded-none border border-input bg-card px-3.5 py-2.5 text-[15px] text-foreground shadow-sm placeholder:text-muted-foreground/70 transition-colors focus:border-secondary/40 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50";
 
 export function GoogleIcon() {
   return (
@@ -57,7 +57,7 @@ export function SocialButton({
   return (
     <button
       type="button"
-      className="flex h-11 w-full items-center justify-center gap-2.5 rounded-lg border border-input bg-card text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted/40"
+      className="flex h-[48px] w-full items-center justify-center gap-2.5 rounded-none border border-input bg-card text-[15px] font-bold text-foreground shadow-sm transition-colors hover:bg-muted/40"
     >
       {icon}
       {label}
@@ -65,15 +65,25 @@ export function SocialButton({
   );
 }
 
-export function AuthLegalNotice({ action }: { action: 'signing in' | 'creating an account' }) {
+export function AuthLegalNotice({
+  action,
+}: {
+  action: "signing in" | "creating an account";
+}) {
   return (
     <p className="text-center text-xs leading-relaxed text-muted-foreground">
-      By {action}, you agree to SusuFlow&apos;s{' '}
-      <Link href="/terms" className="font-medium text-secondary hover:underline">
+      By {action}, you agree to SusuFlow&apos;s{" "}
+      <Link
+        href="/terms"
+        className="font-medium text-secondary hover:underline"
+      >
         Terms of Service
       </Link>
-      ,{' '}
-      <Link href="/privacy" className="font-medium text-secondary hover:underline">
+      ,{" "}
+      <Link
+        href="/privacy"
+        className="font-medium text-secondary hover:underline"
+      >
         Privacy Policy
       </Link>
       .
@@ -103,14 +113,14 @@ export function AuthFooterExtras({
   action,
   mode,
 }: {
-  action: 'signing in' | 'creating an account';
-  mode: 'login' | 'register';
+  action: "signing in" | "creating an account";
+  mode: "login" | "register";
 }) {
   return (
     <div className="mt-6 space-y-5">
       <AuthDivider />
       <AuthLegalNotice action={action} />
-      {mode === 'login' ? <AuthSocialSignIn /> : <AuthSocialSignUp />}
+      {mode === "login" ? <AuthSocialSignIn /> : <AuthSocialSignUp />}
     </div>
   );
 }

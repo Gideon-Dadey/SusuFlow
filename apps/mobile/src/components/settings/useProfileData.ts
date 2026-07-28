@@ -29,7 +29,7 @@ export function useProfileData() {
     email,
     phone,
     groupName,
-    isLoading: query.isLoading,
+    isLoading: query.isPending && !profile,
     isError: query.isError,
     refetch: query.refetch,
   };

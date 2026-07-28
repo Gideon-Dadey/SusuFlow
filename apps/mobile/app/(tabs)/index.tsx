@@ -12,10 +12,12 @@ import { TabScreenLayout } from "@/components/layout/TabScreen";
 import { useProfileData } from "@/components/settings/useProfileData";
 import { HomeBalanceSkeleton } from "@/components/ui/Skeleton";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
-import { useRefreshFinancialsOnFocus } from "@/hooks/useRefreshFinancialsOnFocus";
 import { fetchCustomerWallet } from "@/lib/customer-wallet";
-import { depositApi, withdrawalApi } from "@/lib/api";
-import { financialQueryOptions } from "@/lib/financial-queries";
+import {
+  fetchCustomerDeposits,
+  fetchCustomerWithdrawals,
+  financialQueryOptions,
+} from "@/lib/financial-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
@@ -27,12 +29,9 @@ export default function HomeScreen() {
   const { groupName } = useProfileData();
   const { sessionKey, isProfileReady, profileQuery } = useCustomerSession();
 
-  useRefreshFinancialsOnFocus(sessionKey);
-
   const {
     data: wallet,
     isPending: walletPending,
-    isFetching: walletFetching,
     isError: walletError,
     refetch: refetchWallet,
   } = useQuery({
@@ -48,8 +47,7 @@ export default function HomeScreen() {
     queryKey: sessionKey
       ? queryKeys.deposits(sessionKey.userId, sessionKey.customerId)
       : ["deposits", "inactive"],
-    queryFn: () =>
-      depositApi.list({ customer_id: sessionKey!.customerId, limit: 100 }),
+    queryFn: () => fetchCustomerDeposits(sessionKey!.customerId),
     enabled: !!sessionKey,
     ...financialQueryOptions,
   });
@@ -58,8 +56,7 @@ export default function HomeScreen() {
     queryKey: sessionKey
       ? queryKeys.withdrawals(sessionKey.userId, sessionKey.customerId)
       : ["withdrawals", "inactive"],
-    queryFn: () =>
-      withdrawalApi.list({ customer_id: sessionKey!.customerId, limit: 100 }),
+    queryFn: () => fetchCustomerWithdrawals(sessionKey!.customerId),
     enabled: !!sessionKey,
     ...financialQueryOptions,
   });
@@ -74,12 +71,9 @@ export default function HomeScreen() {
   );
 
   const showBalanceSkeleton =
-    !isProfileReady ||
-    !sessionKey ||
-    walletPending ||
-    (walletFetching && wallet === undefined);
+    !isProfileReady || !sessionKey || (walletPending && wallet === undefined);
 
-  const showBalanceError = walletError && !walletFetching && !walletPending;
+  const showBalanceError = walletError && wallet === undefined;
 
   return (
     <TabScreenLayout header={<HomeHeader />}>

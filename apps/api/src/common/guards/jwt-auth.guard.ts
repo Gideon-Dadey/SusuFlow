@@ -1,10 +1,14 @@
-import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { Reflector } from '@nestjs/core';
-import { PUBLIC_KEY } from '../decorators';
+import {
+  Injectable,
+  ExecutionContext,
+  UnauthorizedException,
+} from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+import { Reflector } from "@nestjs/core";
+import { PUBLIC_KEY } from "../decorators";
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class JwtAuthGuard extends AuthGuard("jwt") {
   constructor(private reflector: Reflector) {
     super();
   }
@@ -19,9 +23,26 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 
-  handleRequest<T>(err: Error | null, user: T): T {
+  handleRequest<T>(
+    err: Error | null,
+    user: T,
+    info?: any,
+    context?: ExecutionContext,
+  ): T {
     if (err || !user) {
-      throw err || new UnauthorizedException('Invalid or expired token');
+      throw err || new UnauthorizedException("Invalid or expired token");
+    }
+    if (context) {
+      const request = context.switchToHttp().getRequest();
+      const u = user as any;
+      if (request && !request.tenant && u?.tenantId) {
+        request.tenant = {
+          id: u.tenantId,
+          slug: u.tenantSlug || "",
+          name: "",
+          status: "active",
+        };
+      }
     }
     return user;
   }

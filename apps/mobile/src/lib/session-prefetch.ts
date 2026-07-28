@@ -1,4 +1,10 @@
-import { depositApi, userApi, withdrawalApi } from "@/lib/api";
+import { userApi } from "@/lib/api";
+import {
+  fetchCustomerDeposits,
+  fetchCustomerWithdrawals,
+  financialQueryOptions,
+  profileQueryOptions,
+} from "@/lib/financial-queries";
 import { fetchCustomerWallet } from "@/lib/customer-wallet";
 import { queryClient } from "@/lib/query-client";
 import { queryKeys } from "@/lib/query-keys";
@@ -11,6 +17,7 @@ export async function prefetchAuthenticatedSession(
   const profile = await queryClient.fetchQuery({
     queryKey: queryKeys.userProfile(userId),
     queryFn: () => userApi.getMe(),
+    ...profileQueryOptions,
   });
 
   const customerId = profile.customer?.id;
@@ -20,14 +27,17 @@ export async function prefetchAuthenticatedSession(
     queryClient.prefetchQuery({
       queryKey: queryKeys.wallet(userId, customerId),
       queryFn: () => fetchCustomerWallet(customerId),
+      ...financialQueryOptions,
     }),
     queryClient.prefetchQuery({
       queryKey: queryKeys.deposits(userId, customerId),
-      queryFn: () => depositApi.list({ customer_id: customerId }),
+      queryFn: () => fetchCustomerDeposits(customerId),
+      ...financialQueryOptions,
     }),
     queryClient.prefetchQuery({
       queryKey: queryKeys.withdrawals(userId, customerId),
-      queryFn: () => withdrawalApi.list({ customer_id: customerId }),
+      queryFn: () => fetchCustomerWithdrawals(customerId),
+      ...financialQueryOptions,
     }),
   ]);
 

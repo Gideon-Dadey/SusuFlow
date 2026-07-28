@@ -46,13 +46,16 @@ function RegisterContent() {
     clearError();
     setTenantSlug(form.tenant);
     try {
-      const result = await register({
-        firstName: form.firstName,
-        lastName: form.lastName,
-        email: form.email,
-        phone: form.phone,
-        password: form.password,
-      });
+      const result = await register(
+        {
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          phone: form.phone,
+          password: form.password,
+        },
+        form.tenant,
+      );
       router.push(`/verify?userId=${result.userId}`);
     } catch {
       // error in store
@@ -213,14 +216,14 @@ function RegisterContent() {
         </div>
 
         {error ? (
-          <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <p className="rounded-none bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {error}
           </p>
         ) : null}
 
         <Button
           type="submit"
-          className="h-11 w-full rounded-lg text-sm font-semibold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
+          className="h-[48px] w-full rounded-none text-[15px] font-bold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
           loading={isLoading}
         >
           Create account

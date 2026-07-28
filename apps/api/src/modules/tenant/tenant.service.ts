@@ -345,28 +345,35 @@ export class TenantService {
   async update(id: string, dto: UpdateTenantDto) {
     const tenant = await this.findById(id);
 
-    const updated = await this.prisma.tenant.update({
-      where: { id },
-      data: {
-        name: dto.name,
-        email: dto.email,
-        phone: dto.phone,
-        logoUrl: dto.logoUrl,
-        primaryColor: dto.primaryColor,
-        settings: dto.settings
-          ? {
-              ...(typeof tenant.settings === "object" &&
-              tenant.settings !== null
-                ? (tenant.settings as Record<string, unknown>)
-                : {}),
-              ...dto.settings,
-            }
-          : undefined,
-      },
-    });
+    try {
+      const updated = await this.prisma.tenant.update({
+        where: { id },
+        data: {
+          name: dto.name,
+          email: dto.email,
+          phone: dto.phone,
+          logoUrl: dto.logoUrl,
+          primaryColor: dto.primaryColor,
+          settings: dto.settings
+            ? {
+                ...(typeof tenant.settings === "object" &&
+                tenant.settings !== null
+                  ? (tenant.settings as Record<string, unknown>)
+                  : {}),
+                ...dto.settings,
+              }
+            : undefined,
+        },
+      });
 
-    await this.invalidateTenantCache(updated.slug);
-    return updated;
+      await this.invalidateTenantCache(updated.slug);
+      return updated;
+    } catch (error: any) {
+      throw new BadRequestException(
+        error?.message ||
+          "Failed to update tenant settings. Please check your input and try again.",
+      );
+    }
   }
 
   async getGlobalSummary() {

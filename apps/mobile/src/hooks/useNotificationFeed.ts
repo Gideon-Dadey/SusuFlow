@@ -4,22 +4,15 @@ import {
   buildNotificationFeed,
   countUnreadNotifications,
 } from "@/lib/notification-utils";
-import { financialQueryOptions } from "@/lib/financial-queries";
-import { depositApi, withdrawalApi } from "@/lib/api";
+import {
+  fetchCustomerDeposits,
+  fetchCustomerWithdrawals,
+  financialQueryOptions,
+} from "@/lib/financial-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
 import { useNotificationStore } from "@/stores/notification.store";
 import type { AppNotification } from "@/types/notification";
-
-const NOTIFICATION_POLL_MS = 12_000;
-
-async function fetchNotificationFeed(customerId: string) {
-  const [deposits, withdrawals] = await Promise.all([
-    depositApi.list({ customer_id: customerId }),
-    withdrawalApi.list({ customer_id: customerId }),
-  ]);
-  return buildNotificationFeed(deposits.items, withdrawals.items);
-}
 
 export function useNotificationFeed(customerId: string | undefined) {
   const { sessionKey } = useCustomerSession();
@@ -41,17 +34,32 @@ export function useNotificationFeed(customerId: string | undefined) {
     activeUserId === sessionKey.userId &&
     customerId === sessionKey.customerId;
 
-  const query = useQuery({
+  const depositsQuery = useQuery({
     queryKey: sessionKey
-      ? queryKeys.notificationFeed(sessionKey.userId, sessionKey.customerId)
-      : ["notification-feed", "inactive"],
-    queryFn: () => fetchNotificationFeed(sessionKey!.customerId),
+      ? queryKeys.deposits(sessionKey.userId, sessionKey.customerId)
+      : ["deposits", "inactive"],
+    queryFn: () => fetchCustomerDeposits(sessionKey!.customerId),
     enabled: notificationsReady,
     ...financialQueryOptions,
-    refetchInterval: NOTIFICATION_POLL_MS,
   });
 
-  const items = query.data ?? [];
+  const withdrawalsQuery = useQuery({
+    queryKey: sessionKey
+      ? queryKeys.withdrawals(sessionKey.userId, sessionKey.customerId)
+      : ["withdrawals", "inactive"],
+    queryFn: () => fetchCustomerWithdrawals(sessionKey!.customerId),
+    enabled: notificationsReady,
+    ...financialQueryOptions,
+  });
+
+  const items = useMemo(
+    () =>
+      buildNotificationFeed(
+        depositsQuery.data?.items ?? [],
+        withdrawalsQuery.data?.items ?? [],
+      ),
+    [depositsQuery.data?.items, withdrawalsQuery.data?.items],
+  );
 
   const unreadCount = useMemo(
     () => countUnreadNotifications(items, lastSeenAt),
@@ -68,13 +76,19 @@ export function useNotificationFeed(customerId: string | undefined) {
     [items],
   );
 
+  const isLoading =
+    (depositsQuery.isPending && !depositsQuery.data) ||
+    (withdrawalsQuery.isPending && !withdrawalsQuery.data);
+
   return {
     items,
     unreadCount,
     hasPending,
-    isLoading: query.isPending || (query.isFetching && items.length === 0),
-    isError: query.isError,
-    refetch: query.refetch,
+    isLoading,
+    isError: depositsQuery.isError || withdrawalsQuery.isError,
+    refetch: async () => {
+      await Promise.all([depositsQuery.refetch(), withdrawalsQuery.refetch()]);
+    },
     markAllRead,
   };
 }

@@ -14,6 +14,7 @@ import { useProfileData } from "@/components/settings/useProfileData";
 import { PlanEnrollmentSkeleton } from "@/components/ui/Skeleton";
 import type { SavingsPlan } from "@/lib/api";
 import { planApi } from "@/lib/api";
+import { plansQueryOptions } from "@/lib/financial-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { useAuthStore } from "@/stores/auth.store";
 import { useTheme } from "@/theme/ThemeProvider";
@@ -27,15 +28,17 @@ export default function GoalsScreen() {
   const [selectedPlan, setSelectedPlan] = useState<SavingsPlan | null>(null);
   const [enrollOpen, setEnrollOpen] = useState(false);
 
-  const { data: plans, isLoading: plansLoading } = useQuery({
+  const { data: plans, isPending: plansPending } = useQuery({
     queryKey: queryKeys.plans,
     queryFn: () => planApi.listPlans(),
+    ...plansQueryOptions,
   });
 
-  const { data: enrollments, isLoading: enrollLoading } = useQuery({
+  const { data: enrollments, isPending: enrollPending } = useQuery({
     queryKey: queryKeys.enrollments(authUserId ?? ""),
     queryFn: () => planApi.listEnrollments(),
     enabled: !!authUserId,
+    ...plansQueryOptions,
   });
 
   const enrolledPlanIds = useMemo(
@@ -59,7 +62,9 @@ export default function GoalsScreen() {
     queryClient.invalidateQueries({ queryKey: queryKeys.plans });
   };
 
-  const isLoading = plansLoading || enrollLoading;
+  const showGoalsSkeleton =
+    (plansPending && plans === undefined) ||
+    (enrollPending && enrollments === undefined);
 
   return (
     <>
@@ -75,7 +80,7 @@ export default function GoalsScreen() {
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
               Your active goals
             </Text>
-            {isLoading ? (
+            {showGoalsSkeleton ? (
               <PlanEnrollmentSkeleton rows={2} />
             ) : !enrollments?.length ? (
               <GoalsEmptyState variant="active" />
@@ -100,7 +105,7 @@ export default function GoalsScreen() {
             >
               Savings programs offered by your susu
             </Text>
-            {isLoading ? (
+            {showGoalsSkeleton ? (
               <PlanEnrollmentSkeleton rows={2} />
             ) : !plans?.length ? (
               <GoalsEmptyState variant="catalog" />

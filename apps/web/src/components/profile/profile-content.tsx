@@ -10,6 +10,8 @@ import { useAuthStore } from "@/stores/auth.store";
 import { getInitials } from "@/lib/utils";
 import { userApi, tenantApi } from "@/lib/api";
 import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCamera, faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { MIN_PASSWORD_LENGTH } from "@susuflow/shared";
 
 export function ProfileContent({ title = "Profile" }: { title?: string }) {
@@ -25,6 +27,7 @@ export function ProfileContent({ title = "Profile" }: { title?: string }) {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
   const [profileSuccess, setProfileSuccess] = useState("");
   const [profileError, setProfileError] = useState("");
 
@@ -77,11 +80,63 @@ export function ProfileContent({ title = "Profile" }: { title?: string }) {
     }
   };
 
+  const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setProfileError("Avatar image must be smaller than 5MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const rawResult = reader.result as string;
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const maxDim = 400;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressed = canvas.toDataURL("image/png", 0.9);
+            setAvatarUrl(compressed);
+            setProfileError("");
+          } else {
+            setAvatarUrl(rawResult);
+            setProfileError("");
+          }
+        };
+        img.onerror = () => {
+          setAvatarUrl(rawResult);
+          setProfileError("");
+        };
+        img.src = rawResult;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const updateCompanyMutation = useMutation({
     mutationFn: () =>
       tenantApi.updateMe({
         name: companyName,
-        logoUrl: companyLogo || undefined,
+        logoUrl: companyLogo ? companyLogo : null,
         primaryColor: companyPrimaryColor,
         phone: companyPhone || undefined,
         email: companyEmail || undefined,
@@ -106,15 +161,22 @@ export function ProfileContent({ title = "Profile" }: { title?: string }) {
       setLastName(user.lastName || "");
       setEmail(user.email || "");
       setPhone(user.phone || "");
+      setAvatarUrl(user.avatarUrl || "");
     }
   }, [user]);
 
   const updateProfileMutation = useMutation({
-    mutationFn: () => userApi.updateMe({ firstName, lastName, email, phone }),
+    mutationFn: () =>
+      userApi.updateMe({
+        firstName,
+        lastName,
+        email,
+        phone,
+        avatarUrl: avatarUrl ? avatarUrl : null,
+      }),
     onSuccess: (updatedUser) => {
       setProfileSuccess("Profile updated successfully!");
       setProfileError("");
-      // Update state in Zustand store
       useAuthStore.setState((state) => ({
         user: state.user
           ? {
@@ -122,10 +184,13 @@ export function ProfileContent({ title = "Profile" }: { title?: string }) {
               firstName: updatedUser.firstName,
               lastName: updatedUser.lastName,
               email: updatedUser.email,
+              avatarUrl: updatedUser.avatarUrl,
             }
           : null,
       }));
       refetch();
+      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+      queryClient.invalidateQueries({ queryKey: ["user-profile-me"] });
     },
     onError: (err: any) => {
       setProfileError(err?.message || "Failed to update profile.");
@@ -199,20 +264,50 @@ export function ProfileContent({ title = "Profile" }: { title?: string }) {
 
       {/* Header card */}
       <Card className="overflow-hidden border-none shadow-md bg-gradient-to-r from-primary-600 to-indigo-700 text-white">
-        <CardContent className="flex items-center gap-6 p-6">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white/25 text-white border-2 border-white/40 text-2xl font-bold backdrop-blur-md">
-            {getInitials(user?.firstName, user?.lastName)}
+        <CardContent className="flex flex-col sm:flex-row items-center gap-6 p-6">
+          <div className="relative group">
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/25 text-white border-2 border-white/40 text-3xl font-bold backdrop-blur-md shadow-inner">
+              {avatarUrl || user?.avatarUrl ? (
+                <img
+                  src={avatarUrl || user?.avatarUrl || ""}
+                  alt="Profile Avatar"
+                  className="size-full object-cover"
+                />
+              ) : tenant?.logoUrl ? (
+                <img
+                  src={tenant.logoUrl}
+                  alt={tenant.name || "Company Logo"}
+                  className="size-full object-cover"
+                />
+              ) : (
+                getInitials(user?.firstName, user?.lastName)
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() =>
+                document.getElementById("profile-avatar-file-input")?.click()
+              }
+              className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-900 shadow-md transition-transform group-hover:scale-110 hover:bg-gray-100"
+              title="Upload avatar"
+            >
+              <FontAwesomeIcon
+                icon={faCamera}
+                className="h-4 w-4 text-primary"
+              />
+            </button>
           </div>
-          <div>
-            <h2 className="text-xl font-bold">
+
+          <div className="text-center sm:text-left">
+            <h2 className="text-2xl font-bold tracking-tight">
               {user?.firstName} {user?.lastName}
             </h2>
             <p className="text-sm text-white/80 mt-1">{user?.email}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-3 flex flex-wrap justify-center sm:justify-start gap-2">
               {authUser?.roles.map((r) => (
                 <Badge
                   key={r}
-                  className="bg-white/20 hover:bg-white/30 text-white border-none capitalize text-xs"
+                  className="bg-white/20 hover:bg-white/30 text-white border-none capitalize text-xs px-2.5 py-0.5"
                 >
                   {r.replace("_", " ")}
                 </Badge>
@@ -243,13 +338,71 @@ export function ProfileContent({ title = "Profile" }: { title?: string }) {
                 </div>
               )}
 
-              <Input
-                label="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Enter first name"
-                required
-              />
+              {/* Avatar Uploader Section */}
+              <div className="space-y-2 pb-3 border-b border-border/40">
+                <label className="block text-sm font-semibold text-foreground">
+                  Profile Avatar
+                </label>
+                <div className="flex items-center gap-4">
+                  <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted border border-border text-lg font-bold text-muted-foreground">
+                    {avatarUrl ? (
+                      <img
+                        src={avatarUrl}
+                        alt="Avatar Preview"
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      getInitials(firstName, lastName)
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <input
+                      type="file"
+                      id="profile-avatar-file-input"
+                      accept="image/png,image/jpeg,image/jpg,image/webp"
+                      className="hidden"
+                      onChange={handleAvatarFileChange}
+                    />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-2 text-xs font-semibold"
+                        onClick={() =>
+                          document
+                            .getElementById("profile-avatar-file-input")
+                            ?.click()
+                        }
+                      >
+                        <FontAwesomeIcon
+                          icon={faUpload}
+                          className="h-3.5 w-3.5 text-primary"
+                        />
+                        {avatarUrl ? "Change Photo" : "Upload Photo"}
+                      </Button>
+                      {avatarUrl && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="flex items-center gap-1.5 text-xs text-destructive hover:bg-destructive/10"
+                          onClick={() => setAvatarUrl("")}
+                        >
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            className="h-3.5 w-3.5"
+                          />
+                          Remove Photo
+                        </Button>
+                      )}
+                    </div>
+                    <span className="text-[11px] text-muted-foreground">
+                      PNG, JPG or WebP up to 5MB. Auto-optimized to 400x400.
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               <Input
                 label="Last Name"

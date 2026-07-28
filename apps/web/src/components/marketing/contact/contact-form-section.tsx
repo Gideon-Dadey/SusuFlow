@@ -1,8 +1,12 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faEnvelope, faLocationDot } from '@fortawesome/free-solid-svg-icons';
-import { ContactForm } from '@/components/marketing/contact-form';
-import { SUPPORT_EMAIL } from '@/lib/marketing-data';
-import { MarketingContainer } from '../marketing-container';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faClock,
+  faEnvelope,
+  faLocationDot,
+} from "@fortawesome/free-solid-svg-icons";
+import { ContactForm } from "@/components/marketing/contact-form";
+import { SUPPORT_EMAIL } from "@/lib/marketing-data";
+import { MarketingContainer } from "../marketing-container";
 
 export function ContactFormSection() {
   return (
@@ -14,8 +18,9 @@ export function ContactFormSection() {
               Need help creating your account?
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              You can call or email us anytime. Our team helps susu companies onboard collectors and
-              run their first verified MoMo collection cycle.
+              You can call or email us anytime. Our team helps susu companies
+              onboard collectors and run their first verified MoMo collection
+              cycle.
             </p>
             <ul className="mt-8 space-y-5">
               <li className="flex items-start gap-3">
@@ -44,16 +49,21 @@ export function ContactFormSection() {
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <FontAwesomeIcon icon={faClock} className="mt-1 h-5 w-5 shrink-0 text-secondary" />
+                <FontAwesomeIcon
+                  icon={faClock}
+                  className="mt-1 h-5 w-5 shrink-0 text-secondary"
+                />
                 <div>
                   <p className="font-medium text-foreground">Response time</p>
-                  <p className="text-sm text-muted-foreground">Within 1 business day</p>
+                  <p className="text-sm text-muted-foreground">
+                    Within 1 business day
+                  </p>
                 </div>
               </li>
             </ul>
           </div>
 
-          <div className="rounded-lg border border-border bg-card p-6 shadow-card sm:p-8">
+          <div className="rounded-none border border-border bg-card p-6 shadow-card sm:p-8">
             <ContactForm />
           </div>
         </div>

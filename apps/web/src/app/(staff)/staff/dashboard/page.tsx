@@ -24,21 +24,25 @@ export default function StaffDashboard() {
   const { data: deposits } = useQuery({
     queryKey: ["staff-deposits"],
     queryFn: () => depositApi.list(),
+    placeholderData: (prev) => prev,
   });
 
   const { data: activeCustomers } = useQuery({
     queryKey: ["staff-active-customers"],
     queryFn: () => customerApi.list({ status: "active" }),
+    placeholderData: (prev) => prev,
   });
 
   const { data: allCustomers } = useQuery({
     queryKey: ["staff-all-customers"],
     queryFn: () => customerApi.list(),
+    placeholderData: (prev) => prev,
   });
 
   const { data: queue } = useQuery({
     queryKey: ["staff-action-queue"],
     queryFn: () => operationsApi.getQueue(),
+    placeholderData: (prev) => prev,
     refetchInterval: 60_000,
   });
 
@@ -235,8 +239,16 @@ export default function StaffDashboard() {
                     className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary font-semibold text-xs">
-                        {getInitials(c.user?.firstName, c.user?.lastName)}
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-primary font-semibold text-xs">
+                        {c.user?.avatarUrl ? (
+                          <img
+                            src={c.user.avatarUrl}
+                            alt={`${c.user?.firstName || "Customer"} Avatar`}
+                            className="size-full object-cover"
+                          />
+                        ) : (
+                          getInitials(c.user?.firstName, c.user?.lastName)
+                        )}
                       </div>
                       <div className="min-w-0">
                         <p className="font-semibold text-sm text-foreground truncate">
