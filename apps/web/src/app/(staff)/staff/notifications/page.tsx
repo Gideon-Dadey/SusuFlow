@@ -92,9 +92,7 @@ export default function StaffNotificationsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="dashboard-title">
-            SMS & WhatsApp Notification Center
-          </h1>
+          <h1 className="dashboard-title">SMS & WhatsApp</h1>
         </div>
       </div>
 
