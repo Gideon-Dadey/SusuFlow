@@ -33,16 +33,10 @@ export function MarketingFooter() {
   };
 
   return (
-    <footer className="relative overflow-hidden border-t border-slate-800/80 bg-slate-950 text-slate-100 dark:bg-[#030712]">
-      {/* Organic Radial Ambient Glow */}
-      <div
-        className="pointer-events-none absolute -top-40 left-1/2 h-96 w-full -translate-x-1/2 rounded-full bg-emerald-500/10 blur-[120px]"
-        aria-hidden="true"
-      />
-
+    <footer className="relative overflow-hidden border-t border-white/10 bg-[#08080a] text-slate-100">
       <MarketingContainer className="relative z-10 pt-16 pb-8">
-        {/* Top Section: Organic Demo & Newsletter Card */}
-        <div className="mb-16 rounded-3xl border border-slate-800/80 bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-emerald-950/30 p-6 sm:p-10 backdrop-blur-md shadow-2xl shadow-emerald-950/20">
+        {/* Top Section: Demo & Newsletter Card (Unified Background Color) */}
+        <div className="mb-16 rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-10 shadow-xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-6 space-y-3">
               <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-semibold text-emerald-400">
@@ -85,7 +79,7 @@ export function MarketingFooter() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your work email address..."
                       required
-                      className="w-full h-12 rounded-2xl border border-slate-700/80 bg-slate-950/90 px-4 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
+                      className="w-full h-12 rounded-2xl border border-white/15 bg-white/[0.04] px-4 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
                     />
                   </div>
                   <button
@@ -106,8 +100,8 @@ export function MarketingFooter() {
           </div>
         </div>
 
-        {/* Main Grid: Organic Domain Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-800/80">
+        {/* Main Grid: Domain Columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
           {/* Column 1: Brand & Office Information */}
           <div className="lg:col-span-4 space-y-5">
             <Link href="/" className="inline-flex items-center">
@@ -128,7 +122,7 @@ export function MarketingFooter() {
                 href={`mailto:${SUPPORT_EMAIL}`}
                 className="flex items-center gap-3 text-xs text-slate-300 hover:text-emerald-400 transition-colors"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-emerald-400">
                   <Mail className="h-3.5 w-3.5" />
                 </div>
                 {SUPPORT_EMAIL}
@@ -139,13 +133,13 @@ export function MarketingFooter() {
                 rel="noreferrer"
                 className="flex items-center gap-3 text-xs text-slate-300 hover:text-emerald-400 transition-colors"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-emerald-400">
                   <MessageSquare className="h-3.5 w-3.5" />
                 </div>
                 +233 (0) 50 000 0000 (WhatsApp Support)
               </a>
               <div className="flex items-center gap-3 text-xs text-slate-400">
-                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-emerald-400">
                   <MapPin className="h-3.5 w-3.5" />
                 </div>
                 Accra Financial Centre, Ridge, Accra - Ghana
@@ -256,14 +250,14 @@ export function MarketingFooter() {
               (Act 987) and Data Protection Act, 2012 (Act 843).
             </p>
             <div className="grid grid-cols-2 gap-2.5 pt-1">
-              <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3 text-center">
+              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 text-center">
                 <Building2 className="h-4 w-4 text-emerald-400 mx-auto mb-1" />
                 <p className="text-[10px] font-bold text-slate-300">
                   BoG Act 987
                 </p>
                 <p className="text-[9px] text-slate-500">Licensed Standard</p>
               </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3 text-center">
+              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 text-center">
                 <Lock className="h-4 w-4 text-emerald-400 mx-auto mb-1" />
                 <p className="text-[10px] font-bold text-slate-300">
                   DPC Act 843
@@ -335,8 +329,8 @@ export function MarketingFooter() {
         </div>
 
         {/* GIANT ORGANIC BRAND WORDMARK BANNER (Hims-inspired luxury brand seal) */}
-        <div className="relative mt-12 pt-6 border-t border-slate-900/90 overflow-hidden select-none pointer-events-none text-center">
-          <span className="block text-[13vw] sm:text-[15vw] font-extrabold tracking-tighter leading-none text-slate-800/25 dark:text-slate-900/40 uppercase opacity-35 font-sans">
+        <div className="relative mt-12 pt-6 border-t border-white/10 overflow-hidden select-none pointer-events-none text-center">
+          <span className="block text-[13vw] sm:text-[15vw] font-extrabold tracking-tighter leading-none text-white/[0.06] uppercase font-sans">
             SusuFlow
           </span>
         </div>
