@@ -33,6 +33,7 @@ SusuFlow is a production-grade, multi-tenant fintech SaaS platform that enables 
 | 19    | [Geofence & Offline Guide](docs/19-FIELD_COLLECTOR_GEOFENCE_AND_OFFLINE_SYNC_GUIDE.md)  | Collector GPS verification (<15m) & IndexedDB queue                              | **Complete** |
 | 20    | [Operational Runbook](docs/20-OPERATIONAL_RUNBOOK_AND_DISASTER_RECOVERY.md)             | Incident response, gateway failover & DB recovery                                | **Complete** |
 | 21    | [Page-by-Page User Guide](docs/21-PORTAL_AND_PAGE_BY_PAGE_USER_GUIDE.md)                | **Exhaustive page-by-page guide for Staff, Admin, Customer & Collector portals** | **Complete** |
+| 22    | [Render Deployment Guide](docs/22-RENDER_DEPLOYMENT_GUIDE.md)                           | **1-Click Render.com Blueprint deployment guide (render.yaml)**                  | **Complete** |
 
 ## Getting Started
 
