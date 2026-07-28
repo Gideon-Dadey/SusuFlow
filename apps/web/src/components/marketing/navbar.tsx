@@ -188,7 +188,8 @@ export function MarketingNavbar() {
                 <Button
                   size="sm"
                   className={cn(
-                    "h-10 rounded-none px-4 text-[15px] font-bold",
+                    "h-10 px-5 text-[15px] font-bold transition-all duration-300",
+                    spread ? "rounded-none" : "rounded-full",
                     spread
                       ? onDarkNav
                         ? "border-0 bg-white text-brand-dark shadow-lg hover:bg-white/95"
