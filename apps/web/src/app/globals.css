@@ -342,11 +342,18 @@
 
   .dashboard-title {
     font-family: var(--font-open-sans), sans-serif;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
-    line-height: 28px;
+    line-height: 26px;
     letter-spacing: -0.015em;
     color: var(--heading);
+  }
+
+  @media (min-width: 640px) {
+    .dashboard-title {
+      font-size: 22px;
+      line-height: 28px;
+    }
   }
 
   .hero-page-title {
@@ -363,6 +370,59 @@
     font-size: 22px;
     font-weight: 500;
     line-height: 37.4px;
+  }
+
+  /* Native Mobile App Typography & Layout Scaling (< 640px) */
+  @media (max-width: 639px) {
+    body {
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .dashboard-title {
+      font-size: 17px;
+      line-height: 22px;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-page-title {
+      font-size: 24px;
+      line-height: 30px;
+      letter-spacing: -0.015em;
+    }
+
+    .card-label {
+      font-size: 16px;
+      line-height: 22px;
+    }
+
+    .mobile-header-title {
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 22px;
+      letter-spacing: -0.015em;
+    }
+
+    /* Scaling large metric numbers on mobile cards */
+    .text-3xl {
+      font-size: 1.375rem /* 22px */;
+      line-height: 1.75rem /* 28px */;
+    }
+
+    .text-2xl {
+      font-size: 1.125rem /* 18px */;
+      line-height: 1.5rem /* 24px */;
+    }
+
+    .text-4xl {
+      font-size: 1.625rem /* 26px */;
+      line-height: 2rem /* 32px */;
+    }
+
+    /* Compact header height on mobile */
+    .dashboard-header {
+      height: 3.25rem /* 52px */;
+    }
   }
 
   .nav-link {
