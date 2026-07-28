@@ -469,7 +469,7 @@ export const ABOUT_OPERATING_DETAILS = [
 
 export const CONTACT_OFFICE = {
   headline: "SusuFlow Ghana",
-  addressLines: ["Accra", "Greater Accra Region", "Ghana"],
+  addressLines: ["Maakro SDA Church Kovak Road", "Kumasi", "Ghana"],
 } as const;
 
 export const FAQ_ITEMS = [
