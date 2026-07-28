@@ -117,7 +117,7 @@ export function MarketingFooter() {
                 {SUPPORT_EMAIL}
               </a>
               <a
-                href="https://wa.me/233500000000"
+                href="https://wa.me/233551550530"
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-3 text-xs text-slate-300 hover:text-emerald-400 transition-colors"
@@ -125,7 +125,7 @@ export function MarketingFooter() {
                 <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-emerald-400">
                   <MessageSquare className="h-3.5 w-3.5" />
                 </div>
-                +233 (0) 50 000 0000 (WhatsApp Support)
+                +233 (0) 551550530
               </a>
               <div className="flex items-center gap-3 text-xs text-slate-400">
                 <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-emerald-400">
@@ -297,7 +297,7 @@ export function MarketingFooter() {
               <Linkedin className="h-4 w-4" />
             </a>
             <a
-              href="https://wa.me/233500000000"
+              href="https://wa.me/233551550530"
               target="_blank"
               rel="noreferrer"
               aria-label="WhatsApp"
