@@ -35,68 +35,57 @@ export function MarketingFooter() {
   return (
     <footer className="relative overflow-hidden border-t border-white/10 bg-[#08080a] text-slate-100">
       <MarketingContainer className="relative z-10 pt-16 pb-8">
-        {/* Top Section: Demo & Newsletter Card (Unified Background Color) */}
-        <div className="mb-16 rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-10 shadow-xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-6 space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-semibold text-emerald-400">
-                <ShieldCheck className="h-3.5 w-3.5" />
-                Enterprise Fintech Standard
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
-                Digitize your Susu enterprise with confidence
-              </h2>
-              <p className="text-sm text-slate-400 max-w-lg leading-relaxed">
-                Empowering modern Ghanaian microfinance institutions and susu
-                companies with gateway-confirmed deposits and 100% cashless
-                audit logs.
-              </p>
-            </div>
+        {/* Top Section: Demo & Newsletter Bar */}
+        <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pb-12 border-b border-white/10">
+          <div className="lg:col-span-6 space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
+              Digitize your Susu enterprise with confidence
+            </h2>
+            <p className="text-sm text-slate-400 max-w-lg leading-relaxed">
+              Empowering modern Ghanaian microfinance institutions and susu
+              companies with gateway-confirmed deposits and 100% cashless audit
+              logs.
+            </p>
+          </div>
 
-            <div className="lg:col-span-6">
-              {subscribed ? (
-                <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/40 bg-emerald-500/15 p-4 text-emerald-300">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
-                  <div>
-                    <p className="font-semibold text-sm">
-                      Thank you for subscribing!
-                    </p>
-                    <p className="text-xs text-emerald-400/80">
-                      We&apos;ve dispatched product documentation and compliance
-                      guides to your email.
-                    </p>
-                  </div>
+          <div className="lg:col-span-6">
+            {subscribed ? (
+              <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/40 bg-emerald-500/15 p-4 text-emerald-300">
+                <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+                <div>
+                  <p className="font-semibold text-sm">
+                    Thank you for subscribing!
+                  </p>
+                  <p className="text-xs text-emerald-400/80">
+                    We&apos;ve dispatched product documentation and compliance
+                    guides to your email.
+                  </p>
                 </div>
-              ) : (
-                <form
-                  onSubmit={handleSubscribe}
-                  className="flex flex-col sm:flex-row gap-3"
+              </div>
+            ) : (
+              <form
+                onSubmit={handleSubscribe}
+                className="flex flex-col sm:flex-row gap-3"
+              >
+                <div className="relative flex-1">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your work email address..."
+                    required
+                    className="w-full h-12 rounded-2xl border border-white/15 bg-white/[0.04] px-4 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="h-12 px-6 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all duration-200 shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 shrink-0"
                 >
-                  <div className="relative flex-1">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your work email address..."
-                      required
-                      className="w-full h-12 rounded-2xl border border-white/15 bg-white/[0.04] px-4 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="h-12 px-6 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all duration-200 shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 shrink-0"
-                  >
-                    <span>Request Demo</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </form>
-              )}
-              <p className="mt-2.5 text-[11px] text-slate-500 flex items-center gap-2">
-                <Lock className="h-3 w-3 text-emerald-400" />
-                Zero spam policy. Bank-grade 256-bit SSL encrypted
-                communication.
-              </p>
-            </div>
+                  <span>Request Demo</span>
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </form>
+            )}
           </div>
         </div>
 
