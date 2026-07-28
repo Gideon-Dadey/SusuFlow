@@ -58,7 +58,7 @@ export const staffNavGroups: NavGroup[] = [
     ],
   },
   {
-    groupLabel: "INTELLIGENCE & AUTOMATION",
+    groupLabel: "AUTOMATION",
     items: [
       {
         href: "/staff/analytics",
