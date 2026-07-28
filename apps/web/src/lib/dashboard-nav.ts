@@ -67,7 +67,7 @@ export const staffNavGroups: NavGroup[] = [
       },
       {
         href: "/staff/notifications",
-        label: "SMS & WhatsApp Dispatch",
+        label: "SMS & WhatsApp",
         icon: faPaperPlane,
       },
       {
