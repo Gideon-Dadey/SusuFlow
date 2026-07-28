@@ -1,13 +1,18 @@
-'use client';
+"use client";
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { adminApi } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faCircleCheck, faSave, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { adminApi } from "@/lib/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faGear,
+  faCircleCheck,
+  faSave,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminSettingsPage() {
   const queryClient = useQueryClient();
@@ -16,14 +21,15 @@ export default function AdminSettingsPage() {
   // Form State
   const [maintenanceMode, setMaintenanceMode] = useState<boolean>(false);
   const [globalRateLimit, setGlobalRateLimit] = useState<number>(100);
-  const [backupSchedule, setBackupSchedule] = useState<string>('daily');
-  const [smsProvider, setSmsProvider] = useState<string>('twilio');
-  const [transactionFeePercent, setTransactionFeePercent] = useState<number>(1.0);
-  const [systemEmail, setSystemEmail] = useState<string>('system@susuflow.com');
+  const [backupSchedule, setBackupSchedule] = useState<string>("daily");
+  const [smsProvider, setSmsProvider] = useState<string>("twilio");
+  const [transactionFeePercent, setTransactionFeePercent] =
+    useState<number>(1.0);
+  const [systemEmail, setSystemEmail] = useState<string>("system@susuflow.com");
 
   // Load current settings
   const { data: settings, isLoading } = useQuery({
-    queryKey: ['admin-global-settings'],
+    queryKey: ["admin-global-settings"],
     queryFn: () => adminApi.getSettings(),
   });
 
@@ -42,7 +48,7 @@ export default function AdminSettingsPage() {
     mutationFn: (data: any) => adminApi.updateSettings(data),
     onSuccess: (res) => {
       setSuccessMsg(res.message);
-      queryClient.invalidateQueries({ queryKey: ['admin-global-settings'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-global-settings"] });
       setTimeout(() => setSuccessMsg(null), 5000);
     },
   });
@@ -62,7 +68,7 @@ export default function AdminSettingsPage() {
   return (
     <div className="space-y-6">
       <div className="page-header mb-0">
-        <h1 className="text-2xl font-bold tracking-tight">Platform Configuration</h1>
+        <h1 className="dashboard-title">Configuration</h1>
       </div>
 
       {successMsg && (
@@ -82,13 +88,19 @@ export default function AdminSettingsPage() {
           {/* System Control Settings */}
           <Card className="border-border/60">
             <CardHeader>
-              <CardTitle className="text-base font-bold">Operational Controls</CardTitle>
+              <CardTitle className="text-base font-bold">
+                Operational Controls
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 pt-2">
               <div className="flex items-center justify-between border-b border-border/60 pb-4">
                 <div>
-                  <label className="text-sm font-semibold text-foreground">Platform Maintenance Mode</label>
-                  <p className="text-xs text-muted-foreground">Blocks API requests from company staff and savers</p>
+                  <label className="text-sm font-semibold text-foreground">
+                    Platform Maintenance Mode
+                  </label>
+                  <p className="text-xs text-muted-foreground">
+                    Blocks API requests from company staff and savers
+                  </p>
                 </div>
                 <input
                   type="checkbox"
@@ -100,7 +112,9 @@ export default function AdminSettingsPage() {
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-muted-foreground uppercase">Global Rate Limit (Req/Min)</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase">
+                    Global Rate Limit (Req/Min)
+                  </label>
                   <Input
                     type="number"
                     value={globalRateLimit}
@@ -109,7 +123,9 @@ export default function AdminSettingsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-muted-foreground uppercase">System Sender Email</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase">
+                    System Sender Email
+                  </label>
                   <Input
                     type="email"
                     value={systemEmail}
@@ -124,36 +140,48 @@ export default function AdminSettingsPage() {
           {/* Fee & Billing Settings */}
           <Card className="border-border/60">
             <CardHeader>
-              <CardTitle className="text-base font-bold">Transactional & Integration Config</CardTitle>
+              <CardTitle className="text-base font-bold">
+                Transactional & Integration Config
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 pt-2">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-muted-foreground uppercase">Platform Fee Percent (%)</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase">
+                    Platform Fee Percent (%)
+                  </label>
                   <Input
                     type="number"
                     step="0.1"
                     value={transactionFeePercent}
-                    onChange={(e) => setTransactionFeePercent(Number(e.target.value))}
+                    onChange={(e) =>
+                      setTransactionFeePercent(Number(e.target.value))
+                    }
                     className="mt-1"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-muted-foreground uppercase">SMS Gateway Channel</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase">
+                    SMS Gateway Channel
+                  </label>
                   <select
                     value={smsProvider}
                     onChange={(e) => setSmsProvider(e.target.value)}
                     className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary h-11"
                   >
                     <option value="twilio">Twilio SMS Router</option>
-                    <option value="africastalking">Africas Talking Gateway</option>
+                    <option value="africastalking">
+                      Africas Talking Gateway
+                    </option>
                     <option value="hubtel">Hubtel Ghana Gateway</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground uppercase">DB Snapshot & Backup Schedule</label>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase">
+                  DB Snapshot & Backup Schedule
+                </label>
                 <select
                   value={backupSchedule}
                   onChange={(e) => setBackupSchedule(e.target.value)}

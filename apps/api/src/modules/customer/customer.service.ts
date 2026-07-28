@@ -63,14 +63,18 @@ export class CustomerService {
     tx: Prisma.TransactionClient,
     tenantId: string,
   ): Promise<string> {
-    const latest = await tx.customer.findFirst({
-      where: { tenantId },
-      orderBy: { createdAt: "desc" },
-      select: { customerNumber: true },
-    });
-    const match = latest?.customerNumber?.match(/(\d+)$/);
-    const next = match ? Number.parseInt(match[1], 10) + 1 : 1;
-    return `CUS-${String(next).padStart(6, "0")}`;
+    const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+    for (let attempts = 0; attempts < 10; attempts++) {
+      let code = "";
+      for (let i = 0; i < 8; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      const existing = await tx.customer.findFirst({
+        where: { tenantId, customerNumber: code },
+      });
+      if (!existing) return code;
+    }
+    return Date.now().toString(36).toUpperCase().slice(-8);
   }
 
   async create(
@@ -102,8 +106,7 @@ export class CustomerService {
           }
 
           const tempEmail =
-            dto.email ||
-            `customer-${customerNumber.replace(/\D/g, "")}@temp.susuflow.com`;
+            dto.email || `customer-${customerNumber}@temp.susuflow.com`;
 
           const user = await tx.user.create({
             data: {
@@ -112,7 +115,7 @@ export class CustomerService {
               phone: dto.phone,
               passwordHash,
               firstName: dto.firstName || "Customer",
-              lastName: dto.lastName || customerNumber.replace("CUS-", ""),
+              lastName: dto.lastName || customerNumber,
               status: "active",
               emailVerified: !!dto.email,
             },
@@ -208,6 +211,12 @@ export class CustomerService {
         {
           user: { lastName: { contains: options.search, mode: "insensitive" } },
         },
+        {
+          user: { email: { contains: options.search, mode: "insensitive" } },
+        },
+        {
+          user: { phone: { contains: options.search, mode: "insensitive" } },
+        },
       ];
     }
 
@@ -224,6 +233,7 @@ export class CustomerService {
             firstName: true,
             lastName: true,
             phone: true,
+            avatarUrl: true,
           },
         },
         wallets: {
@@ -256,6 +266,7 @@ export class CustomerService {
             firstName: true,
             lastName: true,
             phone: true,
+            avatarUrl: true,
           },
         },
         wallets: { include: { accounts: true } },

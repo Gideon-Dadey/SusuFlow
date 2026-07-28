@@ -23,6 +23,12 @@ import {
   faUserTie,
   faRoute,
   faListCheck,
+  faCalculator,
+  faFileExcel,
+  faBrain,
+  faPaperPlane,
+  faBuildingColumns,
+  faMapLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 
 export type NavItem = { href: string; label: string; icon: IconDefinition };
@@ -44,6 +50,31 @@ export const staffNavGroups: NavGroup[] = [
       { href: "/staff/withdrawals", label: "Withdrawals", icon: faHistory },
       { href: "/staff/commissions", label: "Commissions", icon: faCoins },
       { href: "/staff/ledger", label: "Trial Balance", icon: faBook },
+      {
+        href: "/staff/reconciliation",
+        label: "Reconciliation",
+        icon: faBuildingColumns,
+      },
+    ],
+  },
+  {
+    groupLabel: "INTELLIGENCE & AUTOMATION",
+    items: [
+      {
+        href: "/staff/analytics",
+        label: "AI Credit & Insights",
+        icon: faBrain,
+      },
+      {
+        href: "/staff/notifications",
+        label: "SMS & WhatsApp Dispatch",
+        icon: faPaperPlane,
+      },
+      {
+        href: "/staff/collectors/map",
+        label: "Collector Field Map",
+        icon: faMapLocationDot,
+      },
     ],
   },
   {
@@ -61,6 +92,17 @@ export const staffNavGroups: NavGroup[] = [
       { href: "/staff/kyc", label: "KYC Documents", icon: faUserCheck },
       { href: "/staff/team", label: "Team", icon: faUserTie },
       { href: "/staff/collectors", label: "Collectors", icon: faRoute },
+    ],
+  },
+  {
+    groupLabel: "TOOLS & UTILITIES",
+    items: [
+      {
+        href: "/staff/calculator",
+        label: "Financial Calculator",
+        icon: faCalculator,
+      },
+      { href: "/staff/excel", label: "Spreadsheet Studio", icon: faFileExcel },
     ],
   },
   {

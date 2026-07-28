@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { MarketingContainer } from './marketing-container';
-import { HeroProductShowcase } from './hero-product-showcase';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { useState } from "react";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MarketingContainer } from "./marketing-container";
+import { HeroProductShowcase } from "./hero-product-showcase";
+import { cn } from "@/lib/utils";
 
-type Audience = 'company' | 'saver';
+type Audience = "company" | "saver";
 
 const COPY = {
   company: {
@@ -20,11 +20,11 @@ const COPY = {
       </>
     ),
     description:
-      'Run collectors, MoMo deposits, and real-time ledgers from one place. Save time, cut fraud, and scale cashless susu across Ghana.',
-    primaryHref: '/contact?intent=demo',
-    primaryLabel: 'Get started for free',
-    secondaryHref: '/how-it-works',
-    secondaryLabel: 'See how it works',
+      "Run collectors, MoMo deposits, and real-time ledgers from one place. Save time, cut fraud, and scale cashless susu across Ghana.",
+    primaryHref: "/contact?intent=demo",
+    primaryLabel: "Get started for free",
+    secondaryHref: "/how-it-works",
+    secondaryLabel: "See how it works",
   },
   saver: {
     headline: (
@@ -35,16 +35,16 @@ const COPY = {
       </>
     ),
     description:
-      'Join your susu digitally. Pay through MTN MoMo, track your balance, and get proof for every contribution. No more “the collector took it.”',
-    primaryHref: '/register',
-    primaryLabel: 'Join your susu',
-    secondaryHref: '/how-it-works',
-    secondaryLabel: 'See how it works',
+      "Join your susu digitally. Pay through MTN MoMo, track your balance, and get proof for every contribution. No more “the collector took it.”",
+    primaryHref: "/register",
+    primaryLabel: "Join your susu",
+    secondaryHref: "/how-it-works",
+    secondaryLabel: "See how it works",
   },
 } as const;
 
 export function MarketingHero() {
-  const [audience, setAudience] = useState<Audience>('company');
+  const [audience, setAudience] = useState<Audience>("company");
   const copy = COPY[audience];
 
   return (
@@ -57,44 +57,46 @@ export function MarketingHero() {
                 You are on
               </span>
               <div
-                className="flex w-full rounded-lg border border-border bg-card p-1 shadow-sm lg:inline-flex lg:w-auto"
+                className="flex w-full rounded-none border border-border bg-card p-1 shadow-sm lg:inline-flex lg:w-auto"
                 role="tablist"
                 aria-label="Choose audience"
               >
                 <button
                   type="button"
                   role="tab"
-                  aria-selected={audience === 'company'}
+                  aria-selected={audience === "company"}
                   className={cn(
-                    'flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-colors sm:px-4 sm:py-1.5 lg:flex-none',
-                    audience === 'company'
-                      ? 'bg-foreground text-background'
-                      : 'text-muted-foreground hover:text-foreground',
+                    "flex-1 rounded-none px-3 py-2.5 text-center text-[15px] font-bold transition-colors sm:px-4 sm:py-1.5 lg:flex-none",
+                    audience === "company"
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
-                  onClick={() => setAudience('company')}
+                  onClick={() => setAudience("company")}
                 >
                   Susu companies
                 </button>
                 <button
                   type="button"
                   role="tab"
-                  aria-selected={audience === 'saver'}
+                  aria-selected={audience === "saver"}
                   className={cn(
-                    'flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-colors sm:px-4 sm:py-1.5 lg:flex-none',
-                    audience === 'saver'
-                      ? 'bg-foreground text-background'
-                      : 'text-muted-foreground hover:text-foreground',
+                    "flex-1 rounded-none px-3 py-2.5 text-center text-[15px] font-bold transition-colors sm:px-4 sm:py-1.5 lg:flex-none",
+                    audience === "saver"
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
-                  onClick={() => setAudience('saver')}
+                  onClick={() => setAudience("saver")}
                 >
                   Switch to savers
                 </button>
               </div>
             </div>
 
-            <h1 className="marketing-hero-title text-balance text-foreground">{copy.headline}</h1>
+            <h1 className="marketing-hero-title text-balance text-foreground">
+              {copy.headline}
+            </h1>
 
-            <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground lg:mt-6 lg:max-w-lg">
+            <p className="mt-5 max-w-xl text-pretty text-[18px] leading-[30.6px] text-muted-foreground lg:mt-6 lg:max-w-lg">
               {copy.description}
             </p>
 
@@ -102,14 +104,14 @@ export function MarketingHero() {
               <Link href={copy.primaryHref} className="w-full lg:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-lg px-6 text-sm font-semibold shadow-[0_8px_24px_rgba(34,197,94,0.28)] lg:min-w-[12rem]"
+                  className="h-12 w-full rounded-none px-6 text-[15px] font-bold shadow-[0_8px_24px_rgba(34,197,94,0.28)] lg:min-w-[12rem]"
                 >
                   {copy.primaryLabel}
                 </Button>
               </Link>
               <Link
                 href={copy.secondaryHref}
-                className="inline-flex w-full items-center justify-center gap-1.5 text-sm font-semibold text-secondary transition-colors hover:text-secondary/80 lg:w-auto lg:justify-start"
+                className="inline-flex w-full items-center justify-center gap-1.5 text-[15px] font-semibold text-secondary transition-colors hover:text-secondary/80 lg:w-auto lg:justify-start"
               >
                 {copy.secondaryLabel}
                 <ArrowRight className="h-4 w-4" />

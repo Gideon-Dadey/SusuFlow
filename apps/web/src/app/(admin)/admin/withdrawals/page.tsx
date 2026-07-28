@@ -1,28 +1,37 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { adminApi } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { StatusBadge } from '@/components/ui/badge';
-import { formatGhs, formatDate } from '@/lib/utils';
-import { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHistory, faFilter, faFileCsv, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { useQuery } from "@tanstack/react-query";
+import { adminApi } from "@/lib/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
+import { formatGhs, formatDate } from "@/lib/utils";
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faHistory,
+  faFilter,
+  faFileCsv,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminWithdrawalsPage() {
-  const [selectedTenant, setSelectedTenant] = useState<string>('');
-  const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [selectedTenant, setSelectedTenant] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   // Fetch tenants for filtering dropdown
   const { data: tenantsData } = useQuery({
-    queryKey: ['admin-tenants-list'],
+    queryKey: ["admin-tenants-list"],
     queryFn: () => adminApi.listTenants(),
   });
 
   // Fetch global withdrawals list
-  const { data: withdrawalsData, isLoading, isFetching } = useQuery({
-    queryKey: ['admin-global-withdrawals', selectedTenant, selectedStatus],
+  const {
+    data: withdrawalsData,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ["admin-global-withdrawals", selectedTenant, selectedStatus],
     queryFn: () =>
       adminApi.listWithdrawals({
         tenant_id: selectedTenant || undefined,
@@ -35,25 +44,36 @@ export default function AdminWithdrawalsPage() {
 
   const handleExportCsv = () => {
     if (!withdrawals.length) return;
-    const headers = ['Date', 'Reference', 'Tenant Name', 'Customer Name', 'Disbursement Phone', 'Disbursement Method', 'Amount (GHS)', 'Status'];
+    const headers = [
+      "Date",
+      "Reference",
+      "Tenant Name",
+      "Customer Name",
+      "Disbursement Phone",
+      "Disbursement Method",
+      "Amount (GHS)",
+      "Status",
+    ];
     const rows = withdrawals.map((t) => [
       new Date(t.createdAt).toLocaleDateString(),
       t.reference,
-      t.tenant?.name || 'N/A',
-      t.customer?.user ? `"${t.customer.user.firstName} ${t.customer.user.lastName}"` : 'N/A',
-      t.withdrawal?.disbursementPhone || 'N/A',
-      t.withdrawal?.disbursementMethod || 'N/A',
+      t.tenant?.name || "N/A",
+      t.customer?.user
+        ? `"${t.customer.user.firstName} ${t.customer.user.lastName}"`
+        : "N/A",
+      t.withdrawal?.disbursementPhone || "N/A",
+      t.withdrawal?.disbursementMethod || "N/A",
       t.amount,
       t.status,
     ]);
 
     const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `global_withdrawals_${Date.now()}.csv`);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `global_withdrawals_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -63,7 +83,7 @@ export default function AdminWithdrawalsPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="page-header mb-0">
-          <h1 className="text-2xl font-bold tracking-tight">Global Withdrawals</h1>
+          <h1 className="dashboard-title">All Withdrawals</h1>
         </div>
         <Button
           size="sm"
@@ -72,7 +92,10 @@ export default function AdminWithdrawalsPage() {
           disabled={!withdrawals.length}
           className="text-xs font-semibold"
         >
-          <FontAwesomeIcon icon={faFileCsv} className="mr-1.5 h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+          <FontAwesomeIcon
+            icon={faFileCsv}
+            className="mr-1.5 h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400"
+          />
           Export CSV
         </Button>
       </div>
@@ -122,7 +145,10 @@ export default function AdminWithdrawalsPage() {
 
             {isFetching && (
               <div className="flex items-center text-xs text-muted-foreground">
-                <FontAwesomeIcon icon={faSpinner} className="mr-1.5 h-3 w-3 animate-spin text-primary" />
+                <FontAwesomeIcon
+                  icon={faSpinner}
+                  className="mr-1.5 h-3 w-3 animate-spin text-primary"
+                />
                 Updating...
               </div>
             )}
@@ -139,13 +165,21 @@ export default function AdminWithdrawalsPage() {
           {isLoading ? (
             <div className="space-y-4 py-8">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-12 w-full animate-pulse rounded-lg bg-muted/65" />
+                <div
+                  key={i}
+                  className="h-12 w-full animate-pulse rounded-lg bg-muted/65"
+                />
               ))}
             </div>
           ) : withdrawals.length === 0 ? (
             <div className="py-12 text-center">
-              <FontAwesomeIcon icon={faHistory} className="mx-auto h-8 w-8 text-muted-foreground/50" />
-              <p className="mt-2 text-sm text-muted-foreground">No withdrawals match selected filter criteria.</p>
+              <FontAwesomeIcon
+                icon={faHistory}
+                className="mx-auto h-8 w-8 text-muted-foreground/50"
+              />
+              <p className="mt-2 text-sm text-muted-foreground">
+                No withdrawals match selected filter criteria.
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -163,7 +197,10 @@ export default function AdminWithdrawalsPage() {
                 </thead>
                 <tbody className="divide-y divide-border/60">
                   {withdrawals.map((tx) => (
-                    <tr key={tx.id} className="hover:bg-muted/30 transition-colors">
+                    <tr
+                      key={tx.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
                       <td className="py-3.5 px-4 text-xs text-muted-foreground whitespace-nowrap">
                         {formatDate(tx.createdAt)}
                       </td>
@@ -172,13 +209,13 @@ export default function AdminWithdrawalsPage() {
                       </td>
                       <td className="py-3.5 px-4">
                         <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
-                          {tx.tenant?.name || 'Platform'}
+                          {tx.tenant?.name || "Platform"}
                         </span>
                       </td>
                       <td className="py-3.5 px-4 font-medium text-foreground">
                         {tx.customer?.user
                           ? `${tx.customer.user.firstName} ${tx.customer.user.lastName}`
-                          : 'N/A'}
+                          : "N/A"}
                         {tx.customer?.customerNumber && (
                           <span className="block text-[10px] text-muted-foreground font-mono">
                             {tx.customer.customerNumber}
@@ -188,13 +225,18 @@ export default function AdminWithdrawalsPage() {
                       <td className="py-3.5 px-4 text-xs text-muted-foreground whitespace-nowrap">
                         {tx.withdrawal?.disbursementPhone ? (
                           <>
-                            <span className="font-medium text-foreground">{tx.withdrawal.disbursementPhone}</span>
+                            <span className="font-medium text-foreground">
+                              {tx.withdrawal.disbursementPhone}
+                            </span>
                             <span className="block text-[10px] text-muted-foreground capitalize">
-                              {tx.withdrawal.disbursementMethod.replace(/_/g, ' ')}
+                              {tx.withdrawal.disbursementMethod.replace(
+                                /_/g,
+                                " ",
+                              )}
                             </span>
                           </>
                         ) : (
-                          'N/A'
+                          "N/A"
                         )}
                       </td>
                       <td className="py-3.5 px-4 font-bold text-foreground">

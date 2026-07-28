@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import { View } from "react-native";
+import { FinancialSessionSync } from "@/components/layout/FinancialSessionSync";
 import { CustomTabBar } from "@/components/navigation/CustomTabBar";
 import { GlobalOptionsButton } from "@/components/navigation/GlobalOptionsButton";
 import { NotificationSync } from "@/components/notifications/NotificationSync";
@@ -33,6 +34,7 @@ export default function TabLayout() {
           <Tabs.Screen name="profile" options={{ title: "Profile" }} />
         </Tabs>
         <NotificationSync />
+        <FinancialSessionSync />
         <GlobalOptionsButton />
         <ProfileOptionsPanel />
       </View>

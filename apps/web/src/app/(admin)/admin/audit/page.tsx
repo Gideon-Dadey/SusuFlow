@@ -1,25 +1,33 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { adminApi } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatDate } from '@/lib/utils';
-import { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faListUl, faFilter, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { useQuery } from "@tanstack/react-query";
+import { adminApi } from "@/lib/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDate } from "@/lib/utils";
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faListUl,
+  faFilter,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminAuditLogsPage() {
-  const [selectedTenant, setSelectedTenant] = useState<string>('');
+  const [selectedTenant, setSelectedTenant] = useState<string>("");
 
   // Fetch tenants for filtering dropdown
   const { data: tenantsData } = useQuery({
-    queryKey: ['admin-tenants-list'],
+    queryKey: ["admin-tenants-list"],
     queryFn: () => adminApi.listTenants(),
   });
 
   // Fetch global audit logs
-  const { data: auditData, isLoading, isFetching } = useQuery({
-    queryKey: ['admin-global-audit', selectedTenant],
+  const {
+    data: auditData,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ["admin-global-audit", selectedTenant],
     queryFn: () =>
       adminApi.listAuditLogs({
         tenant_id: selectedTenant || undefined,
@@ -32,7 +40,7 @@ export default function AdminAuditLogsPage() {
   return (
     <div className="space-y-6">
       <div className="page-header mb-0">
-        <h1 className="text-2xl font-bold tracking-tight">System Audit Trail</h1>
+        <h1 className="dashboard-title">System Audit Logs</h1>
       </div>
 
       {/* Filter panel */}
@@ -64,7 +72,10 @@ export default function AdminAuditLogsPage() {
 
             {isFetching && (
               <div className="flex items-center text-xs text-muted-foreground">
-                <FontAwesomeIcon icon={faSpinner} className="mr-1.5 h-3 w-3 animate-spin text-primary" />
+                <FontAwesomeIcon
+                  icon={faSpinner}
+                  className="mr-1.5 h-3 w-3 animate-spin text-primary"
+                />
                 Updating...
               </div>
             )}
@@ -81,13 +92,21 @@ export default function AdminAuditLogsPage() {
           {isLoading ? (
             <div className="space-y-4 py-8">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-12 w-full animate-pulse rounded-lg bg-muted/65" />
+                <div
+                  key={i}
+                  className="h-12 w-full animate-pulse rounded-lg bg-muted/65"
+                />
               ))}
             </div>
           ) : logs.length === 0 ? (
             <div className="py-12 text-center">
-              <FontAwesomeIcon icon={faListUl} className="mx-auto h-8 w-8 text-muted-foreground/50" />
-              <p className="mt-2 text-sm text-muted-foreground">No audit logs found matching criteria.</p>
+              <FontAwesomeIcon
+                icon={faListUl}
+                className="mx-auto h-8 w-8 text-muted-foreground/50"
+              />
+              <p className="mt-2 text-sm text-muted-foreground">
+                No audit logs found matching criteria.
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -104,16 +123,19 @@ export default function AdminAuditLogsPage() {
                 </thead>
                 <tbody className="divide-y divide-border/60">
                   {logs.map((log) => (
-                    <tr key={log.id} className="hover:bg-muted/30 transition-colors">
+                    <tr
+                      key={log.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
                       <td className="py-3.5 px-4 text-xs text-muted-foreground whitespace-nowrap">
                         {formatDate(log.createdAt)}
                       </td>
                       <td className="py-3.5 px-4 font-bold text-foreground capitalize whitespace-nowrap">
-                        {log.action.replace(/_/g, ' ')}
+                        {log.action.replace(/_/g, " ")}
                       </td>
                       <td className="py-3.5 px-4">
                         <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
-                          {log.tenant?.name || 'Platform'}
+                          {log.tenant?.name || "Platform"}
                         </span>
                       </td>
                       <td className="py-3.5 px-4">
@@ -127,7 +149,9 @@ export default function AdminAuditLogsPage() {
                             </span>
                           </>
                         ) : (
-                          <span className="text-xs text-muted-foreground italic">System / Webhook</span>
+                          <span className="text-xs text-muted-foreground italic">
+                            System / Webhook
+                          </span>
                         )}
                       </td>
                       <td className="py-3.5 px-4 text-xs">
@@ -143,11 +167,17 @@ export default function AdminAuditLogsPage() {
                       <td className="py-3.5 px-4 text-xs text-muted-foreground whitespace-nowrap">
                         {log.ipAddress && (
                           <div className="font-mono text-[10px]">
-                            IP: <span className="text-foreground">{log.ipAddress}</span>
+                            IP:{" "}
+                            <span className="text-foreground">
+                              {log.ipAddress}
+                            </span>
                           </div>
                         )}
                         {log.userAgent && (
-                          <div className="max-w-[150px] truncate text-[9px]" title={log.userAgent}>
+                          <div
+                            className="max-w-[150px] truncate text-[9px]"
+                            title={log.userAgent}
+                          >
                             UA: {log.userAgent}
                           </div>
                         )}

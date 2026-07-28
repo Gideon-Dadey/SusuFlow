@@ -115,24 +115,24 @@ export const iconAccents = {
 export type IconAccentKey = keyof typeof iconAccents.light;
 
 export const radius = {
-  sm: 4,
-  md: 6,
-  /** Global surface radius — cards, banners, buttons, lists */
-  lg: 12,
-  /** Sheets and modals (matches lg; use either) */
-  xl: 12,
+  none: 0,
+  sm: 2,
+  md: 0,
+  /** Global surface radius — cards, banners, buttons, inputs, modals (sharp: 0) */
+  lg: 8,
+  xl: 0,
   /** Pills, avatars, page dots */
   full: 9999,
 } as const;
 
 /** Canonical radii — prefer these over raw `radius.*` in components. */
 export const surfaceRadius = {
-  card: radius.lg,
-  banner: radius.lg,
-  chip: radius.md,
-  control: radius.lg,
+  card: 0,
+  banner: 0,
+  chip: 0,
+  control: 0,
   avatar: radius.full,
-  sheet: radius.lg,
+  sheet: 0,
 } as const;
 
 export const spacing = {
@@ -146,33 +146,52 @@ export const spacing = {
 
 export const typography = {
   fontFamily: {
-    regular: "Inter_400Regular",
-    medium: "Inter_500Medium",
-    semibold: "Inter_600SemiBold",
-    bold: "Inter_700Bold",
+    regular: "System",
+    medium: "System",
+    semibold: "System",
+    bold: "OpenSans_700Bold",
+    heading: "OpenSans_700Bold",
+    cardLabel: "OpenSans_500Medium",
   },
   /** Prefer these over raw bold — keeps UI refined and consistent. */
   roles: {
-    display: "Inter_600SemiBold",
-    headline: "Inter_600SemiBold",
-    title: "Inter_500Medium",
-    label: "Inter_500Medium",
-    body: "Inter_400Regular",
-    caption: "Inter_400Regular",
-    amount: "Inter_600SemiBold",
-    cta: "Inter_600SemiBold",
+    display: "OpenSans_700Bold",
+    headline: "OpenSans_700Bold",
+    title: "OpenSans_500Medium",
+    label: "System",
+    body: "System",
+    caption: "System",
+    amount: "OpenSans_700Bold",
+    cta: "System",
   },
   size: {
-    xs: 12,
+    xs: 12, // small meta / labels
+    modalBody: 14,
     sm: 14,
-    base: 15,
+    cta: 15, // buttons / CTA
+    input: 16, // inputs
+    bodySub: 17, // body copy under hero
+    base: 18, // body / UI, nav links
     lg: 18,
+    modalTitle: 20, // modal title (1.25rem)
+    cardLabel: 22, // card label (22px)
     xl: 22,
+    sectionBar: 26, // section bar (26px)
     xxl: 28,
+    heroTitle: 35, // hero / page titles (35px)
+    heroTitleMobile: 37.6, // hero title mobile (2.35rem)
+    heroTitleDesktop: 54.4, // hero title desktop (3.4rem)
   },
   lineHeight: {
-    normal: 1.625,
-    tight: 1.25,
+    normal: 1.7, // 30.6px / 18px
+    tight: 1.08,
+    snug: 1.375,
+    relaxed: 1.7,
+    heroMobile: 1.12,
+    heroDesktop: 1.08,
+    pageTitle: 1.2,
+    sectionBar: 1.2,
+    cardLabel: 1.7,
   },
 } as const;
 

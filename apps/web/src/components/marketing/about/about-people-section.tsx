@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { ABOUT_PEOPLE } from '@/lib/marketing-data';
-import { MarketingContainer } from '../marketing-container';
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { ABOUT_PEOPLE } from "@/lib/marketing-data";
+import { MarketingContainer } from "../marketing-container";
 
 export function AboutPeopleSection() {
   return (
@@ -11,9 +11,11 @@ export function AboutPeopleSection() {
           {ABOUT_PEOPLE.map(({ title, description, href, cta }) => (
             <article
               key={title}
-              className="flex flex-col rounded-lg border border-border/80 bg-white p-6 shadow-sm dark:border-border dark:bg-card dark:shadow-none sm:p-8"
+              className="flex flex-col rounded-none border border-border/80 bg-white p-6 shadow-sm dark:border-border dark:bg-card dark:shadow-none sm:p-8"
             >
-              <h3 className="text-lg font-bold tracking-tight text-foreground sm:text-xl">{title}</h3>
+              <h3 className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
+                {title}
+              </h3>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground sm:text-base">
                 {description}
               </p>

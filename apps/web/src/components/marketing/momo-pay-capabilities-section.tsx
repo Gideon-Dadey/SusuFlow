@@ -5,11 +5,11 @@ import {
   ShieldCheck,
   Smartphone,
   Users,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import { MOMO_PAY_CAPABILITIES } from '@/lib/marketing-data';
-import { MarketingContainer } from './marketing-container';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { MOMO_PAY_CAPABILITIES } from "@/lib/marketing-data";
+import { MarketingContainer } from "./marketing-container";
+import { cn } from "@/lib/utils";
 
 const CAPABILITY_ICONS: LucideIcon[] = [
   Smartphone,
@@ -32,9 +32,9 @@ export function MomoPayCapabilitiesSection() {
                 <div
                   key={label}
                   className={cn(
-                    'flex aspect-square flex-col items-center justify-center rounded-2xl bg-[#f3f4f6] px-3 py-5 text-center',
-                    'transition-shadow duration-200 hover:shadow-[0_8px_30px_rgba(15,23,42,0.06)]',
-                    'dark:bg-card dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)]',
+                    "flex aspect-square flex-col items-center justify-center rounded-none bg-[#f3f4f6] px-3 py-5 text-center",
+                    "transition-shadow duration-200 hover:shadow-[0_8px_30px_rgba(15,23,42,0.06)]",
+                    "dark:bg-card dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)]",
                   )}
                 >
                   <Icon
@@ -55,13 +55,14 @@ export function MomoPayCapabilitiesSection() {
               A simple end-to-end solution to help your susu thrive
             </h2>
             <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
-              Forget juggling cash, WhatsApp screenshots, and manual books. Collect MoMo deposits,
-              verify payments, and reconcile ledgers from one platform with just a few taps in
-              the field.
+              Forget juggling cash, WhatsApp screenshots, and manual books.
+              Collect MoMo deposits, verify payments, and reconcile ledgers from
+              one platform with just a few taps in the field.
             </p>
             <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
-              MoMo prompts, gateway verification, collector tools, live dashboards, group payouts,
-              and audit-ready records, built for how Ghanaian susu actually runs.
+              MoMo prompts, gateway verification, collector tools, live
+              dashboards, group payouts, and audit-ready records, built for how
+              Ghanaian susu actually runs.
             </p>
           </div>
         </div>

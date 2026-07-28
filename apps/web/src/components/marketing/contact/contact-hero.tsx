@@ -1,9 +1,9 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { CONTACT_MAP_IMAGE } from '@/lib/brand-assets';
-import { CONTACT_OFFICE, SUPPORT_EMAIL } from '@/lib/marketing-data';
-import { Button } from '@/components/ui/button';
-import { MarketingContainer } from '../marketing-container';
+import Image from "next/image";
+import Link from "next/link";
+import { CONTACT_MAP_IMAGE } from "@/lib/brand-assets";
+import { CONTACT_OFFICE, SUPPORT_EMAIL } from "@/lib/marketing-data";
+import { Button } from "@/components/ui/button";
+import { MarketingContainer } from "../marketing-container";
 
 export function ContactHero() {
   return (
@@ -15,7 +15,9 @@ export function ContactHero() {
               {CONTACT_OFFICE.headline}
             </h1>
 
-            <h2 className="mt-10 text-base font-bold text-foreground sm:mt-12">Office address</h2>
+            <h2 className="mt-10 text-base font-bold text-foreground sm:mt-12">
+              Office address
+            </h2>
             <address className="mt-3 not-italic text-sm leading-relaxed text-muted-foreground sm:text-base">
               {CONTACT_OFFICE.addressLines.map((line) => (
                 <span key={line} className="block">
@@ -26,14 +28,14 @@ export function ContactHero() {
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link href={`mailto:${SUPPORT_EMAIL}`}>
-                <Button className="h-11 w-full rounded-lg px-6 text-sm font-semibold shadow-[0_4px_14px_rgba(34,197,94,0.25)] sm:w-auto">
+                <Button className="h-11 w-full rounded-none px-6 text-[15px] font-bold shadow-[0_4px_14px_rgba(34,197,94,0.25)] sm:w-auto">
                   Email us
                 </Button>
               </Link>
               <Link href="#contact-form">
                 <Button
                   variant="outline"
-                  className="h-11 w-full rounded-lg border-border bg-white px-6 text-sm font-semibold sm:w-auto dark:bg-card"
+                  className="h-11 w-full rounded-none px-6 text-[15px] font-semibold sm:w-auto"
                 >
                   Speak to our team
                 </Button>
@@ -42,7 +44,7 @@ export function ContactHero() {
           </div>
 
           <div className="relative order-1 mx-auto w-full max-w-xl lg:order-2 lg:max-w-none lg:justify-self-end">
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-[#f4f6f8] dark:bg-background sm:aspect-[5/4]">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-none bg-[#f4f6f8] dark:bg-background sm:aspect-[5/4]">
               <Image
                 src={CONTACT_MAP_IMAGE}
                 alt="World map highlighting SusuFlow office location in Ghana"

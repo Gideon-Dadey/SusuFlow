@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { ABOUT_VALUES } from '@/lib/marketing-data';
-import { MarketingContainer } from '../marketing-container';
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { ABOUT_VALUES } from "@/lib/marketing-data";
+import { MarketingContainer } from "../marketing-container";
 
 export function AboutPlatformSection() {
   return (
@@ -12,9 +12,9 @@ export function AboutPlatformSection() {
             Everything susu companies need, in a single platform
           </h2>
           <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground lg:mx-auto">
-            Designed to help susu operators manage collections, commissions, and payouts across
-            branches. Verified MoMo deposits, live balances, and exportable reports make choosing
-            SusuFlow straightforward.
+            Designed to help susu operators manage collections, commissions, and
+            payouts across branches. Verified MoMo deposits, live balances, and
+            exportable reports make choosing SusuFlow straightforward.
           </p>
           <Link
             href="/how-it-works"
@@ -29,10 +29,14 @@ export function AboutPlatformSection() {
           {ABOUT_VALUES.map(({ title, body }) => (
             <article
               key={title}
-              className="rounded-lg border border-border/80 bg-white p-6 dark:border-border dark:bg-card"
+              className="rounded-none border border-border/80 bg-white p-6 dark:border-border dark:bg-card"
             >
-              <h3 className="text-base font-bold text-foreground sm:text-lg">{title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">{body}</p>
+              <h3 className="text-base font-bold text-foreground sm:text-lg">
+                {title}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                {body}
+              </p>
             </article>
           ))}
         </div>

@@ -16,7 +16,6 @@ import {
   TabScreenLayout,
 } from "@/components/layout/TabScreen";
 import { useProfileData } from "@/components/settings/useProfileData";
-import { useRefreshFinancialsOnFocus } from "@/hooks/useRefreshFinancialsOnFocus";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
 import { depositApi } from "@/lib/api";
 import { fetchCustomerWallet } from "@/lib/customer-wallet";
@@ -39,9 +38,7 @@ export default function DepositScreen() {
   const { sessionKey } = useCustomerSession();
   const customerId = sessionKey?.customerId;
 
-  useRefreshFinancialsOnFocus(sessionKey);
-
-  const { data: wallet, isLoading: walletLoading } = useQuery({
+  const { data: wallet, isPending: walletPending } = useQuery({
     queryKey: sessionKey
       ? queryKeys.wallet(sessionKey.userId, sessionKey.customerId)
       : ["wallet", "inactive"],
@@ -131,7 +128,7 @@ export default function DepositScreen() {
             amount={amount}
             onChangeAmount={setAmount}
             balance={wallet?.balance}
-            balanceLoading={walletLoading}
+            balanceLoading={walletPending && wallet === undefined}
           />
         ) : null}
 

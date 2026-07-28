@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
-import { ThemeProvider } from '@/components/theme-provider';
-import { OfflineSyncProvider } from '@/components/offline-sync-provider';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
+import { ThemeProvider } from "@/components/theme-provider";
+import { OfflineSyncProvider } from "@/components/offline-sync-provider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -11,10 +11,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60_000,
-            gcTime: 5 * 60_000,
+            staleTime: 5 * 60_000,
+            gcTime: 15 * 60_000,
             retry: 1,
             refetchOnWindowFocus: false,
+            refetchOnMount: false,
+            refetchOnReconnect: false,
           },
         },
       }),

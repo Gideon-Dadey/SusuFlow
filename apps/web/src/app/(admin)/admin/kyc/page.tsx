@@ -1,16 +1,20 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { adminApi } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { StatusBadge } from '@/components/ui/badge';
-import { formatDate } from '@/lib/utils';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserCheck, faFileAlt, faLink } from '@fortawesome/free-solid-svg-icons';
+import { useQuery } from "@tanstack/react-query";
+import { adminApi } from "@/lib/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatusBadge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/utils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUserCheck,
+  faFileAlt,
+  faLink,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminKycPage() {
   const { data: kycData, isLoading } = useQuery({
-    queryKey: ['admin-global-kyc'],
+    queryKey: ["admin-global-kyc"],
     queryFn: () => adminApi.getKycQueue(),
   });
 
@@ -19,7 +23,7 @@ export default function AdminKycPage() {
   return (
     <div className="space-y-6">
       <div className="page-header mb-0">
-        <h1 className="text-2xl font-bold tracking-tight">Identity KYC Review Queue</h1>
+        <h1 className="dashboard-title">Identity Queue</h1>
       </div>
 
       <Card className="portal-card border-border/60">
@@ -30,13 +34,21 @@ export default function AdminKycPage() {
           {isLoading ? (
             <div className="space-y-4 py-8">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-12 w-full animate-pulse rounded-lg bg-muted/65" />
+                <div
+                  key={i}
+                  className="h-12 w-full animate-pulse rounded-lg bg-muted/65"
+                />
               ))}
             </div>
           ) : items.length === 0 ? (
             <div className="py-12 text-center">
-              <FontAwesomeIcon icon={faUserCheck} className="mx-auto h-8 w-8 text-muted-foreground/50" />
-              <p className="mt-2 text-sm text-muted-foreground">No KYC documents registered yet.</p>
+              <FontAwesomeIcon
+                icon={faUserCheck}
+                className="mx-auto h-8 w-8 text-muted-foreground/50"
+              />
+              <p className="mt-2 text-sm text-muted-foreground">
+                No KYC documents registered yet.
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -54,7 +66,10 @@ export default function AdminKycPage() {
                 </thead>
                 <tbody className="divide-y divide-border/60">
                   {items.map((doc: any) => (
-                    <tr key={doc.id} className="hover:bg-muted/30 transition-colors">
+                    <tr
+                      key={doc.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
                       <td className="py-3.5 px-4 text-xs text-muted-foreground whitespace-nowrap">
                         {formatDate(doc.createdAt)}
                       </td>
@@ -62,24 +77,28 @@ export default function AdminKycPage() {
                         {doc.customer?.user ? (
                           <>
                             <span>
-                              {doc.customer.user.firstName} {doc.customer.user.lastName}
+                              {doc.customer.user.firstName}{" "}
+                              {doc.customer.user.lastName}
                             </span>
                             <span className="block text-[10px] text-muted-foreground font-mono">
                               {doc.customer.user.email}
                             </span>
                           </>
                         ) : (
-                          'N/A'
+                          "N/A"
                         )}
                       </td>
                       <td className="py-3.5 px-4">
                         <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
-                          {doc.customer?.tenant?.name || 'N/A'}
+                          {doc.customer?.tenant?.name || "N/A"}
                         </span>
                       </td>
                       <td className="py-3.5 px-4 text-xs font-semibold text-foreground whitespace-nowrap uppercase">
-                        <FontAwesomeIcon icon={faFileAlt} className="mr-1.5 text-muted-foreground" />
-                        {doc.documentType.replace(/_/g, ' ')}
+                        <FontAwesomeIcon
+                          icon={faFileAlt}
+                          className="mr-1.5 text-muted-foreground"
+                        />
+                        {doc.documentType.replace(/_/g, " ")}
                       </td>
                       <td className="py-3.5 px-4 text-xs whitespace-nowrap">
                         <a
@@ -103,7 +122,9 @@ export default function AdminKycPage() {
                             )}
                           </span>
                         ) : (
-                          <span className="italic text-muted-foreground/60">Not reviewed</span>
+                          <span className="italic text-muted-foreground/60">
+                            Not reviewed
+                          </span>
                         )}
                       </td>
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">

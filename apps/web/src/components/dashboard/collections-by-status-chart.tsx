@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatGhs } from '@/lib/utils';
-import { PieChart as PieIcon } from 'lucide-react';
+import { useMemo } from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatGhs } from "@/lib/utils";
+import { PieChart as PieIcon } from "lucide-react";
 
 interface CollectionsByStatusChartProps {
   transactions: Array<{
@@ -16,13 +16,15 @@ interface CollectionsByStatusChartProps {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  completed: { label: 'Completed', color: '#16a34a' }, // SusuFlow Primary Green
-  pending: { label: 'Pending', color: '#f59e0b' },   // Warm Amber
-  failed: { label: 'Failed', color: '#ef4444' },     // Rose Red
-  cancelled: { label: 'Cancelled', color: '#64748b' },  // Slate Grey
+  completed: { label: "Completed", color: "#16a34a" }, // SusuFlow Primary Green
+  pending: { label: "Pending", color: "#f59e0b" }, // Warm Amber
+  failed: { label: "Failed", color: "#ef4444" }, // Rose Red
+  cancelled: { label: "Cancelled", color: "#64748b" }, // Slate Grey
 };
 
-export function CollectionsByStatusChart({ transactions }: CollectionsByStatusChartProps) {
+export function CollectionsByStatusChart({
+  transactions,
+}: CollectionsByStatusChartProps) {
   const { data, total } = useMemo(() => {
     const buckets: Record<string, { amount: number; count: number }> = {
       completed: { amount: 0, count: 0 },
@@ -33,7 +35,7 @@ export function CollectionsByStatusChart({ transactions }: CollectionsByStatusCh
     let runningTotal = 0;
 
     for (const t of transactions) {
-      const key = t.status || 'completed';
+      const key = t.status || "completed";
       const amount = Number(t.amount);
       if (!buckets[key]) {
         buckets[key] = { amount: 0, count: 0 };
@@ -49,8 +51,11 @@ export function CollectionsByStatusChart({ transactions }: CollectionsByStatusCh
         name: STATUS_CONFIG[status]?.label || status,
         value: item.amount,
         count: item.count,
-        color: STATUS_CONFIG[status]?.color || '#94a3b8',
-        percentage: runningTotal > 0 ? ((item.amount / runningTotal) * 100).toFixed(0) : '0',
+        color: STATUS_CONFIG[status]?.color || "#94a3b8",
+        percentage:
+          runningTotal > 0
+            ? ((item.amount / runningTotal) * 100).toFixed(0)
+            : "0",
       }))
       .sort((a, b) => b.value - a.value);
 
@@ -65,12 +70,16 @@ export function CollectionsByStatusChart({ transactions }: CollectionsByStatusCh
             <PieIcon className="h-4.5 w-4.5" />
           </div>
           <div>
-            <CardTitle className="text-sm font-bold text-foreground">Collections Status</CardTitle>
-            <p className="text-[11px] text-muted-foreground">Distribution by transaction status</p>
+            <CardTitle className="text-sm font-bold text-foreground">
+              Collections Status
+            </CardTitle>
+            <p className="text-[11px] text-muted-foreground">
+              Distribution by transaction status
+            </p>
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="pt-0 flex-1 flex flex-col justify-between gap-6">
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:gap-8">
           {/* Donut chart */}
@@ -81,15 +90,23 @@ export function CollectionsByStatusChart({ transactions }: CollectionsByStatusCh
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       const item = payload[0].payload;
-                      if (item.name === 'No data') return null;
+                      if (item.name === "No data") return null;
                       return (
                         <div className="rounded-lg border border-border bg-popover px-2.5 py-1.5 shadow-md text-xs">
-                          <p className="font-semibold text-foreground">{item.name}</p>
+                          <p className="font-semibold text-foreground">
+                            {item.name}
+                          </p>
                           <p className="text-muted-foreground mt-0.5">
-                            Volume: <span className="font-mono font-medium text-foreground">{formatGhs(item.value)}</span>
+                            Volume:{" "}
+                            <span className="font-mono font-medium text-foreground">
+                              {formatGhs(item.value)}
+                            </span>
                           </p>
                           <p className="text-muted-foreground">
-                            Count: <span className="font-medium text-foreground">{item.count} txns</span>
+                            Count:{" "}
+                            <span className="font-medium text-foreground">
+                              {item.count} txns
+                            </span>
                           </p>
                         </div>
                       );
@@ -98,7 +115,18 @@ export function CollectionsByStatusChart({ transactions }: CollectionsByStatusCh
                   }}
                 />
                 <Pie
-                  data={data.length > 0 ? data : [{ name: 'No data', value: 1, count: 0, color: '#e2e8f0' }]}
+                  data={
+                    data.length > 0
+                      ? data
+                      : [
+                          {
+                            name: "No data",
+                            value: 1,
+                            count: 0,
+                            color: "#e2e8f0",
+                          },
+                        ]
+                  }
                   cx="50%"
                   cy="50%"
                   innerRadius={52}
@@ -109,7 +137,14 @@ export function CollectionsByStatusChart({ transactions }: CollectionsByStatusCh
                 >
                   {(data.length > 0
                     ? data
-                    : [{ name: 'No data', value: 1, count: 0, color: '#e2e8f0' }]
+                    : [
+                        {
+                          name: "No data",
+                          value: 1,
+                          count: 0,
+                          color: "#e2e8f0",
+                        },
+                      ]
                   ).map((entry, i) => (
                     <Cell key={i} fill={entry.color} />
                   ))}
@@ -121,14 +156,19 @@ export function CollectionsByStatusChart({ transactions }: CollectionsByStatusCh
               <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                 Total Vol.
               </span>
-              <span className="text-sm font-bold text-foreground font-mono mt-0.5">{formatGhs(total)}</span>
+              <span className="text-sm font-bold text-foreground font-mono mt-0.5">
+                {formatGhs(total)}
+              </span>
             </div>
           </div>
 
           {/* Legend */}
           <div className="flex flex-1 flex-col gap-3.5 w-full">
             {data.map((item) => (
-              <div key={item.name} className="flex items-center justify-between gap-3 text-xs">
+              <div
+                key={item.name}
+                className="flex items-center justify-between gap-3 text-xs"
+              >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span
                     className="block h-2.5 w-2.5 shrink-0 rounded-full"
@@ -137,7 +177,8 @@ export function CollectionsByStatusChart({ transactions }: CollectionsByStatusCh
                   <div className="min-w-0">
                     <p className="font-bold text-foreground">{item.name}</p>
                     <p className="text-[10px] text-muted-foreground font-medium truncate">
-                      {item.count} txn{item.count !== 1 ? 's' : ''} • {formatGhs(item.value)}
+                      {item.count} txn{item.count !== 1 ? "s" : ""} •{" "}
+                      {formatGhs(item.value)}
                     </p>
                   </div>
                 </div>
@@ -147,7 +188,9 @@ export function CollectionsByStatusChart({ transactions }: CollectionsByStatusCh
               </div>
             ))}
             {data.length === 0 && (
-              <p className="text-xs text-center py-6 text-muted-foreground">No transaction data recorded</p>
+              <p className="text-xs text-center py-6 text-muted-foreground">
+                No transaction data recorded
+              </p>
             )}
           </div>
         </div>

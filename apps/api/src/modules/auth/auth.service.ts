@@ -75,11 +75,30 @@ export class AuthService {
         data: { userId: user.id, roleId: customerRole.id, tenantId: tenant.id },
       });
 
+      const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+      let customerNumber = "";
+      for (let attempts = 0; attempts < 10; attempts++) {
+        let code = "";
+        for (let i = 0; i < 8; i++) {
+          code += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        const existing = await tx.customer.findFirst({
+          where: { tenantId: tenant.id, customerNumber: code },
+        });
+        if (!existing) {
+          customerNumber = code;
+          break;
+        }
+      }
+      if (!customerNumber) {
+        customerNumber = Date.now().toString(36).toUpperCase().slice(-8);
+      }
+
       const customer = await tx.customer.create({
         data: {
           tenantId: tenant.id,
           userId: user.id,
-          customerNumber: `CUS-${String(customerCount + 1).padStart(6, "0")}`,
+          customerNumber,
           status: "pending",
           kycLevel: 0,
         },

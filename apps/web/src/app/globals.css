@@ -37,7 +37,7 @@
     --ring: #22c55e;
     --success: #22c55e;
     --warning: #f59e0b;
-    --radius: 0.5rem;
+    --radius: 0;
     --brand-dark: #1a365d;
     --surface-elevated: #ffffff;
     --surface-hover: #f8fafc;
@@ -85,6 +85,17 @@
 
   * {
     @apply border-border;
+  }
+
+  button:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
+  [type='button']:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
+  [type='submit']:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
+  [type='reset']:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
+  .btn:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
+  input:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
+  select:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
+  textarea:not(.rounded-full):not(.rounded-sm):not(.rounded-lg) {
+    border-radius: 0;
   }
 
   html {
@@ -170,9 +181,9 @@
   body {
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
-    font-size: 15px;
-    line-height: 1.625;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 18px;
+    line-height: 30.6px;
     font-weight: 400;
     @apply antialiased;
   }
@@ -182,13 +193,8 @@
   h3,
   h4 {
     color: var(--heading);
-    font-weight: 500;
-  }
-
-  h2,
-  h3,
-  h4 {
-    @apply font-semibold;
+    font-family: var(--font-open-sans), sans-serif;
+    font-weight: 700;
   }
 
   ::selection {
@@ -238,7 +244,7 @@
   }
 
   .premium-card {
-    @apply rounded-lg border border-border bg-card shadow-card transition-all duration-200;
+    @apply rounded-none border border-border bg-card shadow-card transition-all duration-200;
   }
 
   .premium-card:hover {
@@ -256,7 +262,7 @@
   }
 
   .portal-card {
-    @apply rounded-2xl border border-border bg-card p-4 shadow-card sm:p-5;
+    @apply rounded-none border border-border bg-card p-4 shadow-card sm:p-5;
   }
 
   .dark .portal-card {
@@ -264,7 +270,7 @@
   }
 
   .dashboard-tile {
-    @apply border-border bg-card;
+    @apply border-border bg-card rounded-none;
   }
 
   .dark .dashboard-tile {
@@ -325,22 +331,74 @@
     @apply grid grid-cols-2 gap-3 xl:grid-cols-4 xl:gap-4;
   }
 
-  .dashboard-section-title {
-    @apply mb-3 text-base font-bold text-foreground;
+  .dashboard-section-title,
+  .section-bar {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 31.2px;
+    color: var(--heading);
   }
 
   .dashboard-title {
-    font-size: 1rem;
-    font-weight: 600;
+    font-family: var(--font-open-sans), sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 28px;
+    letter-spacing: -0.015em;
+    color: var(--heading);
+  }
+
+  .hero-page-title {
+    font-family: var(--font-open-sans), sans-serif;
+    font-size: 35px;
+    font-weight: 700;
+    line-height: 42px;
     letter-spacing: -0.02em;
     color: var(--heading);
   }
 
-  @media (min-width: 640px) {
-    .dashboard-title {
-      font-size: 1.5rem;
-      font-weight: 500;
-    }
+  .card-label {
+    font-family: var(--font-open-sans), sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 37.4px;
+  }
+
+  .nav-link {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 30.6px;
+  }
+
+  .body-copy-under-hero,
+  .hero-subtitle {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 30.6px;
+  }
+
+  .small-meta,
+  .meta-label {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .modal-title {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.375;
+  }
+
+  .modal-body {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.625;
   }
 
   .page-header {
@@ -362,17 +420,18 @@
   }
 
   .marketing-hero-title {
-    font-size: clamp(2.25rem, 5vw, 3.5rem);
-    font-weight: 500;
+    font-family: var(--font-open-sans), sans-serif;
+    font-size: 2.35rem;
+    font-weight: 700;
+    line-height: 1.12;
     letter-spacing: -0.02em;
-    line-height: 1.1;
   }
 
-  @media (max-width: 1023px) {
+  @media (min-width: 1024px) {
     .marketing-hero-title {
-      font-size: clamp(1.875rem, 8vw, 2.5rem);
+      font-size: 3.4rem;
       font-weight: 700;
-      line-height: 1.15;
+      line-height: 1.08;
     }
   }
 

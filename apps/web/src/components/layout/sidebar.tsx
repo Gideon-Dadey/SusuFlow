@@ -19,6 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { tenantApi } from "@/lib/api";
 import { getTenantSlug } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth.store";
+import { BRAND_LOGO } from "@/lib/brand-assets";
 
 interface SidebarProps {
   variant?: "staff" | "admin";
@@ -38,11 +39,12 @@ function NavLink({
   return (
     <Link
       href={href}
+      prefetch={true}
       onClick={onClose}
       className={cn(
-        "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.8125rem] font-medium transition-colors",
+        "flex items-center gap-2.5 rounded-none px-2.5 py-2 text-[0.8125rem] font-medium transition-colors",
         active
-          ? "bg-muted text-foreground"
+          ? "bg-muted text-foreground font-semibold"
           : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
       )}
     >
@@ -105,17 +107,21 @@ export function Sidebar({
       )}
     >
       <div className="flex h-16 items-center gap-2 border-b border-border px-4">
-        {variant !== "admin" && tenantBranding?.logoUrl ? (
+        {variant === "admin" ? (
+          <img
+            src={BRAND_LOGO}
+            alt="SusuFlow Admin"
+            className="h-8 w-8 shrink-0 object-contain"
+          />
+        ) : tenantBranding?.logoUrl ? (
           <img
             src={tenantBranding.logoUrl}
             alt={brandLabel}
-            className="h-8 w-8 rounded-lg object-contain bg-transparent shrink-0"
+            className="h-8 w-8 rounded-none object-contain bg-transparent shrink-0"
           />
         ) : (
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground">
-            {variant === "admin"
-              ? "SF"
-              : brandLabel.substring(0, 2).toUpperCase()}
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none bg-primary text-xs font-bold text-primary-foreground">
+            {brandLabel.substring(0, 2).toUpperCase()}
           </div>
         )}
         <span className="truncate text-sm font-semibold text-foreground">

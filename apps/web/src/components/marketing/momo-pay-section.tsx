@@ -1,21 +1,23 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { BRAND_MOMO_PAY_SHOWCASE } from '@/lib/brand-assets';
-import { BrandLogo } from './brand-logo';
-import { MarketingContainer } from './marketing-container';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { BRAND_MOMO_PAY_SHOWCASE } from "@/lib/brand-assets";
+import { BrandLogo } from "./brand-logo";
+import { MarketingContainer } from "./marketing-container";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 function MomoPayBadge({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-md bg-[#ffcc00] px-3 py-1.5 text-sm font-bold tracking-tight text-[#1a1a1a] shadow-sm',
+        "inline-flex items-center gap-1 rounded-full bg-[#ffcc00] px-3 py-1.5 text-sm font-bold tracking-tight text-[#1a1a1a] shadow-sm",
         className,
       )}
     >
-      <span className="text-[0.7rem] font-extrabold uppercase tracking-wider">MTN</span>
+      <span className="text-[0.7rem] font-extrabold uppercase tracking-wider">
+        MTN
+      </span>
       <span className="text-base font-extrabold leading-none">MoMo</span>
     </span>
   );
@@ -34,23 +36,24 @@ export function MomoPaySection() {
             </div>
 
             <h2 className="text-balance text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.65rem]">
-              <span className="text-[#e8a317]">MoMo Pay is integrated.</span>{' '}
+              <span className="text-[#e8a317]">MoMo Pay is integrated.</span>{" "}
               <span className="text-foreground">
                 a fast, secure, and local way to collect deposits.
               </span>
             </h2>
 
             <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground lg:mt-6">
-              Savers pay straight from their MoMo wallet. Collectors send prompts in the field,
-              and every cedi is verified against the gateway before it hits the ledger. No cash
-              handoffs, no disputed receipts.
+              Savers pay straight from their MoMo wallet. Collectors send
+              prompts in the field, and every cedi is verified against the
+              gateway before it hits the ledger. No cash handoffs, no disputed
+              receipts.
             </p>
 
             <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center lg:justify-start">
               <Link href="/contact?intent=demo" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-md px-6 text-sm font-semibold shadow-sm sm:min-w-[10.5rem]"
+                  className="h-12 w-full rounded-none px-6 text-[15px] font-bold shadow-sm sm:min-w-[10.5rem]"
                 >
                   Get started
                   <ArrowRight className="h-4 w-4" />

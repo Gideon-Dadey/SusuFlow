@@ -1,15 +1,19 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { adminApi } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatGhs } from '@/lib/utils';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCoins, faWallet, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { useQuery } from "@tanstack/react-query";
+import { adminApi } from "@/lib/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatGhs } from "@/lib/utils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCoins,
+  faWallet,
+  faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminCommissionsPage() {
   const { data: commissions, isLoading } = useQuery({
-    queryKey: ['admin-global-commissions'],
+    queryKey: ["admin-global-commissions"],
     queryFn: () => adminApi.getCommissions(),
   });
 
@@ -18,7 +22,7 @@ export default function AdminCommissionsPage() {
   return (
     <div className="space-y-6">
       <div className="page-header mb-0">
-        <h1 className="text-2xl font-bold tracking-tight">Collector Commissions</h1>
+        <h1 className="dashboard-title">Collector Earnings</h1>
       </div>
 
       {isLoading ? (
@@ -32,36 +36,64 @@ export default function AdminCommissionsPage() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <Card className="border-border/60">
               <CardHeader className="flex flex-row items-center gap-2 pb-2">
-                <FontAwesomeIcon icon={faCoins} className="h-5 w-5 text-amber-500" />
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Total Earned</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-2">
-                <p className="text-3xl font-extrabold text-foreground">{formatGhs(commissions?.totalEarned ?? 0)}</p>
-                <p className="text-xs text-muted-foreground mt-2">1% of system-wide completed deposits</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border/60">
-              <CardHeader className="flex flex-row items-center gap-2 pb-2">
-                <FontAwesomeIcon icon={faWallet} className="h-5 w-5 text-indigo-500" />
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Total Disbursed</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-2">
-                <p className="text-3xl font-extrabold text-foreground">{formatGhs(commissions?.totalPaid ?? 0)}</p>
-                <p className="text-xs text-muted-foreground mt-2">Paid out via cash or momo channels</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border/60">
-              <CardHeader className="flex flex-row items-center gap-2 pb-2">
-                <FontAwesomeIcon icon={faUserPlus} className="h-5 w-5 text-sky-500" />
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Net Outstanding</CardTitle>
+                <FontAwesomeIcon
+                  icon={faCoins}
+                  className="h-5 w-5 text-amber-500"
+                />
+                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  Total Earned
+                </CardTitle>
               </CardHeader>
               <CardContent className="pt-2">
                 <p className="text-3xl font-extrabold text-foreground">
-                  {formatGhs((commissions?.totalEarned ?? 0) - (commissions?.totalPaid ?? 0))}
+                  {formatGhs(commissions?.totalEarned ?? 0)}
                 </p>
-                <p className="text-xs text-muted-foreground mt-2">Unpaid collector balances</p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  1% of system-wide completed deposits
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border/60">
+              <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                <FontAwesomeIcon
+                  icon={faWallet}
+                  className="h-5 w-5 text-indigo-500"
+                />
+                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  Total Disbursed
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-2">
+                <p className="text-3xl font-extrabold text-foreground">
+                  {formatGhs(commissions?.totalPaid ?? 0)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Paid out via cash or momo channels
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border/60">
+              <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                <FontAwesomeIcon
+                  icon={faUserPlus}
+                  className="h-5 w-5 text-sky-500"
+                />
+                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  Net Outstanding
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-2">
+                <p className="text-3xl font-extrabold text-foreground">
+                  {formatGhs(
+                    (commissions?.totalEarned ?? 0) -
+                      (commissions?.totalPaid ?? 0),
+                  )}
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Unpaid collector balances
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -73,7 +105,9 @@ export default function AdminCommissionsPage() {
             </CardHeader>
             <CardContent>
               {items.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">No active collectors registered yet.</p>
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  No active collectors registered yet.
+                </p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
@@ -89,7 +123,10 @@ export default function AdminCommissionsPage() {
                     </thead>
                     <tbody className="divide-y divide-border/60">
                       {items.map((item: any, idx: number) => (
-                        <tr key={idx} className="hover:bg-muted/30 transition-colors">
+                        <tr
+                          key={idx}
+                          className="hover:bg-muted/30 transition-colors"
+                        >
                           <td className="py-3.5 px-4 font-medium text-foreground">
                             {item.firstName} {item.lastName}
                           </td>

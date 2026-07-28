@@ -1,15 +1,15 @@
-import { Fragment } from 'react';
-import Link from 'next/link';
-import { Minus } from 'lucide-react';
+import { Fragment } from "react";
+import Link from "next/link";
+import { Minus } from "lucide-react";
 import {
   PRICING_COMPARISON_GROUPS,
   PRICING_PLANS,
   type PricingCellValue,
-} from '@/lib/marketing-data';
-import { Button } from '@/components/ui/button';
-import { MarketingContainer } from '../marketing-container';
-import { PricingCheckIcon } from './pricing-check-icon';
-import { cn } from '@/lib/utils';
+} from "@/lib/marketing-data";
+import { Button } from "@/components/ui/button";
+import { MarketingContainer } from "../marketing-container";
+import { PricingCheckIcon } from "./pricing-check-icon";
+import { cn } from "@/lib/utils";
 
 function CellValue({ value }: { value: PricingCellValue }) {
   if (value === true) {
@@ -30,12 +30,12 @@ function CellValue({ value }: { value: PricingCellValue }) {
   return <span className="text-sm font-medium text-foreground">{value}</span>;
 }
 
-const PLAN_KEYS = ['starter', 'growth', 'enterprise'] as const;
+const PLAN_KEYS = ["starter", "growth", "enterprise"] as const;
 
-const COMPARISON_ROW_EVEN = 'bg-white dark:bg-card';
-const COMPARISON_ROW_ODD = 'bg-[#f5f6f8] dark:bg-muted';
+const COMPARISON_ROW_EVEN = "bg-white dark:bg-card";
+const COMPARISON_ROW_ODD = "bg-[#f5f6f8] dark:bg-muted";
 const COMPARISON_GROUP_HEADER =
-  'border-t border-border bg-[#1a1a1a] px-4 py-3 text-sm font-bold text-white dark:bg-muted dark:text-foreground';
+  "border-t border-border bg-[#1a1a1a] px-4 py-3 text-sm font-bold text-white dark:bg-muted dark:text-foreground";
 
 export function PricingComparisonSection() {
   return (
@@ -46,26 +46,32 @@ export function PricingComparisonSection() {
             Compare all features across the plans
           </h2>
           <p className="mt-4 text-pretty text-base text-muted-foreground lg:mx-auto lg:max-w-2xl">
-            Every plan includes verified MoMo collections. Higher tiers add scale, team controls,
-            and support for growing susu companies.
+            Every plan includes verified MoMo collections. Higher tiers add
+            scale, team controls, and support for growing susu companies.
           </p>
         </div>
 
-        <div className="mt-10 hidden overflow-x-auto rounded-2xl border border-border lg:mt-14 lg:block">
+        <div className="mt-10 hidden overflow-x-auto rounded-none border border-border lg:mt-14 lg:block">
           <table className="w-full min-w-[48rem] border-collapse text-left">
             <thead className="bg-white dark:bg-card">
               <tr>
                 <th className="w-[40%] pb-6 pr-6 align-bottom" />
                 {PRICING_PLANS.map((plan) => (
-                  <th key={plan.name} className="px-4 pb-6 text-center align-bottom">
-                    <p className="text-base font-bold text-foreground">{plan.name}</p>
+                  <th
+                    key={plan.name}
+                    className="px-4 pb-6 text-center align-bottom"
+                  >
+                    <p className="text-base font-bold text-foreground">
+                      {plan.name}
+                    </p>
                     <Link href={plan.ctaHref} className="mt-4 inline-block">
                       <Button
-                        variant={plan.highlighted ? 'primary' : 'outline'}
+                        variant={plan.highlighted ? "primary" : "outline"}
                         size="sm"
                         className={cn(
-                          'h-10 min-w-[8.5rem] rounded-lg text-xs font-semibold',
-                          plan.highlighted && 'shadow-[0_4px_16px_rgba(34,197,94,0.24)]',
+                          "h-10 min-w-[8.5rem] rounded-none text-[15px] font-bold",
+                          plan.highlighted &&
+                            "shadow-[0_4px_16px_rgba(34,197,94,0.24)]",
                         )}
                       >
                         {plan.cta}
@@ -92,11 +98,13 @@ export function PricingComparisonSection() {
                         <tr
                           key={row.feature}
                           className={cn(
-                            'border-b border-border/40',
+                            "border-b border-border/40",
                             striped ? COMPARISON_ROW_ODD : COMPARISON_ROW_EVEN,
                           )}
                         >
-                          <td className="py-4 pr-6 text-sm text-foreground">{row.feature}</td>
+                          <td className="py-4 pr-6 text-sm text-foreground">
+                            {row.feature}
+                          </td>
                           {PLAN_KEYS.map((key) => (
                             <td key={key} className="px-4 py-4 text-center">
                               <CellValue value={row[key]} />
@@ -114,24 +122,27 @@ export function PricingComparisonSection() {
 
         <div className="mt-10 flex flex-col gap-6 lg:hidden">
           {PRICING_PLANS.map((plan) => {
-            const planKey = plan.name.toLowerCase() as (typeof PLAN_KEYS)[number];
+            const planKey =
+              plan.name.toLowerCase() as (typeof PLAN_KEYS)[number];
             return (
               <div
                 key={plan.name}
                 className={cn(
-                  'rounded-2xl border bg-card p-5',
+                  "rounded-none border bg-card p-5",
                   plan.highlighted
-                    ? 'border-secondary/40 ring-1 ring-secondary/20'
-                    : 'border-border/70',
+                    ? "border-secondary/40 ring-1 ring-secondary/20"
+                    : "border-border/70",
                 )}
               >
                 <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-base font-bold text-foreground">{plan.name}</h3>
+                  <h3 className="text-base font-bold text-foreground">
+                    {plan.name}
+                  </h3>
                   <Link href={plan.ctaHref}>
                     <Button
-                      variant={plan.highlighted ? 'primary' : 'outline'}
+                      variant={plan.highlighted ? "primary" : "outline"}
                       size="sm"
-                      className="h-9 rounded-lg text-xs font-semibold"
+                      className="h-9 rounded-none text-[15px] font-bold"
                     >
                       {plan.cta}
                     </Button>
@@ -142,13 +153,15 @@ export function PricingComparisonSection() {
                     <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
                       {group.category}
                     </p>
-                    <ul className="mt-3 divide-y divide-border/40 overflow-hidden rounded-lg border border-border bg-card">
+                    <ul className="mt-3 divide-y divide-border/40 overflow-hidden rounded-none border border-border bg-card">
                       {group.rows.map((row, rowIdx) => (
                         <li
                           key={row.feature}
                           className={cn(
-                            'flex items-center justify-between gap-3 px-3 py-2.5 text-sm',
-                            rowIdx % 2 === 1 ? COMPARISON_ROW_ODD : COMPARISON_ROW_EVEN,
+                            "flex items-center justify-between gap-3 px-3 py-2.5 text-sm",
+                            rowIdx % 2 === 1
+                              ? COMPARISON_ROW_ODD
+                              : COMPARISON_ROW_EVEN,
                           )}
                         >
                           <span className="text-foreground">{row.feature}</span>

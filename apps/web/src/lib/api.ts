@@ -187,7 +187,7 @@ export interface TenantInfo {
   slug: string;
   name: string;
   primaryColor?: string;
-  logoUrl?: string;
+  logoUrl?: string | null;
   status: string;
 }
 
@@ -198,6 +198,7 @@ export interface User {
   phone?: string | null;
   firstName: string;
   lastName: string;
+  avatarUrl?: string | null;
   status: string;
   emailVerified: boolean;
   createdAt: string;
@@ -224,17 +225,20 @@ export const authApi = {
       { skipAuth: true, tenantSlug },
     ),
 
-  register: (data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    password: string;
-  }) =>
+  register: (
+    data: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      password: string;
+    },
+    tenantSlug = "",
+  ) =>
     api.post<{ userId: string; customerId: string; message: string }>(
       "/auth/register",
       data,
-      { skipAuth: true },
+      { skipAuth: true, tenantSlug },
     ),
 
   logout: (refreshToken: string) => api.post("/auth/logout", { refreshToken }),
@@ -317,6 +321,7 @@ export const userApi = {
     lastName?: string;
     phone?: string;
     email?: string;
+    avatarUrl?: string | null;
   }) => api.put<User>("/users/me", data),
   updatePassword: (data: { currentPassword?: string; newPassword?: string }) =>
     api.put<{ message: string }>("/users/me/password", data),
@@ -652,6 +657,7 @@ export interface Customer {
     firstName: string;
     lastName: string;
     phone: string;
+    avatarUrl?: string | null;
   };
   collector?: { firstName: string; lastName: string };
 }

@@ -5,7 +5,7 @@ import { useAuthStore } from "@/stores/auth.store";
 import { useNotificationStore } from "@/stores/notification.store";
 
 /**
- * Keeps notification feed polling active across all main tabs (silent background).
+ * Subscribes to the shared transaction cache for in-app notifications.
  */
 export function NotificationSync() {
   const authUserId = useAuthStore((s) => s.user?.id);

@@ -136,8 +136,22 @@ export function getTenantSlug(): string {
   const params = new URLSearchParams(window.location.search);
   const fromQuery = params.get("tenant");
   if (fromQuery) return fromQuery;
+
   const stored = localStorage.getItem("tenant_slug");
   if (stored) return stored;
+
+  try {
+    const rawAuth = localStorage.getItem("susuflow-auth");
+    if (rawAuth) {
+      const parsed = JSON.parse(rawAuth);
+      const userSlug =
+        parsed.state?.user?.tenantSlug || parsed.state?.tenantSlug;
+      if (userSlug) return userSlug;
+    }
+  } catch {
+    // ignore parsing errors
+  }
+
   const host = window.location.hostname;
   if (host.includes(".") && !host.startsWith("localhost")) {
     return host.split(".")[0];

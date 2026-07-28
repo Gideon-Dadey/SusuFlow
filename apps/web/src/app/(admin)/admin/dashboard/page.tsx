@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { adminApi } from '@/lib/api';
-import { StatCard } from '@/components/dashboard/stat-card';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge, StatusBadge } from '@/components/ui/badge';
-import { formatGhs, formatDate } from '@/lib/utils';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { adminApi } from "@/lib/api";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge, StatusBadge } from "@/components/ui/badge";
+import { formatGhs, formatDate } from "@/lib/utils";
 import {
   faBuilding,
   faCircleCheck,
@@ -14,25 +14,31 @@ import {
   faWallet,
   faHistory,
   faListUl,
-} from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import Link from 'next/link';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+} from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function AdminDashboardPage() {
   const queryClient = useQueryClient();
   const [actionMessage, setActionMessage] = useState<string | null>(null);
 
   // Fetch global metrics and summaries
-  const { data: summary, isLoading: isSummaryLoading, error: summaryError } = useQuery({
-    queryKey: ['admin-global-summary'],
+  const {
+    data: summary,
+    isLoading: isSummaryLoading,
+    error: summaryError,
+  } = useQuery({
+    queryKey: ["admin-global-summary"],
     queryFn: () => adminApi.getGlobalSummary(),
+    placeholderData: (prev) => prev,
   });
 
   // Fetch all tenants to allow quick actions
   const { data: tenantsData, isLoading: isTenantsLoading } = useQuery({
-    queryKey: ['admin-tenants-list'],
+    queryKey: ["admin-tenants-list"],
     queryFn: () => adminApi.listTenants(),
+    placeholderData: (prev) => prev,
   });
 
   // Mutations for tenant quick actions
@@ -40,18 +46,19 @@ export default function AdminDashboardPage() {
     mutationFn: (id: string) => adminApi.activateTenant(id),
     onSuccess: (res) => {
       setActionMessage(res.message);
-      queryClient.invalidateQueries({ queryKey: ['admin-global-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-tenants-list'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-global-summary"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-tenants-list"] });
       setTimeout(() => setActionMessage(null), 5000);
     },
   });
 
   const suspendMutation = useMutation({
-    mutationFn: (id: string) => adminApi.suspendTenant(id, 'Suspended by super administrator'),
+    mutationFn: (id: string) =>
+      adminApi.suspendTenant(id, "Suspended by super administrator"),
     onSuccess: (res) => {
       setActionMessage(res.message);
-      queryClient.invalidateQueries({ queryKey: ['admin-global-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-tenants-list'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-global-summary"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-tenants-list"] });
       setTimeout(() => setActionMessage(null), 5000);
     },
   });
@@ -61,9 +68,21 @@ export default function AdminDashboardPage() {
   if (summaryError) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center space-y-4">
-        <FontAwesomeIcon icon={faTriangleExclamation} className="h-12 w-12 text-destructive" />
-        <p className="text-sm font-medium text-destructive">Failed to fetch platform metrics. Verify that the NestJS API is operational.</p>
-        <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['admin-global-summary'] })}>
+        <FontAwesomeIcon
+          icon={faTriangleExclamation}
+          className="h-12 w-12 text-destructive"
+        />
+        <p className="text-sm font-medium text-destructive">
+          Failed to fetch platform metrics. Verify that the NestJS API is
+          operational.
+        </p>
+        <Button
+          onClick={() =>
+            queryClient.invalidateQueries({
+              queryKey: ["admin-global-summary"],
+            })
+          }
+        >
           Retry
         </Button>
       </div>
@@ -76,12 +95,15 @@ export default function AdminDashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="page-header mb-0">
-          <h1 className="text-2xl font-bold tracking-tight">Super Admin Control Center</h1>
+          <h1 className="dashboard-title">Super Admin Control Center</h1>
         </div>
         <div className="flex gap-2">
           <Link href="/admin/tenants/new">
             <Button size="sm">
-              <FontAwesomeIcon icon={faBuilding} className="mr-1.5 h-3.5 w-3.5" />
+              <FontAwesomeIcon
+                icon={faBuilding}
+                className="mr-1.5 h-3.5 w-3.5"
+              />
               New Organization
             </Button>
           </Link>
@@ -99,15 +121,17 @@ export default function AdminDashboardPage() {
       <div className="portal-metric-grid">
         <StatCard
           title="Total Organizations"
-          value={isLoading ? '...' : String(summary?.totalTenants ?? 0)}
-          subtitle={isLoading ? undefined : `${summary?.activeTenants ?? 0} active`}
+          value={isLoading ? "..." : String(summary?.totalTenants ?? 0)}
+          subtitle={
+            isLoading ? undefined : `${summary?.activeTenants ?? 0} active`
+          }
           icon={faBuilding}
           iconBgClassName="bg-indigo-50 dark:bg-indigo-950/40"
           iconClassName="text-indigo-600 dark:text-indigo-400"
         />
         <StatCard
           title="Global Deposits Sum"
-          value={isLoading ? '...' : formatGhs(summary?.totalDeposits ?? 0)}
+          value={isLoading ? "..." : formatGhs(summary?.totalDeposits ?? 0)}
           subtitle="All organizations combined"
           icon={faWallet}
           iconBgClassName="bg-emerald-50 dark:bg-emerald-950/40"
@@ -115,7 +139,7 @@ export default function AdminDashboardPage() {
         />
         <StatCard
           title="Global Withdrawals Sum"
-          value={isLoading ? '...' : formatGhs(summary?.totalWithdrawals ?? 0)}
+          value={isLoading ? "..." : formatGhs(summary?.totalWithdrawals ?? 0)}
           subtitle="Processed disbursements"
           icon={faHistory}
           iconBgClassName="bg-amber-50 dark:bg-amber-950/40"
@@ -123,12 +147,28 @@ export default function AdminDashboardPage() {
         />
         <StatCard
           title="Open Fraud Alerts"
-          value={isLoading ? '...' : String(summary?.openFraudAlerts ?? 0)}
-          subtitle={summary?.openFraudAlerts && summary.openFraudAlerts > 0 ? 'Requires immediate action' : 'System secured'}
+          value={isLoading ? "..." : String(summary?.openFraudAlerts ?? 0)}
+          subtitle={
+            summary?.openFraudAlerts && summary.openFraudAlerts > 0
+              ? "Requires immediate action"
+              : "System secured"
+          }
           icon={faTriangleExclamation}
-          iconBgClassName={summary?.openFraudAlerts && summary.openFraudAlerts > 0 ? 'bg-red-50 dark:bg-red-950/50 pulse-animation' : 'bg-slate-50 dark:bg-slate-900'}
-          iconClassName={summary?.openFraudAlerts && summary.openFraudAlerts > 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-600 dark:text-slate-400'}
-          className={summary?.openFraudAlerts && summary.openFraudAlerts > 0 ? 'border-red-200 dark:border-red-900/40' : undefined}
+          iconBgClassName={
+            summary?.openFraudAlerts && summary.openFraudAlerts > 0
+              ? "bg-red-50 dark:bg-red-950/50 pulse-animation"
+              : "bg-slate-50 dark:bg-slate-900"
+          }
+          iconClassName={
+            summary?.openFraudAlerts && summary.openFraudAlerts > 0
+              ? "text-red-600 dark:text-red-400"
+              : "text-slate-600 dark:text-slate-400"
+          }
+          className={
+            summary?.openFraudAlerts && summary.openFraudAlerts > 0
+              ? "border-red-200 dark:border-red-900/40"
+              : undefined
+          }
         />
       </div>
 
@@ -137,10 +177,16 @@ export default function AdminDashboardPage() {
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div>
             <CardTitle>Recent Organizations</CardTitle>
-            <p className="text-xs text-muted-foreground">Quick action toggles for platform access control</p>
+            <p className="text-xs text-muted-foreground">
+              Quick action toggles for platform access control
+            </p>
           </div>
           <Link href="/admin/tenants">
-            <Button variant="ghost" size="sm" className="text-xs font-semibold text-primary">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs font-semibold text-primary"
+            >
               View All Orgs
             </Button>
           </Link>
@@ -149,11 +195,16 @@ export default function AdminDashboardPage() {
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 w-full animate-pulse rounded-lg bg-muted/65" />
+                <div
+                  key={i}
+                  className="h-16 w-full animate-pulse rounded-lg bg-muted/65"
+                />
               ))}
             </div>
           ) : tenants.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">No organizations registered yet.</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              No organizations registered yet.
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -168,17 +219,24 @@ export default function AdminDashboardPage() {
                 </thead>
                 <tbody className="divide-y divide-border/60">
                   {tenants.slice(0, 5).map((tenant) => (
-                    <tr key={tenant.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="py-3 px-4 font-medium text-foreground">{tenant.name}</td>
-                      <td className="py-3 px-4 text-xs font-mono text-muted-foreground">{tenant.slug}</td>
+                    <tr
+                      key={tenant.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
+                      <td className="py-3 px-4 font-medium text-foreground">
+                        {tenant.name}
+                      </td>
+                      <td className="py-3 px-4 text-xs font-mono text-muted-foreground">
+                        {tenant.slug}
+                      </td>
                       <td className="py-3 px-4">
                         <span
                           className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
-                            tenant.status === 'active'
-                              ? 'bg-green-50 text-green-700 dark:bg-green-950/60 dark:text-green-300'
-                              : tenant.status === 'suspended'
-                              ? 'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-300'
-                              : 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300'
+                            tenant.status === "active"
+                              ? "bg-green-50 text-green-700 dark:bg-green-950/60 dark:text-green-300"
+                              : tenant.status === "suspended"
+                                ? "bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-300"
+                                : "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300"
                           }`}
                         >
                           {tenant.status}
@@ -189,12 +247,15 @@ export default function AdminDashboardPage() {
                       </td>
                       <td className="py-3 px-4 text-right">
                         <div className="flex justify-end gap-1.5">
-                          {tenant.status !== 'active' ? (
+                          {tenant.status !== "active" ? (
                             <Button
                               size="sm"
                               variant="outline"
                               className="h-8 text-xs min-h-[32px] px-2.5"
-                              disabled={activateMutation.isPending || suspendMutation.isPending}
+                              disabled={
+                                activateMutation.isPending ||
+                                suspendMutation.isPending
+                              }
                               onClick={() => activateMutation.mutate(tenant.id)}
                             >
                               Activate
@@ -204,7 +265,10 @@ export default function AdminDashboardPage() {
                               size="sm"
                               variant="outline"
                               className="h-8 text-xs min-h-[32px] px-2.5 border-red-200 hover:bg-red-50 dark:border-red-950/50 dark:hover:bg-red-950/30 text-red-600 dark:text-red-400"
-                              disabled={activateMutation.isPending || suspendMutation.isPending}
+                              disabled={
+                                activateMutation.isPending ||
+                                suspendMutation.isPending
+                              }
                               onClick={() => suspendMutation.mutate(tenant.id)}
                             >
                               Suspend
@@ -228,16 +292,26 @@ export default function AdminDashboardPage() {
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div>
               <CardTitle>Global Ledger Activity</CardTitle>
-              <p className="text-xs text-muted-foreground">Latest transactions across all registered tenants</p>
+              <p className="text-xs text-muted-foreground">
+                Latest transactions across all registered tenants
+              </p>
             </div>
             <div className="flex gap-2">
               <Link href="/admin/deposits">
-                <Button variant="ghost" size="sm" className="text-xs font-semibold text-primary">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs font-semibold text-primary"
+                >
                   Deposits
                 </Button>
               </Link>
               <Link href="/admin/withdrawals">
-                <Button variant="ghost" size="sm" className="text-xs font-semibold text-primary">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs font-semibold text-primary"
+                >
                   Withdrawals
                 </Button>
               </Link>
@@ -247,11 +321,17 @@ export default function AdminDashboardPage() {
             {isLoading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-12 w-full animate-pulse rounded-lg bg-muted/65" />
+                  <div
+                    key={i}
+                    className="h-12 w-full animate-pulse rounded-lg bg-muted/65"
+                  />
                 ))}
               </div>
-            ) : !summary?.recentTransactions || summary.recentTransactions.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">No ledger transactions found.</p>
+            ) : !summary?.recentTransactions ||
+              summary.recentTransactions.length === 0 ? (
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                No ledger transactions found.
+              </p>
             ) : (
               <div className="space-y-3">
                 {summary.recentTransactions.map((tx: any) => (
@@ -264,10 +344,10 @@ export default function AdminDashboardPage() {
                         <span className="text-sm font-semibold text-foreground">
                           {tx.customer?.user
                             ? `${tx.customer.user.firstName} ${tx.customer.user.lastName}`
-                            : 'Unknown customer'}
+                            : "Unknown customer"}
                         </span>
                         <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded font-mono uppercase">
-                          {tx.tenant?.name || 'Platform'}
+                          {tx.tenant?.name || "Platform"}
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground font-mono">
@@ -276,7 +356,7 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-bold text-foreground">
-                        {tx.type === 'deposit' ? '+' : '-'}
+                        {tx.type === "deposit" ? "+" : "-"}
                         {formatGhs(tx.amount)}
                       </p>
                       <StatusBadge status={tx.status} />
@@ -293,10 +373,16 @@ export default function AdminDashboardPage() {
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div>
               <CardTitle>System Security Trail</CardTitle>
-              <p className="text-xs text-muted-foreground">Live monitoring of user actions and admin overrides</p>
+              <p className="text-xs text-muted-foreground">
+                Live monitoring of user actions and admin overrides
+              </p>
             </div>
             <Link href="/admin/audit">
-              <Button variant="ghost" size="sm" className="text-xs font-semibold text-primary">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs font-semibold text-primary"
+              >
                 View Logs
               </Button>
             </Link>
@@ -305,11 +391,17 @@ export default function AdminDashboardPage() {
             {isLoading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-12 w-full animate-pulse rounded-lg bg-muted/65" />
+                  <div
+                    key={i}
+                    className="h-12 w-full animate-pulse rounded-lg bg-muted/65"
+                  />
                 ))}
               </div>
-            ) : !summary?.recentAuditLogs || summary.recentAuditLogs.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">No recent security events.</p>
+            ) : !summary?.recentAuditLogs ||
+              summary.recentAuditLogs.length === 0 ? (
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                No recent security events.
+              </p>
             ) : (
               <div className="space-y-3">
                 {summary.recentAuditLogs.map((log: any) => (
@@ -319,7 +411,7 @@ export default function AdminDashboardPage() {
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-foreground capitalize">
-                        {log.action.replace(/_/g, ' ')}
+                        {log.action.replace(/_/g, " ")}
                       </span>
                       <span className="text-[10px] text-muted-foreground">
                         {formatDate(log.createdAt)}
@@ -327,17 +419,19 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="flex flex-wrap items-center justify-between gap-1 text-xs text-muted-foreground">
                       <span>
-                        Actor:{' '}
+                        Actor:{" "}
                         <span className="font-medium text-foreground">
-                          {log.user ? `${log.user.firstName} ${log.user.lastName}` : 'System'}
+                          {log.user
+                            ? `${log.user.firstName} ${log.user.lastName}`
+                            : "System"}
                         </span>
                       </span>
                       <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded font-mono uppercase">
-                        {log.tenant?.name || 'Platform'}
+                        {log.tenant?.name || "Platform"}
                       </span>
                     </div>
                     <div className="text-[10px] font-mono text-muted-foreground truncate">
-                      Resource: {log.resourceType} ({log.resourceId || 'N/A'})
+                      Resource: {log.resourceType} ({log.resourceId || "N/A"})
                     </div>
                   </div>
                 ))}
