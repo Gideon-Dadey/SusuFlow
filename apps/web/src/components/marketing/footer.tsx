@@ -131,7 +131,7 @@ export function MarketingFooter() {
                 <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-emerald-400">
                   <MapPin className="h-3.5 w-3.5" />
                 </div>
-                Accra Financial Centre, Ridge, Accra - Ghana
+                Maakro SDA Church Kovak Road
               </div>
             </div>
           </div>
