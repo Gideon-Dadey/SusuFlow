@@ -136,97 +136,100 @@ export function MarketingFooter() {
             </div>
           </div>
 
-          {/* Column 2: Product Suite */}
-          <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
-              Product Suite
-            </h3>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link
-                  href="/how-it-works"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors"
-                >
-                  How It Works
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/pricing"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors"
-                >
-                  Pricing Plans
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/staff/calculator"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-1.5"
-                >
-                  <span>Financial Suite</span>
-                  <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-400">
-                    NEW
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/staff/excel"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors"
-                >
-                  Spreadsheet Studio
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/staff/analytics"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors"
-                >
-                  AI Credit Insights
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* 2-Column Mobile Alignment for Product Suite & Company */}
+          <div className="grid grid-cols-2 gap-6 col-span-1 lg:col-span-4 lg:grid-cols-2">
+            {/* Column 2: Product Suite */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
+                Product Suite
+              </h3>
+              <ul className="space-y-2.5 text-sm">
+                <li>
+                  <Link
+                    href="/how-it-works"
+                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                  >
+                    How It Works
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/pricing"
+                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                  >
+                    Pricing Plans
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/staff/calculator"
+                    className="text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-1.5"
+                  >
+                    <span>Financial Suite</span>
+                    <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-400">
+                      NEW
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/staff/excel"
+                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                  >
+                    Spreadsheet Studio
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/staff/analytics"
+                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                  >
+                    AI Credit Insights
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Column 3: Company */}
-          <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
-              Company
-            </h3>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link
-                  href="/about"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors"
-                >
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors"
-                >
-                  Contact Sales
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/login"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors"
-                >
-                  Customer Portal
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/login"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors"
-                >
-                  Staff & Admin Login
-                </Link>
-              </li>
-            </ul>
+            {/* Column 3: Company */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
+                Company
+              </h3>
+              <ul className="space-y-2.5 text-sm">
+                <li>
+                  <Link
+                    href="/about"
+                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                  >
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contact"
+                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                  >
+                    Contact Sales
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/login"
+                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                  >
+                    Customer Portal
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/login"
+                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                  >
+                    Staff & Admin Login
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Column 4: Regulatory Compliance */}
