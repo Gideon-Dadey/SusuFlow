@@ -160,8 +160,7 @@ export default function LoginScreen() {
     setIsSubmitting(true);
     try {
       const trimmedEmail = email.trim();
-      const explicitTenant =
-        tab === "company" && tenant.trim() !== "apex-susu" ? tenant.trim() : "";
+      const explicitTenant = tab === "company" ? tenant.trim() : "";
       const data = await login(trimmedEmail, password, explicitTenant);
       setSuccessMessage("You are logged in successfully");
 
