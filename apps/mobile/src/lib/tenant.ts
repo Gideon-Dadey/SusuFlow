@@ -29,17 +29,12 @@ export function resolveLoginTenantSlug(
   explicit?: string,
   storedSlug?: string,
 ): string {
-  if (explicit?.trim() && explicit.trim() !== "apex-susu")
+  if (explicit?.trim() && explicit.trim() !== "apex-susu") {
     return explicit.trim();
+  }
 
   const inferred = inferTenantSlugFromEmail(email);
   if (inferred) return inferred;
 
-  if (storedSlug?.trim() && storedSlug.trim() !== "apex-susu")
-    return storedSlug.trim();
-
-  const envDefault = process.env.EXPO_PUBLIC_DEFAULT_TENANT?.trim();
-  if (envDefault && envDefault !== "apex-susu") return envDefault;
-
-  return "abc-susu";
+  return "";
 }

@@ -158,16 +158,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const stored = get().tenantSlug;
       const slug = resolveLoginTenantSlug(email, tenantSlug, stored);
       const data = await authApi.login(email, password, slug);
+      const userTenant = data.user?.tenantSlug || slug || "";
       resetUserSessionCache();
-      await persistSession(data, slug);
+      await persistSession(data, userTenant);
       set({
         user: data.user,
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
-        tenantSlug: slug,
+        tenantSlug: userTenant,
         isAuthenticated: true,
       });
-      await prefetchAuthenticatedSession(data.user.id);
+      try {
+        await prefetchAuthenticatedSession(data.user.id);
+      } catch (prefetchErr) {
+        console.warn("Session prefetch warning:", prefetchErr);
+      }
       return data;
     } catch (err) {
       if (err instanceof ApiError) {
