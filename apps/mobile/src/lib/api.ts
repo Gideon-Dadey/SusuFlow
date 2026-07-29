@@ -1,7 +1,10 @@
 import { getApiBaseUrl } from "./config";
 import { storage } from "./storage";
 
-const API_ROOT = `${getApiBaseUrl()}/api/v1`;
+function getApiRoot(): string {
+  const base = getApiBaseUrl().replace(/\/+$/, "");
+  return base.endsWith("/api/v1") ? base : `${base}/api/v1`;
+}
 
 export class ApiError extends Error {
   constructor(
@@ -61,7 +64,7 @@ async function tryRefreshSession(): Promise<boolean> {
     if (!refreshToken) return false;
 
     try {
-      const response = await fetch(`${API_ROOT}/auth/refresh`, {
+      const response = await fetch(`${getApiRoot()}/auth/refresh`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refreshToken }),
@@ -116,7 +119,7 @@ async function request<T>(
 
   let response: Response;
   try {
-    response = await fetch(`${API_ROOT}${endpoint}`, { ...init, headers });
+    response = await fetch(`${getApiRoot()}${endpoint}`, { ...init, headers });
   } catch {
     throw new ApiError(
       "Unable to connect. Check your internet connection and try again.",
