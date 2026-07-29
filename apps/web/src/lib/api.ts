@@ -650,6 +650,7 @@ export interface Customer {
   customerNumber: string;
   status: string;
   kycLevel: number;
+  kycStatus?: string;
   ghanaCardNumber?: string | null;
   user?: {
     id: string;
