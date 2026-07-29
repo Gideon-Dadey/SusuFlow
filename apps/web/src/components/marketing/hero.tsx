@@ -12,13 +12,13 @@ export function MarketingHero() {
       <MarketingContainer className="marketing-hero-platform-inner">
         <div className="flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 xl:gap-16">
           <div className="min-w-0 text-left lg:pt-0">
-            <h1 className="marketing-hero-title text-balance text-foreground font-black tracking-tight text-3xl sm:text-4xl lg:text-5xl leading-tight">
+            <h1 className="marketing-hero-title text-balance text-foreground font-black tracking-tight text-2xl sm:text-4xl lg:text-5xl leading-snug sm:leading-tight">
               One platform for your susu enterprise.
               <br />
               <span>And every verified cedi.</span>
             </h1>
 
-            <p className="mt-5 max-w-xl text-pretty text-[18px] leading-[30.6px] text-muted-foreground lg:mt-6 lg:max-w-lg">
+            <p className="mt-4 sm:mt-5 max-w-xl text-pretty text-sm sm:text-base lg:text-[17px] leading-relaxed text-muted-foreground lg:mt-6 lg:max-w-lg">
               Run field collectors, gateway-confirmed MoMo deposits, and
               real-time double-entry ledgers from one place. Save time, cut
               fraud, and scale cashless operations across Ghana.

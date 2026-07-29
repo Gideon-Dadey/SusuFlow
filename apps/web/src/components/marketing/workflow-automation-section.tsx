@@ -10,13 +10,13 @@ export function WorkflowAutomationSection() {
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="flex flex-col gap-8 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
           <div className="order-1 min-w-0 text-left lg:order-1">
-            <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-muted-foreground">
               Streamline workflows
             </p>
-            <h2 className="mt-3 text-balance text-2xl font-black leading-tight tracking-tight text-foreground sm:text-3xl lg:text-[2.35rem]">
+            <h2 className="mt-2 text-balance text-xl sm:text-3xl lg:text-[2.35rem] font-black leading-snug tracking-tight text-foreground">
               Automate your deposit &amp; payout approvals
             </h2>
-            <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
+            <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-sm sm:text-base leading-relaxed text-muted-foreground">
               Credo helps streamline collections with tailored approval
               workflows. Set clear rules for collector actions, MoMo deposit
               verification, payout sign-offs, and staff access, so every cedi

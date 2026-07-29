@@ -35,14 +35,14 @@ export function MomoPaySection() {
               <MomoPayBadge />
             </div>
 
-            <h2 className="text-balance text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.65rem]">
+            <h2 className="text-balance text-2xl font-bold leading-snug tracking-tight sm:text-4xl lg:text-[2.65rem] sm:leading-[1.15]">
               <span className="text-[#e8a317]">MoMo Pay is integrated.</span>{" "}
               <span className="text-foreground">
                 a fast, secure, and local way to collect deposits.
               </span>
             </h2>
 
-            <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground lg:mt-6">
+            <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-sm sm:text-base leading-relaxed text-muted-foreground lg:mt-6">
               Savers pay straight from their MoMo wallet. Collectors send
               prompts in the field, and every cedi is verified against the
               gateway before it hits the ledger. No cash handoffs, no disputed
