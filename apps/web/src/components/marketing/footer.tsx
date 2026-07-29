@@ -323,7 +323,7 @@ export function MarketingFooter() {
         {/* GIANT ORGANIC BRAND WORDMARK BANNER (Hims-inspired luxury brand seal) */}
         <div className="relative mt-12 overflow-hidden select-none pointer-events-none text-center">
           <span className="block text-[13vw] sm:text-[15vw] font-extrabold tracking-tighter leading-none text-white/[0.06] uppercase font-sans">
-            SusuFlow
+            Credo
           </span>
         </div>
       </MarketingContainer>

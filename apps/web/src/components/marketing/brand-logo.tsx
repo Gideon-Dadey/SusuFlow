@@ -129,8 +129,8 @@ export function BrandLockup({
           wordmarkClassName,
         )}
       >
-        <span className={onDark ? "text-white" : "text-foreground"}>Susu</span>
-        <span className="text-[#0056d2] dark:text-[#38bdf8]">Flow</span>
+        <span className={onDark ? "text-white" : "text-foreground"}>Credo</span>
+        <span className="text-[#0056d2] dark:text-[#38bdf8]">.</span>
       </span>
     </span>
   );
