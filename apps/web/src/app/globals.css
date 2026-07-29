@@ -516,9 +516,10 @@
 
   @media (min-width: 1024px) {
     .marketing-hero-title {
-      font-size: 3.4rem;
+      font-size: 3.65rem;
       font-weight: 700;
-      line-height: 1.08;
+      line-height: 1.06;
+      letter-spacing: -0.03em;
     }
   }
 
@@ -527,21 +528,21 @@
   }
 
   .marketing-hero-platform-inner {
-    padding-top: calc(var(--marketing-header-height) + 4rem);
+    padding-top: calc(var(--marketing-header-height) + 3.5rem);
     padding-bottom: 2.5rem;
   }
 
   @media (min-width: 640px) {
     .marketing-hero-platform-inner {
-      padding-top: calc(var(--marketing-header-height) + 4.5rem);
-      padding-bottom: 3.5rem;
+      padding-top: calc(var(--marketing-header-height) + 2rem);
+      padding-bottom: 3rem;
     }
   }
 
   @media (min-width: 1024px) {
     .marketing-hero-platform-inner {
-      padding-top: calc(var(--marketing-header-height) + 5rem);
-      padding-bottom: 4rem;
+      padding-top: calc(var(--marketing-header-height) + 1rem);
+      padding-bottom: 3.5rem;
       min-height: auto;
     }
   }
@@ -620,8 +621,8 @@
     }
 
     .marketing-hero-title {
-      font-size: clamp(2.15rem, 8.5vw, 2.5rem);
-      line-height: 1.12;
+      font-size: clamp(2.35rem, 9.5vw, 2.75rem);
+      line-height: 1.1;
       letter-spacing: -0.025em;
     }
 
