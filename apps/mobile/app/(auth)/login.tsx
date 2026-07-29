@@ -194,6 +194,7 @@ export default function LoginScreen() {
         });
         return;
       }
+    } finally {
       setIsSubmitting(false);
     }
   };
