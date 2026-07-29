@@ -19,7 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { tenantApi } from "@/lib/api";
 import { getTenantSlug } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth.store";
-import { BRAND_LOGO } from "@/lib/brand-assets";
+import { SusuFlowIconMark } from "@/components/marketing/brand-logo";
 
 interface SidebarProps {
   variant?: "staff" | "admin";
@@ -108,21 +108,15 @@ export function Sidebar({
     >
       <div className="flex h-16 items-center gap-2 border-b border-border px-4">
         {variant === "admin" ? (
-          <img
-            src={BRAND_LOGO}
-            alt="SusuFlow Admin"
-            className="h-8 w-8 shrink-0 object-contain"
-          />
+          <SusuFlowIconMark className="h-8 w-8 shrink-0" />
         ) : tenantBranding?.logoUrl ? (
           <img
             src={tenantBranding.logoUrl}
             alt={brandLabel}
-            className="h-8 w-8 rounded-none object-contain bg-transparent shrink-0"
+            className="h-8 w-8 rounded-md object-contain bg-transparent shrink-0"
           />
         ) : (
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none bg-primary text-xs font-bold text-primary-foreground">
-            {brandLabel.substring(0, 2).toUpperCase()}
-          </div>
+          <SusuFlowIconMark className="h-8 w-8 shrink-0" />
         )}
         <span className="truncate text-sm font-semibold text-foreground">
           {brandLabel}
