@@ -30,8 +30,8 @@ export function SegmentedTabs<T extends string>({
               active && [
                 styles.tabActive,
                 {
-                  backgroundColor: colors.card,
-                  shadowColor: colors.heading,
+                  backgroundColor: "#ffffff",
+                  shadowColor: "#0f172a",
                 },
               ],
               pressed && styles.pressed,
@@ -40,7 +40,9 @@ export function SegmentedTabs<T extends string>({
             <Text
               style={[
                 styles.label,
-                { color: active ? colors.foreground : colors.mutedForeground },
+                active
+                  ? { color: "#0f172a", fontFamily: typography.fontFamily.bold }
+                  : { color: colors.mutedForeground },
               ]}
             >
               {option.label}
@@ -55,14 +57,14 @@ export function SegmentedTabs<T extends string>({
 const styles = StyleSheet.create({
   track: {
     flexDirection: "row",
-    borderRadius: radius.full,
+    borderRadius: radius.lg,
     padding: 4,
     gap: 4,
   },
   tab: {
     flex: 1,
     minHeight: 42,
-    borderRadius: radius.full,
+    borderRadius: radius.lg,
     alignItems: "center",
     justifyContent: "center",
   },
