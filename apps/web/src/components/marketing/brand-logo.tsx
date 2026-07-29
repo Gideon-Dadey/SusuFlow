@@ -121,16 +121,21 @@ export function BrandLockup({
   wordmarkClassName?: string;
 }) {
   return (
-    <span className={cn("inline-flex min-w-0 items-center gap-2.5", className)}>
-      <SusuFlowIconMark className="size-9" />
+    <span
+      className={cn(
+        "inline-flex min-w-0 items-center gap-3 select-none",
+        className,
+      )}
+    >
+      <SusuFlowIconMark className="size-9 shrink-0" />
       <span
         className={cn(
-          "truncate text-xl font-extrabold tracking-tight font-sans",
+          "truncate text-[1.45rem] font-black tracking-[-0.035em] leading-none font-sans flex items-baseline",
           wordmarkClassName,
         )}
       >
         <span className={onDark ? "text-white" : "text-foreground"}>Credo</span>
-        <span className="text-[#0056d2] dark:text-[#38bdf8]">.</span>
+        <span className="text-[#0056d2] dark:text-[#38bdf8] ml-[1px]">.</span>
       </span>
     </span>
   );
