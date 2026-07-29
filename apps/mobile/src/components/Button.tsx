@@ -34,7 +34,7 @@ export function Button({
       style={({ pressed }) => [
         styles.base,
         { borderRadius: radius.lg },
-        isPrimary && { backgroundColor: colors.primary },
+        isPrimary && { backgroundColor: pressed ? "#0043aa" : "#0056d2" },
         variant === "secondary" && { backgroundColor: colors.muted },
         isOutline && {
           backgroundColor: colors.card,
@@ -42,7 +42,7 @@ export function Button({
           borderColor: colors.border,
         },
         (disabled || loading) && styles.disabled,
-        pressed && !disabled && !loading && styles.pressed,
+        pressed && !disabled && !loading && !isPrimary && styles.pressed,
         style,
       ]}
       {...props}

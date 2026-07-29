@@ -45,7 +45,7 @@ export const lightColors = {
 } as const;
 
 export const darkColors = {
-  primary: "#38bdf8",
+  primary: "#0056d2",
   primary50: "#002359",
   primary100: "#003585",
   primary200: "#0043aa",
