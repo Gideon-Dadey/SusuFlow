@@ -140,14 +140,6 @@ export function MarketingFooter() {
               </li>
               <li>
                 <Link
-                  href="/staff/excel"
-                  className="text-slate-400 hover:text-white transition-colors"
-                >
-                  Spreadsheet Studio
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/staff/analytics"
                   className="text-slate-400 hover:text-white transition-colors"
                 >
