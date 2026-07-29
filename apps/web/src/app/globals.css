@@ -620,8 +620,9 @@
     }
 
     .marketing-hero-title {
-      font-size: clamp(1.65rem, 6.5vw, 2.125rem);
-      line-height: 1.18;
+      font-size: clamp(2.15rem, 8.5vw, 2.5rem);
+      line-height: 1.12;
+      letter-spacing: -0.025em;
     }
 
     .marketing-hero-content {
