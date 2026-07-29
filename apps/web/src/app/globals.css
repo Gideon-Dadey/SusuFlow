@@ -527,13 +527,20 @@
   }
 
   .marketing-hero-platform-inner {
-    padding-top: calc(var(--marketing-header-height) + 0.5rem);
+    padding-top: calc(var(--marketing-header-height) + 2.25rem);
     padding-bottom: 2rem;
+  }
+
+  @media (min-width: 640px) {
+    .marketing-hero-platform-inner {
+      padding-top: calc(var(--marketing-header-height) + 2.5rem);
+      padding-bottom: 3rem;
+    }
   }
 
   @media (min-width: 1024px) {
     .marketing-hero-platform-inner {
-      padding-top: calc(var(--marketing-header-height) + 1rem);
+      padding-top: calc(var(--marketing-header-height) + 3rem);
       padding-bottom: 3.5rem;
       min-height: auto;
     }
