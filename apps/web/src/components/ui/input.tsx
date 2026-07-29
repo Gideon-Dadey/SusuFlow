@@ -21,7 +21,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         id={id}
         className={cn(
-          "flex h-11 w-full rounded-none border border-input bg-card px-3 py-2 text-[16px] text-foreground",
+          "flex h-11 w-full rounded-md border border-input bg-card px-3 py-2 text-[16px] text-foreground",
           "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0",
           "disabled:cursor-not-allowed disabled:opacity-50",
           error && "border-destructive focus:ring-destructive",

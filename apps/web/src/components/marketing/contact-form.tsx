@@ -87,13 +87,10 @@ function ContactFormInner() {
           name="message"
           required
           rows={4}
-          className="flex w-full rounded-none border border-input bg-background px-3 py-2 text-[16px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-[16px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </div>
-      <Button
-        type="submit"
-        className="w-full rounded-none text-[15px] font-bold"
-      >
+      <Button type="submit" className="w-full rounded-md text-[15px] font-bold">
         {copy.cta}
       </Button>
     </form>
