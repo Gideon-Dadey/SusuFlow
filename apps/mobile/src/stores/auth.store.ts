@@ -168,11 +168,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         tenantSlug: userTenant,
         isAuthenticated: true,
       });
-      try {
-        await prefetchAuthenticatedSession(data.user.id);
-      } catch (prefetchErr) {
+      // Non-blocking prefetch in background so UI navigation is instant
+      void prefetchAuthenticatedSession(data.user.id).catch((prefetchErr) => {
         console.warn("Session prefetch warning:", prefetchErr);
-      }
+      });
       return data;
     } catch (err) {
       if (err instanceof ApiError) {
