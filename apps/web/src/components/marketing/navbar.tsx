@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BrandLockup } from "@/components/marketing/brand-logo";
 import { NAV_LINKS } from "@/lib/marketing-data";
@@ -126,10 +126,10 @@ export function MarketingNavbar() {
             </Link>
 
             <nav
-              className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-0.5 lg:flex xl:gap-1"
+              className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 lg:flex xl:gap-4"
               aria-label="Main"
             >
-              {NAV_LINKS.map(({ href, label }) => {
+              {NAV_LINKS.map(({ href, label, hasDropdown }) => {
                 const active =
                   href === "/" ? pathname === "/" : pathname.startsWith(href);
                 return (
@@ -137,36 +137,39 @@ export function MarketingNavbar() {
                     key={href}
                     href={href}
                     className={cn(
-                      "px-3.5 py-2 text-[18px] font-normal leading-[30.6px] transition-colors",
+                      "inline-flex items-center gap-1.5 px-3 py-2 text-[17px] font-medium transition-colors",
                       spread
                         ? onDarkNav
                           ? active
-                            ? "text-white font-medium"
-                            : "text-white/75 hover:bg-white/10 hover:text-white"
+                            ? "text-white font-semibold"
+                            : "text-white/85 hover:text-white"
                           : active
-                            ? "text-foreground font-medium"
-                            : "text-muted-foreground hover:text-foreground"
+                            ? "text-foreground font-semibold"
+                            : "text-slate-800 hover:text-primary"
                         : active
-                          ? "text-secondary font-medium"
-                          : "text-muted-foreground hover:text-foreground",
+                          ? "text-primary font-semibold"
+                          : "text-slate-800 hover:text-primary",
                     )}
                   >
-                    {label}
+                    <span>{label}</span>
+                    {hasDropdown && (
+                      <ChevronDown className="size-4 opacity-60 shrink-0 stroke-[2.2]" />
+                    )}
                   </Link>
                 );
               })}
             </nav>
 
-            <div className="relative z-10 flex shrink-0 items-center gap-3 sm:gap-3">
+            <div className="relative z-10 flex shrink-0 items-center gap-4">
               <Link
                 href="/login"
                 className={cn(
-                  "inline-flex px-1 py-2 text-[18px] font-normal leading-[30.6px] transition-colors lg:hidden",
+                  "inline-flex px-1 py-2 text-[17px] font-medium transition-colors lg:hidden",
                   spread
                     ? onDarkNav
                       ? "text-white/90 hover:text-white"
-                      : "text-muted-foreground hover:text-foreground"
-                    : "text-muted-foreground hover:text-foreground",
+                      : "text-slate-800 hover:text-primary"
+                    : "text-slate-800 hover:text-primary",
                 )}
               >
                 Login
@@ -174,12 +177,12 @@ export function MarketingNavbar() {
               <Link
                 href="/login"
                 className={cn(
-                  "hidden px-3 py-2 text-[18px] font-normal leading-[30.6px] transition-colors lg:inline-flex",
+                  "hidden px-3 py-2 text-[17px] font-medium transition-colors lg:inline-flex",
                   spread
                     ? onDarkNav
-                      ? "text-white/90 hover:bg-white/10 hover:text-white"
-                      : "text-muted-foreground hover:text-foreground"
-                    : "text-muted-foreground hover:text-foreground",
+                      ? "text-white/90 hover:text-white"
+                      : "text-slate-800 hover:text-primary"
+                    : "text-slate-800 hover:text-primary",
                 )}
               >
                 Login
@@ -187,17 +190,10 @@ export function MarketingNavbar() {
               <Link href="/register" className="hidden lg:block">
                 <Button
                   size="sm"
-                  className={cn(
-                    "h-10 px-5 text-[15px] font-bold transition-all duration-300",
-                    spread ? "rounded-md" : "rounded-md",
-                    spread
-                      ? onDarkNav
-                        ? "border-0 bg-white text-brand-dark shadow-lg hover:bg-white/95"
-                        : "shadow-[0_6px_18px_rgba(34,197,94,0.28)]"
-                      : "shadow-[0_6px_18px_rgba(34,197,94,0.28)]",
-                  )}
+                  className="h-10 px-5 text-[15px] font-bold rounded-[0.2rem] bg-[#0056d2] hover:bg-[#0043aa] text-white transition-all duration-200 shadow-md flex items-center gap-2"
                 >
-                  Get started
+                  <span>Register</span>
+                  <ArrowRight className="size-4 stroke-[2.5]" />
                 </Button>
               </Link>
 
