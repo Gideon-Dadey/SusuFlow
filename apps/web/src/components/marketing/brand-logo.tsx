@@ -123,14 +123,14 @@ export function BrandLockup({
   return (
     <span
       className={cn(
-        "inline-flex min-w-0 items-center gap-3 select-none",
+        "inline-flex min-w-0 items-center gap-2.5 sm:gap-3 select-none",
         className,
       )}
     >
-      <SusuFlowIconMark className="size-9 shrink-0" />
+      <SusuFlowIconMark className="size-8 sm:size-9 shrink-0" />
       <span
         className={cn(
-          "truncate text-[1.45rem] font-black tracking-[-0.035em] leading-none font-sans flex items-baseline",
+          "truncate text-xl sm:text-[1.45rem] font-black tracking-[-0.035em] leading-none font-sans flex items-baseline",
           wordmarkClassName,
         )}
       >
