@@ -4,6 +4,7 @@ import sharp from 'sharp';
 
 const webPublic = path.resolve('apps/web/public');
 const webSrcApp = path.resolve('apps/web/src/app');
+const mobileAssets = path.resolve('apps/mobile/assets/images');
 const svgPath = path.resolve('apps/web/public/brand/logo-mark.svg');
 
 const svgBuffer = fs.readFileSync(svgPath);
@@ -31,7 +32,16 @@ async function generate() {
   await sharp(svgBuffer).resize(512, 512).toFile(path.join(webSrcApp, 'icon.png'));
   await sharp(svgBuffer).resize(180, 180).toFile(path.join(webSrcApp, 'apple-icon.png'));
 
-  console.log('✅ All brand assets, favicons, splash icons, and PWA icons generated successfully!');
+  // 5. Mobile App Assets (apps/mobile/assets/images/)
+  if (fs.existsSync(mobileAssets)) {
+    await sharp(svgBuffer).resize(1024, 1024).toFile(path.join(mobileAssets, 'icon.png'));
+    await sharp(svgBuffer).resize(512, 512).toFile(path.join(mobileAssets, 'splash-icon.png'));
+    await sharp(svgBuffer).resize(512, 512).toFile(path.join(mobileAssets, 'android-icon-foreground.png'));
+    await sharp(svgBuffer).resize(512, 512).toFile(path.join(mobileAssets, 'logo-transparent.png'));
+    await sharp(svgBuffer).resize(192, 192).toFile(path.join(mobileAssets, 'favicon.png'));
+  }
+
+  console.log('✅ All web & mobile brand assets, favicons, splash icons, and app icons generated successfully!');
 }
 
 generate().catch(console.error);

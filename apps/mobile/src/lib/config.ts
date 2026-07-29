@@ -1,6 +1,9 @@
+import Constants from "expo-constants";
+import { Platform } from "react-native";
+
 /**
  * Runtime config for the mobile app.
- * Production builds must set EXPO_PUBLIC_API_URL via EAS env / secrets.
+ * Production builds set EXPO_PUBLIC_API_URL via EAS env / secrets.
  */
 
 function normalizeBaseUrl(url: string): string {
@@ -19,21 +22,41 @@ export function getApiBaseUrl(): string {
   }
 
   if (isDevRuntime()) {
-    return "http://localhost:4000";
+    // 1. Dynamic Expo host IP detection for physical devices scanning Expo Go QR
+    const hostUri = Constants.expoConfig?.hostUri;
+    if (hostUri) {
+      const hostIp = hostUri.split(":")[0];
+      if (hostIp && hostIp !== "localhost" && hostIp !== "127.0.0.1") {
+        return `http://${hostIp}:4000`;
+      }
+    }
+
+    // 2. Android emulator loopback
+    if (Platform.OS === "android") {
+      return "http://10.0.2.2:4000";
+    }
+
+    // 3. Fallback to production Render live API URL
+    return "https://susuflow-api.onrender.com";
   }
 
-  throw new Error(
-    "EXPO_PUBLIC_API_URL is not configured. Set it in EAS build env for production.",
-  );
+  return "https://susuflow-api.onrender.com";
 }
 
 export function getWebBaseUrl(): string {
   const configured = process.env.EXPO_PUBLIC_WEB_URL?.trim();
   if (configured) return normalizeBaseUrl(configured);
-  if (isDevRuntime()) return "http://localhost:3000";
-  throw new Error(
-    "EXPO_PUBLIC_WEB_URL is not configured. Set it in EAS build env for production.",
-  );
+  if (isDevRuntime()) {
+    const hostUri = Constants.expoConfig?.hostUri;
+    if (hostUri) {
+      const hostIp = hostUri.split(":")[0];
+      if (hostIp && hostIp !== "localhost" && hostIp !== "127.0.0.1") {
+        return `http://${hostIp}:3000`;
+      }
+    }
+    return "https://susuflow.onrender.com";
+  }
+  return "https://susuflow.onrender.com";
 }
 
 export function getSupportEmail(): string {
