@@ -6,11 +6,7 @@ import {
   ViewStyle,
 } from "react-native";
 import type { BiometricSupport } from "@/lib/biometric";
-import { radius } from "@/theme/tokens";
-
-import { brandGreen } from "@/theme/tokens";
-
-const BRAND_GREEN = brandGreen;
+import { useTheme } from "@/theme/ThemeProvider";
 
 interface BiometricLoginButtonProps {
   support: BiometricSupport | null;
@@ -29,8 +25,15 @@ export function BiometricLoginButton({
   onPress,
   style,
 }: BiometricLoginButtonProps) {
-  const iconName = support?.icon ?? "fingerprint";
+  const { colors, radius, isDark } = useTheme();
+  const iconName = support?.icon ?? "face-recognition";
   const label = support?.label ?? "Biometrics";
+
+  const buttonBg = ready ? "#0056d2" : isDark ? "#18181b" : "#f1f5f9";
+
+  const borderColor = ready ? "#0056d2" : isDark ? "#27272a" : "#e2e8f0";
+
+  const iconColor = ready ? "#ffffff" : colors.primary;
 
   return (
     <Pressable
@@ -41,21 +44,26 @@ export function BiometricLoginButton({
       disabled={!enabled || loading}
       style={({ pressed }) => [
         styles.button,
-        ready && styles.buttonReady,
+        {
+          borderRadius: radius.lg,
+          backgroundColor: buttonBg,
+          borderColor,
+        },
         !enabled && styles.buttonDisabled,
-        enabled && !ready && styles.buttonSetup,
-        pressed && enabled && !loading && styles.pressed,
+        pressed &&
+          enabled &&
+          !loading &&
+          (ready ? styles.pressedReady : styles.pressedSetup),
         style,
       ]}
     >
       {loading ? (
-        <ActivityIndicator color="#ffffff" size="small" />
-      ) : (
-        <MaterialCommunityIcons
-          name={iconName}
-          size={28}
-          color={ready ? "#ffffff" : BRAND_GREEN}
+        <ActivityIndicator
+          color={ready ? "#ffffff" : colors.primary}
+          size="small"
         />
+      ) : (
+        <MaterialCommunityIcons name={iconName} size={26} color={iconColor} />
       )}
     </Pressable>
   );
@@ -63,27 +71,21 @@ export function BiometricLoginButton({
 
 const styles = StyleSheet.create({
   button: {
-    width: 54,
-    height: 54,
-    borderRadius: radius.md,
-    backgroundColor: "rgba(34, 197, 94, 0.2)",
+    width: 52,
+    height: 52,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "rgba(34, 197, 94, 0.35)",
-  },
-  buttonReady: {
-    backgroundColor: BRAND_GREEN,
-    borderColor: "rgba(255,255,255,0.2)",
-  },
-  buttonSetup: {
-    opacity: 0.85,
   },
   buttonDisabled: {
-    opacity: 0.45,
+    opacity: 0.4,
   },
-  pressed: {
-    opacity: 0.9,
-    transform: [{ scale: 0.98 }],
+  pressedReady: {
+    backgroundColor: "#0043aa",
+    transform: [{ scale: 0.97 }],
+  },
+  pressedSetup: {
+    opacity: 0.8,
+    transform: [{ scale: 0.97 }],
   },
 });

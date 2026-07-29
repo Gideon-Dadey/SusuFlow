@@ -364,7 +364,9 @@ export default function LoginScreen() {
                       styles.loginButton,
                       (busy || bioBusy || !!successMessage) &&
                         styles.loginDisabled,
-                      pressed && !busy && !bioBusy && styles.pressed,
+                      pressed &&
+                        !busy &&
+                        !bioBusy && { backgroundColor: "#0043aa" },
                     ]}
                   >
                     {busy ? (
@@ -477,9 +479,9 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     flex: 1,
-    minHeight: 54,
-    borderRadius: radius.md,
-    backgroundColor: brandGreen,
+    minHeight: 52,
+    borderRadius: radius.lg,
+    backgroundColor: "#0056d2",
     alignItems: "center",
     justifyContent: "center",
   },
