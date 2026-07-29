@@ -530,7 +530,7 @@
     --marketing-safe-top: max(1rem, env(safe-area-inset-top, 0px));
     --marketing-gutter: 1rem;
     --marketing-max-width: 100%;
-    --marketing-nav-pill-height: 4rem;
+    --marketing-nav-pill-height: 3.25rem;
     --marketing-header-height: calc(var(--marketing-safe-top) + var(--marketing-nav-pill-height));
     --marketing-hero-content-gap: 3rem;
     --marketing-hero-content-offset: calc(
@@ -546,7 +546,7 @@
     .marketing-canvas {
       --marketing-safe-top: max(1.25rem, env(safe-area-inset-top, 0px));
       --marketing-gutter: 1.25rem;
-      --marketing-nav-pill-height: 4.25rem;
+      --marketing-nav-pill-height: 3.75rem;
       --marketing-hero-content-gap: 3.5rem;
     }
   }
@@ -554,7 +554,7 @@
   @media (min-width: 1024px) {
     .marketing-canvas {
       --marketing-gutter: 1.5rem;
-      --marketing-nav-pill-height: 4.5rem;
+      --marketing-nav-pill-height: 4rem;
       --marketing-hero-content-gap: 4rem;
       --marketing-max-width: min(1200px, 100%);
     }

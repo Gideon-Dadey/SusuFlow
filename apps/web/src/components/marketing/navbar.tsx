@@ -98,8 +98,8 @@ export function MarketingNavbar() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-[200] bg-[#f4f6f8] dark:bg-[#090d16]">
-        <div className="marketing-container flex h-16 items-center justify-between gap-4">
+      <header className="fixed inset-x-0 top-0 z-[200] bg-[#f4f6f8] dark:bg-[#090d16] pt-[env(safe-area-inset-top,0px)]">
+        <div className="marketing-container flex h-13 sm:h-16 items-center justify-between gap-3 sm:gap-4">
           <Link
             href="/"
             className="relative z-10 flex min-w-0 shrink-0 items-center"
@@ -133,10 +133,10 @@ export function MarketingNavbar() {
             })}
           </nav>
 
-          <div className="relative z-10 flex shrink-0 items-center gap-4">
+          <div className="relative z-10 flex shrink-0 items-center gap-2 sm:gap-4">
             <Link
               href="/login"
-              className="inline-flex px-1 py-2 text-[17px] font-semibold text-slate-800 hover:text-[#0056d2] dark:text-slate-200 dark:hover:text-white lg:hidden"
+              className="inline-flex px-1.5 py-1 text-sm font-bold text-slate-800 hover:text-[#0056d2] dark:text-slate-200 dark:hover:text-white lg:hidden"
             >
               Login
             </Link>
@@ -158,7 +158,7 @@ export function MarketingNavbar() {
 
             <button
               type="button"
-              className="inline-flex size-11 items-center justify-center rounded-md text-foreground transition-colors lg:hidden"
+              className="inline-flex size-9 sm:size-11 items-center justify-center rounded-md text-foreground transition-colors lg:hidden"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
@@ -175,7 +175,7 @@ export function MarketingNavbar() {
             <div
               id="mobile-nav"
               className="fixed inset-x-0 bottom-0 z-[190] bg-white dark:bg-background lg:hidden"
-              style={{ top: "var(--marketing-header-height, 4.5rem)" }}
+              style={{ top: "calc(env(safe-area-inset-top, 0px) + 3.25rem)" }}
             >
               <nav className="h-full overflow-y-auto" aria-label="Mobile">
                 {NAV_LINKS.map(({ href, label }, index) => {
