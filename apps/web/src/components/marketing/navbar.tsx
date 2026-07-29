@@ -189,7 +189,7 @@ export function MarketingNavbar() {
                   size="sm"
                   className={cn(
                     "h-10 px-5 text-[15px] font-bold transition-all duration-300",
-                    spread ? "rounded-none" : "rounded-full",
+                    spread ? "rounded-md" : "rounded-md",
                     spread
                       ? onDarkNav
                         ? "border-0 bg-white text-brand-dark shadow-lg hover:bg-white/95"
@@ -204,7 +204,7 @@ export function MarketingNavbar() {
               <button
                 type="button"
                 className={cn(
-                  "inline-flex size-11 items-center justify-center rounded-none transition-colors lg:hidden",
+                  "inline-flex size-11 items-center justify-center rounded-md transition-colors lg:hidden",
                   spread && onDarkNav
                     ? "text-white hover:text-white/90"
                     : "text-foreground hover:text-foreground/80",
@@ -249,7 +249,7 @@ export function MarketingNavbar() {
 
                 <div className="border-t border-border px-6 py-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
                   <Link href="/register" onClick={() => setMenuOpen(false)}>
-                    <Button className="h-12 w-full rounded-none text-[15px] font-bold shadow-[0_4px_14px_rgba(34,197,94,0.25)]">
+                    <Button className="h-12 w-full rounded-md text-[15px] font-bold shadow-[0_4px_14px_rgba(34,197,94,0.25)]">
                       Get started
                       <ArrowRight className="size-4" aria-hidden />
                     </Button>

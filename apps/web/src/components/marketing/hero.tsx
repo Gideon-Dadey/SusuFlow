@@ -57,7 +57,7 @@ export function MarketingHero() {
                 You are on
               </span>
               <div
-                className="flex w-full rounded-none border border-border bg-card p-1 shadow-sm lg:inline-flex lg:w-auto"
+                className="flex w-full rounded-md border border-border bg-card p-1 shadow-sm lg:inline-flex lg:w-auto"
                 role="tablist"
                 aria-label="Choose audience"
               >
@@ -66,7 +66,7 @@ export function MarketingHero() {
                   role="tab"
                   aria-selected={audience === "company"}
                   className={cn(
-                    "flex-1 rounded-none px-3 py-2.5 text-center text-[15px] font-bold transition-colors sm:px-4 sm:py-1.5 lg:flex-none",
+                    "flex-1 rounded-md px-3 py-2.5 text-center text-[15px] font-bold transition-colors sm:px-4 sm:py-1.5 lg:flex-none",
                     audience === "company"
                       ? "bg-foreground text-background"
                       : "text-muted-foreground hover:text-foreground",
@@ -80,7 +80,7 @@ export function MarketingHero() {
                   role="tab"
                   aria-selected={audience === "saver"}
                   className={cn(
-                    "flex-1 rounded-none px-3 py-2.5 text-center text-[15px] font-bold transition-colors sm:px-4 sm:py-1.5 lg:flex-none",
+                    "flex-1 rounded-md px-3 py-2.5 text-center text-[15px] font-bold transition-colors sm:px-4 sm:py-1.5 lg:flex-none",
                     audience === "saver"
                       ? "bg-foreground text-background"
                       : "text-muted-foreground hover:text-foreground",
@@ -104,7 +104,7 @@ export function MarketingHero() {
               <Link href={copy.primaryHref} className="w-full lg:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-none px-6 text-[15px] font-bold shadow-[0_8px_24px_rgba(34,197,94,0.28)] lg:min-w-[12rem]"
+                  className="h-12 w-full rounded-md px-6 text-[15px] font-bold shadow-[0_8px_24px_rgba(0,86,210,0.28)] lg:min-w-[12rem]"
                 >
                   {copy.primaryLabel}
                 </Button>
