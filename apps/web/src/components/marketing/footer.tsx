@@ -236,7 +236,7 @@ export function MarketingFooter() {
                   href="mailto:gideondadey@gmail.com"
                   className="text-slate-400 hover:text-white transition-colors"
                 >
-                  Email: gideondadey@gmail.com
+                  Email
                 </a>
               </li>
               <li>
@@ -246,13 +246,16 @@ export function MarketingFooter() {
                   rel="noreferrer"
                   className="text-slate-400 hover:text-white transition-colors"
                 >
-                  WhatsApp &amp; Call: +233 (0) 551550530
+                  WhatsApp
                 </a>
               </li>
               <li>
-                <span className="text-slate-400 block">
-                  Address: Maakro SDA Church Kovak Road
-                </span>
+                <Link
+                  href="/contact"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Office Location
+                </Link>
               </li>
             </ul>
           </div>
