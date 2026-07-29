@@ -45,68 +45,78 @@ export class UserService {
     });
     if (!user) throw new NotFoundException("User not found");
 
-    if (!user.customer && user.tenantId) {
-      const tenantId = user.tenantId;
-      const customer = await this.prisma.$transaction(async (tx) => {
-        const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-        let customerNumber = "";
-        for (let attempts = 0; attempts < 10; attempts++) {
-          let code = "";
-          for (let i = 0; i < 8; i++) {
-            code += chars.charAt(Math.floor(Math.random() * chars.length));
+    if (!user.customer) {
+      let tenantId = user.tenantId;
+      if (!tenantId) {
+        const tenant = await this.prisma.tenant.findFirst({
+          where: { status: "active" },
+        });
+        tenantId = tenant?.id || null;
+      }
+
+      if (tenantId) {
+        const targetTenantId = tenantId;
+        const customer = await this.prisma.$transaction(async (tx) => {
+          const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+          let customerNumber = "";
+          for (let attempts = 0; attempts < 10; attempts++) {
+            let code = "";
+            for (let i = 0; i < 8; i++) {
+              code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            const existing = await tx.customer.findFirst({
+              where: { tenantId: targetTenantId, customerNumber: code },
+            });
+            if (!existing) {
+              customerNumber = code;
+              break;
+            }
           }
-          const existing = await tx.customer.findFirst({
-            where: { tenantId, customerNumber: code },
+          if (!customerNumber) {
+            customerNumber = Date.now().toString(36).toUpperCase().slice(-8);
+          }
+
+          const newCustomer = await tx.customer.create({
+            data: {
+              tenantId: targetTenantId,
+              userId: user.id,
+              customerNumber,
+              status: "active",
+              kycLevel: 1,
+            },
           });
-          if (!existing) {
-            customerNumber = code;
-            break;
-          }
-        }
-        if (!customerNumber) {
-          customerNumber = Date.now().toString(36).toUpperCase().slice(-8);
-        }
 
-        const newCustomer = await tx.customer.create({
-          data: {
-            tenantId,
-            userId: user.id,
-            customerNumber,
-            status: "active",
-            kycLevel: 1,
-          },
+          const wallet = await tx.wallet.create({
+            data: {
+              tenantId: targetTenantId,
+              customerId: newCustomer.id,
+              walletType: "customer",
+            },
+          });
+
+          const compact = newCustomer.id.replace(/-/g, "").slice(0, 8);
+          const code = `11${compact}`.slice(0, 10);
+
+          await tx.account.create({
+            data: {
+              tenantId: targetTenantId,
+              walletId: wallet.id,
+              code,
+              name: `Wallet: ${user.firstName} ${user.lastName}`,
+              accountType: "liability",
+            },
+          });
+
+          return newCustomer;
         });
 
-        const wallet = await tx.wallet.create({
-          data: {
-            tenantId,
-            customerId: newCustomer.id,
-            walletType: "customer",
-          },
-        });
-
-        const compact = newCustomer.id.replace(/-/g, "").slice(0, 8);
-        const code = `11${compact}`.slice(0, 10);
-
-        await tx.account.create({
-          data: {
-            tenantId,
-            walletId: wallet.id,
-            code,
-            name: `Wallet: ${user.firstName} ${user.lastName}`,
-            accountType: "liability",
-          },
-        });
-
-        return newCustomer;
-      });
-
-      user.customer = {
-        id: customer.id,
-        customerNumber: customer.customerNumber,
-        status: customer.status,
-        kycLevel: customer.kycLevel,
-      };
+        user.customer = {
+          id: customer.id,
+          customerNumber: customer.customerNumber,
+          status: customer.status,
+          kycLevel: customer.kycLevel,
+        };
+      }
     }
 
     return user;
