@@ -55,9 +55,7 @@ export default function LoginScreen() {
   const [tab, setTab] = useState<LoginTab>("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [tenant, setTenant] = useState(
-    process.env.EXPO_PUBLIC_DEFAULT_TENANT || "abc-susu",
-  );
+  const [tenant, setTenant] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
