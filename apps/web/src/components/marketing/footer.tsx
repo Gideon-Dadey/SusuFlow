@@ -230,42 +230,31 @@ export function MarketingFooter() {
             <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
               CONTACT US
             </h3>
-            <div className="space-y-3.5 text-xs text-slate-400 leading-relaxed">
-              <div>
-                <span className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-0.5">
-                  Email
-                </span>
+            <ul className="space-y-3 text-sm">
+              <li>
                 <a
                   href="mailto:gideondadey@gmail.com"
                   className="text-slate-400 hover:text-white transition-colors"
                 >
-                  gideondadey@gmail.com
+                  Email: gideondadey@gmail.com
                 </a>
-              </div>
-
-              <div>
-                <span className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-0.5">
-                  WhatsApp &amp; Call
-                </span>
+              </li>
+              <li>
                 <a
                   href="https://wa.me/233551550530"
                   target="_blank"
                   rel="noreferrer"
                   className="text-slate-400 hover:text-white transition-colors"
                 >
-                  +233 (0) 551550530
+                  WhatsApp &amp; Call: +233 (0) 551550530
                 </a>
-              </div>
-
-              <div>
-                <span className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-0.5">
-                  Address
-                </span>
+              </li>
+              <li>
                 <span className="text-slate-400 block">
-                  Maakro SDA Church Kovak Road
+                  Address: Maakro SDA Church Kovak Road
                 </span>
-              </div>
-            </div>
+              </li>
+            </ul>
           </div>
         </div>
 
