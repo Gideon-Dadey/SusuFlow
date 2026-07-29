@@ -45,7 +45,8 @@ export class UserService {
     });
     if (!user) throw new NotFoundException("User not found");
 
-    if (!user.customer) {
+    if (!user.customer && user.tenantId) {
+      const tenantId = user.tenantId;
       const customer = await this.prisma.$transaction(async (tx) => {
         const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
         let customerNumber = "";
@@ -55,7 +56,7 @@ export class UserService {
             code += chars.charAt(Math.floor(Math.random() * chars.length));
           }
           const existing = await tx.customer.findFirst({
-            where: { tenantId: user.tenantId, customerNumber: code },
+            where: { tenantId, customerNumber: code },
           });
           if (!existing) {
             customerNumber = code;
@@ -68,7 +69,7 @@ export class UserService {
 
         const newCustomer = await tx.customer.create({
           data: {
-            tenantId: user.tenantId,
+            tenantId,
             userId: user.id,
             customerNumber,
             status: "active",
@@ -78,7 +79,7 @@ export class UserService {
 
         const wallet = await tx.wallet.create({
           data: {
-            tenantId: user.tenantId,
+            tenantId,
             customerId: newCustomer.id,
             walletType: "customer",
           },
@@ -89,7 +90,7 @@ export class UserService {
 
         await tx.account.create({
           data: {
-            tenantId: user.tenantId,
+            tenantId,
             walletId: wallet.id,
             code,
             name: `Wallet: ${user.firstName} ${user.lastName}`,
