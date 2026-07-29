@@ -82,19 +82,49 @@ export class CustomerService {
     dto: CreateCustomerDto,
     onboardedBy: AuthenticatedUser,
   ) {
-    if (dto.email) {
-      const existing = await this.prisma.user.findFirst({
-        where: { tenantId, email: dto.email },
-      });
-      if (existing) throw new ConflictException("Email already registered");
-    }
-
     try {
       const result = await this.prisma.$transaction(async (tx) => {
         const customerNumber = await this.nextCustomerNumber(tx, tenantId);
         let userId: string | undefined = undefined;
 
-        if (dto.firstName || dto.lastName || dto.email) {
+        if (dto.email) {
+          const existingUser = await tx.user.findFirst({
+            where: { tenantId, email: dto.email },
+            include: { customer: true },
+          });
+
+          if (existingUser) {
+            // User exists — check if they already have a customer record
+            if (existingUser.customer) {
+              throw new ConflictException(
+                "Email already registered as a customer",
+              );
+            }
+            // Link existing user (e.g. company_admin) as customer too
+            userId = existingUser.id;
+
+            // Also grant 'customer' role if missing
+            const customerRole = await tx.role.findUnique({
+              where: { name: ROLES.CUSTOMER },
+            });
+            if (customerRole) {
+              const hasRole = await tx.userRole.findFirst({
+                where: { userId: existingUser.id, roleId: customerRole.id },
+              });
+              if (!hasRole) {
+                await tx.userRole.create({
+                  data: {
+                    userId: existingUser.id,
+                    roleId: customerRole.id,
+                    tenantId,
+                  },
+                });
+              }
+            }
+          }
+        }
+
+        if (!userId && (dto.firstName || dto.lastName || dto.email)) {
           const passwordHash = await bcrypt.hash("ChangeMe123!", 12);
           const customerRole = await tx.role.findUnique({
             where: { name: ROLES.CUSTOMER },
@@ -113,9 +143,9 @@ export class CustomerService {
               tenantId,
               email: tempEmail,
               phone: dto.phone,
-              passwordHash,
               firstName: dto.firstName || "Customer",
               lastName: dto.lastName || customerNumber,
+              passwordHash,
               status: "active",
               emailVerified: !!dto.email,
             },
