@@ -50,7 +50,7 @@ export default function WelcomeScreen() {
               style={styles.logo}
               resizeMode="contain"
             />
-            <Text style={styles.wordmark}>SusuFlow</Text>
+            <Text style={styles.wordmark}>Credo</Text>
           </View>
         </View>
 

@@ -169,7 +169,7 @@ export function SecuritySettingsContent() {
           Delete account
         </Text>
         <Text style={[styles.dangerCopy, { color: colors.mutedForeground }]}>
-          Permanently remove your SusuFlow account and sign out on this device.
+          Permanently remove your Credo account and sign out on this device.
           This cannot be undone.
         </Text>
         <Input

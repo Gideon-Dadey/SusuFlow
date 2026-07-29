@@ -6,7 +6,7 @@ export default function TermsOfServiceScreen() {
   return (
     <SettingsDetailLayout
       title={TERMS_OF_SERVICE.title}
-      subtitle="Terms governing use of the SusuFlow platform"
+      subtitle="Terms governing use of the Credo platform"
     >
       <LegalDocumentContent document={TERMS_OF_SERVICE} />
     </SettingsDetailLayout>

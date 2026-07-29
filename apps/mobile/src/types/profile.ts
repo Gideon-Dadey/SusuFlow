@@ -78,7 +78,7 @@ export const SETTINGS_GROUPS: SettingsGroup[] = [
       },
       {
         id: "about",
-        label: "About SusuFlow",
+        label: "About Credo",
         icon: "info",
         description: "Version and company info",
       },
@@ -121,14 +121,14 @@ export const PROFILE_SECTION_META: Record<
   },
   appearance: {
     title: "Appearance",
-    subtitle: "Customize how SusuFlow looks",
+    subtitle: "Customize how Credo looks",
   },
   help: {
     title: "Help & support",
     subtitle: "We're here when you need us",
   },
   about: {
-    title: "About SusuFlow",
+    title: "About Credo",
     subtitle: "Community savings, built for Ghana",
   },
 };

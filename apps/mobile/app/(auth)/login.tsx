@@ -247,7 +247,7 @@ export default function LoginScreen() {
                 resizeMode="contain"
               />
               <Text style={[styles.wordmark, { color: heroTextColor }]}>
-                SusuFlow
+                Credo
               </Text>
             </View>
           </View>

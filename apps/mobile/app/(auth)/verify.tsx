@@ -123,7 +123,7 @@ export default function VerifyAccountScreen() {
           Verify your account
         </Text>
         <Text style={[styles.lead, { color: colors.mutedForeground }]}>
-          Enter the codes sent to your email and phone to activate your SusuFlow
+          Enter the codes sent to your email and phone to activate your Credo
           account.
         </Text>
 

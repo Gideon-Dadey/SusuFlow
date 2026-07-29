@@ -29,7 +29,7 @@ export function AuthBrandHeader({
           { color: onDark ? "#ffffff" : colors.heading },
         ]}
       >
-        SusuFlow
+        Credo
       </Text>
     </View>
   );
