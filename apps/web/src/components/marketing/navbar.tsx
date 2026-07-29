@@ -180,7 +180,9 @@ export function MarketingNavbar() {
               <nav className="h-full overflow-y-auto" aria-label="Mobile">
                 {NAV_LINKS.map(({ href, label }, index) => {
                   const active =
-                    href === "/" ? pathname === "/" : pathname.startsWith(href);
+                    (href as string) === "/"
+                      ? pathname === "/"
+                      : pathname.startsWith(href);
                   return (
                     <Link
                       key={href}
