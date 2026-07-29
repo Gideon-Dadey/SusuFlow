@@ -116,23 +116,23 @@ export type IconAccentKey = keyof typeof iconAccents.light;
 
 export const radius = {
   none: 0,
-  sm: 2,
-  md: 0,
-  /** Global surface radius — cards, banners, buttons, inputs, modals (sharp: 0) */
-  lg: 8,
-  xl: 0,
+  sm: 4,
+  md: 4,
+  /** Global surface radius — cards, banners, buttons, inputs, modals (0.2rem / 4px) */
+  lg: 4,
+  xl: 4,
   /** Pills, avatars, page dots */
   full: 9999,
 } as const;
 
 /** Canonical radii — prefer these over raw `radius.*` in components. */
 export const surfaceRadius = {
-  card: 0,
-  banner: 0,
-  chip: 0,
-  control: 0,
+  card: 4,
+  banner: 4,
+  chip: 4,
+  control: 4,
   avatar: radius.full,
-  sheet: 0,
+  sheet: 4,
 } as const;
 
 export const spacing = {
