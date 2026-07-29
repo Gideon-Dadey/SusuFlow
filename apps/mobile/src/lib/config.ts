@@ -57,11 +57,11 @@ export const legalUrls = {
 
 export function openPasswordResetRequest(email?: string) {
   const support = getSupportEmail();
-  const subject = encodeURIComponent("SusuFlow password reset request");
+  const subject = encodeURIComponent("Credo password reset request");
   const body = encodeURIComponent(
     email
-      ? `Hello SusuFlow support,\n\nPlease help reset the password for:\n${email}\n\nThank you.`
-      : "Hello SusuFlow support,\n\nPlease help reset my SusuFlow password.\n\nRegistered email:\n\nThank you.",
+      ? `Hello Credo support,\n\nPlease help reset the password for:\n${email}\n\nThank you.`
+      : "Hello Credo support,\n\nPlease help reset my Credo password.\n\nRegistered email:\n\nThank you.",
   );
   return `mailto:${support}?subject=${subject}&body=${body}`;
 }

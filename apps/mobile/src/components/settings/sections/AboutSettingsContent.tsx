@@ -20,9 +20,7 @@ export function AboutSettingsContent() {
         ]}
       >
         <BrandMark size={64} />
-        <Text style={[styles.brandName, { color: colors.heading }]}>
-          SusuFlow
-        </Text>
+        <Text style={[styles.brandName, { color: colors.heading }]}>Credo</Text>
         <Text style={[styles.brandTagline, { color: colors.mutedForeground }]}>
           Save together. Grow together.
         </Text>

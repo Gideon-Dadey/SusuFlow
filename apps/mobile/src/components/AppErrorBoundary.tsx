@@ -33,7 +33,7 @@ export class AppErrorBoundary extends Component<Props, State> {
         <View style={styles.root}>
           <Text style={styles.title}>Something went wrong</Text>
           <Text style={styles.copy}>
-            SusuFlow ran into an unexpected error. Please try again.
+            Credo ran into an unexpected error. Please try again.
           </Text>
           <Button title="Try again" onPress={this.handleRetry} />
         </View>

@@ -10,7 +10,7 @@ export function AppBrandFooter() {
   return (
     <View style={styles.row}>
       <Text style={[styles.label, { color: colors.mutedForeground }]}>
-        SusuFlow Ghana · v{appVersion}
+        Credo Ghana · v{appVersion}
       </Text>
       <Image source={BRAND_LOGO} style={styles.logo} resizeMode="contain" />
     </View>
