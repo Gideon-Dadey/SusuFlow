@@ -21,6 +21,7 @@ export function AboutPlatformSection() {
             className="mt-8 inline-flex items-center gap-1.5 text-sm font-semibold text-secondary transition-colors hover:text-secondary/80 lg:justify-center"
           >
             Read more
+            <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
         </div>
 

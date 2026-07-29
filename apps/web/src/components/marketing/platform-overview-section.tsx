@@ -28,6 +28,7 @@ export function PlatformOverviewSection() {
               className="mt-6 inline-flex items-center gap-2 text-base font-semibold text-muted-foreground transition-colors hover:text-foreground lg:mt-8"
             >
               <span>Explore the platform</span>
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 

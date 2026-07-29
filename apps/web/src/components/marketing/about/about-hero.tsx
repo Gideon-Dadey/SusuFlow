@@ -42,6 +42,7 @@ export function AboutHero() {
                 className="inline-flex w-full items-center justify-center gap-1.5 text-[15px] font-semibold text-secondary transition-colors hover:text-secondary/80 sm:w-auto sm:justify-start"
               >
                 How it works
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>

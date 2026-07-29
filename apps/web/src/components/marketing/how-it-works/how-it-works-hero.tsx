@@ -37,6 +37,7 @@ export function HowItWorksHero() {
                 className="inline-flex w-full items-center justify-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground sm:w-auto sm:justify-start"
               >
                 View pricing
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>

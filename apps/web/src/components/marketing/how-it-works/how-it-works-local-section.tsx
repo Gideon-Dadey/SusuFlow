@@ -43,6 +43,7 @@ export function HowItWorksLocalSection() {
               className="mt-8 inline-flex items-center gap-2 text-base font-semibold text-muted-foreground transition-colors hover:text-foreground"
             >
               Talk to our team
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>

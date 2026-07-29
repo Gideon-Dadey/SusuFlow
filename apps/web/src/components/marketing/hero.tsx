@@ -38,6 +38,7 @@ export function MarketingHero() {
                 className="inline-flex w-full items-center justify-center gap-1.5 text-[15px] font-semibold text-muted-foreground transition-colors hover:text-foreground sm:w-auto sm:justify-start"
               >
                 <span>See how it works</span>
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
