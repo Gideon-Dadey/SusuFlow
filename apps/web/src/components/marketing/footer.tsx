@@ -103,33 +103,6 @@ export function MarketingFooter() {
               agents, and market traders with instant gateway deposit
               verification.
             </p>
-
-            <div className="space-y-2 pt-2 text-xs text-slate-400">
-              <p className="flex items-center gap-2">
-                <Mail className="h-3.5 w-3.5 text-[#0066cc] shrink-0" />
-                <a
-                  href="mailto:gideondadey@gmail.com"
-                  className="hover:text-white transition-colors"
-                >
-                  gideondadey@gmail.com
-                </a>
-              </p>
-              <p className="flex items-center gap-2">
-                <Phone className="h-3.5 w-3.5 text-[#0066cc] shrink-0" />
-                <a
-                  href="https://wa.me/233551550530"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-white transition-colors"
-                >
-                  +233 (0) 551550530
-                </a>
-              </p>
-              <p className="flex items-center gap-2">
-                <MapPin className="h-3.5 w-3.5 text-[#0066cc] shrink-0" />
-                <span>Maakro SDA Church Kovak Road</span>
-              </p>
-            </div>
           </div>
 
           {/* Column 2: Product Suite */}
