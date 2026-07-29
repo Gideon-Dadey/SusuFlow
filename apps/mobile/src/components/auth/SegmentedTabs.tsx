@@ -57,14 +57,14 @@ export function SegmentedTabs<T extends string>({
 const styles = StyleSheet.create({
   track: {
     flexDirection: "row",
-    borderRadius: radius.lg,
+    borderRadius: radius.full,
     padding: 4,
     gap: 4,
   },
   tab: {
     flex: 1,
     minHeight: 42,
-    borderRadius: radius.lg,
+    borderRadius: radius.full,
     alignItems: "center",
     justifyContent: "center",
   },
