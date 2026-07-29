@@ -98,6 +98,20 @@
   textarea {
     border-radius: 0.2rem;
   }
+}
+
+@layer utilities {
+  .rounded-none,
+  .rounded-sm,
+  .rounded-md,
+  .rounded-lg,
+  .rounded-xl,
+  .rounded-2xl,
+  .rounded-3xl,
+  .rounded {
+    border-radius: 0.2rem !important;
+  }
+}
 
   html {
     background-color: var(--background);
