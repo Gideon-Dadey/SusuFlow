@@ -56,7 +56,7 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [tenant, setTenant] = useState(
-    process.env.EXPO_PUBLIC_DEFAULT_TENANT || "",
+    process.env.EXPO_PUBLIC_DEFAULT_TENANT || "abc-susu",
   );
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -106,8 +106,6 @@ export default function LoginScreen() {
 
   const handleBiometricLogin = useCallback(async () => {
     clearError();
-    setSuccessMessage("");
-
     const support = await getBiometricSupport();
     setBiometricSupport(support);
 
@@ -164,8 +162,9 @@ export default function LoginScreen() {
     setIsSubmitting(true);
     try {
       const trimmedEmail = email.trim();
-      const trimmedTenant = tenant.trim();
-      const data = await login(trimmedEmail, password, trimmedTenant);
+      const explicitTenant =
+        tab === "company" && tenant.trim() !== "apex-susu" ? tenant.trim() : "";
+      const data = await login(trimmedEmail, password, explicitTenant);
       setSuccessMessage("You are logged in successfully");
 
       const alreadySaved = await hasBiometricCredentials();

@@ -1,12 +1,13 @@
 const EMAIL_DOMAIN_TENANT_SLUG: Record<string, string> = {
-  "apexsusu.com": "apex-susu",
+  "apexsusu.com": "abc-susu",
+  "abcsusu.com": "abc-susu",
 };
 
-const PLATFORM_EMAIL_DOMAINS = new Set(["susuflow.com"]);
+const PLATFORM_EMAIL_DOMAINS = new Set(["susuflow.com", "credo.com"]);
 
 function isPlatformEmailDomain(domain: string): boolean {
   if (PLATFORM_EMAIL_DOMAINS.has(domain)) return true;
-  return domain.endsWith(".susuflow.com");
+  return domain.endsWith(".susuflow.com") || domain.endsWith(".credo.com");
 }
 
 export function inferTenantSlugFromEmail(email: string): string {
@@ -28,15 +29,17 @@ export function resolveLoginTenantSlug(
   explicit?: string,
   storedSlug?: string,
 ): string {
-  if (explicit?.trim()) return explicit.trim();
+  if (explicit?.trim() && explicit.trim() !== "apex-susu")
+    return explicit.trim();
 
   const inferred = inferTenantSlugFromEmail(email);
   if (inferred) return inferred;
 
-  if (storedSlug?.trim() && storedSlug !== "abc-susu") return storedSlug.trim();
+  if (storedSlug?.trim() && storedSlug.trim() !== "apex-susu")
+    return storedSlug.trim();
 
   const envDefault = process.env.EXPO_PUBLIC_DEFAULT_TENANT?.trim();
-  if (envDefault && envDefault !== "abc-susu") return envDefault;
+  if (envDefault && envDefault !== "apex-susu") return envDefault;
 
-  return "";
+  return "abc-susu";
 }
