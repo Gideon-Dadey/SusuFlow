@@ -1,6 +1,6 @@
-export const APP_NAME = "SusuFlow";
+export const APP_NAME = "Credo";
 export const APP_TAGLINE =
-  "Digital susu savings: verified, transparent, fraud-proof.";
+  "Enterprise Susu & Digital Savings Platform with verified deposits.";
 export const SUPPORT_EMAIL = "gideondadey@gmail.com";
 
 export const NAV_LINKS = [
