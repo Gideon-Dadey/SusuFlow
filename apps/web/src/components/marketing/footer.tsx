@@ -239,18 +239,6 @@ export function MarketingFooter() {
 
         {/* Bottom Status & Copyright Bar */}
         <div className="mt-14 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 border-t border-white/10 pt-8">
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-            </span>
-            <span className="text-slate-300 font-medium">
-              All Systems Operational
-            </span>
-            <span className="text-slate-600">|</span>
-            <span>99.98% Uptime SLA</span>
-          </div>
-
           <div className="text-center">
             © {year} {APP_NAME} Inc. All rights reserved. Built for Ghanaian
             Financial Enterprise.
