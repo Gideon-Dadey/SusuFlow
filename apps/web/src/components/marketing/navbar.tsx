@@ -98,7 +98,7 @@ export function MarketingNavbar() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-[200] border-b border-slate-200/80 bg-white/95 backdrop-blur-md dark:border-white/10 dark:bg-background/95">
+      <header className="fixed inset-x-0 top-0 z-[200] border-b border-slate-200/80 bg-white/95 backdrop-blur-md dark:border-white/10 dark:bg-[#08080a]/95">
         <div className="marketing-container flex h-16 items-center justify-between gap-4">
           <Link
             href="/"
@@ -108,7 +108,7 @@ export function MarketingNavbar() {
           </Link>
 
           <nav
-            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 lg:flex xl:gap-4"
+            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 lg:flex xl:gap-5"
             aria-label="Main"
           >
             {NAV_LINKS.map(({ href, label }) => {
@@ -119,10 +119,10 @@ export function MarketingNavbar() {
                   key={href}
                   href={href}
                   className={cn(
-                    "px-3 py-2 text-[17px] font-medium transition-colors",
+                    "px-3 py-2 text-[17px] font-semibold transition-colors",
                     active
-                      ? "text-primary font-semibold"
-                      : "text-slate-800 hover:text-primary dark:text-slate-200 dark:hover:text-white",
+                      ? "text-[#0056d2] dark:text-[#38bdf8] font-bold"
+                      : "text-slate-800 hover:text-[#0056d2] dark:text-slate-200 dark:hover:text-white",
                   )}
                 >
                   {label}
@@ -134,13 +134,13 @@ export function MarketingNavbar() {
           <div className="relative z-10 flex shrink-0 items-center gap-4">
             <Link
               href="/login"
-              className="inline-flex px-1 py-2 text-[17px] font-medium text-slate-800 hover:text-primary dark:text-slate-200 dark:hover:text-white lg:hidden"
+              className="inline-flex px-1 py-2 text-[17px] font-semibold text-slate-800 hover:text-[#0056d2] dark:text-slate-200 dark:hover:text-white lg:hidden"
             >
               Login
             </Link>
             <Link
               href="/login"
-              className="hidden px-3 py-2 text-[17px] font-medium text-slate-800 hover:text-primary dark:text-slate-200 dark:hover:text-white lg:inline-flex"
+              className="hidden px-3 py-2 text-[17px] font-semibold text-slate-800 hover:text-[#0056d2] dark:text-slate-200 dark:hover:text-white lg:inline-flex"
             >
               Login
             </Link>
