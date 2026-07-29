@@ -50,13 +50,13 @@ export function MarketingFooter() {
 
           <div className="lg:col-span-6">
             {subscribed ? (
-              <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/40 bg-emerald-500/15 p-4 text-emerald-300">
-                <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+              <div className="flex items-center gap-3 rounded-2xl border border-primary/40 bg-primary/15 p-4 text-sky-300">
+                <CheckCircle2 className="h-5 w-5 text-sky-400 shrink-0" />
                 <div>
                   <p className="font-semibold text-sm">
                     Thank you for subscribing!
                   </p>
-                  <p className="text-xs text-emerald-400/80">
+                  <p className="text-xs text-sky-400/80">
                     We&apos;ve dispatched product documentation and compliance
                     guides to your email.
                   </p>
@@ -74,12 +74,12 @@ export function MarketingFooter() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your work email address..."
                     required
-                    className="w-full h-12 rounded-2xl border border-white/15 bg-white/[0.04] px-4 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
+                    className="w-full h-12 rounded-2xl border border-white/15 bg-white/[0.04] px-4 text-sm text-white placeholder-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="h-12 px-6 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all duration-200 shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 shrink-0"
+                  className="h-12 px-6 rounded-2xl bg-[#0056d2] hover:bg-[#0066cc] text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 shrink-0"
                 >
                   <span>Request Demo</span>
                   <ArrowRight className="h-4 w-4" />
@@ -109,9 +109,9 @@ export function MarketingFooter() {
             <div className="space-y-2.5 pt-2">
               <a
                 href={`mailto:${SUPPORT_EMAIL}`}
-                className="flex items-center gap-3 text-xs text-slate-300 hover:text-emerald-400 transition-colors"
+                className="flex items-center gap-3 text-xs text-slate-300 hover:text-sky-400 transition-colors"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-emerald-400">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-sky-400">
                   <Mail className="h-3.5 w-3.5" />
                 </div>
                 {SUPPORT_EMAIL}
@@ -120,15 +120,15 @@ export function MarketingFooter() {
                 href="https://wa.me/233551550530"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-3 text-xs text-slate-300 hover:text-emerald-400 transition-colors"
+                className="flex items-center gap-3 text-xs text-slate-300 hover:text-sky-400 transition-colors"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-emerald-400">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-sky-400">
                   <MessageSquare className="h-3.5 w-3.5" />
                 </div>
                 +233 (0) 551550530
               </a>
               <div className="flex items-center gap-3 text-xs text-slate-400">
-                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-emerald-400">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.06] text-sky-400">
                   <MapPin className="h-3.5 w-3.5" />
                 </div>
                 Maakro SDA Church Kovak Road
@@ -147,7 +147,7 @@ export function MarketingFooter() {
                 <li>
                   <Link
                     href="/how-it-works"
-                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                    className="text-slate-400 hover:text-sky-400 transition-colors"
                   >
                     How It Works
                   </Link>
@@ -155,7 +155,7 @@ export function MarketingFooter() {
                 <li>
                   <Link
                     href="/pricing"
-                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                    className="text-slate-400 hover:text-sky-400 transition-colors"
                   >
                     Pricing Plans
                   </Link>
@@ -163,10 +163,10 @@ export function MarketingFooter() {
                 <li>
                   <Link
                     href="/staff/calculator"
-                    className="text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-1.5"
+                    className="text-slate-400 hover:text-sky-400 transition-colors flex items-center gap-1.5"
                   >
                     <span>Financial Suite</span>
-                    <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-400">
+                    <span className="rounded bg-sky-500/20 px-1.5 py-0.5 text-[10px] font-bold text-sky-400">
                       NEW
                     </span>
                   </Link>
@@ -174,7 +174,7 @@ export function MarketingFooter() {
                 <li>
                   <Link
                     href="/staff/excel"
-                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                    className="text-slate-400 hover:text-sky-400 transition-colors"
                   >
                     Spreadsheet Studio
                   </Link>
@@ -182,7 +182,7 @@ export function MarketingFooter() {
                 <li>
                   <Link
                     href="/staff/analytics"
-                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                    className="text-slate-400 hover:text-sky-400 transition-colors"
                   >
                     AI Credit Insights
                   </Link>
@@ -199,7 +199,7 @@ export function MarketingFooter() {
                 <li>
                   <Link
                     href="/about"
-                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                    className="text-slate-400 hover:text-sky-400 transition-colors"
                   >
                     About Us
                   </Link>
@@ -207,7 +207,7 @@ export function MarketingFooter() {
                 <li>
                   <Link
                     href="/contact"
-                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                    className="text-slate-400 hover:text-sky-400 transition-colors"
                   >
                     Contact Sales
                   </Link>
@@ -215,7 +215,7 @@ export function MarketingFooter() {
                 <li>
                   <Link
                     href="/login"
-                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                    className="text-slate-400 hover:text-sky-400 transition-colors"
                   >
                     Customer Portal
                   </Link>
@@ -223,7 +223,7 @@ export function MarketingFooter() {
                 <li>
                   <Link
                     href="/login"
-                    className="text-slate-400 hover:text-emerald-400 transition-colors"
+                    className="text-slate-400 hover:text-sky-400 transition-colors"
                   >
                     Staff & Admin Login
                   </Link>
@@ -243,14 +243,14 @@ export function MarketingFooter() {
             </p>
             <div className="grid grid-cols-2 gap-2.5 pt-1">
               <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 text-center">
-                <Building2 className="h-4 w-4 text-emerald-400 mx-auto mb-1" />
+                <Building2 className="h-4 w-4 text-sky-400 mx-auto mb-1" />
                 <p className="text-[10px] font-bold text-slate-300">
                   BoG Act 987
                 </p>
                 <p className="text-[9px] text-slate-500">Licensed Standard</p>
               </div>
               <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 text-center">
-                <Lock className="h-4 w-4 text-emerald-400 mx-auto mb-1" />
+                <Lock className="h-4 w-4 text-sky-400 mx-auto mb-1" />
                 <p className="text-[10px] font-bold text-slate-300">
                   DPC Act 843
                 </p>
@@ -286,7 +286,7 @@ export function MarketingFooter() {
               target="_blank"
               rel="noreferrer"
               aria-label="Twitter"
-              className="text-slate-400 hover:text-emerald-400 transition-colors"
+              className="text-slate-400 hover:text-sky-400 transition-colors"
             >
               <Twitter className="h-4 w-4" />
             </a>
@@ -295,7 +295,7 @@ export function MarketingFooter() {
               target="_blank"
               rel="noreferrer"
               aria-label="LinkedIn"
-              className="text-slate-400 hover:text-emerald-400 transition-colors"
+              className="text-slate-400 hover:text-sky-400 transition-colors"
             >
               <Linkedin className="h-4 w-4" />
             </a>
@@ -304,7 +304,7 @@ export function MarketingFooter() {
               target="_blank"
               rel="noreferrer"
               aria-label="WhatsApp"
-              className="text-slate-400 hover:text-emerald-400 transition-colors"
+              className="text-slate-400 hover:text-sky-400 transition-colors"
             >
               <MessageSquare className="h-4 w-4" />
             </a>
@@ -313,7 +313,7 @@ export function MarketingFooter() {
               target="_blank"
               rel="noreferrer"
               aria-label="GitHub"
-              className="text-slate-400 hover:text-emerald-400 transition-colors"
+              className="text-slate-400 hover:text-sky-400 transition-colors"
             >
               <Github className="h-4 w-4" />
             </a>
