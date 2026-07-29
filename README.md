@@ -68,6 +68,10 @@ pnpm --filter @susuflow/worker dev
 
 # Start frontend (port 3000)
 pnpm dev:web
+
+# Start mobile app (Expo / React Native)
+pnpm dev:mobile          # Standard dev server
+pnpm dev:mobile:tunnel   # Tunnel mode for physical iOS & Android phones
 ```
 
 ### Frontend Routes
