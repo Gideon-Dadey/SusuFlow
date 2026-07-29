@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import "@/lib/fontawesome";
+import { Providers } from "@/components/providers";
 import { PwaAutoUpdater } from "@/components/pwa-auto-updater";
 
 const openSans = Open_Sans({
