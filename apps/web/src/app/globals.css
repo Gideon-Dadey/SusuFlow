@@ -516,10 +516,10 @@
 
   @media (min-width: 1024px) {
     .marketing-hero-title {
-      font-size: 4.15rem;
+      font-size: 3.25rem;
       font-weight: 700;
-      line-height: 1.05;
-      letter-spacing: -0.035em;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
     }
   }
 
@@ -621,9 +621,9 @@
     }
 
     .marketing-hero-title {
-      font-size: clamp(2.75rem, 11vw, 3.25rem);
-      line-height: 1.06;
-      letter-spacing: -0.03em;
+      font-size: clamp(2rem, 7.5vw, 2.35rem);
+      line-height: 1.14;
+      letter-spacing: -0.02em;
     }
 
     .marketing-hero-content {
