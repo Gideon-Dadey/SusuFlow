@@ -37,7 +37,7 @@
     --ring: #0056d2;
     --success: #10b981;
     --warning: #f59e0b;
-    --radius: 0;
+    --radius: 8px;
     --brand-dark: #0f172a;
     --surface-elevated: #ffffff;
     --surface-hover: #f1f5f9;
@@ -81,21 +81,22 @@
     --primary-700: #adcdff;
     --primary-800: #d6ebff;
     --primary-900: #ebf5ff;
+    --radius: 8px;
   }
 
   * {
     @apply border-border;
   }
 
-  button:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
-  [type='button']:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
-  [type='submit']:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
-  [type='reset']:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
-  .btn:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
-  input:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
-  select:not(.rounded-full):not(.rounded-sm):not(.rounded-lg),
-  textarea:not(.rounded-full):not(.rounded-sm):not(.rounded-lg) {
-    border-radius: 0;
+  button,
+  [type='button'],
+  [type='submit'],
+  [type='reset'],
+  .btn,
+  input,
+  select,
+  textarea {
+    border-radius: 8px;
   }
 
   html {
