@@ -5,6 +5,7 @@ import { useState } from "react";
 import {
   Mail,
   MapPin,
+  Phone,
   ShieldCheck,
   Lock,
   ArrowRight,
@@ -232,15 +233,35 @@ export function MarketingFooter() {
             </div>
           </div>
 
-          {/* Column 4: Regulatory Compliance */}
+          {/* Column 4: Contact Information */}
           <div className="lg:col-span-4 space-y-4">
             <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
-              Regulatory & Compliance
+              Contact Us
             </h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Compliant with Bank of Ghana Payment Systems & Services Act, 2019
-              (Act 987) and Data Protection Act, 2012 (Act 843).
-            </p>
+            <div className="space-y-2.5 text-xs text-slate-400 leading-relaxed">
+              <p className="flex items-center gap-2.5">
+                <Mail className="h-4 w-4 text-[#0066cc] shrink-0" />
+                <a
+                  href="mailto:gideondadey@gmail.com"
+                  className="hover:text-white transition-colors"
+                >
+                  gideondadey@gmail.com
+                </a>
+              </p>
+              <p className="flex items-center gap-2.5">
+                <Phone className="h-4 w-4 text-[#0066cc] shrink-0" />
+                <a
+                  href="tel:+233551550530"
+                  className="hover:text-white transition-colors"
+                >
+                  +233 (0) 551550530
+                </a>
+              </p>
+              <p className="flex items-center gap-2.5">
+                <MapPin className="h-4 w-4 text-[#0066cc] shrink-0" />
+                <span>Maakro SDA Church Kovak Road</span>
+              </p>
+            </div>
           </div>
         </div>
 
