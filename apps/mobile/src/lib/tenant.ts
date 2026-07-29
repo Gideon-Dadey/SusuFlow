@@ -1,6 +1,6 @@
 const EMAIL_DOMAIN_TENANT_SLUG: Record<string, string> = {
-  "apexsusu.com": "abc-susu",
-  "abcsusu.com": "abc-susu",
+  "adipamicrofinance.com": "adipa",
+  "adipa.com": "adipa",
 };
 
 const PLATFORM_EMAIL_DOMAINS = new Set(["susuflow.com", "credo.com"]);
@@ -29,7 +29,11 @@ export function resolveLoginTenantSlug(
   explicit?: string,
   storedSlug?: string,
 ): string {
-  if (explicit?.trim() && explicit.trim() !== "apex-susu") {
+  if (
+    explicit?.trim() &&
+    explicit.trim() !== "apex-susu" &&
+    explicit.trim() !== "abc-susu"
+  ) {
     return explicit.trim();
   }
 

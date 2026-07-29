@@ -75,16 +75,16 @@ export function getRoleLabelForPortal(
 
 /** Map known company email domains to tenant slugs. */
 const EMAIL_DOMAIN_TENANT_SLUG: Record<string, string> = {
-  "apexsusu.com": "apex-susu",
+  "adipamicrofinance.com": "adipa",
+  "adipa.com": "adipa",
 };
 
 /** Platform operator domains — no tenant context on login. */
-const PLATFORM_EMAIL_DOMAINS = new Set(["susuflow.com"]);
+const PLATFORM_EMAIL_DOMAINS = new Set(["susuflow.com", "credo.com"]);
 
 function isPlatformEmailDomain(domain: string): boolean {
   if (PLATFORM_EMAIL_DOMAINS.has(domain)) return true;
-  // e.g. customer-000003@temp.susuflow.com — tenant comes from URL/storage, not email
-  return domain.endsWith(".susuflow.com");
+  return domain.endsWith(".susuflow.com") || domain.endsWith(".credo.com");
 }
 
 export function inferTenantSlugFromEmail(email: string): string {
@@ -120,25 +120,27 @@ export function resolveLoginTenantSlug(
     if (fromQuery?.trim()) return fromQuery.trim();
 
     const stored = localStorage.getItem("tenant_slug")?.trim();
-    if (stored && stored !== "abc-susu") return stored;
+    if (stored && stored !== "abc-susu" && stored !== "apex-susu")
+      return stored;
   }
 
   const envDefault = process.env.NEXT_PUBLIC_DEFAULT_TENANT?.trim();
-  if (envDefault && envDefault !== "abc-susu") return envDefault;
+  if (envDefault && envDefault !== "abc-susu" && envDefault !== "apex-susu")
+    return envDefault;
 
   return "";
 }
 
 export function getTenantSlug(): string {
   if (typeof window === "undefined") {
-    return process.env.NEXT_PUBLIC_DEFAULT_TENANT?.trim() || "";
+    return process.env.NEXT_PUBLIC_DEFAULT_TENANT?.trim() || "adipa";
   }
   const params = new URLSearchParams(window.location.search);
   const fromQuery = params.get("tenant");
   if (fromQuery) return fromQuery;
 
   const stored = localStorage.getItem("tenant_slug");
-  if (stored) return stored;
+  if (stored && stored !== "abc-susu" && stored !== "apex-susu") return stored;
 
   try {
     const rawAuth = localStorage.getItem("susuflow-auth");
@@ -146,7 +148,8 @@ export function getTenantSlug(): string {
       const parsed = JSON.parse(rawAuth);
       const userSlug =
         parsed.state?.user?.tenantSlug || parsed.state?.tenantSlug;
-      if (userSlug) return userSlug;
+      if (userSlug && userSlug !== "abc-susu" && userSlug !== "apex-susu")
+        return userSlug;
     }
   } catch {
     // ignore parsing errors
@@ -157,7 +160,9 @@ export function getTenantSlug(): string {
     return host.split(".")[0];
   }
   const envDefault = process.env.NEXT_PUBLIC_DEFAULT_TENANT?.trim();
-  return envDefault && envDefault !== "abc-susu" ? envDefault : "";
+  return envDefault && envDefault !== "abc-susu" && envDefault !== "apex-susu"
+    ? envDefault
+    : "adipa";
 }
 
 export function getDashboardPath(roles: string[]): string {

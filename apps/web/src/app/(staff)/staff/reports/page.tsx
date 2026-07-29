@@ -1,37 +1,37 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { Button } from '@/components/ui/button';
-import { reportApi, tenantApi } from '@/lib/api';
-import { getTenantSlug } from '@/lib/utils';
-import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { reportApi, tenantApi } from "@/lib/api";
+import { getTenantSlug } from "@/lib/utils";
+import { useState } from "react";
 
 export default function ReportsHubPage() {
   const queryClient = useQueryClient();
   const [seeding, setSeeding] = useState(false);
 
   const { data: reportData, isLoading } = useQuery({
-    queryKey: ['staff-reports-summary'],
+    queryKey: ["staff-reports-summary"],
     queryFn: () => reportApi.getSummary(),
   });
 
   const seedMutation = useMutation({
-    mutationFn: () => tenantApi.seedDemo(getTenantSlug() || 'abc-susu'),
+    mutationFn: () => tenantApi.seedDemo(getTenantSlug() || "adipa"),
     onSuccess: (res) => {
-      alert(res.message || 'Demo data successfully seeded!');
+      alert(res.message || "Demo data successfully seeded!");
       queryClient.invalidateQueries();
     },
     onError: (err) => {
-      alert(err instanceof Error ? err.message : 'Seeding failed');
+      alert(err instanceof Error ? err.message : "Seeding failed");
     },
   });
 
   const handleSeedDemo = async () => {
     if (
       confirm(
-        'Are you sure you want to seed demo data? This will reset/re-initialize transaction histories, KYC documents, fraud flags, and ledger accounts for this organization.',
+        "Are you sure you want to seed demo data? This will reset/re-initialize transaction histories, KYC documents, fraud flags, and ledger accounts for this organization.",
       )
     ) {
       setSeeding(true);
@@ -56,24 +56,27 @@ export default function ReportsHubPage() {
   const trends = reportData?.dailyTrends || [];
 
   const handleExportCsv = () => {
-    const headers = ['Metric', 'Value (GHS)'];
+    const headers = ["Metric", "Value (GHS)"];
     const rows = [
-      ['Total Deposits', summary.totalDeposits],
-      ['Total Withdrawals', summary.totalWithdrawals],
-      ['Outstanding Customer Liability', summary.outstandingLiability],
-      ['Collector Commissions Payable', summary.collectorCommissionsPayable],
-      ['Total Commission Expense', summary.totalCommissionExpense],
-      ['Platform Cash Reserve', summary.platformCash],
-      ['Net Operations Balance (Deposits - Withdrawals)', summary.netOperationsBalance],
+      ["Total Deposits", summary.totalDeposits],
+      ["Total Withdrawals", summary.totalWithdrawals],
+      ["Outstanding Customer Liability", summary.outstandingLiability],
+      ["Collector Commissions Payable", summary.collectorCommissionsPayable],
+      ["Total Commission Expense", summary.totalCommissionExpense],
+      ["Platform Cash Reserve", summary.platformCash],
+      [
+        "Net Operations Balance (Deposits - Withdrawals)",
+        summary.netOperationsBalance,
+      ],
     ];
 
     const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `operations_summary_${Date.now()}.csv`);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `operations_summary_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -106,7 +109,6 @@ export default function ReportsHubPage() {
           </Button>
         </div>
       </div>
-
 
       {/* Summary KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -159,26 +161,36 @@ export default function ReportsHubPage() {
         {/* Additional liability and expense card */}
         <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm flex flex-col justify-between">
           <CardHeader>
-            <CardTitle className="text-base font-bold text-foreground">Accruals & Overhead</CardTitle>
+            <CardTitle className="text-base font-bold text-foreground">
+              Accruals & Overhead
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center text-sm border-b border-border pb-3">
-              <span className="text-muted-foreground">Collector Commissions Payable</span>
+              <span className="text-muted-foreground">
+                Collector Commissions Payable
+              </span>
               <span className="font-bold text-foreground">
                 GHS {summary.collectorCommissionsPayable.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between items-center text-sm border-b border-border pb-3">
-              <span className="text-muted-foreground">Total Commission Expense</span>
+              <span className="text-muted-foreground">
+                Total Commission Expense
+              </span>
               <span className="font-bold text-foreground">
                 GHS {summary.totalCommissionExpense.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between items-center text-sm pb-1">
-              <span className="text-muted-foreground">Net Operations Balance</span>
+              <span className="text-muted-foreground">
+                Net Operations Balance
+              </span>
               <span
                 className={`font-bold ${
-                  summary.netOperationsBalance >= 0 ? 'text-emerald-600' : 'text-red-600'
+                  summary.netOperationsBalance >= 0
+                    ? "text-emerald-600"
+                    : "text-red-600"
                 }`}
               >
                 GHS {summary.netOperationsBalance.toFixed(2)}
@@ -190,7 +202,9 @@ export default function ReportsHubPage() {
         {/* Daily operations activity trends */}
         <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm">
           <CardHeader>
-            <CardTitle className="text-base font-bold text-foreground">Daily Activity Trend</CardTitle>
+            <CardTitle className="text-base font-bold text-foreground">
+              Daily Activity Trend
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -205,20 +219,28 @@ export default function ReportsHubPage() {
                 <tbody className="divide-y divide-border/60">
                   {isLoading ? (
                     <tr>
-                      <td colSpan={3} className="p-4 text-center text-muted-foreground">
+                      <td
+                        colSpan={3}
+                        className="p-4 text-center text-muted-foreground"
+                      >
                         Loading trends...
                       </td>
                     </tr>
                   ) : trends.length === 0 ? (
                     <tr>
-                      <td colSpan={3} className="p-4 text-center text-muted-foreground">
+                      <td
+                        colSpan={3}
+                        className="p-4 text-center text-muted-foreground"
+                      >
                         No transactions trend available
                       </td>
                     </tr>
                   ) : (
                     trends.map((t) => (
                       <tr key={t.date} className="hover:bg-muted/10">
-                        <td className="p-3 font-medium text-foreground">{t.date}</td>
+                        <td className="p-3 font-medium text-foreground">
+                          {t.date}
+                        </td>
                         <td className="p-3 text-right text-emerald-600 dark:text-emerald-400 font-semibold">
                           GHS {t.deposits.toFixed(2)}
                         </td>

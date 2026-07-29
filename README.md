@@ -89,11 +89,11 @@ Once running, Swagger docs are at: http://localhost:4000/api/docs
 
 ### Demo Credentials (after seed)
 
-| Role          | Email              | Password        | Tenant Header             |
-| ------------- | ------------------ | --------------- | ------------------------- |
-| Super Admin   | admin@susuflow.com | ChangeMe123!    | —                         |
-| Company Admin | admin@abcsusu.com  | Admin123!@#     | `x-tenant-slug: abc-susu` |
-| Collector     | nana@abcsusu.com   | Collector123!@# | `x-tenant-slug: abc-susu` |
+| Role          | Email                | Password        | Tenant Header          |
+| ------------- | -------------------- | --------------- | ---------------------- |
+| Super Admin   | admin@susuflow.com   | ChangeMe123!    | —                      |
+| Company Admin | steveamoah@gmail.com | Adipa123!@#     | `x-tenant-slug: adipa` |
+| Collector     | nana@adipa.com       | Collector123!@# | `x-tenant-slug: adipa` |
 
 ### Key API Endpoints
 

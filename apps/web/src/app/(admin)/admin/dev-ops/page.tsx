@@ -42,7 +42,7 @@ export default function AdminDevOpsPage() {
   });
 
   const seedDemoMutation = useMutation({
-    mutationFn: () => tenantApi.seedDemo("abc-susu"),
+    mutationFn: () => tenantApi.seedDemo("adipa"),
     onSuccess: (res) => {
       addLog(`SUCCESS: Seeding completed - ${res.message}`);
       queryClient.invalidateQueries();

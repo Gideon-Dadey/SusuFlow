@@ -109,7 +109,7 @@ function VerifyContent() {
             className={authInputClassName}
             value={tenant}
             onChange={(e) => setTenant(e.target.value)}
-            placeholder="abc-susu"
+            placeholder="adipa"
           />
         </label>
 

@@ -862,7 +862,7 @@ export class TenantService {
 
   async getGlobalSettings() {
     const platformTenant = await this.prisma.tenant.findFirst({
-      where: { slug: "abc-susu" },
+      where: { slug: "adipa" },
     });
 
     const settings = (platformTenant?.settings as Record<string, any>) || {};
@@ -879,7 +879,7 @@ export class TenantService {
 
   async updateGlobalSettings(dto: any) {
     const platformTenant = await this.prisma.tenant.findFirst({
-      where: { slug: "abc-susu" },
+      where: { slug: "adipa" },
     });
 
     if (platformTenant) {
