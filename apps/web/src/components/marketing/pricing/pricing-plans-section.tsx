@@ -56,7 +56,7 @@ export function PricingPlansSection() {
 
               <Link href={plan.ctaHref} className="mt-8 block">
                 <Button
-                  variant={plan.name === "Enterprise" ? "secondary" : "primary"}
+                  size="lg"
                   className={cn(
                     "h-12 w-full rounded-none text-[15px] font-bold",
                     plan.name === "Enterprise"
@@ -65,7 +65,6 @@ export function PricingPlansSection() {
                   )}
                 >
                   {plan.cta}
-                  <ArrowRight className="size-4" aria-hidden />
                 </Button>
               </Link>
 

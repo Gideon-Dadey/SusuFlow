@@ -151,10 +151,9 @@ export function MarketingNavbar() {
             <Link href="/register" className="hidden sm:block">
               <Button
                 size="sm"
-                className="h-9 sm:h-10 px-3.5 sm:px-5 text-xs sm:text-[15px] font-bold rounded-md bg-[#0066cc] hover:bg-[#0052a3] text-white transition-all duration-200 shadow-sm flex items-center gap-1.5 sm:gap-2"
+                className="h-9 sm:h-10 px-3.5 sm:px-5 text-xs sm:text-[15px] font-bold rounded-md bg-[#0066cc] hover:bg-[#0052a3] text-white transition-all duration-200 shadow-sm flex items-center justify-center"
               >
                 <span>Register</span>
-                <ArrowRight className="size-3.5 sm:size-4 stroke-[2.5]" />
               </Button>
             </Link>
 
