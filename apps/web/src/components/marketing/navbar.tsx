@@ -113,7 +113,9 @@ export function MarketingNavbar() {
           >
             {NAV_LINKS.map(({ href, label }) => {
               const active =
-                href === "/" ? pathname === "/" : pathname.startsWith(href);
+                (href as string) === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(href);
               return (
                 <Link
                   key={href}
