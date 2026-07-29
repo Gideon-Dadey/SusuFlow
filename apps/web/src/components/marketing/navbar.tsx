@@ -169,7 +169,7 @@ export function MarketingNavbar() {
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                Sign in
+                Login
               </Link>
               <Link
                 href="/login"
@@ -182,7 +182,7 @@ export function MarketingNavbar() {
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                Sign in
+                Login
               </Link>
               <Link href="/register" className="hidden lg:block">
                 <Button

@@ -77,7 +77,7 @@ function LoginContent() {
     <AuthShell>
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Sign in
+          Login
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           or{" "}
@@ -180,10 +180,10 @@ function LoginContent() {
           type="submit"
           className="h-[48px] w-full rounded-none text-[15px] font-bold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
           loading={isSubmitting}
-          loadingText="Signing in..."
+          loadingText="Logging in..."
           disabled={!!successMessage}
         >
-          Sign in
+          Login
         </Button>
       </form>
 

@@ -74,7 +74,7 @@ function RegisterContent() {
             href="/login"
             className="font-medium text-secondary hover:text-secondary/80"
           >
-            Sign in
+            Login
           </Link>
         </p>
       </div>
