@@ -4,10 +4,10 @@ export const APP_TAGLINE =
 export const SUPPORT_EMAIL = "gideondadey@gmail.com";
 
 export const NAV_LINKS = [
-  { href: "/how-it-works", label: "Product", hasDropdown: true },
-  { href: "/about", label: "Why Credo", hasDropdown: true },
-  { href: "/pricing", label: "Pricing", hasDropdown: false },
-  { href: "/contact", label: "Resources", hasDropdown: true },
+  { href: "/how-it-works", label: "Product" },
+  { href: "/about", label: "Why Credo" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/contact", label: "Resources" },
 ] as const;
 
 export const FOOTER_LINKS = {
