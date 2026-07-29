@@ -49,11 +49,11 @@
     --background: #08080a;
     --foreground: #f8fafc;
     --heading: #ffffff;
-    --card: #0c101d;
+    --card: #0f172a;
     --card-foreground: #f8fafc;
-    --popover: #0c101d;
+    --popover: #0f172a;
     --popover-foreground: #f8fafc;
-    --muted: #141a29;
+    --muted: #1e293b;
     --muted-foreground: #94a3b8;
     --primary: #0056d2;
     --primary-foreground: #ffffff;
@@ -67,8 +67,8 @@
     --input: #1e293b;
     --ring: #0056d2;
     --brand-dark: #08080a;
-    --surface-elevated: #0c101d;
-    --surface-hover: #141a29;
+    --surface-elevated: #1e293b;
+    --surface-hover: #334155;
     --surface-glow: rgba(0, 86, 210, 0.12);
     --primary-50: #002359;
     --primary-100: #003585;
