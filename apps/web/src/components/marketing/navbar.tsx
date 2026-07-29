@@ -98,8 +98,8 @@ export function MarketingNavbar() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-[200] bg-[#f4f6f8] dark:bg-[#09090b] pt-[env(safe-area-inset-top,0px)]">
-        <div className="marketing-container flex h-13 sm:h-16 items-center justify-between gap-3 sm:gap-4">
+      <header className="fixed inset-x-0 top-0 z-[200] border-b border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-[#09090b] pt-[env(safe-area-inset-top,0px)] transition-all">
+        <div className="marketing-container flex h-14 sm:h-16 items-center justify-between gap-3 sm:gap-4">
           <Link
             href="/"
             className="relative z-10 flex min-w-0 shrink-0 items-center"
@@ -123,8 +123,8 @@ export function MarketingNavbar() {
                   className={cn(
                     "px-3 py-2 text-[17px] font-semibold transition-colors",
                     active
-                      ? "text-[#0056d2] dark:text-[#38bdf8] font-bold"
-                      : "text-slate-800 hover:text-[#0056d2] dark:text-slate-200 dark:hover:text-white",
+                      ? "text-[#0066cc] dark:text-[#38bdf8] font-bold"
+                      : "text-slate-800 hover:text-[#0066cc] dark:text-slate-200 dark:hover:text-white",
                   )}
                 >
                   {label}
@@ -133,32 +133,34 @@ export function MarketingNavbar() {
             })}
           </nav>
 
-          <div className="relative z-10 flex shrink-0 items-center gap-2 sm:gap-4">
+          <div className="relative z-10 flex shrink-0 items-center gap-2 sm:gap-3">
             <Link
               href="/login"
-              className="inline-flex px-1.5 py-1 text-sm font-bold text-slate-800 hover:text-[#0056d2] dark:text-slate-200 dark:hover:text-white lg:hidden"
+              className="inline-flex items-center px-3 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 border border-slate-200/90 dark:border-slate-800 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors lg:hidden"
             >
               Login
             </Link>
+
             <Link
               href="/login"
-              className="hidden px-3 py-2 text-[17px] font-semibold text-slate-800 hover:text-[#0056d2] dark:text-slate-200 dark:hover:text-white lg:inline-flex"
+              className="hidden px-3 py-2 text-[17px] font-semibold text-slate-800 hover:text-[#0066cc] dark:text-slate-200 dark:hover:text-white lg:inline-flex"
             >
               Login
             </Link>
-            <Link href="/register" className="hidden lg:block">
+
+            <Link href="/register" className="hidden sm:block">
               <Button
                 size="sm"
-                className="h-10 px-5 text-[15px] font-bold rounded-[0.2rem] bg-[#0056d2] hover:bg-[#0043aa] text-white transition-all duration-200 shadow-md flex items-center gap-2"
+                className="h-9 sm:h-10 px-3.5 sm:px-5 text-xs sm:text-[15px] font-bold rounded-md bg-[#0066cc] hover:bg-[#0052a3] text-white transition-all duration-200 shadow-sm flex items-center gap-1.5 sm:gap-2"
               >
                 <span>Register</span>
-                <ArrowRight className="size-4 stroke-[2.5]" />
+                <ArrowRight className="size-3.5 sm:size-4 stroke-[2.5]" />
               </Button>
             </Link>
 
             <button
               type="button"
-              className="inline-flex size-9 sm:size-11 items-center justify-center rounded-md text-foreground transition-colors lg:hidden"
+              className="inline-flex size-9 items-center justify-center rounded-md border border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all shadow-xs lg:hidden"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
@@ -174,36 +176,46 @@ export function MarketingNavbar() {
         ? createPortal(
             <div
               id="mobile-nav"
-              className="fixed inset-x-0 bottom-0 z-[190] bg-white dark:bg-background lg:hidden"
-              style={{ top: "calc(env(safe-area-inset-top, 0px) + 3.25rem)" }}
+              className="fixed inset-x-0 bottom-0 z-[190] bg-white dark:bg-[#09090b] lg:hidden flex flex-col border-t border-slate-200/80 dark:border-slate-800 shadow-2xl"
+              style={{ top: "calc(env(safe-area-inset-top, 0px) + 3.5rem)" }}
             >
-              <nav className="h-full overflow-y-auto" aria-label="Mobile">
-                {NAV_LINKS.map(({ href, label }, index) => {
-                  const active =
-                    (href as string) === "/"
-                      ? pathname === "/"
-                      : pathname.startsWith(href);
-                  return (
-                    <Link
-                      key={href}
-                      href={href}
-                      className={cn(
-                        "flex items-center px-6 py-4 text-[18px] font-bold text-foreground transition-colors hover:bg-muted/40",
-                        index > 0 && "border-t border-border",
-                        active && "text-secondary",
-                      )}
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      {label}
-                    </Link>
-                  );
-                })}
+              <nav
+                className="flex-1 overflow-y-auto px-6 py-6"
+                aria-label="Mobile"
+              >
+                <div className="flex flex-col gap-1">
+                  {NAV_LINKS.map(({ href, label }) => {
+                    const active =
+                      (href as string) === "/"
+                        ? pathname === "/"
+                        : pathname.startsWith(href);
+                    return (
+                      <Link
+                        key={href}
+                        href={href}
+                        className={cn(
+                          "flex items-center justify-between rounded-lg px-4 py-3.5 text-base font-bold transition-all",
+                          active
+                            ? "bg-[#0066cc]/10 text-[#0066cc] dark:bg-[#0066cc]/20 dark:text-[#38bdf8]"
+                            : "text-foreground hover:bg-slate-100 dark:hover:bg-slate-800/60",
+                        )}
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <span>{label}</span>
+                        <ChevronDown
+                          className="size-4 -rotate-90 text-muted-foreground"
+                          aria-hidden
+                        />
+                      </Link>
+                    );
+                  })}
+                </div>
 
-                <div className="border-t border-border px-6 py-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+                <div className="mt-8 flex flex-col gap-3 border-t border-slate-200/80 dark:border-slate-800 pt-6 pb-[max(2rem,env(safe-area-inset-bottom))]">
                   <Link href="/register" onClick={() => setMenuOpen(false)}>
-                    <Button className="h-12 w-full rounded-md text-[15px] font-bold shadow-[0_4px_14px_rgba(34,197,94,0.25)]">
-                      Get started
-                      <ArrowRight className="size-4" aria-hidden />
+                    <Button className="h-12 w-full rounded-md text-[15px] font-bold bg-[#0066cc] hover:bg-[#0052a3] text-white shadow-md flex items-center justify-center gap-2">
+                      <span>Create Free Account</span>
+                      <ArrowRight className="size-4 stroke-[2.5]" aria-hidden />
                     </Button>
                   </Link>
                 </div>

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 export function PlatformOverviewSection() {
   return (
-    <section className="bg-[#f4f6f8] dark:bg-background">
+    <section className="bg-white dark:bg-background">
       <MarketingContainer className="pt-10 pb-5 sm:pt-16 sm:pb-10 lg:py-24">
         <div className="flex flex-col gap-6 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
           <div className="order-2 min-w-0 text-left lg:order-1">
@@ -25,7 +25,7 @@ export function PlatformOverviewSection() {
             </p>
             <Link
               href="/how-it-works"
-              className="mt-6 inline-flex items-center gap-2 text-base font-semibold text-[#0056d2] dark:text-sky-400 transition-colors hover:opacity-80 lg:mt-8"
+              className="mt-6 inline-flex items-center gap-2 text-base font-semibold text-muted-foreground transition-colors hover:text-foreground lg:mt-8"
             >
               <span>Explore the platform</span>
               <ArrowRight className="h-4 w-4" />

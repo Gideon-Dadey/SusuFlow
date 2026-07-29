@@ -5,7 +5,7 @@ import { MarketingContainer } from "../marketing-container";
 
 export function AboutPeopleSection() {
   return (
-    <section className="bg-[#f4f6f8] dark:bg-background">
+    <section className="bg-white dark:bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="grid gap-6 md:grid-cols-3 md:gap-8">
           {ABOUT_PEOPLE.map(({ title, description, href, cta }) => (

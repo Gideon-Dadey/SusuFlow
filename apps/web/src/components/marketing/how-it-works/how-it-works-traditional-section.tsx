@@ -1,24 +1,7 @@
-import {
-  Activity,
-  FileCheck,
-  ShieldCheck,
-  Smartphone,
-  Users,
-  Wallet,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { HOW_IT_WORKS_TRADITIONAL_PAINS } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
 import { cn } from "@/lib/utils";
-
-const PAIN_ICONS: LucideIcon[] = [
-  FileCheck,
-  Wallet,
-  Smartphone,
-  Users,
-  Activity,
-  ShieldCheck,
-];
 
 export function HowItWorksTraditionalSection() {
   return (
@@ -46,8 +29,7 @@ export function HowItWorksTraditionalSection() {
           </div>
 
           <div className="order-2 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:order-2">
-            {HOW_IT_WORKS_TRADITIONAL_PAINS.map(({ label }, i) => {
-              const Icon = PAIN_ICONS[i]!;
+            {HOW_IT_WORKS_TRADITIONAL_PAINS.map(({ label, icon }) => {
               return (
                 <div
                   key={label}
@@ -57,9 +39,9 @@ export function HowItWorksTraditionalSection() {
                     "dark:bg-card dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)]",
                   )}
                 >
-                  <Icon
-                    className="size-9 shrink-0 text-foreground sm:size-10"
-                    strokeWidth={1.5}
+                  <FontAwesomeIcon
+                    icon={icon}
+                    className="h-8 w-8 text-foreground sm:h-9 sm:w-9"
                     aria-hidden
                   />
                   <span className="mt-4 text-xs font-semibold leading-snug text-foreground sm:text-sm">

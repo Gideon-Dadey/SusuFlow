@@ -116,23 +116,18 @@ export default function CustomerDashboard() {
                 <div className="font-bold text-foreground text-sm flex items-center gap-2">
                   Identity Verification Required (Ghana Card / Passport)
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 uppercase tracking-wider">
-                    {userProfile?.customer?.kycStatus === "pending"
-                      ? "In Review"
-                      : "Action Required"}
+                    Action Required
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {userProfile?.customer?.kycStatus === "pending"
-                    ? "Your verification documents are being processed by our compliance team (1-2 hrs)."
-                    : "Upload your ID to ensure full compliance with Bank of Ghana anti-fraud regulations."}
+                  Upload your Ghana Card or Passport to comply with Bank of
+                  Ghana anti-fraud regulations.
                 </p>
               </div>
             </div>
             <Link href="/kyc" className="shrink-0">
               <button className="w-full sm:w-auto px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity">
-                {userProfile?.customer?.kycStatus === "pending"
-                  ? "View KYC Status"
-                  : "Verify Identity Now →"}
+                Verify Identity Now →
               </button>
             </Link>
           </div>

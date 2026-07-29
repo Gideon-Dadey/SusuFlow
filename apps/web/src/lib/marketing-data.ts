@@ -7,7 +7,7 @@ export const NAV_LINKS = [
   { href: "/how-it-works", label: "Product" },
   { href: "/about", label: "Why Credo" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/contact", label: "Resources" },
+  { href: "/contact", label: "Contact" },
 ] as const;
 
 export const FOOTER_LINKS = {
@@ -28,48 +28,83 @@ export const FOOTER_LINKS = {
   ],
 };
 
-export const MOMO_PAY_CAPABILITIES = [
-  { label: "MoMo Deposits" },
-  { label: "Verified Settlements" },
-  { label: "Collector Prompts" },
-  { label: "Live Dashboards" },
-  { label: "Group Payouts" },
-  { label: "Audit & Reconcile" },
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import {
+  faMobileScreenButton,
+  faShieldHalved,
+  faUserCheck,
+  faChartLine,
+  faPaperPlane,
+  faScaleBalanced,
+  faBook,
+  faMoneyBillWave,
+  faMessage,
+  faTriangleExclamation,
+  faClock,
+  faFileLines,
+  faBuilding,
+  faUserPlus,
+  faFileCircleCheck,
+} from "@fortawesome/free-solid-svg-icons";
+
+export interface CapabilityItem {
+  label: string;
+  icon: IconDefinition;
+}
+
+export interface StepItem {
+  step: string;
+  title: string;
+  description: string;
+  icon: IconDefinition;
+}
+
+export const MOMO_PAY_CAPABILITIES: readonly CapabilityItem[] = [
+  { label: "MoMo Deposits", icon: faMobileScreenButton },
+  { label: "Verified Settlements", icon: faShieldHalved },
+  { label: "Collector Prompts", icon: faUserCheck },
+  { label: "Live Dashboards", icon: faChartLine },
+  { label: "Group Payouts", icon: faPaperPlane },
+  { label: "Audit & Reconcile", icon: faScaleBalanced },
 ] as const;
 
-export const HOW_IT_WORKS_TRADITIONAL_PAINS = [
-  { label: "Paper ledger books" },
-  { label: "Cash in the field" },
-  { label: "WhatsApp receipts" },
-  { label: "Collector disputes" },
-  { label: "Slow reconciliation" },
-  { label: "Weak audit trails" },
+export const HOW_IT_WORKS_TRADITIONAL_PAINS: readonly CapabilityItem[] = [
+  { label: "Paper ledger books", icon: faBook },
+  { label: "Cash in the field", icon: faMoneyBillWave },
+  { label: "WhatsApp receipts", icon: faMessage },
+  { label: "Collector disputes", icon: faTriangleExclamation },
+  { label: "Slow reconciliation", icon: faClock },
+  { label: "Weak audit trails", icon: faFileLines },
 ] as const;
 
-export const HOW_IT_WORKS_STEPS = [
+export const HOW_IT_WORKS_STEPS: readonly StepItem[] = [
   {
     step: "01",
     title: "Set up your company",
     description:
       "Create your tenant, invite staff, and configure settings from one admin dashboard.",
+    icon: faBuilding,
   },
   {
     step: "02",
     title: "Members sign up directly",
     description:
       "Savers join your company online in minutes. No manual paperwork or collector visits needed.",
+    icon: faUserPlus,
   },
   {
     step: "03",
     title: "Direct MoMo deposits",
     description:
       "Savers deposit funds directly from their own Mobile Money wallet, getting an instant confirmation receipt.",
+    icon: faMobileScreenButton,
   },
   {
     step: "04",
     title: "Verify deposits & approve payouts",
     description:
       "Staff review deposits and payout requests with a full audit trail. Every cedi is traceable from deposit to payout.",
+    icon: faFileCircleCheck,
   },
 ] as const;
 

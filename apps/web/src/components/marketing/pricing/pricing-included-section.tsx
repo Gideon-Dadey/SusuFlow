@@ -1,28 +1,11 @@
-import {
-  Activity,
-  FileCheck,
-  Send,
-  ShieldCheck,
-  Smartphone,
-  Users,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MOMO_PAY_CAPABILITIES } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
 import { cn } from "@/lib/utils";
 
-const CAPABILITY_ICONS: LucideIcon[] = [
-  Smartphone,
-  ShieldCheck,
-  Users,
-  Activity,
-  Send,
-  FileCheck,
-];
-
 export function PricingIncludedSection() {
   return (
-    <section className="border-t border-border bg-[#f4f6f8] dark:bg-background">
+    <section className="border-t border-border bg-white dark:bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="max-w-2xl text-left">
           <p className="text-sm font-medium text-muted-foreground">
@@ -38,8 +21,7 @@ export function PricingIncludedSection() {
         </div>
 
         <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:mt-12">
-          {MOMO_PAY_CAPABILITIES.map(({ label }, i) => {
-            const Icon = CAPABILITY_ICONS[i]!;
+          {MOMO_PAY_CAPABILITIES.map(({ label, icon }) => {
             return (
               <div
                 key={label}
@@ -49,9 +31,9 @@ export function PricingIncludedSection() {
                   "dark:bg-card",
                 )}
               >
-                <Icon
-                  className="size-9 shrink-0 text-foreground sm:size-10"
-                  strokeWidth={1.5}
+                <FontAwesomeIcon
+                  icon={icon}
+                  className="h-8 w-8 text-foreground sm:h-9 sm:w-9"
                   aria-hidden
                 />
                 <span className="mt-4 text-xs font-semibold leading-snug text-foreground sm:text-sm">

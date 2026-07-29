@@ -153,11 +153,15 @@ export default function CustomerKycPage() {
     submitMutation.mutate();
   };
 
-  const isVerified = kycStatusData?.kycStatus === "verified";
+  const hasSubmittedDoc = (kycStatusData?.documents?.length ?? 0) > 0;
+  const isVerified =
+    kycStatusData?.kycStatus === "verified" ||
+    (kycStatusData?.kycStatus as string) === "approved";
   const isPending =
-    kycStatusData?.kycStatus === "pending" ||
-    kycStatusData?.documents?.some((d) => d.status === "pending");
-  const isRejected = kycStatusData?.kycStatus === "rejected";
+    hasSubmittedDoc &&
+    (kycStatusData?.kycStatus === "pending" ||
+      kycStatusData?.documents?.some((d) => d.status === "pending"));
+  const isRejected = hasSubmittedDoc && kycStatusData?.kycStatus === "rejected";
   const latestDoc = kycStatusData?.documents?.[0];
 
   return (
