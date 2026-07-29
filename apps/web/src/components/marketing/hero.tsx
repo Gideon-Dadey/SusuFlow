@@ -12,7 +12,7 @@ export function MarketingHero() {
       <MarketingContainer className="marketing-hero-platform-inner">
         <div className="flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 xl:gap-16">
           <div className="min-w-0 text-left lg:pt-0">
-            <h1 className="marketing-hero-title text-balance text-foreground font-bold tracking-tight text-4xl sm:text-5xl lg:text-7xl leading-none sm:leading-tight">
+            <h1 className="marketing-hero-title text-balance text-foreground font-bold tracking-tight text-3xl sm:text-4xl lg:text-5xl leading-snug sm:leading-tight">
               One platform for your susu enterprise.
               <br />
               <span>And every verified cedi.</span>
