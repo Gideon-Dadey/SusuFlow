@@ -28,9 +28,7 @@ export default function RegisterScreen() {
   const insets = useSafeAreaInsets();
   const { colors, isDark } = useTheme();
   const { register, isLoading, error, clearError } = useAuthStore();
-  const [tenant, setTenant] = useState(
-    process.env.EXPO_PUBLIC_DEFAULT_TENANT || "",
-  );
+  const [tenant, setTenant] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -181,6 +179,7 @@ export default function RegisterScreen() {
                 <View style={styles.form}>
                   <Input
                     label="Susu company"
+                    placeholder="e.g. adipa"
                     value={tenant}
                     onChangeText={setTenant}
                     autoCapitalize="none"
@@ -406,7 +405,7 @@ const styles = StyleSheet.create({
   actionButton: {
     flex: 1,
     minHeight: 52,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -414,10 +413,10 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   nextButton: {
-    backgroundColor: brandGreen,
-    shadowColor: brandGreen,
+    backgroundColor: "#0056d2",
+    shadowColor: "#0056d2",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 4,
   },
