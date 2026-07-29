@@ -173,14 +173,14 @@ export default function LoginScreen() {
         if (support.available) {
           queueEnrollment({
             email: trimmedEmail,
-            tenant: trimmedTenant,
+            tenant: explicitTenant,
             refreshToken: data.refreshToken,
           });
         }
       } else {
         await updateBiometricSession({
           email: trimmedEmail,
-          tenant: trimmedTenant,
+          tenant: explicitTenant,
           refreshToken: data.refreshToken,
         });
       }
