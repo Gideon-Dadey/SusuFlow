@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -10,7 +11,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MIN_PASSWORD_LENGTH } from "@susuflow/shared/client";
@@ -19,9 +19,10 @@ import { BackArrowButton } from "@/components/navigation/BackArrowButton";
 import { AuthMessage } from "@/components/auth/AuthMessage";
 import { AuthPasswordInput } from "@/components/auth/AuthPasswordInput";
 import { Input } from "@/components/Input";
+import { BRAND_LOGO } from "@/lib/brand-assets";
 import { useAuthStore } from "@/stores/auth.store";
 import { useTheme } from "@/theme/ThemeProvider";
-import { brandGreen, radius, spacing, typography } from "@/theme/tokens";
+import { radius, spacing, typography } from "@/theme/tokens";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -130,17 +131,12 @@ export default function RegisterScreen() {
               />
             </View>
 
-            <View
-              style={[
-                styles.heroIcon,
-                {
-                  borderColor: isDark
-                    ? colors.border
-                    : "rgba(255,255,255,0.35)",
-                },
-              ]}
-            >
-              <Ionicons name="person-outline" size={42} color={heroTextColor} />
+            <View style={styles.brandBlock}>
+              <Image
+                source={BRAND_LOGO}
+                style={styles.logo}
+                resizeMode="contain"
+              />
             </View>
           </View>
 
@@ -337,15 +333,15 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
   },
-  heroIcon: {
-    alignSelf: "center",
-    marginTop: spacing.xl,
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    borderWidth: 1,
+  brandBlock: {
     alignItems: "center",
-    justifyContent: "center",
+    alignSelf: "center",
+    marginTop: spacing.lg,
+  },
+  logo: {
+    width: 76,
+    height: 76,
+    borderRadius: 16,
   },
   sheetWrap: {
     flex: 1,
