@@ -40,7 +40,7 @@ export default function RootLayout({
       className={`${openSans.variable} h-full`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-background font-sans text-[18px] font-normal leading-[30.6px] text-foreground antialiased">
+      <body className="min-h-full flex flex-col bg-background font-sans text-foreground antialiased">
         <Providers>
           <PwaAutoUpdater />
           {children}

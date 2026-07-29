@@ -13,7 +13,7 @@ export function WorkflowAutomationSection() {
             <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-muted-foreground">
               Streamline workflows
             </p>
-            <h2 className="mt-2 text-balance text-xl sm:text-3xl lg:text-[2.35rem] font-black leading-snug tracking-tight text-foreground">
+            <h2 className="mt-2 text-balance text-xl sm:text-3xl lg:text-[2.35rem] font-bold leading-snug tracking-tight text-foreground">
               Automate your deposit &amp; payout approvals
             </h2>
             <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-sm sm:text-base leading-relaxed text-muted-foreground">
