@@ -133,12 +133,12 @@ export function MarketingNavbar() {
             })}
           </nav>
 
-          <div className="relative z-10 flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="relative z-10 flex shrink-0 items-center gap-3 sm:gap-4">
             <Link
               href="/login"
-              className="inline-flex items-center px-3 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 border border-slate-200/90 dark:border-slate-800 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors lg:hidden"
+              className="inline-flex text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-[#0066cc] dark:hover:text-white lg:hidden"
             >
-              Login
+              Sign in
             </Link>
 
             <Link
@@ -160,7 +160,7 @@ export function MarketingNavbar() {
 
             <button
               type="button"
-              className="inline-flex size-9 items-center justify-center rounded-md border border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all shadow-xs lg:hidden"
+              className="inline-flex p-1.5 text-slate-700 dark:text-slate-200 hover:text-slate-900 transition-colors lg:hidden"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
