@@ -1,13 +1,10 @@
-import { Send, ShieldCheck, Smartphone, Users } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { HOW_IT_WORKS_STEPS } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
 
-const STEP_ICONS: LucideIcon[] = [Users, Smartphone, ShieldCheck, Send];
-
 export function HowItWorksStepsSection() {
   return (
-    <section className="bg-[#f4f6f8] dark:bg-background">
+    <section className="bg-white dark:bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="max-w-2xl text-left">
           <p className="text-sm font-medium text-muted-foreground">
@@ -24,8 +21,7 @@ export function HowItWorksStepsSection() {
         </div>
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:mt-12 lg:gap-8">
-          {HOW_IT_WORKS_STEPS.map(({ step, title, description }, i) => {
-            const Icon = STEP_ICONS[i]!;
+          {HOW_IT_WORKS_STEPS.map(({ step, title, description, icon }) => {
             return (
               <article
                 key={step}
@@ -33,9 +29,9 @@ export function HowItWorksStepsSection() {
               >
                 <div className="flex items-start gap-4 sm:gap-5">
                   <div className="flex size-14 shrink-0 items-center justify-center rounded-none bg-[#f3f4f6] dark:bg-muted">
-                    <Icon
-                      className="size-7 text-foreground"
-                      strokeWidth={1.5}
+                    <FontAwesomeIcon
+                      icon={icon}
+                      className="h-6 w-6 text-foreground sm:h-7 sm:w-7"
                       aria-hidden
                     />
                   </div>

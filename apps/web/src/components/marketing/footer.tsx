@@ -79,7 +79,7 @@ export function MarketingFooter() {
                 </div>
                 <button
                   type="submit"
-                  className="h-12 px-6 rounded-2xl bg-[#0056d2] hover:bg-[#0066cc] text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 shrink-0"
+                  className="h-12 px-6 rounded-2xl bg-[#0066cc] hover:bg-[#0052a3] text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 shrink-0"
                 >
                   <span>Request Demo</span>
                   <ArrowRight className="h-4 w-4" />
@@ -241,22 +241,6 @@ export function MarketingFooter() {
               Compliant with Bank of Ghana Payment Systems & Services Act, 2019
               (Act 987) and Data Protection Act, 2012 (Act 843).
             </p>
-            <div className="grid grid-cols-2 gap-2.5 pt-1">
-              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 text-center">
-                <Building2 className="h-4 w-4 text-sky-400 mx-auto mb-1" />
-                <p className="text-[10px] font-bold text-slate-300">
-                  BoG Act 987
-                </p>
-                <p className="text-[9px] text-slate-500">Licensed Standard</p>
-              </div>
-              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 text-center">
-                <Lock className="h-4 w-4 text-sky-400 mx-auto mb-1" />
-                <p className="text-[10px] font-bold text-slate-300">
-                  DPC Act 843
-                </p>
-                <p className="text-[9px] text-slate-500">AES-256 Encrypted</p>
-              </div>
-            </div>
           </div>
         </div>
 

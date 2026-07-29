@@ -61,7 +61,7 @@ export function MomoPaySection() {
               </Link>
               <Link
                 href="/how-it-works"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-secondary transition-colors hover:text-secondary/80"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
               >
                 How MoMo deposits work
                 <ArrowRight className="h-4 w-4" />

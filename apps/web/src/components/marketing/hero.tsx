@@ -8,7 +8,7 @@ import { HeroProductShowcase } from "./hero-product-showcase";
 
 export function MarketingHero() {
   return (
-    <section className="marketing-hero-platform bg-[#f4f6f8] dark:bg-background pb-12 lg:pb-20">
+    <section className="marketing-hero-platform bg-white dark:bg-background pb-12 lg:pb-20">
       <MarketingContainer className="marketing-hero-platform-inner">
         <div className="flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 xl:gap-16">
           <div className="min-w-0 text-left lg:pt-0">
@@ -28,7 +28,7 @@ export function MarketingHero() {
               <Link href="/contact?intent=demo" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-[0.2rem] bg-[#0056d2] hover:bg-[#0043aa] text-white px-6 text-[15px] font-bold shadow-[0_8px_24px_rgba(0,86,210,0.28)] sm:w-auto sm:min-w-[12rem] flex items-center justify-center gap-2"
+                  className="h-12 w-full rounded-[0.2rem] bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[15px] font-bold shadow-[0_8px_24px_rgba(0,102,204,0.25)] sm:w-auto sm:min-w-[12rem] flex items-center justify-center gap-2"
                 >
                   <span>Get Started</span>
                   <ArrowRight className="size-4 stroke-[2.5]" />
@@ -36,7 +36,7 @@ export function MarketingHero() {
               </Link>
               <Link
                 href="/how-it-works"
-                className="inline-flex w-full items-center justify-center gap-1.5 text-[15px] font-semibold text-[#0056d2] dark:text-[#38bdf8] transition-colors hover:opacity-80 sm:w-auto sm:justify-start"
+                className="inline-flex w-full items-center justify-center gap-1.5 text-[15px] font-semibold text-muted-foreground transition-colors hover:text-foreground sm:w-auto sm:justify-start"
               >
                 <span>See how it works</span>
                 <ArrowRight className="h-4 w-4" />

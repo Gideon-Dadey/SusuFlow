@@ -7,7 +7,7 @@ import { MarketingContainer } from "../marketing-container";
 
 export function HowItWorksHero() {
   return (
-    <section className="bg-[#f4f6f8] dark:bg-background">
+    <section className="bg-white dark:bg-background">
       <MarketingContainer className="marketing-hero-platform-inner">
         <div className="flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 xl:gap-16">
           <div className="min-w-0 text-left">
@@ -34,7 +34,7 @@ export function HowItWorksHero() {
               </Link>
               <Link
                 href="/pricing"
-                className="inline-flex w-full items-center justify-center gap-1.5 text-sm font-semibold text-secondary transition-colors hover:text-secondary/80 sm:w-auto sm:justify-start"
+                className="inline-flex w-full items-center justify-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground sm:w-auto sm:justify-start"
               >
                 View pricing
                 <ArrowRight className="h-4 w-4" />

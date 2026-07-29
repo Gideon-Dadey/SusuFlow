@@ -5,7 +5,7 @@ import { MarketingContainer } from "../marketing-container";
 
 export function AboutCtaSection() {
   return (
-    <section className="bg-[#f4f6f8] dark:bg-background">
+    <section className="bg-white dark:bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-2xl text-left lg:text-center">
           <h2 className="text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">

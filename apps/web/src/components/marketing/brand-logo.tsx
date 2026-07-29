@@ -18,8 +18,8 @@ export function SusuFlowIconMark({ className }: { className?: string }) {
           y2="90"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0%" stopColor="#0056D2" />
-          <stop offset="50%" stopColor="#0066CC" />
+          <stop offset="0%" stopColor="#0066CC" />
+          <stop offset="50%" stopColor="#0052A3" />
           <stop offset="100%" stopColor="#0284C7" />
         </linearGradient>
 
@@ -33,7 +33,7 @@ export function SusuFlowIconMark({ className }: { className?: string }) {
         >
           <stop offset="0%" stopColor="#38BDF8" />
           <stop offset="60%" stopColor="#0284C7" />
-          <stop offset="100%" stopColor="#0043AA" />
+          <stop offset="100%" stopColor="#0052A3" />
         </linearGradient>
 
         <filter
@@ -48,7 +48,7 @@ export function SusuFlowIconMark({ className }: { className?: string }) {
             dx="0"
             dy="4"
             stdDeviation="6"
-            floodColor="#0056D2"
+            floodColor="#0066CC"
             floodOpacity="0.3"
           />
         </filter>
@@ -139,7 +139,7 @@ export function BrandLockup({
         >
           Credo
         </span>
-        <span className="text-[#0056d2] dark:text-[#38bdf8] ml-[1px]">.</span>
+        <span className="text-[#0066cc] dark:text-[#38bdf8] ml-[1px]">.</span>
       </span>
     </span>
   );
