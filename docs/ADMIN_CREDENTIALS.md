@@ -7,9 +7,8 @@ Save this file for quick reference when logging into SusuFlow admin dashboards a
 | Role                      | Email                  | Password          | Susu Company / Tenant     | Dashboard Route        |
 | :------------------------ | :--------------------- | :---------------- | :------------------------ | :--------------------- |
 | **Super Admin**           | `admin@susuflow.com`   | `ChangeMe123!`    | _(Platform Admin - none)_ | `/admin`               |
-| **Company Admin**         | `admin@abcsusu.com`    | `Admin123!@#`     | `abc-susu`                | `/staff/dashboard`     |
 | **Company Admin (ADIPA)** | `steveamoah@gmail.com` | `Adipa123!@#`     | `adipa`                   | `/staff/dashboard`     |
-| **Collector Agent**       | `nana@abcsusu.com`     | `Collector123!@#` | `abc-susu`                | `/collector/dashboard` |
+| **Collector Agent**       | `nana@adipa.com`       | `Collector123!@#` | `adipa`                   | `/collector/dashboard` |
 
 ---
 
@@ -17,7 +16,7 @@ Save this file for quick reference when logging into SusuFlow admin dashboards a
 
 - **Super Admin Email:** `admin@susuflow.com`
 - **Super Admin Password:** `ChangeMe123!`
-- **Default Tenant Slug:** `abc-susu`
+- **Default Tenant Slug:** `adipa` (Adipa Microfinance)
 
 ## 📱 Mobile App Commands (Expo / React Native)
 
