@@ -19,6 +19,18 @@ Save this file for quick reference when logging into SusuFlow admin dashboards a
 - **Super Admin Password:** `ChangeMe123!`
 - **Default Tenant Slug:** `abc-susu`
 
+## 📱 Mobile App Commands (Expo / React Native)
+
+| Description                                     | Command                                      |
+| :---------------------------------------------- | :------------------------------------------- |
+| **Standard Mobile Dev Server**                  | `pnpm dev:mobile`                            |
+| **Tunnel Mode (Physical iOS & Android Phones)** | `pnpm dev:mobile:tunnel`                     |
+| **Run on Android Emulator**                     | `pnpm --filter @susuflow/mobile android`     |
+| **Run on iOS Simulator (Mac)**                  | `pnpm --filter @susuflow/mobile ios`         |
+| **Clear Expo Cache & Restart**                  | `pnpm --filter @susuflow/mobile start:clear` |
+
+---
+
 ## 🔄 How to Reset Database / Re-seed
 
 If credentials ever get lost or changed, reset the database seed by running:
