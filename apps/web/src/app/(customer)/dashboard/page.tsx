@@ -1,17 +1,23 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { BalanceCard } from '@/components/financial/balance-card';
-import { TransactionRow } from '@/components/financial/transaction-row';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { depositApi, Transaction, userApi } from '@/lib/api';
-import { useAuthStore } from '@/stores/auth.store';
-import { useOfflineSync } from '@/components/offline-sync-provider';
-import { TransactionListSkeleton } from '@/components/ui/skeleton';
-import { ReceiptModal } from '@/components/financial/receipt-modal';
-import Link from 'next/link';
-import { Wallet, FileText, ArrowRight, ArrowUpRight, Target } from 'lucide-react';
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { BalanceCard } from "@/components/financial/balance-card";
+import { TransactionRow } from "@/components/financial/transaction-row";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { depositApi, Transaction, userApi } from "@/lib/api";
+import { useAuthStore } from "@/stores/auth.store";
+import { useOfflineSync } from "@/components/offline-sync-provider";
+import { TransactionListSkeleton } from "@/components/ui/skeleton";
+import { ReceiptModal } from "@/components/financial/receipt-modal";
+import Link from "next/link";
+import {
+  Wallet,
+  FileText,
+  ArrowRight,
+  ArrowUpRight,
+  Target,
+} from "lucide-react";
 
 export default function CustomerDashboard() {
   const user = useAuthStore((s) => s.user);
@@ -21,7 +27,7 @@ export default function CustomerDashboard() {
 
   // Query current user's profile to retrieve the associated customer account
   const { data: userProfile } = useQuery({
-    queryKey: ['user-profile-me'],
+    queryKey: ["user-profile-me"],
     queryFn: () => userApi.getMe(),
   });
 
@@ -29,24 +35,29 @@ export default function CustomerDashboard() {
 
   // Query actual wallet balance from ledger
   const { data: walletData } = useQuery({
-    queryKey: ['customer-wallet', activeCustomer?.id],
+    queryKey: ["customer-wallet", activeCustomer?.id],
     queryFn: () =>
       activeCustomer
-        ? import('@/lib/api').then((m) => m.customerApi.getWallet(activeCustomer.id))
+        ? import("@/lib/api").then((m) =>
+            m.customerApi.getWallet(activeCustomer.id),
+          )
         : Promise.resolve(null),
     enabled: !!activeCustomer,
   });
 
   // Query customer transactions (both deposits and withdrawals)
   const { data: depositsData, isLoading: depositsLoading } = useQuery({
-    queryKey: ['deposits', activeCustomer?.id],
+    queryKey: ["deposits", activeCustomer?.id],
     queryFn: () => depositApi.list({ customer_id: activeCustomer?.id }),
     enabled: !!activeCustomer,
   });
 
   const { data: withdrawalsData, isLoading: withdrawalsLoading } = useQuery({
-    queryKey: ['withdrawals', activeCustomer?.id],
-    queryFn: () => import('@/lib/api').then((m) => m.withdrawalApi.list({ customer_id: activeCustomer?.id })),
+    queryKey: ["withdrawals", activeCustomer?.id],
+    queryFn: () =>
+      import("@/lib/api").then((m) =>
+        m.withdrawalApi.list({ customer_id: activeCustomer?.id }),
+      ),
     enabled: !!activeCustomer,
   });
 
@@ -54,40 +65,79 @@ export default function CustomerDashboard() {
 
   const balance = walletData?.balance || 0;
 
-  const mappedQueued: Transaction[] = queuedDeposits.map(q => ({
+  const mappedQueued: Transaction[] = queuedDeposits.map((q) => ({
     id: q.id,
     reference: q.reference,
-    type: 'deposit',
+    type: "deposit",
     status: q.status,
     amount: q.amount,
-    currency: 'GHS',
+    currency: "GHS",
     createdAt: q.createdAt,
     description: `Deposit via ${q.paymentMethod} (Queued Offline)`,
     customer: {
-      customerNumber: 'Offline',
+      customerNumber: "Offline",
       user: {
-        firstName: q.customerName.split(' ')[0] || 'Customer',
-        lastName: q.customerName.split(' ').slice(1).join(' ') || ''
-      }
+        firstName: q.customerName.split(" ")[0] || "Customer",
+        lastName: q.customerName.split(" ").slice(1).join(" ") || "",
+      },
     },
     payment: {
       paymentMethod: q.paymentMethod,
-      status: q.status === 'syncing' ? 'pending' : 'initiated'
-    }
+      status: q.status === "syncing" ? "pending" : "initiated",
+    },
   }));
 
   const transactions = [
     ...mappedQueued,
     ...(depositsData?.items || []),
     ...(withdrawalsData?.items || []),
-  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  ].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
 
   const todayTotal = transactions
-    .filter((t) => t.type === 'deposit' && t.status === 'completed' && new Date(t.createdAt).toDateString() === new Date().toDateString())
+    .filter(
+      (t) =>
+        t.type === "deposit" &&
+        t.status === "completed" &&
+        new Date(t.createdAt).toDateString() === new Date().toDateString(),
+    )
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
   return (
     <div className="space-y-6">
+      {/* KYC Verification Banner */}
+      {userProfile?.customer?.kycStatus !== "approved" &&
+        userProfile?.customer?.kycStatus !== "verified" && (
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl shrink-0">🛡️</span>
+              <div>
+                <div className="font-bold text-foreground text-sm flex items-center gap-2">
+                  Identity Verification Required (Ghana Card / Passport)
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                    {userProfile?.customer?.kycStatus === "pending"
+                      ? "In Review"
+                      : "Action Required"}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {userProfile?.customer?.kycStatus === "pending"
+                    ? "Your verification documents are being processed by our compliance team (1-2 hrs)."
+                    : "Upload your ID to ensure full compliance with Bank of Ghana anti-fraud regulations."}
+                </p>
+              </div>
+            </div>
+            <Link href="/kyc" className="shrink-0">
+              <button className="w-full sm:w-auto px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity">
+                {userProfile?.customer?.kycStatus === "pending"
+                  ? "View KYC Status"
+                  : "Verify Identity Now →"}
+              </button>
+            </Link>
+          </div>
+        )}
+
       <div>
         <h2 className="dashboard-title text-foreground">{user?.firstName}</h2>
       </div>
@@ -96,17 +146,39 @@ export default function CustomerDashboard() {
 
       <div className="grid grid-cols-2 gap-3">
         {[
-          { href: '/deposit', label: 'Deposit', icon: Wallet, color: 'bg-primary-100 text-primary' },
-          { href: '/withdraw', label: 'Withdraw', icon: ArrowUpRight, color: 'bg-red-50 text-red-600 dark:bg-red-950/20' },
-          { href: '/plans', label: 'Goals', icon: Target, color: 'bg-green-50 text-green-600 dark:bg-green-950/20' },
-          { href: '/transactions', label: 'History', icon: FileText, color: 'bg-blue-50 text-blue-600 dark:bg-blue-950/20' },
+          {
+            href: "/deposit",
+            label: "Deposit",
+            icon: Wallet,
+            color: "bg-primary-100 text-primary",
+          },
+          {
+            href: "/withdraw",
+            label: "Withdraw",
+            icon: ArrowUpRight,
+            color: "bg-red-50 text-red-600 dark:bg-red-950/20",
+          },
+          {
+            href: "/plans",
+            label: "Goals",
+            icon: Target,
+            color: "bg-green-50 text-green-600 dark:bg-green-950/20",
+          },
+          {
+            href: "/transactions",
+            label: "History",
+            icon: FileText,
+            color: "bg-blue-50 text-blue-600 dark:bg-blue-950/20",
+          },
         ].map(({ href, label, icon: Icon, color }) => (
           <Link
             key={href}
             href={href}
             className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-4 transition-all hover:border-secondary/40 hover:shadow-card"
           >
-            <div className={`flex h-10 w-10 items-center justify-center rounded-full ${color}`}>
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-full ${color}`}
+            >
               <Icon className="h-5 w-5" />
             </div>
             <span className="text-sm font-medium text-foreground">{label}</span>
@@ -117,7 +189,10 @@ export default function CustomerDashboard() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-base">Recent Transactions</CardTitle>
-          <Link href="/transactions" className="text-sm text-primary flex items-center gap-1">
+          <Link
+            href="/transactions"
+            className="text-sm text-primary flex items-center gap-1"
+          >
             View all <ArrowRight className="h-3 w-3" />
           </Link>
         </CardHeader>
@@ -126,8 +201,13 @@ export default function CustomerDashboard() {
             <TransactionListSkeleton count={3} />
           ) : transactions.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-muted-foreground text-sm">No transactions yet</p>
-              <Link href="/deposit" className="text-primary text-sm font-medium mt-2 inline-block">
+              <p className="text-muted-foreground text-sm">
+                No transactions yet
+              </p>
+              <Link
+                href="/deposit"
+                className="text-primary text-sm font-medium mt-2 inline-block"
+              >
                 Make your first deposit →
               </Link>
             </div>
