@@ -238,29 +238,50 @@ export function MarketingFooter() {
             <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
               Contact Us
             </h3>
-            <div className="space-y-2.5 text-xs text-slate-400 leading-relaxed">
-              <p className="flex items-center gap-2.5">
-                <Mail className="h-4 w-4 text-[#0066cc] shrink-0" />
-                <a
-                  href="mailto:gideondadey@gmail.com"
-                  className="hover:text-white transition-colors"
-                >
-                  gideondadey@gmail.com
-                </a>
-              </p>
-              <p className="flex items-center gap-2.5">
-                <Phone className="h-4 w-4 text-[#0066cc] shrink-0" />
-                <a
-                  href="tel:+233551550530"
-                  className="hover:text-white transition-colors"
-                >
-                  +233 (0) 551550530
-                </a>
-              </p>
-              <p className="flex items-center gap-2.5">
-                <MapPin className="h-4 w-4 text-[#0066cc] shrink-0" />
-                <span>Maakro SDA Church Kovak Road</span>
-              </p>
+            <div className="space-y-3 text-xs text-slate-400 leading-relaxed">
+              <div className="flex items-start gap-2.5">
+                <Mail className="h-4 w-4 text-[#0066cc] shrink-0 mt-0.5" />
+                <div>
+                  <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    Email
+                  </span>
+                  <a
+                    href="mailto:gideondadey@gmail.com"
+                    className="text-slate-200 hover:text-white transition-colors"
+                  >
+                    gideondadey@gmail.com
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2.5">
+                <Phone className="h-4 w-4 text-[#0066cc] shrink-0 mt-0.5" />
+                <div>
+                  <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    WhatsApp &amp; Call
+                  </span>
+                  <a
+                    href="https://wa.me/233551550530"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-slate-200 hover:text-white transition-colors"
+                  >
+                    +233 (0) 551550530
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2.5">
+                <MapPin className="h-4 w-4 text-[#0066cc] shrink-0 mt-0.5" />
+                <div>
+                  <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    Address
+                  </span>
+                  <span className="text-slate-200">
+                    Maakro SDA Church Kovak Road
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
