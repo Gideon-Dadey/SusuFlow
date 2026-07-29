@@ -202,7 +202,7 @@ export function MarketingFooter() {
           </div>
 
           {/* Column 4: Contact Us */}
-          <div className="lg:col-span-3 space-y-4">
+          <div className="hidden sm:block lg:col-span-3 space-y-4">
             <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
               CONTACT US
             </h3>
