@@ -37,7 +37,7 @@
     --ring: #0056d2;
     --success: #10b981;
     --warning: #f59e0b;
-    --radius: 8px;
+    --radius: 0.2rem;
     --brand-dark: #0f172a;
     --surface-elevated: #ffffff;
     --surface-hover: #f1f5f9;
@@ -81,7 +81,7 @@
     --primary-700: #adcdff;
     --primary-800: #d6ebff;
     --primary-900: #ebf5ff;
-    --radius: 8px;
+    --radius: 0.2rem;
   }
 
   * {
@@ -96,7 +96,7 @@
   input,
   select,
   textarea {
-    border-radius: 8px;
+    border-radius: 0.2rem;
   }
 
   html {
