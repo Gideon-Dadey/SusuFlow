@@ -46,7 +46,7 @@ export function ReceiptModal({
   if (!mounted) return null;
 
   const companyName =
-    transaction.tenant?.name || tenantInfo?.name || "SusuFlow Platform";
+    transaction.tenant?.name || tenantInfo?.name || "Credo Platform";
 
   const handlePrint = () => {
     window.print();
@@ -170,7 +170,7 @@ export function ReceiptModal({
             {/* Footer Receipt Message */}
             <div className="text-center border-t border-dashed border-border pt-3 space-y-0.5">
               <p className="text-xs text-muted-foreground font-medium">
-                Thank you for saving with SusuFlow!
+                Thank you for saving with Credo!
               </p>
               <p className="text-[10px] text-muted-foreground/60">
                 This is a system-generated electronic receipt.

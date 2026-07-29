@@ -72,7 +72,7 @@ export function AuthLegalNotice({
 }) {
   return (
     <p className="text-center text-xs leading-relaxed text-muted-foreground">
-      By {action}, you agree to SusuFlow&apos;s{" "}
+      By {action}, you agree to Credo&apos;s{" "}
       <Link
         href="/terms"
         className="font-medium text-secondary hover:underline"

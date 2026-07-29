@@ -10,7 +10,7 @@ export function AboutDetailsSection() {
             Our operating details in Ghana
           </h2>
           <p className="mt-4 text-pretty text-base text-muted-foreground lg:mx-auto">
-            SusuFlow serves susu companies across Ghana with Mobile Money
+            Credo serves susu companies across Ghana with Mobile Money
             integrations and platform support aligned to local payment
             practices.
           </p>

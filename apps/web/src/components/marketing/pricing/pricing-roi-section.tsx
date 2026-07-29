@@ -15,7 +15,7 @@ export function PricingRoiSection() {
           </h2>
           <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground">
             Susu companies across Ghana still lose time and trust to cash
-            disputes and manual books. SusuFlow pays for itself when collections
+            disputes and manual books. Credo pays for itself when collections
             are verified and records are always ready.
           </p>
         </div>
@@ -24,7 +24,7 @@ export function PricingRoiSection() {
           <div className="grid grid-cols-2 border-b border-border/70 bg-muted/40 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:text-sm">
             <div className="px-4 py-3 sm:px-6 sm:py-4">Manual susu</div>
             <div className="border-l border-border/70 px-4 py-3 sm:px-6 sm:py-4">
-              On SusuFlow
+              On Credo
             </div>
           </div>
           {PRICING_ROI.map(({ manual, digital }) => (
