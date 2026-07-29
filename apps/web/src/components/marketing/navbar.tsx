@@ -194,7 +194,7 @@ export function MarketingNavbar() {
                         key={href}
                         href={href}
                         className={cn(
-                          "flex items-center justify-between rounded-lg px-4 py-3.5 text-base font-bold transition-all",
+                          "flex items-center justify-between rounded-lg px-3.5 py-3 text-[15px] font-semibold transition-all",
                           active
                             ? "bg-[#0066cc]/10 text-[#0066cc] dark:bg-[#0066cc]/20 dark:text-[#38bdf8]"
                             : "text-foreground hover:bg-slate-100 dark:hover:bg-slate-800/60",
