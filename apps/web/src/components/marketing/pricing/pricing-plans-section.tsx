@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 export function PricingPlansSection() {
   return (
     <section className="bg-white dark:bg-background">
-      <MarketingContainer className="py-14 sm:py-16 lg:py-20">
+      <MarketingContainer className="marketing-hero-platform-inner pb-14 sm:pb-16 lg:pb-20">
         <div className="mx-auto max-w-3xl text-left lg:text-center">
           <h1 className="marketing-hero-title text-balance text-foreground">
             Plans to suit your susu company, no matter the size.
