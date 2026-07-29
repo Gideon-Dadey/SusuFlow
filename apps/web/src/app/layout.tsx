@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import "@/lib/fontawesome";
-import { Providers } from "@/components/providers";
+import { PwaAutoUpdater } from "@/components/pwa-auto-updater";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -40,7 +40,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-background font-sans text-[18px] font-normal leading-[30.6px] text-foreground antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <PwaAutoUpdater />
+          {children}
+        </Providers>
       </body>
     </html>
   );
