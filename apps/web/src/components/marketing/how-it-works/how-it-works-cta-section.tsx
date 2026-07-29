@@ -33,7 +33,6 @@ export function HowItWorksCtaSection() {
               className="inline-flex h-12 items-center justify-center gap-1.5 rounded-none border border-white/35 px-6 text-[15px] font-semibold text-white transition-colors hover:bg-white/10 sm:min-w-[11rem]"
             >
               View pricing
-              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>

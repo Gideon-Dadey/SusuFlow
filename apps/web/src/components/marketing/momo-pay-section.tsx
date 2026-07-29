@@ -56,7 +56,6 @@ export function MomoPaySection() {
                   className="h-12 w-full rounded-none px-6 text-[15px] font-bold shadow-sm sm:min-w-[10.5rem]"
                 >
                   Get started
-                  <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <Link
@@ -64,7 +63,6 @@ export function MomoPaySection() {
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
               >
                 How MoMo deposits work
-                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>

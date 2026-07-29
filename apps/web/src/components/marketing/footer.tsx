@@ -77,10 +77,9 @@ export function MarketingFooter() {
                 </div>
                 <button
                   type="submit"
-                  className="h-12 px-6 rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 shrink-0"
+                  className="h-12 px-6 rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-blue-600/25 flex items-center justify-center shrink-0"
                 >
                   <span>Request Demo</span>
-                  <ArrowRight className="h-4 w-4" />
                 </button>
               </form>
             )}

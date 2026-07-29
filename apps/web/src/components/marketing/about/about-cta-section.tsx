@@ -29,7 +29,6 @@ export function AboutCtaSection() {
               className="inline-flex h-12 items-center justify-center gap-1.5 rounded-none border border-border bg-white px-6 text-[15px] font-semibold text-foreground transition-colors hover:bg-muted/50 dark:border-border dark:bg-card dark:hover:bg-muted/50 sm:min-w-[11rem]"
             >
               View pricing
-              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
