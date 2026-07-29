@@ -727,7 +727,25 @@ export interface OperationsReport {
   dailyTrends: { date: string; deposits: number; withdrawals: number }[];
 }
 
+export interface KycStatusResponse {
+  customerId: string;
+  kycLevel: number;
+  kycStatus: "pending" | "verified" | "rejected";
+  ghanaCardNumber?: string | null;
+  dateOfBirth?: string | null;
+  address?: string | null;
+  documents: KycDocument[];
+}
+
 export const kycApi = {
+  getMyStatus: () => api.get<KycStatusResponse>("/kyc/my-status"),
+  submit: (data: {
+    documentType: "ghana_card" | "passport" | "utility_bill" | "selfie";
+    idNumber: string;
+    dateOfBirth?: string;
+    address?: string;
+    fileUrl: string;
+  }) => api.post<KycDocument>("/kyc/submit", data),
   list: (status?: string) =>
     api.get<KycDocument[]>(`/kyc${status ? `?status=${status}` : ""}`),
   review: (
