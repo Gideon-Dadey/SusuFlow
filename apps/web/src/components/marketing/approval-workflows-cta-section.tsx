@@ -8,11 +8,7 @@ export function ApprovalWorkflowsCtaSection() {
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="w-full rounded-2xl bg-[#08080a] px-6 py-12 text-center sm:px-8 sm:py-14 lg:px-10 lg:py-16 xl:px-12 2xl:px-14 border border-white/10 shadow-2xl">
           <div className="mx-auto max-w-3xl flex flex-col items-center text-center">
-            <span className="inline-block rounded-full border border-sky-500/30 bg-sky-500/10 px-3.5 py-1 text-xs font-bold text-sky-400 uppercase tracking-wider">
-              Deposit &amp; payout workflows
-            </span>
-
-            <h2 className="mt-5 text-balance text-2xl font-black leading-tight tracking-tight text-white text-center sm:text-3xl lg:text-[2.15rem]">
+            <h2 className="text-balance text-2xl font-black leading-tight tracking-tight text-white text-center sm:text-3xl lg:text-[2.15rem]">
               Fast, secure approvals for every susu contribution, built for
               Ghana.
             </h2>
