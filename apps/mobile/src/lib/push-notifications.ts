@@ -44,7 +44,7 @@ export async function ensureAndroidNotificationChannel() {
     importance: Notifications.AndroidImportance.MAX,
     sound: "default",
     vibrationPattern: [0, 250, 250, 250],
-    lightColor: "#059669",
+    lightColor: "#0056d2",
     lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
     enableVibrate: true,
     showBadge: true,

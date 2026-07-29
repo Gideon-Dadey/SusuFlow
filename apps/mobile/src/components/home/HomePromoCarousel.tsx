@@ -74,8 +74,8 @@ export function HomePromoCarousel({
         cta: "View activity",
         icon: "activity",
         gradient: isDark
-          ? (["#064e3b", "#022c22"] as const)
-          : (["#047857", "#059669"] as const),
+          ? (["#002359", "#003585"] as const)
+          : (["#0043aa", "#0056d2"] as const),
         accent: "rgba(255, 255, 255, 0.12)",
         onPress: onActivity,
       },
