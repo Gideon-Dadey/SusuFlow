@@ -32,7 +32,7 @@ export function MarketingHero() {
                   size="lg"
                   className="h-12 w-full rounded-[0.2rem] bg-[#0056d2] hover:bg-[#0043aa] text-white px-6 text-[15px] font-bold shadow-[0_8px_24px_rgba(0,86,210,0.28)] sm:w-auto sm:min-w-[12rem] flex items-center justify-center gap-2"
                 >
-                  <span>Get started for free</span>
+                  <span>Get Started</span>
                   <ArrowRight className="size-4 stroke-[2.5]" />
                 </Button>
               </Link>
