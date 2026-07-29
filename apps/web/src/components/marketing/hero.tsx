@@ -15,9 +15,7 @@ export function MarketingHero() {
             <h1 className="marketing-hero-title text-balance text-foreground font-black tracking-tight text-3xl sm:text-4xl lg:text-5xl leading-tight">
               One platform for your susu enterprise.
               <br />
-              <span className="text-[#0056d2] dark:text-[#38bdf8]">
-                And every verified cedi.
-              </span>
+              <span>And every verified cedi.</span>
             </h1>
 
             <p className="mt-5 max-w-xl text-pretty text-[18px] leading-[30.6px] text-muted-foreground lg:mt-6 lg:max-w-lg">
