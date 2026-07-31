@@ -52,7 +52,7 @@ export function DashboardShell({
         <main
           data-portal={variant}
           className={cn(
-            "dashboard-scroll p-4 sm:p-6 lg:p-8 pb-8",
+            "dashboard-scroll p-3 pt-2.5 sm:p-6 lg:p-8 pb-8",
             sidebarOpen && "overflow-hidden lg:overflow-y-auto",
           )}
         >

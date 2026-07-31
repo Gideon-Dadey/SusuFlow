@@ -88,8 +88,8 @@ export default function StaffDashboard() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="page-header">
+    <div className="space-y-3.5 sm:space-y-6">
+      <div className="page-header hidden sm:block">
         <h1>Company Overview</h1>
       </div>
 
