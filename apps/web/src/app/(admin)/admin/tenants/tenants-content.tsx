@@ -59,6 +59,7 @@ export default function AdminTenantsPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-tenants"],
     queryFn: () => adminApi.listTenants(),
+    placeholderData: (prev) => prev,
   });
 
   const tenants = data?.items ?? [];

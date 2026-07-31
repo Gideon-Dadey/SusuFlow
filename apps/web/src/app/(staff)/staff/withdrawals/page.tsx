@@ -1,37 +1,38 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { StatusBadge } from '@/components/ui/badge';
-import { withdrawalApi, Transaction } from '@/lib/api';
-import { formatGhs, formatDate } from '@/lib/utils';
-import { TransactionListSkeleton } from '@/components/ui/skeleton';
-import { ReceiptModal } from '@/components/financial/receipt-modal';
-import { ArrowUpRight } from 'lucide-react';
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
+import { withdrawalApi, Transaction } from "@/lib/api";
+import { formatGhs, formatDate } from "@/lib/utils";
+import { TransactionListSkeleton } from "@/components/ui/skeleton";
+import { ReceiptModal } from "@/components/financial/receipt-modal";
+import { ArrowUpRight } from "lucide-react";
 
 export default function StaffWithdrawalsPage() {
   const queryClient = useQueryClient();
   const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const { data, isLoading } = useQuery({
-    queryKey: ['staff-withdrawals'],
+    queryKey: ["staff-withdrawals"],
     queryFn: () => withdrawalApi.list(),
+    placeholderData: (prev) => prev,
   });
 
   const handleApprove = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     setActionLoading(id);
-    setError('');
+    setError("");
     try {
       await withdrawalApi.approveWithdrawal(id);
-      queryClient.invalidateQueries({ queryKey: ['staff-withdrawals'] });
+      queryClient.invalidateQueries({ queryKey: ["staff-withdrawals"] });
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Approval failed');
+      alert(err instanceof Error ? err.message : "Approval failed");
     } finally {
       setActionLoading(null);
     }
@@ -39,19 +40,19 @@ export default function StaffWithdrawalsPage() {
 
   const handleReject = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    const reason = prompt('Please enter the reason for rejection:');
+    const reason = prompt("Please enter the reason for rejection:");
     if (reason === null) return;
     if (!reason.trim()) {
-      alert('Rejection reason is required.');
+      alert("Rejection reason is required.");
       return;
     }
     setActionLoading(id);
-    setError('');
+    setError("");
     try {
       await withdrawalApi.rejectWithdrawal(id, reason);
-      queryClient.invalidateQueries({ queryKey: ['staff-withdrawals'] });
+      queryClient.invalidateQueries({ queryKey: ["staff-withdrawals"] });
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Rejection failed');
+      alert(err instanceof Error ? err.message : "Rejection failed");
     } finally {
       setActionLoading(null);
     }
@@ -59,23 +60,32 @@ export default function StaffWithdrawalsPage() {
 
   const handleExportCsv = () => {
     const items = data?.items || [];
-    const headers = ['Date', 'Reference', 'Customer Name', 'Amount (GHS)', 'Method', 'Status'];
+    const headers = [
+      "Date",
+      "Reference",
+      "Customer Name",
+      "Amount (GHS)",
+      "Method",
+      "Status",
+    ];
     const rows = items.map((t) => [
       new Date(t.createdAt).toLocaleDateString(),
       t.reference,
-      t.customer?.user ? `"${t.customer.user.firstName} ${t.customer.user.lastName}"` : 'N/A',
+      t.customer?.user
+        ? `"${t.customer.user.firstName} ${t.customer.user.lastName}"`
+        : "N/A",
       t.amount,
-      t.withdrawal?.disbursementMethod || 'momo',
+      t.withdrawal?.disbursementMethod || "momo",
       t.status,
     ]);
 
     const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `withdrawals_report_${Date.now()}.csv`);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `withdrawals_report_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -111,7 +121,10 @@ export default function StaffWithdrawalsPage() {
           ) : (
             <div className="divide-y divide-gray-100 dark:divide-border/40">
               {withdrawals.map((t) => {
-                const amt = typeof t.amount === 'string' ? parseFloat(t.amount) : t.amount;
+                const amt =
+                  typeof t.amount === "string"
+                    ? parseFloat(t.amount)
+                    : t.amount;
                 return (
                   <div
                     key={t.id}
@@ -126,19 +139,27 @@ export default function StaffWithdrawalsPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm text-foreground">
-                        {t.customer?.user ? `${t.customer.user.firstName} ${t.customer.user.lastName}` : 'Customer'}
+                        {t.customer?.user
+                          ? `${t.customer.user.firstName} ${t.customer.user.lastName}`
+                          : "Customer"}
                       </p>
-                      <p className="text-xs text-muted-foreground">{formatDate(t.createdAt)}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDate(t.createdAt)}
+                      </p>
                     </div>
                     <div className="text-right flex items-center gap-4">
                       <div>
-                        <p className="font-bold text-sm text-red-600">-{formatGhs(amt)}</p>
-                        <span className="text-[10px] text-muted-foreground uppercase font-semibold block">{t.reference}</span>
+                        <p className="font-bold text-sm text-red-600">
+                          -{formatGhs(amt)}
+                        </p>
+                        <span className="text-[10px] text-muted-foreground uppercase font-semibold block">
+                          {t.reference}
+                        </span>
                         <div className="mt-1 flex justify-end">
                           <StatusBadge status={t.status} />
                         </div>
                       </div>
-                      {t.status === 'pending' && (
+                      {t.status === "pending" && (
                         <div className="flex gap-1.5 ml-2">
                           <Button
                             size="sm"
@@ -168,7 +189,11 @@ export default function StaffWithdrawalsPage() {
         </CardContent>
       </Card>
 
-      <ReceiptModal transaction={selectedTxn} open={receiptOpen} onClose={() => setSelectedTxn(null)} />
+      <ReceiptModal
+        transaction={selectedTxn}
+        open={receiptOpen}
+        onClose={() => setSelectedTxn(null)}
+      />
     </div>
   );
 }

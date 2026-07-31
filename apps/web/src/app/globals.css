@@ -401,54 +401,138 @@
 
   /* Native Mobile App Typography & Layout Scaling (< 640px) */
   @media (max-width: 639px) {
-    body {
-      font-size: 14px;
-      line-height: 1.45;
+    html {
+      font-size: 13.5px;
     }
 
+    body {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    /* Dashboard & Page Titles */
     .dashboard-title {
-      font-size: 17px;
-      line-height: 22px;
+      font-size: 16px !important;
+      line-height: 20px !important;
       letter-spacing: -0.01em;
     }
 
+    .dashboard-section-title,
+    .section-bar {
+      font-size: 18px !important;
+      line-height: 22px !important;
+    }
+
     .hero-page-title {
-      font-size: 24px;
-      line-height: 30px;
+      font-size: 20px !important;
+      line-height: 26px !important;
       letter-spacing: -0.015em;
     }
 
     .card-label {
-      font-size: 16px;
-      line-height: 22px;
+      font-size: 14px !important;
+      line-height: 18px !important;
     }
 
-    .mobile-header-title {
-      font-size: 17px;
-      font-weight: 700;
-      line-height: 22px;
-      letter-spacing: -0.015em;
+    /* Prevent names, headers, badges, and table text from breaking onto multiple lines on mobile */
+    .dashboard-title,
+    .mobile-header-title,
+    .name-single-line,
+    .no-break,
+    table th,
+    table td {
+      white-space: nowrap !important;
+      word-break: keep-all !important;
     }
 
-    /* Scaling large metric numbers on mobile cards */
+    h1 {
+      font-size: 17px !important;
+      line-height: 22px !important;
+    }
+
+    h2 {
+      font-size: 15px !important;
+      line-height: 20px !important;
+    }
+
+    h3 {
+      font-size: 13.5px !important;
+      line-height: 18px !important;
+    }
+
+    /* Metric & Typography Text Scale Overrides for Mobile */
+    .text-4xl {
+      font-size: 1.35rem !important;
+      line-height: 1.65rem !important;
+    }
+
     .text-3xl {
-      font-size: 1.375rem /* 22px */;
-      line-height: 1.75rem /* 28px */;
+      font-size: 1.2rem !important;
+      line-height: 1.5rem !important;
     }
 
     .text-2xl {
-      font-size: 1.125rem /* 18px */;
-      line-height: 1.5rem /* 24px */;
+      font-size: 1.05rem !important;
+      line-height: 1.35rem !important;
     }
 
-    .text-4xl {
-      font-size: 1.625rem /* 26px */;
-      line-height: 2rem /* 32px */;
+    .text-xl {
+      font-size: 0.9375rem !important;
+      line-height: 1.25rem !important;
     }
 
-    /* Compact header height on mobile */
+    .text-lg {
+      font-size: 0.875rem !important;
+      line-height: 1.2rem !important;
+    }
+
+    .text-base {
+      font-size: 0.8125rem !important;
+      line-height: 1.15rem !important;
+    }
+
+    .text-sm {
+      font-size: 0.75rem !important;
+      line-height: 1.1rem !important;
+    }
+
+    .text-xs {
+      font-size: 0.6875rem !important;
+      line-height: 1rem !important;
+    }
+
+    /* Card Padding & Grid Alignment Optimization */
+    .portal-card,
+    .premium-card {
+      padding: 0.75rem !important;
+    }
+
+    .portal-metric-grid {
+      gap: 0.5rem !important;
+    }
+
+    .dashboard-scroll {
+      padding: 0.625rem !important;
+    }
+
+    /* Form Controls & Table Density on Mobile */
+    input,
+    select {
+      height: 2.25rem !important;
+      font-size: 0.75rem !important;
+      padding-left: 0.625rem !important;
+      padding-right: 0.625rem !important;
+    }
+
+    table th,
+    table td {
+      padding: 0.5rem 0.625rem !important;
+      font-size: 0.6875rem !important;
+    }
+
+    /* Compact Header Height on Mobile */
     .dashboard-header {
-      height: 3.25rem /* 52px */;
+      height: 3.25rem !important;
     }
   }
 

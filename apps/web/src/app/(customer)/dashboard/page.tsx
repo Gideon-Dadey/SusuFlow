@@ -5,7 +5,13 @@ import { useQuery } from "@tanstack/react-query";
 import { BalanceCard } from "@/components/financial/balance-card";
 import { TransactionRow } from "@/components/financial/transaction-row";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { depositApi, Transaction, userApi } from "@/lib/api";
+import {
+  depositApi,
+  customerApi,
+  withdrawalApi,
+  Transaction,
+  userApi,
+} from "@/lib/api";
 import { useAuthStore } from "@/stores/auth.store";
 import { useOfflineSync } from "@/components/offline-sync-provider";
 import { TransactionListSkeleton } from "@/components/ui/skeleton";
@@ -25,40 +31,37 @@ export default function CustomerDashboard() {
   const [receiptOpen, setReceiptOpen] = useState(false);
   const { queuedDeposits } = useOfflineSync();
 
-  // Query current user's profile to retrieve the associated customer account
+  // Query current user's profile
   const { data: userProfile } = useQuery({
     queryKey: ["user-profile-me"],
     queryFn: () => userApi.getMe(),
+    placeholderData: (prev) => prev,
   });
 
   const activeCustomer = userProfile?.customer;
 
-  // Query actual wallet balance from ledger
+  // Parallel Query 1: Wallet Balance
   const { data: walletData } = useQuery({
     queryKey: ["customer-wallet", activeCustomer?.id],
     queryFn: () =>
       activeCustomer
-        ? import("@/lib/api").then((m) =>
-            m.customerApi.getWallet(activeCustomer.id),
-          )
+        ? customerApi.getWallet(activeCustomer.id)
         : Promise.resolve(null),
-    enabled: !!activeCustomer,
+    placeholderData: (prev) => prev,
   });
 
-  // Query customer transactions (both deposits and withdrawals)
+  // Parallel Query 2: Customer Deposits
   const { data: depositsData, isLoading: depositsLoading } = useQuery({
     queryKey: ["deposits", activeCustomer?.id],
     queryFn: () => depositApi.list({ customer_id: activeCustomer?.id }),
-    enabled: !!activeCustomer,
+    placeholderData: (prev) => prev,
   });
 
+  // Parallel Query 3: Customer Withdrawals
   const { data: withdrawalsData, isLoading: withdrawalsLoading } = useQuery({
     queryKey: ["withdrawals", activeCustomer?.id],
-    queryFn: () =>
-      import("@/lib/api").then((m) =>
-        m.withdrawalApi.list({ customer_id: activeCustomer?.id }),
-      ),
-    enabled: !!activeCustomer,
+    queryFn: () => withdrawalApi.list({ customer_id: activeCustomer?.id }),
+    placeholderData: (prev) => prev,
   });
 
   const isLoading = depositsLoading || withdrawalsLoading;

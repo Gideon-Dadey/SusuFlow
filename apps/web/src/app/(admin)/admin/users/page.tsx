@@ -16,6 +16,7 @@ export default function AdminUsersPage() {
   const { data: usersData, isLoading } = useQuery({
     queryKey: ["admin-global-users"],
     queryFn: () => adminApi.getUsers(),
+    placeholderData: (prev) => prev,
   });
 
   const users = usersData?.items ?? [];

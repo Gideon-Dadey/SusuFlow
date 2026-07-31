@@ -1,29 +1,30 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { TransactionRow } from '@/components/financial/transaction-row';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { depositApi } from '@/lib/api';
-import { TransactionListSkeleton } from '@/components/ui/skeleton';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { TransactionRow } from "@/components/financial/transaction-row";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { depositApi } from "@/lib/api";
+import { TransactionListSkeleton } from "@/components/ui/skeleton";
 
 export default function StaffDepositsPage() {
   const queryClient = useQueryClient();
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['staff-deposits'],
+    queryKey: ["staff-deposits"],
     queryFn: () => depositApi.list(),
+    placeholderData: (prev) => prev,
   });
 
   const confirmMutation = useMutation({
     mutationFn: (id: string) => depositApi.confirm(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['staff-deposits'] });
+      queryClient.invalidateQueries({ queryKey: ["staff-deposits"] });
     },
     onError: (err) => {
-      alert(err instanceof Error ? err.message : 'Verification failed');
+      alert(err instanceof Error ? err.message : "Verification failed");
     },
   });
 
@@ -38,23 +39,32 @@ export default function StaffDepositsPage() {
 
   const handleExportCsv = () => {
     const items = data?.items || [];
-    const headers = ['Date', 'Reference', 'Customer Name', 'Amount (GHS)', 'Method', 'Status'];
+    const headers = [
+      "Date",
+      "Reference",
+      "Customer Name",
+      "Amount (GHS)",
+      "Method",
+      "Status",
+    ];
     const rows = items.map((t) => [
       new Date(t.createdAt).toLocaleDateString(),
       t.reference,
-      t.customer?.user ? `"${t.customer.user.firstName} ${t.customer.user.lastName}"` : 'N/A',
+      t.customer?.user
+        ? `"${t.customer.user.firstName} ${t.customer.user.lastName}"`
+        : "N/A",
       t.amount,
-      t.payment?.paymentMethod || 'momo',
+      t.payment?.paymentMethod || "momo",
       t.status,
     ]);
 
     const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `deposits_report_${Date.now()}.csv`);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `deposits_report_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -84,7 +94,7 @@ export default function StaffDepositsPage() {
                 key={t.id}
                 transaction={t}
                 action={
-                  t.status === 'pending' ? (
+                  t.status === "pending" ? (
                     <Button
                       size="sm"
                       className="font-semibold text-xs py-1 px-3 h-8 bg-emerald-600 hover:bg-emerald-700 text-white"

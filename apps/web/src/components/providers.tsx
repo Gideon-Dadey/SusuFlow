@@ -17,6 +17,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             refetchOnWindowFocus: false,
             refetchOnMount: false,
             refetchOnReconnect: false,
+            placeholderData: (prev: unknown) => prev,
           },
         },
       }),

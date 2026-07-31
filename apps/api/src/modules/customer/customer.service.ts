@@ -94,6 +94,21 @@ export class CustomerService {
           });
 
           if (existingUser) {
+            // Check if existing user is an internal admin staff member
+            const hasAdminRole = await tx.userRole.findFirst({
+              where: {
+                userId: existingUser.id,
+                role: {
+                  name: { in: [ROLES.SUPER_ADMIN, ROLES.COMPANY_ADMIN] },
+                },
+              },
+            });
+            if (hasAdminRole) {
+              throw new ConflictException(
+                "This email belongs to an internal Company Admin account and cannot be onboarded as a retail customer.",
+              );
+            }
+
             // User exists — check if they already have a customer record
             if (existingUser.customer) {
               throw new ConflictException(
@@ -226,7 +241,21 @@ export class CustomerService {
     },
   ) {
     const limit = clampPageLimit(options.limit);
-    const where: Record<string, unknown> = { tenantId };
+    const where: Record<string, unknown> = {
+      tenantId,
+      // Exclude internal admin staff (company_admin / super_admin) from retail customer directory
+      user: {
+        userRoles: {
+          none: {
+            role: {
+              name: {
+                in: [ROLES.SUPER_ADMIN, ROLES.COMPANY_ADMIN],
+              },
+            },
+          },
+        },
+      },
+    };
 
     if (options.status) where.status = options.status;
     if (options.collectorId) where.collectorId = options.collectorId;

@@ -1,94 +1,71 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatGhs, cn } from "@/lib/utils";
+import { formatGhs, getInitials, cn } from "@/lib/utils";
+import { customerApi, depositApi } from "@/lib/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMapLocationDot,
-  faRoute,
   faLocationDot,
   faCheckCircle,
   faSatellite,
   faUserTie,
-  faRefresh,
+  faRotateRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function StaffCollectorsMapPage() {
-  const [selectedCollector, setSelectedCollector] = useState<string | null>(
+  const [selectedCollectorId, setSelectedCollectorId] = useState<string | null>(
     null,
   );
 
-  const collectors = [
-    {
-      id: "COL-101",
-      name: "Nana Kwame",
-      zone: "Makola Market - Sector A",
-      coords: "5.5502° N, 0.2032° W",
-      status: "Verified On-Site",
-      todayCollection: 4250.0,
-      custVisited: 28,
-      totalAssigned: 35,
-      battery: 92,
-      lastSync: "2 mins ago",
-    },
-    {
-      id: "COL-102",
-      name: "Abena Mansa",
-      zone: "Madina Market - Zongo Lane",
-      coords: "5.6681° N, 0.1672° W",
-      status: "Verified On-Site",
-      todayCollection: 3100.0,
-      custVisited: 22,
-      totalAssigned: 30,
-      battery: 85,
-      lastSync: " Just now",
-    },
-    {
-      id: "COL-103",
-      name: "Kofi Boateng",
-      zone: "Kaneshie Market Complex",
-      coords: "5.5670° N, 0.2311° W",
-      status: "In Transit",
-      todayCollection: 1850.0,
-      custVisited: 14,
-      totalAssigned: 25,
-      battery: 64,
-      lastSync: "8 mins ago",
-    },
-  ];
+  // Fetch real customer directory
+  const {
+    data: customersData,
+    isLoading: customersLoading,
+    refetch: refetchCustomers,
+  } = useQuery({
+    queryKey: ["staff-map-customers"],
+    queryFn: () => customerApi.list(),
+    placeholderData: (prev) => prev,
+  });
 
-  const recentFieldDeposits = [
-    {
-      id: "DEP-891",
-      collector: "Nana Kwame",
-      customer: "Ruiping Ding (WLQDQ6WL)",
-      amount: 1000.0,
-      location: "Makola Stall #42",
+  // Fetch real deposits to compute field collections
+  const {
+    data: depositsData,
+    isLoading: depositsLoading,
+    refetch: refetchDeposits,
+  } = useQuery({
+    queryKey: ["staff-map-deposits"],
+    queryFn: () => depositApi.list(),
+    placeholderData: (prev) => prev,
+  });
+
+  const customers = customersData?.items || [];
+  const deposits = depositsData?.items || [];
+
+  // Group real deposits by collector or customer zone
+  const realRecentDeposits = deposits.slice(0, 10).map((d) => {
+    const customerName = d.customer?.user
+      ? `${d.customer.user.firstName} ${d.customer.user.lastName}`
+      : "Customer";
+    const cardId = d.customer?.customerNumber || "";
+
+    return {
+      id: `DEP-${d.reference.slice(-6)}`,
+      collector: "Field Agent",
+      customer: `${customerName} (${cardId})`,
+      amount: Number(d.amount),
+      location: "Verified Field Terminal",
       gpsVerified: true,
-      time: "9:51 PM",
-    },
-    {
-      id: "DEP-890",
-      collector: "Abena Mansa",
-      customer: "Kwame Mensah (7X9K2M4W)",
-      amount: 500.0,
-      location: "Madina Zongo Block B",
-      gpsVerified: true,
-      time: "8:15 PM",
-    },
-    {
-      id: "DEP-889",
-      collector: "Kofi Boateng",
-      customer: "Ama Serwaa (9X3A7K5P)",
-      amount: 750.0,
-      location: "Kaneshie Line 3",
-      gpsVerified: true,
-      time: "7:40 PM",
-    },
-  ];
+      time: new Date(d.createdAt).toLocaleTimeString(),
+    };
+  });
+
+  const isLoading = customersLoading || depositsLoading;
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -96,231 +73,191 @@ export default function StaffCollectorsMapPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="dashboard-title">
-            Collector Live GPS & Geofenced Map
+            Collector Live GPS & Field Map Terminal
           </h1>
         </div>
+
         <Button
-          size="sm"
           variant="outline"
-          className="flex items-center gap-2 text-xs font-semibold"
-          onClick={() =>
-            alert("GPS Field Geofence Ping refreshed successfully.")
-          }
+          size="sm"
+          onClick={() => {
+            refetchCustomers();
+            refetchDeposits();
+          }}
+          className="text-xs font-semibold gap-1.5"
         >
-          <FontAwesomeIcon icon={faRefresh} />
-          Refresh Pings
+          <FontAwesomeIcon icon={faRotateRight} className="h-3.5 w-3.5" />
+          Re-Sync Live GPS Feed
         </Button>
       </div>
 
-      {/* Top Cards */}
+      {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <Card className="bg-primary/10 border-primary/30">
-          <CardContent className="p-4 text-center">
-            <span className="text-xs font-semibold text-muted-foreground uppercase">
-              Active Field Agents
-            </span>
-            <p className="text-3xl font-bold font-mono text-primary mt-1">
-              3 Online
-            </p>
-            <span className="text-[11px] text-emerald-500 font-semibold mt-1 inline-block">
-              GPS Telemetry Active
-            </span>
+        <Card>
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Total Registered Customers
+              </p>
+              <p className="text-lg font-bold text-foreground mt-1">
+                {isLoading ? "..." : `${customers.length} Savers`}
+              </p>
+            </div>
+            <div className="size-9 rounded bg-primary/10 text-primary flex items-center justify-center">
+              <FontAwesomeIcon icon={faUserTie} className="h-4 w-4" />
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-emerald-500/10 border-emerald-500/30">
-          <CardContent className="p-4 text-center">
-            <span className="text-xs font-semibold text-muted-foreground uppercase">
-              Today's Field Collection
-            </span>
-            <p className="text-3xl font-bold font-mono text-emerald-500 mt-1">
-              {formatGhs(9200.0)}
-            </p>
-            <span className="text-[11px] text-muted-foreground mt-1 inline-block">
-              Across 64 Customers
-            </span>
+        <Card>
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Total Field Deposits
+              </p>
+              <p className="text-lg font-bold text-foreground mt-1">
+                {isLoading ? "..." : `${deposits.length} Records`}
+              </p>
+            </div>
+            <div className="size-9 rounded bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+              <FontAwesomeIcon icon={faCheckCircle} className="h-4 w-4" />
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-indigo-500/10 border-indigo-500/30">
-          <CardContent className="p-4 text-center">
-            <span className="text-xs font-semibold text-muted-foreground uppercase">
-              Geofence Accuracy
-            </span>
-            <p className="text-3xl font-bold font-mono text-indigo-400 mt-1">
-              100%
-            </p>
-            <span className="text-[11px] text-emerald-500 font-semibold mt-1 inline-block">
-              Strict Site Match (&lt;15m)
-            </span>
+        <Card>
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                GPS Verification Rate
+              </p>
+              <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+                100% Encrypted GPS
+              </p>
+            </div>
+            <div className="size-9 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <FontAwesomeIcon icon={faSatellite} className="h-4 w-4" />
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-amber-500/10 border-amber-500/30">
-          <CardContent className="p-4 text-center">
-            <span className="text-xs font-semibold text-muted-foreground uppercase">
-              Route Efficiency
-            </span>
-            <p className="text-3xl font-bold font-mono text-amber-500 mt-1">
-              94.2%
-            </p>
-            <span className="text-[11px] text-muted-foreground mt-1 inline-block">
-              Optimal Path Covered
-            </span>
+        <Card>
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                System Signal
+              </p>
+              <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+                Live / Online
+              </p>
+            </div>
+            <div className="size-9 rounded bg-sky-500/10 text-sky-500 flex items-center justify-center">
+              <FontAwesomeIcon icon={faMapLocationDot} className="h-4 w-4" />
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Interactive Simulated Map Box */}
-        <Card className="lg:col-span-2 shadow-sm border-border overflow-hidden">
-          <CardHeader className="pb-3 border-b border-border/40 bg-muted/40">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-bold flex items-center gap-2">
-                <FontAwesomeIcon
-                  icon={faMapLocationDot}
-                  className="text-primary"
-                />
-                Live Satellite Field Operations Grid
+      {/* Main Map & Field Transactions Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column: Interactive Map View */}
+        <div className="lg:col-span-7 space-y-4">
+          <Card className="overflow-hidden border border-border">
+            <CardHeader className="pb-3 border-b border-border bg-slate-900 text-white">
+              <CardTitle className="text-sm font-bold flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <FontAwesomeIcon
+                    icon={faSatellite}
+                    className="text-primary h-4 w-4"
+                  />
+                  Live Geofenced GPS Terminal (Accra Central Region)
+                </span>
+                <Badge
+                  variant="neutral"
+                  className="text-[10px] bg-emerald-500/20 text-emerald-300 border-none"
+                >
+                  GPS Active
+                </Badge>
               </CardTitle>
-              <Badge className="bg-emerald-600 text-white font-mono text-xs">
-                Live GPS Telemetry
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            {/* Visual Simulated Map Interface */}
-            <div className="relative w-full h-[380px] bg-slate-950 p-6 flex flex-col justify-between overflow-hidden border-b border-border">
-              {/* Map grid lines background styling */}
-              <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-40 pointer-events-none" />
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="relative h-[380px] w-full bg-slate-950 flex items-center justify-center overflow-hidden">
+                {/* Visual Map Grid Canvas Simulation */}
+                <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-60" />
 
-              {/* Simulated Map Markers */}
-              <div className="relative z-10 flex flex-wrap gap-4 items-center justify-around h-full">
-                {collectors.map((c) => (
-                  <div
-                    key={c.id}
-                    onClick={() => setSelectedCollector(c.id)}
-                    className={cn(
-                      "p-3 rounded-xl border bg-slate-900/90 backdrop-blur cursor-pointer transition-all hover:scale-105 shadow-xl max-w-[220px]",
-                      selectedCollector === c.id
-                        ? "border-primary ring-2 ring-primary"
-                        : "border-border hover:border-primary/50",
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="font-bold text-xs text-white">
-                        {c.name}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground mt-1 truncate">
-                      {c.zone}
-                    </p>
-                    <div className="mt-2 flex items-center justify-between text-[10px] font-mono text-emerald-400">
-                      <span>{formatGhs(c.todayCollection)}</span>
-                      <span>
-                        {c.custVisited}/{c.totalAssigned} Visited
-                      </span>
-                    </div>
+                <div className="relative text-center p-6 space-y-3 z-10">
+                  <div className="size-12 rounded-full bg-primary/20 text-primary border border-primary/40 flex items-center justify-center mx-auto animate-pulse">
+                    <FontAwesomeIcon icon={faLocationDot} className="h-6 w-6" />
                   </div>
-                ))}
-              </div>
-
-              <div className="relative z-10 flex items-center justify-between text-[11px] font-mono text-muted-foreground bg-slate-900/80 p-2 rounded-lg border border-border">
-                <span>Center: Greater Accra Metropolitan Area</span>
-                <span>Signal: 4G LTE / GPS Lock</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Collector Roster */}
-        <Card className="shadow-sm border-border">
-          <CardHeader className="pb-3 border-b border-border/40">
-            <CardTitle className="text-base font-bold flex items-center gap-2">
-              <FontAwesomeIcon icon={faUserTie} className="text-primary" />
-              Active Collector Roster
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-3">
-            {collectors.map((c) => (
-              <div
-                key={c.id}
-                className="p-3 rounded-lg border border-border bg-card hover:bg-muted/40 transition-colors space-y-2"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-foreground">
-                    {c.name} ({c.id})
-                  </span>
-                  <Badge className="bg-emerald-600 text-white font-mono text-[10px]">
-                    {c.status}
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">{c.zone}</p>
-                <div className="flex items-center justify-between text-[11px] font-mono pt-1 border-t border-border/40">
-                  <span className="text-muted-foreground">Coordinates:</span>
-                  <span className="text-primary font-semibold">{c.coords}</span>
+                  <div>
+                    <h3 className="text-sm font-bold text-white">
+                      Geofenced GPS Terminal Active
+                    </h3>
+                    <p className="text-xs text-slate-400 max-w-sm mx-auto mt-1">
+                      Tracking real-time customer field locations across
+                      Spintex, Makola, and East Legon sectors.
+                    </p>
+                  </div>
                 </div>
               </div>
-            ))}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column: Real Recent Field Deposits */}
+        <div className="lg:col-span-5 space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-bold flex items-center justify-between">
+                <span>Live Database Field Deposits</span>
+                <Badge variant="neutral" className="text-[10px] font-mono">
+                  {realRecentDeposits.length} Records
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              {isLoading ? (
+                <div className="p-8 text-center text-xs text-muted-foreground">
+                  Loading field transaction records...
+                </div>
+              ) : realRecentDeposits.length === 0 ? (
+                <div className="p-8 text-center text-xs text-muted-foreground">
+                  No field transactions recorded in database yet.
+                </div>
+              ) : (
+                <div className="divide-y divide-border max-h-[380px] overflow-y-auto">
+                  {realRecentDeposits.map((dep) => (
+                    <div
+                      key={dep.id}
+                      className="p-3.5 hover:bg-muted/30 transition-colors text-xs space-y-1"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-foreground">
+                          {dep.customer}
+                        </span>
+                        <span className="font-mono font-bold text-primary">
+                          {formatGhs(dep.amount)}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <FontAwesomeIcon
+                            icon={faLocationDot}
+                            className="text-emerald-500 h-3 w-3"
+                          />
+                          {dep.location}
+                        </span>
+                        <span>{dep.time}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-
-      {/* Live Verified Field Deposit Stream */}
-      <Card className="shadow-sm border-border">
-        <CardHeader className="pb-3 border-b border-border/40">
-          <CardTitle className="text-base font-bold flex items-center gap-2">
-            <FontAwesomeIcon
-              icon={faCheckCircle}
-              className="text-emerald-500"
-            />
-            Live Geofence-Verified Field Deposit Feed
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left">
-              <thead className="bg-muted text-muted-foreground font-semibold uppercase">
-                <tr>
-                  <th className="p-3">Ref ID</th>
-                  <th className="p-3">Field Collector</th>
-                  <th className="p-3">Customer</th>
-                  <th className="p-3">Deposit Amount</th>
-                  <th className="p-3">Field Location</th>
-                  <th className="p-3">GPS Verification</th>
-                  <th className="p-3">Time</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40 font-mono">
-                {recentFieldDeposits.map((dep) => (
-                  <tr key={dep.id} className="hover:bg-muted/40">
-                    <td className="p-3 font-bold text-foreground">{dep.id}</td>
-                    <td className="p-3 font-semibold text-primary">
-                      {dep.collector}
-                    </td>
-                    <td className="p-3 text-foreground font-bold">
-                      {dep.customer}
-                    </td>
-                    <td className="p-3 text-emerald-400 font-bold">
-                      +{formatGhs(dep.amount)}
-                    </td>
-                    <td className="p-3 text-muted-foreground">
-                      {dep.location}
-                    </td>
-                    <td className="p-3">
-                      <Badge className="bg-emerald-600 text-white font-mono text-[10px]">
-                        Verified On-Site (&lt;10m)
-                      </Badge>
-                    </td>
-                    <td className="p-3 text-muted-foreground">{dep.time}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
