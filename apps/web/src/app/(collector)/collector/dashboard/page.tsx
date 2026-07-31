@@ -24,11 +24,13 @@ export default function CollectorDashboardPage() {
   const { data: summary } = useQuery({
     queryKey: ["collector-summary"],
     queryFn: () => operationsApi.getMySummary(),
+    placeholderData: (prev) => prev,
   });
 
   const { data: deposits } = useQuery({
     queryKey: ["collector-deposits"],
     queryFn: () => depositApi.list(),
+    placeholderData: (prev) => prev,
   });
 
   const transactions = deposits?.items || [];

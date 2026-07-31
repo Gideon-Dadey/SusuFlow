@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MoneyDisplay } from '@/components/financial/money-display';
-import { customerApi, withdrawalApi, userApi } from '@/lib/api';
-import { useAuthStore } from '@/stores/auth.store';
-import { CheckCircle, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MoneyDisplay } from "@/components/financial/money-display";
+import { customerApi, withdrawalApi, userApi } from "@/lib/api";
+import { useAuthStore } from "@/stores/auth.store";
+import { CheckCircle, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 const QUICK_AMOUNTS = [10, 20, 50, 100];
 const DISBURSEMENT_METHODS = [
-  { id: 'mtn_momo', label: 'MTN Mobile Money', emoji: '📱' },
-  { id: 'telecel_cash', label: 'Telecel Cash', emoji: '📱' },
+  { id: "mtn_momo", label: "MTN Mobile Money", emoji: "📱" },
+  { id: "telecel_cash", label: "Telecel Cash", emoji: "📱" },
 ];
 
 export default function WithdrawRequestPage() {
@@ -24,17 +24,18 @@ export default function WithdrawRequestPage() {
   const user = useAuthStore((s) => s.user);
 
   const [step, setStep] = useState(1);
-  const [amount, setAmount] = useState('');
-  const [method, setMethod] = useState('mtn_momo');
-  const [phone, setPhone] = useState('');
+  const [amount, setAmount] = useState("");
+  const [method, setMethod] = useState("mtn_momo");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [result, setResult] = useState<{ reference: string } | null>(null);
 
-  // Query current user's profile to retrieve the associated customer account
+  // Query current user's profile
   const { data: userProfile } = useQuery({
-    queryKey: ['user-profile-me'],
+    queryKey: ["user-profile-me"],
     queryFn: () => userApi.getMe(),
+    placeholderData: (prev) => prev,
   });
 
   const activeCustomer = userProfile?.customer;
@@ -48,48 +49,51 @@ export default function WithdrawRequestPage() {
 
   // Query actual wallet balance from ledger
   const { data: walletData } = useQuery({
-    queryKey: ['customer-wallet', activeCustomer?.id],
+    queryKey: ["customer-wallet", activeCustomer?.id],
     queryFn: () =>
       activeCustomer
         ? customerApi.getWallet(activeCustomer.id)
         : Promise.resolve(null),
-    enabled: !!activeCustomer,
+    placeholderData: (prev) => prev,
   });
 
-  // Query pending withdrawals to subtract
+  // Query pending withdrawals
   const { data: withdrawalsData } = useQuery({
-    queryKey: ['withdrawals', activeCustomer?.id],
+    queryKey: ["withdrawals", activeCustomer?.id],
     queryFn: () => withdrawalApi.list({ customer_id: activeCustomer?.id }),
-    enabled: !!activeCustomer,
+    placeholderData: (prev) => prev,
   });
 
   const walletBalance = walletData?.balance || 0;
   const pendingRequests =
     withdrawalsData?.items?.filter(
       (w) =>
-        w.status === 'pending' ||
-        w.status === 'processing' ||
-        w.status === 'approved' ||
-        w.withdrawal?.status === 'requested' ||
-        w.withdrawal?.status === 'processing' ||
-        w.withdrawal?.status === 'approved'
+        w.status === "pending" ||
+        w.status === "processing" ||
+        w.status === "approved" ||
+        w.withdrawal?.status === "requested" ||
+        w.withdrawal?.status === "processing" ||
+        w.withdrawal?.status === "approved",
     ) || [];
 
-  const pendingSum = pendingRequests.reduce((sum, w) => sum + Number(w.amount), 0);
+  const pendingSum = pendingRequests.reduce(
+    (sum, w) => sum + Number(w.amount),
+    0,
+  );
   const availableBalance = Math.max(0, walletBalance - pendingSum);
 
   const handleRequestWithdrawal = async () => {
     setLoading(true);
-    setError('');
+    setError("");
     try {
       if (!amount || parseFloat(amount) < 10) {
-        throw new Error('Minimum withdrawal amount is GHS 10.00');
+        throw new Error("Minimum withdrawal amount is GHS 10.00");
       }
       if (parseFloat(amount) > availableBalance) {
-        throw new Error('Requested amount exceeds available balance.');
+        throw new Error("Requested amount exceeds available balance.");
       }
       if (!phone) {
-        throw new Error('Please specify a disbursement phone number.');
+        throw new Error("Please specify a disbursement phone number.");
       }
 
       const res = await withdrawalApi.requestWithdrawal({
@@ -99,14 +103,16 @@ export default function WithdrawRequestPage() {
       });
 
       setResult({ reference: res.reference });
-      
+
       // Invalidate queries to refresh lists and balances
-      queryClient.invalidateQueries({ queryKey: ['customer-wallet'] });
-      queryClient.invalidateQueries({ queryKey: ['withdrawals'] });
-      
+      queryClient.invalidateQueries({ queryKey: ["customer-wallet"] });
+      queryClient.invalidateQueries({ queryKey: ["withdrawals"] });
+
       setStep(3);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Withdrawal request failed');
+      setError(
+        err instanceof Error ? err.message : "Withdrawal request failed",
+      );
     } finally {
       setLoading(false);
     }
@@ -120,7 +126,8 @@ export default function WithdrawRequestPage() {
         </div>
         <h2 className="dashboard-title text-foreground">Request Submitted!</h2>
         <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-          Your payout request has been registered and is pending approval by our staff. You will receive mobile money prompt to confirm once approved.
+          Your payout request has been registered and is pending approval by our
+          staff. You will receive mobile money prompt to confirm once approved.
         </p>
         <Card className="border border-border bg-card">
           <CardContent className="p-4 space-y-2 text-left">
@@ -130,11 +137,15 @@ export default function WithdrawRequestPage() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Reference</span>
-              <span className="font-mono text-xs text-foreground font-semibold">{result.reference}</span>
+              <span className="font-mono text-xs text-foreground font-semibold">
+                {result.reference}
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Disbursement Wallet</span>
-              <span className="text-foreground capitalize">{method.replace('_', ' ')}</span>
+              <span className="text-foreground capitalize">
+                {method.replace("_", " ")}
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Target Phone</span>
@@ -142,7 +153,11 @@ export default function WithdrawRequestPage() {
             </div>
           </CardContent>
         </Card>
-        <Button variant="outline" className="w-full" onClick={() => router.push('/dashboard')}>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => router.push("/dashboard")}
+        >
           Back to Dashboard
         </Button>
       </div>
@@ -164,7 +179,7 @@ export default function WithdrawRequestPage() {
         {[1, 2].map((s) => (
           <div
             key={s}
-            className={`h-1 flex-1 rounded-full ${step >= s ? 'bg-primary' : 'bg-muted'}`}
+            className={`h-1 flex-1 rounded-full ${step >= s ? "bg-primary" : "bg-muted"}`}
           />
         ))}
       </div>
@@ -172,18 +187,28 @@ export default function WithdrawRequestPage() {
       <Card className="border border-border bg-card">
         <CardContent className="p-4 space-y-2 bg-muted/40 rounded-t-xl border-b border-border">
           <div className="flex justify-between items-center">
-            <span className="text-xs text-muted-foreground">Wallet Balance:</span>
-            <span className="text-sm font-medium text-foreground">GHS {walletBalance.toFixed(2)}</span>
+            <span className="text-xs text-muted-foreground">
+              Wallet Balance:
+            </span>
+            <span className="text-sm font-medium text-foreground">
+              GHS {walletBalance.toFixed(2)}
+            </span>
           </div>
           {pendingSum > 0 && (
             <div className="flex justify-between items-center text-xs text-muted-foreground">
               <span>Pending Requests:</span>
-              <span className="text-red-500 font-medium">-GHS {pendingSum.toFixed(2)}</span>
+              <span className="text-red-500 font-medium">
+                -GHS {pendingSum.toFixed(2)}
+              </span>
             </div>
           )}
           <div className="flex justify-between items-center border-t border-dashed border-border pt-1">
-            <span className="text-xs font-semibold text-foreground">Available to Withdraw:</span>
-            <span className="text-base font-bold text-primary">GHS {availableBalance.toFixed(2)}</span>
+            <span className="text-xs font-semibold text-foreground">
+              Available to Withdraw:
+            </span>
+            <span className="text-base font-bold text-primary">
+              GHS {availableBalance.toFixed(2)}
+            </span>
           </div>
         </CardContent>
 
@@ -211,11 +236,17 @@ export default function WithdrawRequestPage() {
               ))}
             </div>
             {error ? (
-              <p className="text-xs text-red-500 bg-red-50 dark:bg-red-950/20 rounded-lg px-3 py-2">{error}</p>
+              <p className="text-xs text-red-500 bg-red-50 dark:bg-red-950/20 rounded-lg px-3 py-2">
+                {error}
+              </p>
             ) : null}
             <Button
               className="w-full"
-              disabled={!amount || parseFloat(amount) < 10 || parseFloat(amount) > availableBalance}
+              disabled={
+                !amount ||
+                parseFloat(amount) < 10 ||
+                parseFloat(amount) > availableBalance
+              }
               onClick={() => setStep(2)}
             >
               Continue
@@ -224,7 +255,9 @@ export default function WithdrawRequestPage() {
         ) : (
           <CardContent className="p-6 space-y-4">
             <div className="space-y-2">
-              <span className="text-xs font-medium text-muted-foreground">Select MoMo Network</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                Select MoMo Network
+              </span>
               <div className="space-y-2">
                 {DISBURSEMENT_METHODS.map((m) => (
                   <button
@@ -232,14 +265,16 @@ export default function WithdrawRequestPage() {
                     onClick={() => setMethod(m.id)}
                     className={`w-full flex items-center gap-3 rounded-lg border p-4 text-left transition-colors ${
                       method === m.id
-                        ? 'border-primary bg-primary/5 text-primary'
-                        : 'border-border bg-background text-foreground hover:bg-muted/50'
+                        ? "border-primary bg-primary/5 text-primary"
+                        : "border-border bg-background text-foreground hover:bg-muted/50"
                     }`}
                   >
                     <span className="text-xl">{m.emoji}</span>
                     <span className="font-semibold text-sm">{m.label}</span>
                     {method === m.id ? (
-                      <span className="ml-auto text-primary text-xs font-bold">Selected</span>
+                      <span className="ml-auto text-primary text-xs font-bold">
+                        Selected
+                      </span>
                     ) : null}
                   </button>
                 ))}
@@ -256,14 +291,24 @@ export default function WithdrawRequestPage() {
             />
 
             {error ? (
-              <p className="text-xs text-red-500 bg-red-50 dark:bg-red-950/20 rounded-lg px-3 py-2">{error}</p>
+              <p className="text-xs text-red-500 bg-red-50 dark:bg-red-950/20 rounded-lg px-3 py-2">
+                {error}
+              </p>
             ) : null}
 
             <div className="flex gap-2 pt-2">
-              <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setStep(1)}
+              >
                 Back
               </Button>
-              <Button className="flex-1" loading={loading} onClick={handleRequestWithdrawal}>
+              <Button
+                className="flex-1"
+                loading={loading}
+                onClick={handleRequestWithdrawal}
+              >
                 Request GHS {amount}
               </Button>
             </div>

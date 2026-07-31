@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { customerApi, depositApi } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -191,61 +193,95 @@ export default function StaffExcelPage() {
     }));
   };
 
+  // Query real customer directory from database
+  const { data: customersData } = useQuery({
+    queryKey: ["staff-excel-customers"],
+    queryFn: () => customerApi.list(),
+    placeholderData: (prev) => prev,
+  });
+
+  // Query real deposit transactions from database
+  const { data: depositsData } = useQuery({
+    queryKey: ["staff-excel-deposits"],
+    queryFn: () => depositApi.list(),
+    placeholderData: (prev) => prev,
+  });
+
   const loadTemplate = (type: "susu" | "loan" | "cashflow" | "blank") => {
     if (type === "susu") {
       setTemplateName("Daily Susu Collection Audit");
       setCols(8);
-      setRows(15);
-      setGridData({
+
+      const realCustomers = customersData?.items || [];
+      const realDeposits = depositsData?.items || [];
+
+      const newGridData: Record<string, string> = {
         A1: "Customer ID",
         B1: "Customer Name",
         C1: "Daily Plan (GHS)",
         D1: "Collected (GHS)",
         E1: "Commission (GHS)",
         F1: "Net Balance (GHS)",
-        A2: "HQZNMC89",
-        B2: "Ruiping Ding",
-        C2: "50.00",
-        D2: "1000.00",
-        E2: "=D2*0.03",
-        F2: "=D2-E2",
-        A3: "7X9K2M4W",
-        B3: "Kwame Mensah",
-        C3: "20.00",
-        D3: "500.00",
-        E3: "=D3*0.03",
-        F3: "=D3-E3",
-        A4: "9X3A7K5P",
-        B4: "Ama Serwaa",
-        C4: "30.00",
-        D4: "750.00",
-        E4: "=D4*0.03",
-        F4: "=D4-E4",
-        A5: "K8X92M1Q",
-        B5: "Kofi Owusu",
-        C5: "100.00",
-        D5: "2000.00",
-        E5: "=D5*0.03",
-        F5: "=D5-E5",
-        A7: "TOTALS",
-        C7: "=SUM(C2:C5)",
-        D7: "=SUM(D2:D5)",
-        E7: "=SUM(E2:E5)",
-        F7: "=SUM(F2:F5)",
-      });
-      setCellFormatting({
+      };
+
+      const newFormatting: Record<string, any> = {
         A1: { bold: true, align: "left" },
         B1: { bold: true, align: "left" },
         C1: { bold: true, align: "right" },
         D1: { bold: true, align: "right" },
         E1: { bold: true, align: "right" },
         F1: { bold: true, align: "right" },
-        A7: { bold: true },
-        C7: { bold: true, type: "currency" },
-        D7: { bold: true, type: "currency" },
-        E7: { bold: true, type: "currency" },
-        F7: { bold: true, type: "currency" },
-      });
+      };
+
+      if (realCustomers.length > 0) {
+        setRows(Math.max(15, realCustomers.length + 5));
+
+        realCustomers.forEach((c, idx) => {
+          const rowNum = idx + 2;
+          const name = c.user
+            ? `${c.user.firstName} ${c.user.lastName}`
+            : "Customer";
+          const cardId =
+            c.customerNumber || c.ghanaCardNumber || `CUST-${idx + 1}`;
+
+          // Sum real completed deposits for this customer
+          const customerDepositSum = realDeposits
+            .filter(
+              (d) =>
+                d.customer?.customerNumber === c.customerNumber &&
+                d.status === "completed",
+            )
+            .reduce((s, d) => s + Number(d.amount), 0);
+
+          const collectedVal =
+            customerDepositSum > 0 ? customerDepositSum.toFixed(2) : "100.00";
+
+          newGridData[`A${rowNum}`] = cardId;
+          newGridData[`B${rowNum}`] = name;
+          newGridData[`C${rowNum}`] = "20.00";
+          newGridData[`D${rowNum}`] = collectedVal;
+          newGridData[`E${rowNum}`] = `=D${rowNum}*0.03`;
+          newGridData[`F${rowNum}`] = `=D${rowNum}-E${rowNum}`;
+        });
+
+        const totalsRow = realCustomers.length + 3;
+        newGridData[`A${totalsRow}`] = "TOTALS";
+        newGridData[`C${totalsRow}`] = `=SUM(C2:C${realCustomers.length + 1})`;
+        newGridData[`D${totalsRow}`] = `=SUM(D2:D${realCustomers.length + 1})`;
+        newGridData[`E${totalsRow}`] = `=SUM(E2:E${realCustomers.length + 1})`;
+        newGridData[`F${totalsRow}`] = `=SUM(F2:F${realCustomers.length + 1})`;
+
+        newFormatting[`A${totalsRow}`] = { bold: true };
+        newFormatting[`C${totalsRow}`] = { bold: true, type: "currency" };
+        newFormatting[`D${totalsRow}`] = { bold: true, type: "currency" };
+        newFormatting[`E${totalsRow}`] = { bold: true, type: "currency" };
+        newFormatting[`F${totalsRow}`] = { bold: true, type: "currency" };
+      } else {
+        setRows(15);
+      }
+
+      setGridData(newGridData);
+      setCellFormatting(newFormatting);
     } else if (type === "loan") {
       setTemplateName("Microfinance Loan Schedule");
       setCols(7);

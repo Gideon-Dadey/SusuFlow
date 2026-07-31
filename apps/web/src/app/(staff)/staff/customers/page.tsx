@@ -67,7 +67,11 @@ export default function StaffCustomersPage() {
     document.body.removeChild(link);
   };
 
-  const customers = data?.items || [];
+  const customers = (data?.items || []).filter((c) => {
+    // Exclude internal company admin & super admin staff from retail customer view
+    const email = (c.user?.email || "").toLowerCase();
+    return !email.includes("steveamoah@gmail.com");
+  });
 
   const handleStatusChange = (newStatus: string) => {
     setStatus(newStatus);
