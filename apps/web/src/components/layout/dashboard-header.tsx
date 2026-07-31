@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/components/ui/button";
 import { DashboardUserMenu } from "@/components/layout/dashboard-user-menu";
+import { cn } from "@/lib/utils";
 
 const titles: Record<string, string> = {
   // Customer portal
@@ -95,9 +96,16 @@ export function DashboardHeader({
   };
 
   const mobileTitle = getMobileTitle();
+  const isDashboardPage =
+    pathname.endsWith("/dashboard") || pathname === "/dashboard";
 
   return (
-    <header className="dashboard-header flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-background px-4 sm:px-6 lg:px-8">
+    <header
+      className={cn(
+        "dashboard-header flex h-16 shrink-0 items-center justify-between gap-4 bg-background px-4 sm:px-6 lg:px-8",
+        isDashboardPage ? "border-b border-border" : "border-b-0 border-none",
+      )}
+    >
       <div className="flex min-w-0 items-center gap-2.5 lg:hidden">
         <Button
           type="button"
