@@ -28,14 +28,14 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "dashboard-tile flex h-full min-h-[8.5rem] flex-col rounded-none border bg-card p-4 sm:min-h-[10.5rem] sm:p-6",
+        "dashboard-tile flex h-full min-h-[8.5rem] flex-col rounded-md border border-slate-200/90 dark:border-slate-800 bg-card p-4 sm:min-h-[10.5rem] sm:p-6 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
         className,
       )}
     >
       {icon ? (
         <div
           className={cn(
-            "flex size-8 items-center justify-center rounded-none sm:size-10",
+            "flex size-9 items-center justify-center rounded-lg sm:size-10 shadow-sm",
             iconBgClassName,
           )}
         >
