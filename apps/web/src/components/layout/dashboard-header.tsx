@@ -97,7 +97,7 @@ export function DashboardHeader({
   const mobileTitle = getMobileTitle();
 
   return (
-    <header className="dashboard-header flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-background px-4 sm:px-6 lg:px-8">
+    <header className="dashboard-header flex h-16 shrink-0 items-center justify-between gap-4 border-b-0 border-none bg-background px-4 sm:px-6 lg:px-8">
       <div className="flex min-w-0 items-center gap-2.5 lg:hidden">
         <Button
           type="button"
