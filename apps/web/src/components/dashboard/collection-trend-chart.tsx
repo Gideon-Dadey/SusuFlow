@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -9,9 +9,9 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { formatGhs } from '@/lib/utils';
+} from "recharts";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { formatGhs } from "@/lib/utils";
 
 interface CollectionTrendChartProps {
   transactions: Array<{
@@ -22,12 +22,12 @@ interface CollectionTrendChartProps {
   }>;
 }
 
-type Period = '7d' | '14d' | '30d';
+type Period = "7d" | "14d" | "30d";
 
 const PERIOD_LABELS: Record<Period, string> = {
-  '7d': 'Last 7 days',
-  '14d': 'Last 14 days',
-  '30d': 'Last 30 days',
+  "7d": "Last 7 days",
+  "14d": "Last 14 days",
+  "30d": "Last 30 days",
 };
 
 function getDaysAgo(n: number): Date {
@@ -38,7 +38,7 @@ function getDaysAgo(n: number): Date {
 }
 
 function formatDayLabel(date: Date): string {
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 function CustomTooltip({ active, payload, label }: any) {
@@ -47,22 +47,26 @@ function CustomTooltip({ active, payload, label }: any) {
     <div className="rounded-lg border border-border bg-popover px-3 py-2 text-xs shadow-xl">
       <p className="mb-1 font-medium text-foreground">{label}</p>
       <p className="text-muted-foreground">
-        Collections:{' '}
-        <span className="font-semibold text-emerald-500">{formatGhs(payload[0].value)}</span>
+        Collections:{" "}
+        <span className="font-semibold text-emerald-500">
+          {formatGhs(payload[0].value)}
+        </span>
       </p>
     </div>
   );
 }
 
-export function CollectionTrendChart({ transactions }: CollectionTrendChartProps) {
-  const [period, setPeriod] = useState<Period>('7d');
+export function CollectionTrendChart({
+  transactions,
+}: CollectionTrendChartProps) {
+  const [period, setPeriod] = useState<Period>("7d");
 
-  const days = period === '30d' ? 30 : period === '14d' ? 14 : 7;
+  const days = period === "30d" ? 30 : period === "14d" ? 14 : 7;
 
   const { chartData, total } = useMemo(() => {
     const cutoff = getDaysAgo(days);
     const completed = transactions.filter(
-      (t) => t.status === 'completed' && new Date(t.createdAt) >= cutoff,
+      (t) => t.status === "completed" && new Date(t.createdAt) >= cutoff,
     );
 
     const buckets = new Map<string, number>();
@@ -82,7 +86,10 @@ export function CollectionTrendChart({ transactions }: CollectionTrendChartProps
     }
 
     return {
-      chartData: Array.from(buckets.entries()).map(([name, value]) => ({ name, value })),
+      chartData: Array.from(buckets.entries()).map(([name, value]) => ({
+        name,
+        value,
+      })),
       total: runningTotal,
     };
   }, [transactions, days]);
@@ -91,7 +98,9 @@ export function CollectionTrendChart({ transactions }: CollectionTrendChartProps
     <Card className="col-span-1 lg:col-span-7">
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div>
-          <p className="text-sm font-medium text-muted-foreground">Collection Trend</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            Collection Trend
+          </p>
           <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">
             {formatGhs(total)}
           </p>
@@ -99,7 +108,7 @@ export function CollectionTrendChart({ transactions }: CollectionTrendChartProps
         <select
           value={period}
           onChange={(e) => setPeriod(e.target.value as Period)}
-          className="rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm outline-none transition hover:border-foreground/20 focus:ring-1 focus:ring-primary"
+          className="rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm outline-none transition hover:border-foreground/20 focus:outline-none focus:border-foreground/40"
         >
           {Object.entries(PERIOD_LABELS).map(([key, label]) => (
             <option key={key} value={key}>
@@ -116,9 +125,23 @@ export function CollectionTrendChart({ transactions }: CollectionTrendChartProps
               margin={{ top: 8, right: 4, left: -20, bottom: 0 }}
             >
               <defs>
-                <linearGradient id="collectionGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(160, 84%, 50%)" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="hsl(160, 84%, 50%)" stopOpacity={0} />
+                <linearGradient
+                  id="collectionGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="0%"
+                    stopColor="hsl(160, 84%, 50%)"
+                    stopOpacity={0.3}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor="hsl(160, 84%, 50%)"
+                    stopOpacity={0}
+                  />
                 </linearGradient>
               </defs>
               <CartesianGrid
@@ -131,15 +154,17 @@ export function CollectionTrendChart({ transactions }: CollectionTrendChartProps
                 dataKey="name"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
+                tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 dy={8}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
+                tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 tickFormatter={(v) =>
-                  v >= 1000 ? `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}K` : String(v)
+                  v >= 1000
+                    ? `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}K`
+                    : String(v)
                 }
               />
               <Tooltip content={<CustomTooltip />} />
@@ -153,8 +178,8 @@ export function CollectionTrendChart({ transactions }: CollectionTrendChartProps
                 activeDot={{
                   r: 5,
                   strokeWidth: 2,
-                  fill: 'hsl(160, 84%, 50%)',
-                  stroke: 'var(--background)',
+                  fill: "hsl(160, 84%, 50%)",
+                  stroke: "var(--background)",
                 }}
               />
             </AreaChart>
