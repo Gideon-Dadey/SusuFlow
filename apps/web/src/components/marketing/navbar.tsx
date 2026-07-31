@@ -98,7 +98,7 @@ export function MarketingNavbar() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-[200] border-b border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-[#09090b] pt-[env(safe-area-inset-top,0px)] transition-all">
+      <header className="fixed inset-x-0 top-0 z-[200] border-b-0 border-none bg-white dark:bg-[#09090b] pt-[env(safe-area-inset-top,0px)] transition-all">
         <div className="marketing-container flex h-14 sm:h-16 items-center justify-between gap-3 sm:gap-4">
           <Link
             href="/"
