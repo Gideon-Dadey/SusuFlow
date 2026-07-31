@@ -99,6 +99,7 @@
   }
 
   html {
+    font-size: 90%;
     background-color: var(--background);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -392,7 +393,7 @@
   /* Native Mobile App Typography & Layout Scaling (< 640px) */
   @media (max-width: 639px) {
     html {
-      font-size: 13.5px;
+      font-size: 12.5px;
     }
 
     body {
