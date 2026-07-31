@@ -14,10 +14,10 @@ export function HowItWorksHero() {
             <p className="text-sm font-medium text-muted-foreground">
               How Credo works
             </p>
-            <h1 className="marketing-hero-title mt-3 text-balance text-foreground">
+            <h1 className="sr-hero-title mt-3 text-balance text-foreground">
               Move your susu company from notebooks to verified MoMo.
             </h1>
-            <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground lg:mt-6">
+            <p className="sr-hero-copy mt-5 max-w-xl text-pretty text-muted-foreground lg:mt-6">
               Built for Ghanaian susu operators still collecting cash, chasing
               WhatsApp screenshots, and reconciling by hand. Credo keeps your
               relationships in the field and puts every cedi on a verified

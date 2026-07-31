@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const authInputClassName =
-  "flex h-[48px] w-full rounded-none border border-input bg-card px-3.5 py-2.5 text-[15px] text-foreground shadow-sm placeholder:text-muted-foreground/70 transition-colors focus:border-secondary/40 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50";
+  "auth-input flex h-[54px] min-h-[54px] w-full rounded-[0.25rem] border border-input bg-card px-4 py-3 text-[16px] text-foreground shadow-sm placeholder:text-muted-foreground/60 transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50";
 
 export function GoogleIcon() {
   return (
@@ -57,7 +57,7 @@ export function SocialButton({
   return (
     <button
       type="button"
-      className="flex h-[48px] w-full items-center justify-center gap-2.5 rounded-none border border-input bg-card text-[15px] font-bold text-foreground shadow-sm transition-colors hover:bg-muted/40"
+      className="flex h-[54px] min-h-[54px] w-full items-center justify-center gap-2.5 rounded-[0.25rem] border border-input bg-card text-[16px] font-semibold text-foreground shadow-sm transition-all duration-150 hover:bg-muted/50 focus:ring-2 focus:ring-primary/20"
     >
       {icon}
       {label}

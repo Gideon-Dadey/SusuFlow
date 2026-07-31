@@ -14,10 +14,10 @@ export function FaqSection() {
     <section className="marketing-section bg-background">
       <MarketingContainer>
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Common questions
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+          <p className="mt-2 text-base text-muted-foreground sm:text-lg">
             Everything you need to know about digital susu with Credo.
             Can&apos;t find your answer?{" "}
             <Link
@@ -41,7 +41,7 @@ export function FaqSection() {
                     aria-hidden
                   />
                 </span>
-                <span className="min-w-0 flex-1 text-left text-[0.9375rem] font-normal leading-snug text-foreground sm:text-base">
+                <span className="min-w-0 flex-1 text-left text-base font-semibold leading-snug text-foreground sm:text-lg">
                   {q}
                 </span>
                 <span className="flex size-6 shrink-0 items-center justify-center text-foreground">
@@ -53,7 +53,7 @@ export function FaqSection() {
                 </span>
               </summary>
               <div className="faq-item-answer">
-                <p className="text-sm leading-relaxed text-muted-foreground sm:text-[0.9375rem]">
+                <p className="text-base leading-relaxed text-muted-foreground">
                   {a}
                 </p>
               </div>

@@ -11,14 +11,14 @@ export function PlatformOverviewSection() {
       <MarketingContainer className="pt-10 pb-5 sm:pt-16 sm:pb-10 lg:py-24">
         <div className="flex flex-col gap-6 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
           <div className="order-2 min-w-0 text-left lg:order-1">
-            <h2 className="text-balance text-2xl font-bold leading-snug tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] sm:leading-[1.12]">
+            <h2 className="text-balance text-3xl font-bold leading-snug tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] sm:leading-[1.12]">
               Control everything.
               <br />
               See everything.
               <br />
               All in one place.
             </h2>
-            <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-sm sm:text-base leading-relaxed text-muted-foreground lg:mt-6">
+            <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-base sm:text-lg leading-relaxed text-muted-foreground lg:mt-6">
               Forget juggling books, WhatsApp receipts, and collector disputes.
               Run contributions, payouts, and MoMo verification from one
               streamlined platform built for Ghanaian susu.
