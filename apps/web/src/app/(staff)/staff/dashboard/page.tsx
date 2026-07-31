@@ -117,6 +117,11 @@ export default function StaffDashboard() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <CollectionTrendChart transactions={transactions} />
+        <CollectionsByStatusChart transactions={transactions} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         <Card className="lg:col-span-8">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
@@ -194,11 +199,6 @@ export default function StaffDashboard() {
             })}
           </CardContent>
         </Card>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <CollectionTrendChart transactions={transactions} />
-        <CollectionsByStatusChart transactions={transactions} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
