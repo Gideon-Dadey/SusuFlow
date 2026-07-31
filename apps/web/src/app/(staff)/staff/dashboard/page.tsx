@@ -9,7 +9,7 @@ import { TransactionRow } from "@/components/financial/transaction-row";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { depositApi, customerApi, operationsApi } from "@/lib/api";
-import { formatGhs, getInitials } from "@/lib/utils";
+import { formatGhs, getInitials, cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui/badge";
 import {
   faChartLine,
@@ -58,16 +58,33 @@ export default function StaffDashboard() {
 
   const quickActions = [
     {
+      href: "/staff/deposits",
+      label: "Manual Payments",
+      subtitle: "Verify MoMo claims",
+      icon: Wallet,
+      bg: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+    },
+    {
       href: "/staff/customers/new",
       label: "Onboard Customer",
-      icon: "user-plus" as const,
+      subtitle: "Register new account",
+      icon: UserPlus,
+      bg: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
     },
     {
       href: "/staff/withdrawals",
       label: "Review Withdrawals",
-      icon: "wallet" as const,
+      subtitle: "Process claims & payouts",
+      icon: Wallet,
+      bg: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
     },
-    { href: "/staff/team", label: "Manage Team", icon: "users" as const },
+    {
+      href: "/staff/team",
+      label: "Agent Approvals",
+      subtitle: "Review registrations",
+      icon: Users,
+      bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    },
   ];
 
   return (
@@ -121,8 +138,38 @@ export default function StaffDashboard() {
         <CollectionsByStatusChart transactions={transactions} />
       </div>
 
+      {/* Elevated Pop-Up Quick Actions Grid */}
+      <div className="space-y-3">
+        <h2 className="text-sm font-bold tracking-tight text-foreground uppercase text-muted-foreground/80">
+          Quick Actions
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {quickActions.map((action) => (
+            <Link key={action.href} href={action.href} className="block group">
+              <Card className="p-4 h-full transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-1 border border-slate-200/90 dark:border-slate-800 bg-card">
+                <div
+                  className={cn(
+                    "size-9 rounded-lg flex items-center justify-center mb-3 shadow-sm",
+                    action.bg,
+                  )}
+                >
+                  <action.icon className="h-4 w-4" />
+                </div>
+                <h4 className="font-bold text-xs text-foreground group-hover:text-primary transition-colors">
+                  {action.label}
+                </h4>
+                <p className="text-[11px] text-muted-foreground mt-0.5 font-medium">
+                  {action.subtitle}
+                </p>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Action Queue */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <Card className="lg:col-span-8">
+        <Card className="lg:col-span-12">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <FontAwesomeIcon
@@ -140,7 +187,7 @@ export default function StaffDashboard() {
           <CardContent className="p-0">
             {!queue || queue.summary.total === 0 ? (
               <p className="py-8 px-4 text-center text-sm text-muted-foreground">
-                No pending actions — you&apos;re all caught up
+                No pending actions &mdash; you&apos;re all caught up
               </p>
             ) : (
               <div className="divide-y divide-border/60">
@@ -170,33 +217,6 @@ export default function StaffDashboard() {
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
-
-        <Card className="lg:col-span-4">
-          <CardHeader>
-            <CardTitle className="text-base">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {quickActions.map((action) => {
-              const Icon =
-                action.icon === "user-plus"
-                  ? UserPlus
-                  : action.icon === "wallet"
-                    ? Wallet
-                    : Users;
-              return (
-                <Link key={action.href} href={action.href}>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-2 h-10"
-                  >
-                    <Icon className="h-4 w-4" />
-                    {action.label}
-                  </Button>
-                </Link>
-              );
-            })}
           </CardContent>
         </Card>
       </div>

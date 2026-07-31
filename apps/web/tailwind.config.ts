@@ -107,10 +107,14 @@ const config: Config = {
         full: "9999px",
       },
       boxShadow: {
-        card: "0 1px 2px rgb(15 23 42 / 0.04), 0 4px 24px rgb(15 23 42 / 0.04)",
-        elevated: "0 12px 40px rgb(15 23 42 / 0.08)",
-        "card-dark": "0 1px 2px rgb(0 0 0 / 0.2), 0 4px 24px rgb(0 0 0 / 0.25)",
-        "elevated-dark": "0 12px 40px rgb(0 0 0 / 0.45)",
+        card: "0 2px 8px -1px rgb(15 23 42 / 0.08), 0 8px 16px -2px rgb(15 23 42 / 0.06)",
+        elevated:
+          "0 12px 32px -4px rgb(15 23 42 / 0.12), 0 4px 12px -2px rgb(15 23 42 / 0.08)",
+        pop: "0 4px 20px -2px rgb(15 23 42 / 0.1), 0 2px 6px -1px rgb(15 23 42 / 0.06)",
+        "card-dark":
+          "0 2px 8px -1px rgb(0 0 0 / 0.4), 0 8px 16px -2px rgb(0 0 0 / 0.3)",
+        "elevated-dark":
+          "0 12px 32px -4px rgb(0 0 0 / 0.5), 0 4px 12px -2px rgb(0 0 0 / 0.4)",
       },
     },
   },
