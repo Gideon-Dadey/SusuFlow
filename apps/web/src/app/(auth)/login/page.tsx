@@ -76,14 +76,12 @@ function LoginContent() {
   return (
     <AuthShell>
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Login
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <h1 className="sr-hero-title text-foreground">Login</h1>
+        <p className="mt-2.5 text-base text-muted-foreground">
           or{" "}
           <Link
             href="/register"
-            className="font-medium text-secondary hover:text-secondary/80"
+            className="font-semibold text-primary hover:text-primary/80"
           >
             Join your susu
           </Link>
@@ -94,7 +92,7 @@ function LoginContent() {
         <div className="space-y-1.5">
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-foreground"
+            className="block text-sm sm:text-base font-semibold text-foreground"
           >
             Email address <span className="text-destructive">*</span>
           </label>
@@ -115,13 +113,13 @@ function LoginContent() {
           <div className="flex items-center justify-between gap-2">
             <label
               htmlFor="password"
-              className="text-sm font-medium text-foreground"
+              className="text-sm sm:text-base font-semibold text-foreground"
             >
               Password <span className="text-destructive">*</span>
             </label>
             <Link
               href="/contact"
-              className="text-sm font-medium text-secondary hover:text-secondary/80"
+              className="text-sm font-semibold text-primary hover:text-primary/80"
             >
               Forgot Password?
             </Link>
@@ -178,7 +176,7 @@ function LoginContent() {
 
         <Button
           type="submit"
-          className="h-[48px] w-full rounded-none text-[15px] font-bold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
+          className="h-[54px] min-h-[54px] w-full rounded-[0.25rem] text-base font-bold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
           loading={isSubmitting}
           loadingText="Logging in..."
           disabled={!!successMessage}

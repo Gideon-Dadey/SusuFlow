@@ -65,14 +65,12 @@ function RegisterContent() {
   return (
     <AuthShell>
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Join your susu
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <h1 className="sr-hero-title text-foreground">Join your susu</h1>
+        <p className="mt-2.5 text-base text-muted-foreground">
           or{" "}
           <Link
             href="/login"
-            className="font-medium text-secondary hover:text-secondary/80"
+            className="font-semibold text-primary hover:text-primary/80"
           >
             Login
           </Link>
@@ -83,7 +81,7 @@ function RegisterContent() {
         <div className="space-y-1.5">
           <label
             htmlFor="tenant"
-            className="block text-sm font-medium text-foreground"
+            className="block text-sm sm:text-base font-semibold text-foreground"
           >
             Susu company <span className="text-destructive">*</span>
           </label>
@@ -104,7 +102,7 @@ function RegisterContent() {
           <div className="space-y-1.5">
             <label
               htmlFor="firstName"
-              className="block text-sm font-medium text-foreground"
+              className="block text-sm sm:text-base font-semibold text-foreground"
             >
               First name <span className="text-destructive">*</span>
             </label>
@@ -123,7 +121,7 @@ function RegisterContent() {
           <div className="space-y-1.5">
             <label
               htmlFor="lastName"
-              className="block text-sm font-medium text-foreground"
+              className="block text-sm sm:text-base font-semibold text-foreground"
             >
               Last name <span className="text-destructive">*</span>
             </label>
@@ -144,7 +142,7 @@ function RegisterContent() {
         <div className="space-y-1.5">
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-foreground"
+            className="block text-sm sm:text-base font-semibold text-foreground"
           >
             Email address <span className="text-destructive">*</span>
           </label>
@@ -164,7 +162,7 @@ function RegisterContent() {
         <div className="space-y-1.5">
           <label
             htmlFor="phone"
-            className="block text-sm font-medium text-foreground"
+            className="block text-sm sm:text-base font-semibold text-foreground"
           >
             Phone <span className="text-destructive">*</span>
           </label>
@@ -184,7 +182,7 @@ function RegisterContent() {
         <div className="space-y-1.5">
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-foreground"
+            className="block text-sm sm:text-base font-semibold text-foreground"
           >
             Password <span className="text-destructive">*</span>
           </label>
@@ -223,7 +221,7 @@ function RegisterContent() {
 
         <Button
           type="submit"
-          className="h-[48px] w-full rounded-none text-[15px] font-bold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
+          className="h-[54px] min-h-[54px] w-full rounded-[0.25rem] text-base font-bold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
           loading={isLoading}
         >
           Create account

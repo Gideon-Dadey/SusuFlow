@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export function MarketingContainer({
   children,
@@ -7,5 +7,9 @@ export function MarketingContainer({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={cn('marketing-container', className)}>{children}</div>;
+  return (
+    <div className={cn("sr-container marketing-container", className)}>
+      {children}
+    </div>
+  );
 }

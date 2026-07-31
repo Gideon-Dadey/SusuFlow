@@ -14,15 +14,15 @@ export function AboutHero() {
             <p className="text-sm font-medium text-muted-foreground">
               About us
             </p>
-            <h1 className="marketing-hero-title mt-3 text-balance text-foreground">
+            <h1 className="sr-hero-title mt-3 text-balance text-foreground">
               Choose Credo for cashless susu you can trust.
             </h1>
-            <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground lg:mt-6">
+            <p className="sr-hero-copy mt-5 max-w-xl text-pretty text-muted-foreground lg:mt-6">
               For susu companies across Ghana, we built a better way to collect,
               reconcile, and pay out. Verified MoMo deposits, real time ledgers,
               and collectors who never handle cash.
             </p>
-            <p className="mt-4 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground">
+            <p className="sr-hero-copy mt-4 max-w-xl text-pretty text-muted-foreground">
               Building on Ghana&apos;s susu heritage, Credo gives operators the
               digital tools to collect with confidence, verify every MoMo
               deposit, and grow their member base without taking on unnecessary

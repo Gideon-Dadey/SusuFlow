@@ -1,14 +1,14 @@
-import { cn } from '@/lib/utils';
-import { MarketingContainer } from './marketing-container';
+import { cn } from "@/lib/utils";
+import { MarketingContainer } from "./marketing-container";
 
 export function PageHero({
   title,
   description,
-  align = 'center',
+  align = "center",
 }: {
   title: string;
   description: string;
-  align?: 'center' | 'left';
+  align?: "center" | "left";
 }) {
   return (
     <section className="page-hero-offset relative overflow-hidden border-b border-border bg-brand-dark dark:bg-background">
@@ -19,14 +19,14 @@ export function PageHero({
       <MarketingContainer className="relative pb-2">
         <div
           className={cn(
-            'max-w-3xl animate-fade-in py-4',
-            align === 'center' ? 'mx-auto text-center' : 'text-left',
+            "max-w-3xl animate-fade-in py-4",
+            align === "center" ? "mx-auto text-center" : "text-left",
           )}
         >
-          <h1 className="marketing-hero-title text-balance text-white dark:text-heading">
+          <h1 className="sr-hero-title text-balance text-white dark:text-heading">
             {title}
           </h1>
-          <p className="mt-4 text-base font-normal leading-relaxed text-slate-300 dark:text-muted-foreground sm:mt-6">
+          <p className="sr-hero-copy mt-4 font-normal leading-relaxed text-slate-300 dark:text-muted-foreground sm:mt-6">
             {description}
           </p>
         </div>

@@ -97,7 +97,7 @@ export function MarketingFooter() {
               Enterprise Susu &amp; Digital Savings Platform with verified
               deposits.
             </h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-sm text-slate-400 leading-relaxed">
               Designed for Ghanaian microfinance enterprises, cashless field
               agents, and market traders with instant gateway deposit
               verification.
@@ -108,7 +108,7 @@ export function MarketingFooter() {
           <div className="grid grid-cols-2 gap-6 col-span-1 lg:col-span-5 lg:grid-cols-5">
             {/* Column 2: Product Suite */}
             <div className="lg:col-span-3 space-y-4">
-              <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest inline-block">
+              <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider inline-block">
                 PRODUCT SUITE
               </h3>
               <ul className="space-y-3 text-sm">
@@ -237,7 +237,7 @@ export function MarketingFooter() {
         </div>
 
         {/* Bottom Status & Copyright Bar */}
-        <div className="mt-14 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 border-t border-white/10 pt-8">
+        <div className="mt-14 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-400 border-t border-white/10 pt-8">
           <div className="text-center">
             © {year} {APP_NAME} Inc. All rights reserved. Built for Ghanaian
             Financial Enterprise.

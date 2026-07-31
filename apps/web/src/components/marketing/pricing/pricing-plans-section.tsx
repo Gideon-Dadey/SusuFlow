@@ -10,10 +10,10 @@ export function PricingPlansSection() {
     <section className="bg-white dark:bg-background">
       <MarketingContainer className="marketing-hero-platform-inner pb-14 sm:pb-16 lg:pb-20">
         <div className="mx-auto max-w-3xl text-left lg:text-center">
-          <h1 className="marketing-hero-title text-balance text-foreground">
+          <h1 className="sr-hero-title text-balance text-foreground">
             Plans to suit your susu company, no matter the size.
           </h1>
-          <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground lg:mx-auto lg:max-w-2xl">
+          <p className="sr-hero-copy mt-5 text-pretty text-muted-foreground lg:mx-auto lg:max-w-2xl">
             Start with a free trial, scale with verified MoMo collections, and
             grow into multi branch operations. No per deposit fees. You pay for
             the platform, not every transaction.

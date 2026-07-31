@@ -11,7 +11,7 @@ export function ContactHero() {
       <MarketingContainer className="marketing-hero-platform-inner pb-14 sm:pb-16 lg:pb-20">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
           <div className="order-2 min-w-0 text-left lg:order-1">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-[2.5rem] lg:leading-tight">
+            <h1 className="sr-hero-title text-balance text-foreground">
               {CONTACT_OFFICE.headline}
             </h1>
 
