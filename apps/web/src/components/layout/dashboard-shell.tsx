@@ -56,7 +56,7 @@ export function DashboardShell({
             sidebarOpen && "overflow-hidden lg:overflow-y-auto",
           )}
         >
-          <div className="dashboard-page mx-auto max-w-6xl animate-fade-in">
+          <div className="dashboard-page w-full max-w-[1780px] mx-auto animate-fade-in">
             {children}
           </div>
         </main>
