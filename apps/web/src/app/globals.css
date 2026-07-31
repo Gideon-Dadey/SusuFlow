@@ -224,6 +224,7 @@
 }
 
 @layer utilities {
+
   .rounded-none,
   .rounded-sm,
   .rounded-md,
@@ -629,9 +630,7 @@
     --marketing-nav-pill-height: 3.25rem;
     --marketing-header-height: calc(var(--marketing-safe-top) + var(--marketing-nav-pill-height));
     --marketing-hero-content-gap: 3rem;
-    --marketing-hero-content-offset: calc(
-      var(--marketing-header-height) + var(--marketing-hero-content-gap)
-    );
+    --marketing-hero-content-offset: calc(var(--marketing-header-height) + var(--marketing-hero-content-gap));
     @apply min-h-screen overflow-x-hidden bg-background;
     background:
       radial-gradient(ellipse 80% 50% at 50% -20%, var(--surface-glow), transparent),
@@ -652,27 +651,27 @@
       --marketing-gutter: 1.5rem;
       --marketing-nav-pill-height: 4rem;
       --marketing-hero-content-gap: 4rem;
-      --marketing-max-width: min(1200px, 100%);
+      --marketing-max-width: min(1400px, 100%);
     }
   }
 
   @media (min-width: 1280px) {
     .marketing-canvas {
-      --marketing-max-width: min(1320px, 100%);
+      --marketing-max-width: min(1560px, 100%);
     }
   }
 
   @media (min-width: 1536px) {
     .marketing-canvas {
       --marketing-gutter: 2rem;
-      --marketing-max-width: min(1440px, 100%);
+      --marketing-max-width: min(1680px, 100%);
       --marketing-hero-content-gap: 3.5rem;
     }
   }
 
   @media (min-width: 1920px) {
     .marketing-canvas {
-      --marketing-max-width: min(1680px, 100%);
+      --marketing-max-width: min(1780px, 100%);
     }
   }
 
@@ -866,9 +865,11 @@
 
   .faq-item-summary {
     @apply flex cursor-pointer list-none items-center gap-3 px-4 py-4 sm:gap-4 sm:px-5 sm:py-[1.125rem];
+
     &::-webkit-details-marker {
       display: none;
     }
+
     &::marker {
       content: '';
     }
@@ -935,6 +936,7 @@
 
   /* iOS Safari zooms focused inputs below 16px — keep auth fields at 16px on touch devices */
   @media (max-width: 767px) {
+
     .auth-split input:not([type='checkbox']):not([type='radio']),
     .auth-split select,
     .auth-split textarea {
@@ -971,6 +973,7 @@
 
   /* Prevent duplicate headers on mobile dashboards */
   @media (max-width: 1023px) {
+
     .dashboard-shell main .page-header,
     .dashboard-shell main h1.dashboard-title {
       display: none !important;
@@ -979,6 +982,7 @@
 
   /* SaaS Production-Grade Receipt Print Styles */
   @media print {
+
     /* Hide the entire application shell layout completely */
     .dashboard-shell {
       display: none !important;
@@ -995,7 +999,7 @@
     }
 
     /* Make sure the portaled modal wrapper behaves as a static document block */
-    body > div.z-50 {
+    body>div.z-50 {
       position: static !important;
       display: block !important;
       width: 100% !important;
@@ -1050,6 +1054,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
