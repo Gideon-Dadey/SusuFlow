@@ -22,7 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         id={id}
         className={cn(
           "flex h-11 w-full rounded-md border border-input bg-card px-3 py-2 text-[16px] text-foreground",
-          "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0",
+          "placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus:border-primary dark:focus:border-zinc-700",
           "disabled:cursor-not-allowed disabled:opacity-50",
           error && "border-destructive focus:ring-destructive",
           className,
