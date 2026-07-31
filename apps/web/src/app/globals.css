@@ -280,38 +280,28 @@
   }
 
   .dark .premium-card {
-    box-shadow: none;
+    border-color: var(--border);
+    box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
   }
 
-  .dark .premium-card:hover {
-    border-color: rgb(74 222 128 / 0.35);
-    box-shadow: none;
+  .dark .premium-card:hover,
+  .dark .portal-card:hover,
+  .dark .dashboard-tile:hover {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 8px 28px -4px rgba(0, 0, 0, 0.6) !important;
+    outline: none !important;
   }
 
-  .portal-card {
-    @apply rounded-none border border-border bg-card p-4 shadow-card sm:p-5;
-  }
-
-  .dark .portal-card {
-    box-shadow: none;
-  }
-
-  .dashboard-tile {
-    @apply border-border bg-card rounded-none;
-  }
-
+  .dark .portal-card,
   .dark .dashboard-tile {
     background-color: var(--card);
     border-color: var(--border);
-    box-shadow: none;
+    box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
   }
 
-  .dark .shadow-card {
-    box-shadow: none;
-  }
-
+  .dark .shadow-card,
   .dark .shadow-elevated {
-    box-shadow: none;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
   }
 
   .dashboard-icon-amber {
