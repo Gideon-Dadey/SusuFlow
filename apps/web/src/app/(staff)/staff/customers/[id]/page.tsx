@@ -343,19 +343,23 @@ export default function CustomerDetailPage({
         </Card>
 
         {/* Balance Card */}
-        <Card className="bg-gradient-to-br from-brand-dark via-primary-800 to-secondary text-primary-foreground border-0 shadow-elevated">
+        <Card className="bg-card dark:bg-zinc-900 border border-slate-200/90 dark:border-zinc-800 shadow-md">
           <CardContent className="p-6 flex flex-col justify-between h-full min-h-[140px]">
             <div>
-              <p className="text-sm font-medium text-slate-300">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Savings Wallet Balance
               </p>
-              <div className="mt-2 text-3xl font-bold">
+              <div className="mt-2 text-3xl font-extrabold text-foreground font-mono">
                 {walletLoading ? "..." : formatGhs(wallet?.balance || 0)}
               </div>
             </div>
-            <div className="text-xs text-slate-300 font-mono mt-4">
-              Wallet ID:{" "}
-              {wallet?.walletId ? `${wallet.walletId.slice(0, 8)}...` : "N/A"}
+            <div className="text-xs text-muted-foreground font-mono mt-4 pt-3 border-t border-border/60 flex items-center justify-between">
+              <span>Wallet ID</span>
+              <span className="font-semibold text-foreground">
+                {wallet?.walletId
+                  ? `${wallet.walletId.slice(0, 10)}...`
+                  : "N/A"}
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -401,15 +405,12 @@ export default function CustomerDetailPage({
 
       {/* Tab Contents */}
       {activeTab === "overview" && (
-        <Card>
+        <Card className="bg-card dark:bg-zinc-900 border border-slate-200/90 dark:border-zinc-800 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
             <div>
               <CardTitle className="text-base font-semibold">
                 Account History
               </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Recent deposits and withdrawals for this account
-              </p>
             </div>
             <Button
               size="sm"
@@ -421,7 +422,7 @@ export default function CustomerDetailPage({
               Download CSV
             </Button>
           </CardHeader>
-          <CardContent className="divide-y divide-gray-100 dark:divide-border/40 p-0">
+          <CardContent className="divide-y divide-border/60 p-0">
             {allTransactions.length === 0 ? (
               <p className="text-center py-12 text-muted-foreground text-sm">
                 No transactions on record
@@ -445,8 +446,8 @@ export default function CustomerDetailPage({
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
                         isDeposit
-                          ? "bg-emerald-100 text-emerald-600"
-                          : "bg-red-100 text-red-600"
+                          ? "bg-emerald-500/10 text-emerald-500"
+                          : "bg-red-500/10 text-red-500"
                       }`}
                     >
                       {isDeposit ? (
