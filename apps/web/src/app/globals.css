@@ -794,21 +794,21 @@
   }
 
   .marketing-hero-platform-inner {
-    padding-top: calc(var(--marketing-header-height) + 3.5rem);
+    padding-top: 1.5rem;
     padding-bottom: 2.5rem;
   }
 
   @media (min-width: 640px) {
     .marketing-hero-platform-inner {
-      padding-top: calc(var(--marketing-header-height) + 2rem);
+      padding-top: 2.5rem;
       padding-bottom: 3rem;
     }
   }
 
   @media (min-width: 1024px) {
     .marketing-hero-platform-inner {
-      padding-top: calc(var(--marketing-header-height) + 1rem);
-      padding-bottom: 3.5rem;
+      padding-top: 3.5rem;
+      padding-bottom: 4rem;
       min-height: auto;
     }
   }
