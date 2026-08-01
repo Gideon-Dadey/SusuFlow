@@ -399,7 +399,7 @@
 
   /* OmniH Standard Typography Rules */
   .omnih-h1 {
-    @apply text-3xl md:text-4xl font-black tracking-tighter leading-none;
+    @apply text-3xl md:text-4xl font-bold tracking-tighter leading-none;
     font-family: var(--font-open-sans), "Open Sans", sans-serif;
     color: var(--heading);
   }
