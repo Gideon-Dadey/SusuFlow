@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { tenantApi, userApi } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth.store";
+import { getTenantSlug } from "@/lib/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -103,15 +104,22 @@ export default function StaffSettingsPage() {
 
   // 2. Tenant Settings Queries & States
   const isCompanyAdmin = user?.roles.includes("company_admin");
+  const tenantSlug = user?.tenantSlug || getTenantSlug();
 
   const {
     data: tenant,
     isLoading: isTenantLoading,
     refetch: refetchTenant,
   } = useQuery({
-    queryKey: ["tenant-settings", user?.tenantSlug],
+    queryKey: ["tenant-settings", tenantSlug],
     queryFn: () => tenantApi.getMe(),
     enabled: !!isCompanyAdmin,
+  });
+
+  const { data: tenantBranding } = useQuery({
+    queryKey: ["tenant-branding", tenantSlug],
+    queryFn: () => tenantApi.getBySlug(tenantSlug),
+    enabled: !!tenantSlug,
   });
 
   // Branding states
@@ -134,30 +142,33 @@ export default function StaffSettingsPage() {
   const [commissionRate, setCommissionRate] = useState("1.5");
 
   useEffect(() => {
+    const activeTenant = (tenant || tenantBranding) as any;
     const resolvedName =
-      tenant?.name ||
-      (user?.tenantSlug
-        ? user.tenantSlug === "adipa"
+      activeTenant?.name ||
+      (tenantSlug
+        ? tenantSlug === "adipa"
           ? "Adipa Microfinance"
-          : user.tenantSlug.toUpperCase()
+          : tenantSlug.toUpperCase()
         : "Adipa Microfinance");
     const resolvedEmail =
-      tenant?.email || user?.email || "admin@adipamicrofinance.com";
+      activeTenant?.email || user?.email || "admin@adipamicrofinance.com";
     const resolvedPhone =
-      tenant?.phone || userProfile?.phone || "+233240000000";
+      activeTenant?.phone || userProfile?.phone || "+233240000000";
+    const resolvedLogo = tenant?.logoUrl || tenantBranding?.logoUrl || "";
 
     setName((prev) => prev || resolvedName);
     setEmail((prev) => prev || resolvedEmail);
     setPhone((prev) => prev || resolvedPhone);
+    if (resolvedLogo) setLogoUrl(resolvedLogo);
 
-    if (tenant) {
-      if (tenant.name) setName(tenant.name);
-      if (tenant.email) setEmail(tenant.email);
-      if (tenant.phone) setPhone(tenant.phone);
-      if (tenant.logoUrl) setLogoUrl(tenant.logoUrl);
-      if (tenant.primaryColor) setPrimaryColor(tenant.primaryColor);
+    if (activeTenant) {
+      if (activeTenant.name) setName(activeTenant.name);
+      if (activeTenant.email) setEmail(activeTenant.email);
+      if (activeTenant.phone) setPhone(activeTenant.phone);
+      if (activeTenant.logoUrl) setLogoUrl(activeTenant.logoUrl);
+      if (activeTenant.primaryColor) setPrimaryColor(activeTenant.primaryColor);
 
-      const settings = (tenant.settings || {}) as Record<string, any>;
+      const settings = (activeTenant.settings || {}) as Record<string, any>;
       setCurrency(settings.currency || "GHS");
       setTimezone(settings.timezone || "Africa/Accra");
       setMinDeposit(String(settings.min_deposit ?? "5"));
@@ -167,7 +178,7 @@ export default function StaffSettingsPage() {
       setTransactionFee(String(settings.transaction_fee ?? "0.50"));
       setCommissionRate(String((settings.commission_rate ?? 0.015) * 100));
     }
-  }, [tenant, user, userProfile]);
+  }, [tenant, tenantBranding, user, userProfile, tenantSlug]);
 
   // Tab switcher
   const handleTabChange = (tab: typeof activeTab) => {
@@ -849,14 +860,19 @@ export default function StaffSettingsPage() {
                       Company Logo
                     </label>
                     <div className="flex items-center gap-4">
-                      {logoUrl ? (
+                      {logoUrl || tenant?.logoUrl || tenantBranding?.logoUrl ? (
                         <img
-                          src={logoUrl}
-                          alt="Logo preview"
-                          className="h-16 w-16 object-contain bg-muted border border-border"
+                          src={
+                            logoUrl ||
+                            tenant?.logoUrl ||
+                            tenantBranding?.logoUrl ||
+                            ""
+                          }
+                          alt="Company Logo preview"
+                          className="h-16 w-16 object-contain rounded-lg bg-muted border border-border p-1"
                         />
                       ) : (
-                        <div className="flex h-16 w-16 items-center justify-center bg-muted text-xs text-muted-foreground font-semibold border border-border">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-muted text-xs text-muted-foreground font-semibold border border-border">
                           No Logo
                         </div>
                       )}
