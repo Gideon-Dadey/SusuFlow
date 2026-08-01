@@ -50,7 +50,7 @@ export function ProductHero({
               <Link href="/register" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center gap-2 shadow-sm"
+                  className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-8 text-[17px] font-semibold flex items-center gap-2 shadow-sm"
                 >
                   Get started
                   <ArrowRight className="h-[18px] w-[18px]" />

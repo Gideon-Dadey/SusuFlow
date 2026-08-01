@@ -28,14 +28,14 @@ export function ContactHero() {
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link href={`mailto:${SUPPORT_EMAIL}`}>
-                <Button className="h-12 w-full rounded-xl px-6 text-[17px] font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white shadow-sm sm:w-auto">
+                <Button className="h-12 w-full rounded-xl px-8 text-[17px] font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white shadow-sm sm:w-auto">
                   Email us
                 </Button>
               </Link>
               <Link href="#contact-form">
                 <Button
                   variant="outline"
-                  className="h-12 w-full rounded-xl px-6 text-[17px] font-semibold sm:w-auto"
+                  className="h-12 w-full rounded-xl px-8 text-[17px] font-semibold sm:w-auto"
                 >
                   Speak to our team
                 </Button>

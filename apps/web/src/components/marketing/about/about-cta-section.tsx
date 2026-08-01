@@ -19,7 +19,7 @@ export function AboutCtaSection() {
             <Link href="/register" className="sm:w-auto">
               <Button
                 size="lg"
-                className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center justify-center gap-2.5 sm:min-w-[12rem]"
+                className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-8 text-[17px] font-semibold flex items-center justify-center gap-2.5 sm:min-w-[12rem]"
               >
                 <span>Register</span>
                 <ArrowRight
@@ -30,7 +30,7 @@ export function AboutCtaSection() {
             </Link>
             <Link
               href="/pricing"
-              className="inline-flex h-12 items-center justify-center gap-1.5 rounded-none border border-border bg-white px-6 text-[15px] font-semibold text-foreground transition-colors hover:bg-muted/50 dark:border-border dark:bg-card dark:hover:bg-muted/50 sm:min-w-[11rem]"
+              className="inline-flex h-12 items-center justify-center gap-1.5 rounded-none border border-border bg-white px-8 text-[15px] font-semibold text-foreground transition-colors hover:bg-muted/50 dark:border-border dark:bg-card dark:hover:bg-muted/50 sm:min-w-[11rem]"
             >
               View pricing
               <ArrowRight className="h-4 w-4" />
