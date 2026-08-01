@@ -824,7 +824,7 @@
   }
 
   .marketing-canvas {
-    @apply min-h-screen overflow-x-hidden bg-background;
+    @apply min-h-screen bg-background;
     background:
       radial-gradient(ellipse 80% 50% at 50% -20%, var(--surface-glow), transparent),
       var(--background);
