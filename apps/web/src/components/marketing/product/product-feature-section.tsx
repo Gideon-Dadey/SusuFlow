@@ -36,7 +36,7 @@ export function ProductFeatureSection({
                     isReversed ? "lg:order-2" : "lg:order-1",
                   )}
                 >
-                  <h2 className="omnih-h2 text-3xl sm:text-4xl font-bold text-foreground">
+                  <h2 className="omnih-h2 text-3xl sm:text-4xl font-semibold text-foreground">
                     {feature.title}
                   </h2>
                   <div className="omnih-body mt-6 text-[17px] sm:text-[18px] leading-relaxed text-muted-foreground space-y-6">
