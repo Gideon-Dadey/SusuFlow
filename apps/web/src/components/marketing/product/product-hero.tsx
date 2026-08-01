@@ -47,10 +47,13 @@ export function ProductHero({
               {description}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6">
-              <Link href="/register" className="w-full sm:w-auto">
+              <Link
+                href="/register"
+                className="w-[85%] max-w-[320px] sm:max-w-none sm:w-auto"
+              >
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center gap-2 shadow-sm"
+                  className="h-12 w-[85%] max-w-[320px] sm:max-w-none sm:w-auto rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center gap-2 shadow-sm"
                 >
                   Get started
                   <ArrowRight className="h-[18px] w-[18px]" />
