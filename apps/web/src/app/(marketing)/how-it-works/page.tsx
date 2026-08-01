@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { FaqSection } from "@/components/marketing/faq-section";
 import { HowItWorksCapabilitiesSection } from "@/components/marketing/how-it-works/how-it-works-capabilities-section";
 import { HowItWorksCtaSection } from "@/components/marketing/how-it-works/how-it-works-cta-section";
 import { HowItWorksHero } from "@/components/marketing/how-it-works/how-it-works-hero";
@@ -23,7 +22,6 @@ export default function HowItWorksPage() {
       <HowItWorksLocalSection />
       <HowItWorksCapabilitiesSection />
       <HowItWorksCtaSection />
-      <FaqSection />
     </>
   );
 }

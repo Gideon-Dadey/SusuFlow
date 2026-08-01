@@ -16,12 +16,12 @@ export function AboutPeopleSection() {
               <h3 className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
                 {title}
               </h3>
-              <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground sm:text-base">
+              <p className="mt-3 flex-1 text-[17px] leading-relaxed text-muted-foreground sm:text-[17px]">
                 {description}
               </p>
               <Link
                 href={href}
-                className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-secondary transition-colors hover:text-secondary/80"
+                className="mt-6 inline-flex items-center gap-1.5 text-[17px] font-semibold text-secondary transition-colors hover:text-secondary/80"
               >
                 {cta}
                 <ArrowRight className="h-4 w-4" aria-hidden />

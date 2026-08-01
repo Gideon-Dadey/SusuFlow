@@ -22,7 +22,7 @@ export function HowItWorksLocalSection() {
           </div>
 
           <div className="order-2 min-w-0 text-left lg:order-2">
-            <p className="text-sm font-medium text-muted-foreground">
+            <p className="text-[17px] font-medium text-muted-foreground">
               Built for Ghana
             </p>
             <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-[2rem]">
@@ -40,7 +40,7 @@ export function HowItWorksLocalSection() {
             </p>
             <Link
               href="/contact?intent=demo"
-              className="mt-8 inline-flex items-center gap-2 text-base font-semibold text-muted-foreground transition-colors hover:text-foreground"
+              className="mt-8 inline-flex items-center gap-2 text-[17px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
             >
               Talk to our team
               <ArrowRight className="h-4 w-4" />

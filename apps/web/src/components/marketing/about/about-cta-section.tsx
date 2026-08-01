@@ -11,7 +11,7 @@ export function AboutCtaSection() {
           <h2 className="text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
             Ready to modernize your susu company?
           </h2>
-          <p className="mt-4 text-pretty text-base text-muted-foreground">
+          <p className="mt-4 text-pretty text-[17px] text-muted-foreground">
             Request a demo or start a free trial. We will help you onboard
             collectors and run your first verified MoMo collection cycle.
           </p>

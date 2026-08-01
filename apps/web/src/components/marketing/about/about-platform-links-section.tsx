@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import { ABOUT_PLATFORM_LINKS } from '@/lib/marketing-data';
-import { MarketingContainer } from '../marketing-container';
+import Link from "next/link";
+import { ABOUT_PLATFORM_LINKS } from "@/lib/marketing-data";
+import { MarketingContainer } from "../marketing-container";
 
 export function AboutPlatformLinksSection() {
   return (
@@ -11,12 +11,15 @@ export function AboutPlatformLinksSection() {
             <li key={label} className="flex items-center gap-x-2 sm:gap-x-4">
               <Link
                 href={href}
-                className="text-sm font-semibold text-foreground transition-colors hover:text-secondary sm:text-base"
+                className="text-[17px] font-semibold text-foreground transition-colors hover:text-secondary sm:text-[17px]"
               >
                 {label}
               </Link>
               {index < ABOUT_PLATFORM_LINKS.length - 1 ? (
-                <span className="hidden text-muted-foreground/40 sm:inline" aria-hidden>
+                <span
+                  className="hidden text-muted-foreground/40 sm:inline"
+                  aria-hidden
+                >
                   |
                 </span>
               ) : null}

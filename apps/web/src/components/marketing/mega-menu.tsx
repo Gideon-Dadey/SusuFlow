@@ -351,7 +351,7 @@ export function MegaDropdown({
                   <Link
                     href={config.promo.ctaHref}
                     onClick={onClose}
-                    className="mt-1 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-[#0066cc] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#0052a3]"
+                    className="mt-1 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-[#0066cc] px-4 text-[17px] font-semibold text-white transition-colors hover:bg-[#0052a3]"
                   >
                     <span>{config.promo.ctaLabel}</span>
                     <FontAwesomeIcon icon={faArrowRight} className="h-3 w-3" />

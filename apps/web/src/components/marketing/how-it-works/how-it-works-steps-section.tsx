@@ -7,7 +7,7 @@ export function HowItWorksStepsSection() {
     <section className="bg-white dark:bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="max-w-2xl text-left">
-          <p className="text-sm font-medium text-muted-foreground">
+          <p className="text-[17px] font-medium text-muted-foreground">
             The digital path
           </p>
           <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-[2rem]">
@@ -36,13 +36,13 @@ export function HowItWorksStepsSection() {
                     />
                   </div>
                   <div className="min-w-0">
-                    <span className="text-sm font-bold text-secondary">
+                    <span className="text-[17px] font-bold text-secondary">
                       {step}
                     </span>
                     <h3 className="mt-1 text-lg font-bold tracking-tight text-foreground">
                       {title}
                     </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    <p className="mt-2 text-[17px] leading-relaxed text-muted-foreground sm:text-[17px]">
                       {description}
                     </p>
                   </div>
