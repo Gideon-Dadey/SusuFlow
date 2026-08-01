@@ -44,7 +44,7 @@ export function PlatformOverviewSection() {
             <div className="relative aspect-[4/3] w-full max-h-[14rem] sm:max-h-none sm:aspect-[16/11] lg:aspect-[5/4]">
               <Image
                 src={BRAND_PLATFORM_OVERVIEW}
-                alt="Credo admin dashboard on tablet, mobile saver app, and verified MoMo card"
+                alt="SusuFlow admin dashboard on tablet, mobile saver app, and verified MoMo card"
                 fill
                 sizes="(max-width: 1024px) 90vw, 50vw"
                 className="object-contain object-center drop-shadow-[0_28px_56px_rgba(15,23,42,0.14)]"

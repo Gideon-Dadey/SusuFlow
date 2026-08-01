@@ -112,8 +112,8 @@ export function TransactionReceiptSheet({
   });
 
   const companyName = useMemo(() => {
-    if (!transaction) return "Credo Platform";
-    return transaction.tenant?.name || tenantInfo?.name || "Credo Platform";
+    if (!transaction) return "SusuFlow Platform";
+    return transaction.tenant?.name || tenantInfo?.name || "SusuFlow Platform";
   }, [transaction, tenantInfo]);
 
   const receiptDocument = useMemo(() => {

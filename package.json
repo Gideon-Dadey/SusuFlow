@@ -32,6 +32,7 @@
     "docker:prod": "docker compose -f infrastructure/docker/docker-compose.prod.yml up -d --build",
     "db:backup": "bash scripts/db-backup.sh",
     "prepare": "husky || true",
+    "rebrand": "node scripts/rebrand-platform.js",
     "setup": "pnpm install && pnpm db:generate && pnpm docker:up"
   },
   "engines": {

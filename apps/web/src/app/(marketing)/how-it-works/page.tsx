@@ -11,7 +11,7 @@ import { APP_NAME } from "@/lib/marketing-data";
 export const metadata: Metadata = {
   title: `How it works | ${APP_NAME}`,
   description:
-    "How Ghanaian susu companies move from cash and notebooks to verified MoMo deposits on Credo.",
+    "How Ghanaian susu companies move from cash and notebooks to verified MoMo deposits on SusuFlow.",
 };
 
 export default function HowItWorksPage() {

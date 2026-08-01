@@ -94,10 +94,10 @@ async function authenticateUser(promptLabel: string): Promise<boolean> {
 
   const promptMessage =
     support.authType === "fingerprint"
-      ? "Confirm fingerprint to sign in to Credo"
+      ? "Confirm fingerprint to sign in to SusuFlow"
       : support.authType === "face"
-        ? "Confirm Face ID to sign in to Credo"
-        : `Confirm ${promptLabel} to sign in to Credo`;
+        ? "Confirm Face ID to sign in to SusuFlow"
+        : `Confirm ${promptLabel} to sign in to SusuFlow`;
 
   const result = await LocalAuthentication.authenticateAsync({
     promptMessage,

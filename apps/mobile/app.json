@@ -1,18 +1,18 @@
 {
   "expo": {
-    "name": "Credo",
-    "slug": "credo",
+    "name": "SusuFlow",
+    "slug": "susuflow",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "credo",
+    "scheme": "susuflow",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.credo.app",
+      "bundleIdentifier": "com.susuflow.app",
       "buildNumber": "1",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Allow Credo to use Face ID for quick and secure sign in."
+        "NSFaceIDUsageDescription": "Allow SusuFlow to use Face ID for quick and secure sign in."
       }
     },
     "android": {
@@ -20,7 +20,7 @@
         "backgroundColor": "#0056d2",
         "foregroundImage": "./assets/images/android-icon-foreground.png"
       },
-      "package": "com.credo.app",
+      "package": "com.susuflow.app",
       "versionCode": 1
     },
     "web": {
@@ -33,13 +33,13 @@
       [
         "expo-secure-store",
         {
-          "faceIDPermission": "Allow Credo to use Face ID for quick and secure sign in."
+          "faceIDPermission": "Allow SusuFlow to use Face ID for quick and secure sign in."
         }
       ],
       [
         "expo-local-authentication",
         {
-          "faceIDPermission": "Allow Credo to use Face ID for quick and secure sign in."
+          "faceIDPermission": "Allow SusuFlow to use Face ID for quick and secure sign in."
         }
       ],
       [

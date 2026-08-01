@@ -14,7 +14,7 @@ export function AboutPlatformSection() {
           <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground lg:mx-auto">
             Designed to help susu operators manage collections, commissions, and
             payouts across branches. Verified MoMo deposits, live balances, and
-            exportable reports make choosing Credo straightforward.
+            exportable reports make choosing SusuFlow straightforward.
           </p>
           <Link
             href="/how-it-works"

@@ -15,7 +15,7 @@ export function AboutHero() {
               About us
             </p>
             <h1 className="sr-hero-title mt-3 text-balance text-foreground">
-              Choose Credo for cashless susu you can trust.
+              Choose SusuFlow for cashless susu you can trust.
             </h1>
             <p className="sr-hero-copy mt-5 max-w-xl text-pretty text-muted-foreground lg:mt-6">
               For susu companies across Ghana, we built a better way to collect,
@@ -23,8 +23,8 @@ export function AboutHero() {
               and collectors who never handle cash.
             </p>
             <p className="sr-hero-copy mt-4 max-w-xl text-pretty text-muted-foreground">
-              Building on Ghana&apos;s susu heritage, Credo gives operators the
-              digital tools to collect with confidence, verify every MoMo
+              Building on Ghana&apos;s susu heritage, SusuFlow gives operators
+              the digital tools to collect with confidence, verify every MoMo
               deposit, and grow their member base without taking on unnecessary
               risk.
             </p>

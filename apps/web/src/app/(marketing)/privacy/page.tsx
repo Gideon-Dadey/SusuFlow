@@ -5,7 +5,7 @@ import { APP_NAME } from "@/lib/marketing-data";
 
 export const metadata: Metadata = {
   title: `Privacy Policy | ${APP_NAME}`,
-  description: "How Credo collects, uses, and protects your data.",
+  description: "How SusuFlow collects, uses, and protects your data.",
 };
 
 export default function PrivacyPage() {
@@ -21,9 +21,9 @@ export default function PrivacyPage() {
           <article className="legal-prose">
             <h2>1. Overview</h2>
             <p>
-              Credo (&quot;we&quot;) respects your privacy. This policy explains
-              what data we collect when you use our website and application, and
-              how we use it.
+              SusuFlow (&quot;we&quot;) respects your privacy. This policy
+              explains what data we collect when you use our website and
+              application, and how we use it.
             </p>
 
             <h2>2. Data we collect</h2>

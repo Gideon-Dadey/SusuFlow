@@ -156,7 +156,7 @@ export default function ReceiptVerificationPage() {
                     Transaction Receipt Verified
                   </h1>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Cryptographically sealed by Credo Ledger Engine
+                    Cryptographically sealed by SusuFlow Ledger Engine
                   </p>
                 </div>
               </div>
@@ -185,7 +185,7 @@ export default function ReceiptVerificationPage() {
                     <span>Organization</span>
                   </div>
                   <span className="font-semibold text-foreground text-right">
-                    {txn.tenant?.name || "Credo"}
+                    {txn.tenant?.name || "SusuFlow"}
                   </span>
                 </div>
 
@@ -301,7 +301,7 @@ export default function ReceiptVerificationPage() {
               {/* Warning message */}
               <div className="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl p-4 text-center text-sm text-red-800 dark:text-red-300">
                 This transaction reference <strong>{reference}</strong> does not
-                correspond to an official record in the Credo double-entry
+                correspond to an official record in the SusuFlow double-entry
                 ledger. Please ensure the URL is correct or check with the
                 issuing organization.
               </div>
@@ -313,12 +313,12 @@ export default function ReceiptVerificationPage() {
                 </p>
                 <ul className="list-disc list-inside space-y-1.5 text-muted-foreground/75 leading-relaxed">
                   <li>
-                    Only scan QR codes generated directly by the official Credo
-                    platform.
+                    Only scan QR codes generated directly by the official
+                    SusuFlow platform.
                   </li>
                   <li>
                     Double-check that the domain name in your browser matches
-                    the official Credo domain.
+                    the official SusuFlow domain.
                   </li>
                   <li>
                     If you suspect fraud or an altered print receipt, contact
@@ -334,7 +334,7 @@ export default function ReceiptVerificationPage() {
                 href="/"
                 className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                <ArrowLeft className="h-4 w-4" /> Go to Credo Home
+                <ArrowLeft className="h-4 w-4" /> Go to SusuFlow Home
               </Link>
             </div>
           </div>

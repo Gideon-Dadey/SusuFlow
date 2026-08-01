@@ -1,5 +1,5 @@
 /**
- * Design tokens — Credo Brand Blue palette (#0056d2).
+ * Design tokens — SusuFlow Brand Blue palette (#0056d2).
  * Primary: #0056d2 for actions; #0043aa for active/pressed states.
  */
 

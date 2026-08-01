@@ -14,7 +14,7 @@ import { APP_NAME } from "@/lib/marketing-data";
 export const metadata: Metadata = {
   title: `About us | ${APP_NAME}`,
   description:
-    "Learn about Credo. We digitize susu savings in Ghana with verified MoMo deposits, transparent ledgers, and tools built for collectors and susu companies.",
+    "Learn about SusuFlow. We digitize susu savings in Ghana with verified MoMo deposits, transparent ledgers, and tools built for collectors and susu companies.",
 };
 
 export default function AboutPage() {

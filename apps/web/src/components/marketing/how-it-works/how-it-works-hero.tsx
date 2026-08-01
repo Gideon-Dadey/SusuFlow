@@ -12,14 +12,14 @@ export function HowItWorksHero() {
         <div className="flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 xl:gap-16">
           <div className="min-w-0 text-left">
             <p className="text-sm font-medium text-muted-foreground">
-              How Credo works
+              How SusuFlow works
             </p>
             <h1 className="sr-hero-title mt-3 text-balance text-foreground">
               Move your susu company from notebooks to verified MoMo.
             </h1>
             <p className="sr-hero-copy mt-5 max-w-xl text-pretty text-muted-foreground lg:mt-6">
               Built for Ghanaian susu operators still collecting cash, chasing
-              WhatsApp screenshots, and reconciling by hand. Credo keeps your
+              WhatsApp screenshots, and reconciling by hand. SusuFlow keeps your
               relationships in the field and puts every cedi on a verified
               digital ledger.
             </p>

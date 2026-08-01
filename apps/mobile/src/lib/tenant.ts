@@ -1,13 +1,13 @@
 const EMAIL_DOMAIN_TENANT_SLUG: Record<string, string> = {
-  "adipamicrofinance.com": "adipa",
+  "susuflow.com": "adipa",
   "adipa.com": "adipa",
 };
 
-const PLATFORM_EMAIL_DOMAINS = new Set(["susuflow.com", "credo.com"]);
+const PLATFORM_EMAIL_DOMAINS = new Set(["susuflow.com", "susuflow.com"]);
 
 function isPlatformEmailDomain(domain: string): boolean {
   if (PLATFORM_EMAIL_DOMAINS.has(domain)) return true;
-  return domain.endsWith(".susuflow.com") || domain.endsWith(".credo.com");
+  return domain.endsWith(".susuflow.com") || domain.endsWith(".susuflow.com");
 }
 
 export function inferTenantSlugFromEmail(email: string): string {

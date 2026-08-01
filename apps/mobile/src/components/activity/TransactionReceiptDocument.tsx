@@ -194,7 +194,7 @@ export function TransactionReceiptDocument({
           Verification
         </Text>
         <Text style={[styles.verifyHint, { color: colors.mutedForeground }]}>
-          Confirm this receipt on Credo using the reference below.
+          Confirm this receipt on SusuFlow using the reference below.
         </Text>
         <Pressable
           accessibilityRole="button"
