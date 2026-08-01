@@ -137,7 +137,7 @@ export function BrandLockup({
         <span
           className={onDark ? "text-white" : "text-slate-900 dark:text-white"}
         >
-          Credo
+          SusuFlow
         </span>
         <span className="text-[#0066cc] dark:text-[#38bdf8] ml-[1px]">.</span>
       </span>

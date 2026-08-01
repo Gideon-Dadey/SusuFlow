@@ -81,9 +81,9 @@ export function Sidebar({
 
   const brandLabel =
     variant === "admin"
-      ? "Credo Admin"
+      ? "SusuFlow Admin"
       : tenantBranding?.name ||
-        (collectorMode ? "Collector" : customerMode ? "My Susu" : "Credo");
+        (collectorMode ? "Collector" : customerMode ? "My Susu" : "SusuFlow");
 
   const isGrouped =
     (variant === "staff" || variant === "admin") &&
