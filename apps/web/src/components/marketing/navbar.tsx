@@ -497,7 +497,7 @@ export function MarketingNavbar() {
                         href={dashboardPath}
                         onClick={() => setMenuOpen(false)}
                       >
-                        <Button className="h-12 w-[85%] max-w-[320px] sm:max-w-none sm:w-auto rounded-xl text-[17px] font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white shadow-md flex items-center justify-center gap-2.5">
+                        <Button className="h-12 w-full rounded-xl text-[17px] font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white shadow-md flex items-center justify-center gap-2.5">
                           <span>Go to Dashboard</span>
                           <ArrowRight
                             className="h-[18px] w-[18px] stroke-[2.25]"
@@ -511,7 +511,7 @@ export function MarketingNavbar() {
                           setMenuOpen(false);
                           logout();
                         }}
-                        className="h-12 w-[85%] max-w-[320px] sm:max-w-none sm:w-auto rounded-xl text-[16px] font-semibold border-slate-300 dark:border-slate-700 text-destructive hover:bg-destructive/10"
+                        className="h-12 w-full rounded-xl text-[16px] font-semibold border-slate-300 dark:border-slate-700 text-destructive hover:bg-destructive/10"
                       >
                         Sign out
                       </Button>
@@ -527,7 +527,7 @@ export function MarketingNavbar() {
                         </Button>
                       </Link>
                       <Link href="/register" onClick={() => setMenuOpen(false)}>
-                        <Button className="h-12 w-[85%] max-w-[320px] sm:max-w-none sm:w-auto rounded-xl text-[17px] font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white shadow-md flex items-center justify-center gap-2.5">
+                        <Button className="h-12 w-full rounded-xl text-[17px] font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white shadow-md flex items-center justify-center gap-2.5">
                           <span>Register</span>
                           <ArrowRight
                             className="h-[18px] w-[18px] stroke-[2.25]"
