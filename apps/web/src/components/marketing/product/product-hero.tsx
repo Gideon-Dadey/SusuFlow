@@ -39,7 +39,7 @@ export function ProductHero({
 
       <MarketingContainer>
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 lg:items-center">
-          <div className="max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
+          <div className="order-2 lg:order-1 max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
             <h1 className="omnih-h1 text-4xl sm:text-5xl lg:text-6xl text-balance text-slate-900 dark:text-white mb-6">
               {title}
             </h1>
@@ -65,7 +65,7 @@ export function ProductHero({
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
+          <div className="order-1 lg:order-2 relative mx-auto w-full max-w-xl lg:max-w-none">
             <div className="relative w-full overflow-hidden aspect-[4/3] rounded-[1.75rem] shadow-md border border-border/40 bg-muted/30 sm:aspect-[16/11]">
               <Image
                 src={imageSrc}
