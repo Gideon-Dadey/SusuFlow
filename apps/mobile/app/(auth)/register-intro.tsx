@@ -20,7 +20,7 @@ const STEPS = [
   {
     title: "Choose your susu company",
     description:
-      "Every member belongs to one savings group on Credo. Enter the company name from your invite, or ask your collector if you are unsure.",
+      "Every member belongs to one savings group on SusuFlow. Enter the company name from your invite, or ask your collector if you are unsure.",
     Illustration: AddressIllustration,
   },
   {

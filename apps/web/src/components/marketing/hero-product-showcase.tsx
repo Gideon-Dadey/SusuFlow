@@ -19,7 +19,7 @@ export function HeroProductShowcase({ className }: { className?: string }) {
       <div className="hero-showcase-frame relative aspect-[4/3] w-full sm:aspect-[16/11] lg:aspect-[5/4]">
         <Image
           src={BRAND_HERO_SHOWCASE}
-          alt="Credo dashboard on tablet and mobile showing verified MoMo susu deposits and group savings"
+          alt="SusuFlow dashboard on tablet and mobile showing verified MoMo susu deposits and group savings"
           fill
           priority
           sizes="(max-width: 1024px) 90vw, 50vw"

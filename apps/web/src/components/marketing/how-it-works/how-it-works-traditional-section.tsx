@@ -22,9 +22,9 @@ export function HowItWorksTraditionalSection() {
               prove what was collected.
             </p>
             <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
-              Credo does not replace your collectors or your community trust. It
-              gives your company gateway verified deposits, live balances, and
-              records your auditors can export.
+              SusuFlow does not replace your collectors or your community trust.
+              It gives your company gateway verified deposits, live balances,
+              and records your auditors can export.
             </p>
           </div>
 

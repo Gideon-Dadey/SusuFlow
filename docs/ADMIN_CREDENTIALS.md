@@ -16,7 +16,7 @@ Save this file for quick reference when logging into SusuFlow admin dashboards a
 
 - **Super Admin Email:** `admin@susuflow.com`
 - **Super Admin Password:** `ChangeMe123!`
-- **Default Tenant Slug:** `adipa` (Adipa Microfinance)
+- **Default Tenant Slug:** `adipa` (SusuFlow)
 
 ## 📱 Mobile App Commands (Expo / React Native)
 

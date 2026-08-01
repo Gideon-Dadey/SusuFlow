@@ -18,7 +18,7 @@ export function FaqSection() {
             Common questions
           </h2>
           <p className="mt-2 text-base text-muted-foreground sm:text-lg">
-            Everything you need to know about digital susu with Credo.
+            Everything you need to know about digital susu with SusuFlow.
             Can&apos;t find your answer?{" "}
             <Link
               href="/contact"

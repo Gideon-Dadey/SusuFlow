@@ -120,7 +120,7 @@ export function LaunchSplash({ onFinish }: LaunchSplashProps) {
           </Animated.View>
 
           <Animated.Text style={[styles.wordmark, wordmarkAnimatedStyle]}>
-            Credo
+            SusuFlow
           </Animated.Text>
         </View>
       </BrandSplashBackground>

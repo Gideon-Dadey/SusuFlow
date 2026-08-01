@@ -17,7 +17,7 @@ export function WorkflowAutomationSection() {
               Automate your deposit &amp; payout approvals
             </h2>
             <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-base sm:text-lg leading-relaxed text-muted-foreground">
-              Credo helps streamline collections with tailored approval
+              SusuFlow helps streamline collections with tailored approval
               workflows. Set clear rules for collector actions, MoMo deposit
               verification, payout sign-offs, and staff access, so every cedi
               moves with accountability.
@@ -35,7 +35,7 @@ export function WorkflowAutomationSection() {
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[5/4] shadow-2xl border border-slate-200/80 dark:border-white/10">
               <Image
                 src={BRAND_WORKFLOW_AUTOMATION}
-                alt="Credo staff reviewing deposit approvals in a modern office"
+                alt="SusuFlow staff reviewing deposit approvals in a modern office"
                 fill
                 sizes="(max-width: 1024px) 90vw, 50vw"
                 className="object-cover object-center"

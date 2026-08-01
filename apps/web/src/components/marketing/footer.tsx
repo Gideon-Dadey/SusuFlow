@@ -287,7 +287,7 @@ export function MarketingFooter() {
         {/* GIANT BRAND WORDMARK BANNER */}
         <div className="relative mt-12 overflow-hidden select-none pointer-events-none text-center">
           <span className="block text-[13vw] sm:text-[15vw] font-extrabold tracking-tighter leading-none text-slate-200/50 dark:text-white/[0.04] uppercase font-sans">
-            Credo
+            SusuFlow
           </span>
         </div>
       </MarketingContainer>

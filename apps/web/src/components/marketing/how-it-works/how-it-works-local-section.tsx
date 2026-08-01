@@ -13,7 +13,7 @@ export function HowItWorksLocalSection() {
             <div className="relative aspect-[4/3] w-full sm:aspect-[5/4]">
               <Image
                 src={HOW_IT_WORKS_DIGITAL_COLLECTOR}
-                alt="Credo collector helping a Ghanaian market trader pay via Mobile Money"
+                alt="SusuFlow collector helping a Ghanaian market trader pay via Mobile Money"
                 fill
                 sizes="(max-width: 1024px) 90vw, 50vw"
                 className="object-cover object-center"
@@ -34,7 +34,7 @@ export function HowItWorksLocalSection() {
               for cash handoffs or waiting for a collector to visit.
             </p>
             <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
-              Credo is designed to empower Ghanaian savers: convenient
+              SusuFlow is designed to empower Ghanaian savers: convenient
               self-service mobile money payments, instant digital receipts, and
               real-time dashboard verification for the Susu company.
             </p>

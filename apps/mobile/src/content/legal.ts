@@ -19,13 +19,13 @@ export const TERMS_OF_SERVICE: LegalDocument = {
     {
       title: "1. Acceptance",
       paragraphs: [
-        'By accessing or using Credo ("the Platform"), you agree to these Terms of Service. If you do not agree, do not use the Platform.',
+        'By accessing or using SusuFlow ("the Platform"), you agree to these Terms of Service. If you do not agree, do not use the Platform.',
       ],
     },
     {
       title: "2. Services",
       paragraphs: [
-        "Credo provides software for digital susu savings management, including customer wallets, collector tools, staff dashboards, and payment gateway integrations. We do not hold customer funds. Deposits are processed through licensed payment providers.",
+        "SusuFlow provides software for digital susu savings management, including customer wallets, collector tools, staff dashboards, and payment gateway integrations. We do not hold customer funds. Deposits are processed through licensed payment providers.",
       ],
     },
     {
@@ -52,7 +52,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
     {
       title: "6. Limitation of liability",
       paragraphs: [
-        'The Platform is provided "as is." To the extent permitted by law, Credo is not liable for indirect damages arising from use of the service or third-party payment failures.',
+        'The Platform is provided "as is." To the extent permitted by law, SusuFlow is not liable for indirect damages arising from use of the service or third-party payment failures.',
       ],
     },
     {
@@ -70,7 +70,7 @@ export const PRIVACY_POLICY: LegalDocument = {
     {
       title: "1. Overview",
       paragraphs: [
-        'Credo ("we") respects your privacy. This policy explains what data we collect when you use our website and application, and how we use it.',
+        'SusuFlow ("we") respects your privacy. This policy explains what data we collect when you use our website and application, and how we use it.',
       ],
     },
     {

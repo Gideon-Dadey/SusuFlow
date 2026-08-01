@@ -11,8 +11,8 @@ export function AboutComplianceSection() {
             Secure, auditable, and built for verified collections
           </h2>
           <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground lg:mx-auto">
-            Credo is designed around gateway confirmed Mobile Money deposits and
-            transparent ledger records. Your team sees the same numbers your
+            SusuFlow is designed around gateway confirmed Mobile Money deposits
+            and transparent ledger records. Your team sees the same numbers your
             savers expect.
           </p>
         </div>

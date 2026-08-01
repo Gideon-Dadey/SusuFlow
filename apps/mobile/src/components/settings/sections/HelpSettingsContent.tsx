@@ -26,7 +26,8 @@ const FAQ_ITEMS = [
   },
   {
     question: "Is my money safe?",
-    answer: "Credo uses secure, regulated processes to protect your savings.",
+    answer:
+      "SusuFlow uses secure, regulated processes to protect your savings.",
   },
 ];
 

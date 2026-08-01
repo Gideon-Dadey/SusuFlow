@@ -5,7 +5,7 @@ import { APP_NAME } from "@/lib/marketing-data";
 
 export const metadata: Metadata = {
   title: `Terms of Service | ${APP_NAME}`,
-  description: "Terms governing use of the Credo platform.",
+  description: "Terms governing use of the SusuFlow platform.",
 };
 
 export default function TermsPage() {
@@ -21,14 +21,14 @@ export default function TermsPage() {
           <article className="legal-prose">
             <h2>1. Acceptance</h2>
             <p>
-              By accessing or using Credo (&quot;the Platform&quot;), you agree
-              to these Terms of Service. If you do not agree, do not use the
-              Platform.
+              By accessing or using SusuFlow (&quot;the Platform&quot;), you
+              agree to these Terms of Service. If you do not agree, do not use
+              the Platform.
             </p>
 
             <h2>2. Services</h2>
             <p>
-              Credo provides software for digital susu savings management,
+              SusuFlow provides software for digital susu savings management,
               including customer wallets, collector tools, staff dashboards, and
               payment gateway integrations. We do not hold customer funds.
               Deposits are processed through licensed payment providers.
@@ -60,8 +60,8 @@ export default function TermsPage() {
             <h2>6. Limitation of liability</h2>
             <p>
               The Platform is provided &quot;as is.&quot; To the extent
-              permitted by law, Credo is not liable for indirect damages arising
-              from use of the service or third-party payment failures.
+              permitted by law, SusuFlow is not liable for indirect damages
+              arising from use of the service or third-party payment failures.
             </p>
 
             <h2>7. Contact</h2>
