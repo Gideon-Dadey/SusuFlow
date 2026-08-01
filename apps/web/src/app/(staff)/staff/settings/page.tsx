@@ -113,12 +113,28 @@ export default function StaffSettingsPage() {
   const [commissionRate, setCommissionRate] = useState("1.5");
 
   useEffect(() => {
+    const resolvedName =
+      tenant?.name ||
+      (user?.tenantSlug
+        ? user.tenantSlug === "adipa"
+          ? "Adipa Microfinance"
+          : user.tenantSlug.toUpperCase()
+        : "Adipa Microfinance");
+    const resolvedEmail =
+      tenant?.email || user?.email || "admin@adipamicrofinance.com";
+    const resolvedPhone =
+      tenant?.phone || userProfile?.phone || "+233240000000";
+
+    setName((prev) => prev || resolvedName);
+    setEmail((prev) => prev || resolvedEmail);
+    setPhone((prev) => prev || resolvedPhone);
+
     if (tenant) {
-      setName(tenant.name || "");
-      setEmail(tenant.email || "");
-      setPhone(tenant.phone || "");
-      setLogoUrl(tenant.logoUrl || "");
-      setPrimaryColor(tenant.primaryColor || "#1E40AF");
+      if (tenant.name) setName(tenant.name);
+      if (tenant.email) setEmail(tenant.email);
+      if (tenant.phone) setPhone(tenant.phone);
+      if (tenant.logoUrl) setLogoUrl(tenant.logoUrl);
+      if (tenant.primaryColor) setPrimaryColor(tenant.primaryColor);
 
       const settings = (tenant.settings || {}) as Record<string, any>;
       setCurrency(settings.currency || "GHS");
@@ -130,7 +146,7 @@ export default function StaffSettingsPage() {
       setTransactionFee(String(settings.transaction_fee ?? "0.50"));
       setCommissionRate(String((settings.commission_rate ?? 0.015) * 100));
     }
-  }, [tenant]);
+  }, [tenant, user, userProfile]);
 
   // Tab switcher
   const handleTabChange = (tab: typeof activeTab) => {
@@ -295,19 +311,36 @@ export default function StaffSettingsPage() {
     e.preventDefault();
     setSuccessMessage("");
     setErrorMessage("");
-    if (!name.trim() || !email.trim()) {
-      setErrorMessage("Company Name and Support Email are required.");
-      return;
-    }
-    if (!isValidEmail(email)) {
+
+    const targetName =
+      name.trim() ||
+      tenant?.name ||
+      (user?.tenantSlug
+        ? user.tenantSlug === "adipa"
+          ? "Adipa Microfinance"
+          : user.tenantSlug.toUpperCase()
+        : "Adipa Microfinance");
+    const targetEmail =
+      email.trim() ||
+      tenant?.email ||
+      user?.email ||
+      "admin@adipamicrofinance.com";
+    const targetPhone =
+      phone.trim() || tenant?.phone || userProfile?.phone || "+233240000000";
+
+    if (!isValidEmail(targetEmail)) {
       setErrorMessage("Please enter a valid support email address.");
       return;
     }
 
+    setName(targetName);
+    setEmail(targetEmail);
+    setPhone(targetPhone);
+
     updateTenantMutation.mutate({
-      name,
-      email,
-      phone,
+      name: targetName,
+      email: targetEmail,
+      phone: targetPhone,
       logoUrl: logoUrl ? logoUrl : null,
       primaryColor,
       settings: tenant?.settings || {},
@@ -661,8 +694,7 @@ export default function StaffSettingsPage() {
                     label="Company Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter company name"
-                    required
+                    placeholder="e.g. Adipa Microfinance"
                   />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -671,8 +703,7 @@ export default function StaffSettingsPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="admin@yourcompany.com"
-                      required
+                      placeholder="admin@adipamicrofinance.com"
                     />
                     <Input
                       label="Support Phone"
