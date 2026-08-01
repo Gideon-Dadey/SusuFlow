@@ -23,7 +23,7 @@ export function ProductHero({
   isMockup = false,
 }: ProductHeroProps) {
   return (
-    <section className="relative overflow-hidden bg-white pb-14 pt-24 sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-36">
+    <section className="relative overflow-hidden bg-white dark:bg-background pb-14 pt-24 sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-36">
       <div
         className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
         aria-hidden="true"
@@ -40,10 +40,10 @@ export function ProductHero({
       <MarketingContainer>
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 lg:items-center">
           <div className="max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl text-balance">
+            <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl text-balance">
               {title}
             </h1>
-            <p className="mt-6 text-[17px] leading-8 text-slate-600 text-pretty">
+            <p className="mt-6 text-[17px] leading-8 text-slate-600 dark:text-slate-400 text-pretty">
               {description}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6">
@@ -58,7 +58,7 @@ export function ProductHero({
               </Link>
               <Link
                 href="/pricing"
-                className="text-[17px] font-semibold leading-6 text-slate-900 flex items-center gap-1 hover:text-[#0066cc] transition-colors"
+                className="text-[17px] font-semibold leading-6 text-slate-900 dark:text-white flex items-center gap-1 hover:text-[#0066cc] dark:hover:text-[#38bdf8] transition-colors"
               >
                 View pricing <ArrowRight className="h-4 w-4" />
               </Link>
