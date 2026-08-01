@@ -6,44 +6,47 @@ import { MarketingContainer } from "./marketing-container";
 
 export function WorkflowAutomationSection() {
   return (
-    <section className="bg-white dark:bg-background">
-      <MarketingContainer className="py-16 sm:py-20 lg:py-24">
-        <div className="flex flex-col gap-8 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
-          <div className="order-1 min-w-0 text-left lg:order-1">
-            <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+    <section className="bg-background py-12 lg:py-20 border-t border-border/40">
+      <MarketingContainer>
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-20">
+          {/* Left Column: Image */}
+          <div className="relative order-2 lg:order-1">
+            <div className="relative rounded-[1.75rem] overflow-hidden shadow-md border border-border/40 bg-muted/30 aspect-[4/3] sm:aspect-[16/11]">
+              <Image
+                src={BRAND_WORKFLOW_AUTOMATION}
+                alt="SusuFlow staff reviewing deposit approvals in a modern office"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover object-center"
+              />
+            </div>
+          </div>
+
+          {/* Right Column: Text Content */}
+          <div className="order-1 lg:order-2 space-y-4 sm:space-y-6 max-w-xl">
+            <span className="text-sm font-medium tracking-wide text-muted-foreground block">
               Streamline workflows
-            </p>
-            <h2 className="mt-2 text-balance text-2xl sm:text-3xl lg:text-[2.35rem] font-bold leading-snug tracking-tight text-foreground">
+            </span>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] tracking-tight">
               Automate your deposit &amp; payout approvals
             </h2>
-            <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-base sm:text-lg leading-relaxed text-muted-foreground">
+
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed text-pretty">
               SusuFlow helps streamline collections with tailored approval
               workflows. Set clear rules for collector actions, MoMo deposit
               verification, payout sign-offs, and staff access, so every cedi
               moves with accountability.
             </p>
-            <Link
-              href="/how-it-works"
-              className="mt-6 inline-flex items-center gap-2 text-base font-bold text-muted-foreground transition-colors hover:text-foreground lg:mt-8"
-            >
-              <span>Deposit automation</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
 
-          <div className="relative order-2 mx-auto w-full max-w-xl lg:order-2 lg:max-w-none">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[5/4] shadow-2xl border border-slate-200/80 dark:border-white/10">
-              <Image
-                src={BRAND_WORKFLOW_AUTOMATION}
-                alt="SusuFlow staff reviewing deposit approvals in a modern office"
-                fill
-                sizes="(max-width: 1024px) 90vw, 50vw"
-                className="object-cover object-center"
-              />
-              <div
-                className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/10 via-transparent to-black/5"
-                aria-hidden
-              />
+            <div className="pt-2">
+              <Link
+                href="/how-it-works"
+                className="inline-flex items-center gap-2 text-sm sm:text-base font-semibold text-[#0066cc] hover:text-[#0052a3] transition-colors group"
+              >
+                <span>Deposit automation</span>
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
             </div>
           </div>
         </div>
