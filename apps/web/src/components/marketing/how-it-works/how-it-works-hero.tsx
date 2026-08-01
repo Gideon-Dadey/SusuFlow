@@ -46,7 +46,7 @@ export function HowItWorksHero() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-xl overflow-hidden rounded-none lg:max-w-none lg:justify-self-end">
+          <div className="relative mx-auto w-full max-w-xl overflow-hidden rounded-[1.75rem] shadow-md border border-border/40 lg:max-w-none lg:justify-self-end">
             <div className="relative aspect-[4/3] w-full sm:aspect-[5/4]">
               <Image
                 src={HOW_IT_WORKS_GHANIAN_MARKET}
