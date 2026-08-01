@@ -23,7 +23,7 @@ export function ProductHero({
   isMockup = false,
 }: ProductHeroProps) {
   return (
-    <section className="relative overflow-hidden bg-white dark:bg-background pb-14 pt-24 sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-36">
+    <section className="relative overflow-hidden bg-white dark:bg-background pb-14 pt-6 sm:pb-20 sm:pt-16 lg:pb-24 lg:pt-24">
       <div
         className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
         aria-hidden="true"
