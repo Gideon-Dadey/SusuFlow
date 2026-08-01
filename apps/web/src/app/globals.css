@@ -1255,3 +1255,29 @@
     transform: translateY(0);
   }
 }
+
+/* Theme Toggle Rail (OmniH Style) */
+.theme-toggle-rail {
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 640px) {
+  .theme-toggle-rail {
+    right: 1.5rem;
+  }
+}
+
+.theme-toggle-rail--visible {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  pointer-events: auto;
+}
+
+.theme-toggle-rail--hidden {
+  opacity: 0;
+  transform: translateY(-50%) translateX(2rem);
+  pointer-events: none;
+}

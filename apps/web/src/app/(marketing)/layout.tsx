@@ -1,6 +1,7 @@
 import { MarketingFooter } from "@/components/marketing/footer";
 import { MarketingNavbar } from "@/components/marketing/navbar";
 import { MarketingScrollToTop } from "@/components/marketing/marketing-scroll-to-top";
+import { ThemeToggleRail } from "@/components/theme-toggle-rail";
 
 export default function MarketingLayout({
   children,
@@ -24,6 +25,7 @@ export default function MarketingLayout({
         </main>
         <MarketingFooter />
       </div>
+      <ThemeToggleRail />
     </>
   );
 }
