@@ -227,16 +227,16 @@ export function MarketingNavbar() {
                 </Link>
               );
             })}
-
-            {/* Render Desktop Mega Menu Dropdown */}
-            {activeMegaMenu && getMegaMenuConfig(activeMegaMenu) && (
-              <MegaDropdown
-                config={getMegaMenuConfig(activeMegaMenu)!}
-                isOpen={!!activeMegaMenu}
-                onClose={() => setActiveMegaMenu(null)}
-              />
-            )}
           </nav>
+
+          {/* Render Full-Width Desktop Mega Menu Dropdown */}
+          {activeMegaMenu && getMegaMenuConfig(activeMegaMenu) && (
+            <MegaDropdown
+              config={getMegaMenuConfig(activeMegaMenu)!}
+              isOpen={!!activeMegaMenu}
+              onClose={() => setActiveMegaMenu(null)}
+            />
+          )}
 
           {/* Right Header Controls */}
           <div className="relative z-10 flex shrink-0 items-center gap-3 sm:gap-4">

@@ -22,10 +22,10 @@ import {
   Lock,
   Landmark,
   ArrowRight,
-  ChevronDown,
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MarketingContainer } from "./marketing-container";
 
 export interface MegaMenuItem {
   title: string;
@@ -138,7 +138,7 @@ export const PRODUCT_MEGA_MENU: MegaMenuConfig = {
   ],
   promo: {
     badge: "Enterprise Susu Suite",
-    title: "Control collections with SusuFlow Digital Platform.",
+    title: "Control spend & collections with SusuFlow Digital Platform.",
     description:
       "100% cashless audit trails, instant MoMo verification, and real-time field collector tracking.",
     ctaLabel: "Get Started Free",
@@ -253,23 +253,23 @@ export function MegaDropdown({ config, isOpen, onClose }: MegaDropdownProps) {
   return (
     <div
       className={cn(
-        "absolute top-full left-1/2 -translate-x-1/2 mt-2 w-screen max-w-6xl px-4 sm:px-6 transition-all duration-200 z-[300]",
+        "fixed inset-x-0 top-[4.5rem] w-full bg-white dark:bg-[#09090b] border-b border-slate-200/80 dark:border-slate-800 shadow-2xl transition-all duration-200 z-[300]",
         isOpen
           ? "opacity-100 translate-y-0 pointer-events-auto"
           : "opacity-0 -translate-y-2 pointer-events-none",
       )}
       onMouseLeave={onClose}
     >
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#121215] p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
-          {/* Left Grid: Categories */}
-          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-8">
+      <MarketingContainer className="py-8 lg:py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* Left Area: 3 Equal Category Columns (Spans 9 Cols) */}
+          <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-8">
             {config.categories.map((category) => (
               <div key={category.title} className="space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/40 pb-2">
+                <h3 className="text-[17px] font-bold text-slate-900 dark:text-white tracking-tight border-b border-slate-200/60 dark:border-slate-800/80 pb-2.5 font-sans">
                   {category.title}
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-3.5">
                   {category.items.map((item) => {
                     const IconComponent = item.icon;
                     return (
@@ -277,16 +277,16 @@ export function MegaDropdown({ config, isOpen, onClose }: MegaDropdownProps) {
                         key={item.title}
                         href={item.href}
                         onClick={onClose}
-                        className="group flex items-start gap-3.5 p-2 rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                        className="group flex items-start gap-3.5 p-2 rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-slate-800/50"
                       >
-                        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-800/80 text-[#0066cc] dark:text-[#38bdf8] group-hover:bg-[#0066cc] group-hover:text-white transition-colors">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-100/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 group-hover:bg-[#0066cc] group-hover:text-white group-hover:border-[#0066cc] transition-all shadow-xs mt-0.5">
                           <IconComponent className="h-4 w-4" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-foreground group-hover:text-[#0066cc] dark:group-hover:text-[#38bdf8] transition-colors">
+                          <p className="text-[15px] font-bold text-slate-900 dark:text-white group-hover:text-[#0066cc] dark:group-hover:text-[#38bdf8] transition-colors leading-snug font-sans">
                             {item.title}
                           </p>
-                          <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5 leading-relaxed">
+                          <p className="text-[13px] text-slate-600 dark:text-slate-400 mt-1 leading-relaxed font-normal">
                             {item.description}
                           </p>
                         </div>
@@ -298,11 +298,11 @@ export function MegaDropdown({ config, isOpen, onClose }: MegaDropdownProps) {
             ))}
           </div>
 
-          {/* Right Column: Promo Card */}
-          <div className="lg:col-span-4 flex flex-col justify-between rounded-xl border border-slate-200/80 dark:border-slate-800/80 bg-slate-50 dark:bg-[#18181c] p-5">
-            <div className="space-y-3">
+          {/* Right Area: Promo Feature Box (Spans 3 Cols) */}
+          <div className="lg:col-span-3 flex flex-col justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/90 dark:bg-[#141417] p-5 shadow-sm">
+            <div className="space-y-3.5">
               {config.promo.imageSrc && (
-                <div className="relative h-32 w-full rounded-lg overflow-hidden border border-border/40 bg-muted mb-2">
+                <div className="relative h-36 w-full rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-800 bg-muted mb-3">
                   <Image
                     src={config.promo.imageSrc}
                     alt={config.promo.title}
@@ -311,31 +311,31 @@ export function MegaDropdown({ config, isOpen, onClose }: MegaDropdownProps) {
                   />
                 </div>
               )}
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0066cc]/10 text-[#0066cc] dark:text-[#38bdf8] px-2.5 py-1 text-xs font-bold">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0066cc]/10 text-[#0066cc] dark:text-[#38bdf8] px-3 py-1 text-xs font-bold">
                 <Sparkles className="h-3 w-3" />
                 {config.promo.badge}
               </span>
-              <h4 className="text-base font-bold text-foreground leading-snug">
+              <h4 className="text-[15px] font-bold text-slate-900 dark:text-white leading-snug font-sans">
                 {config.promo.title}
               </h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-[13px] text-slate-600 dark:text-slate-400 leading-relaxed">
                 {config.promo.description}
               </p>
             </div>
 
-            <div className="pt-4 mt-2 border-t border-border/40">
+            <div className="pt-4 mt-3 border-t border-slate-200/60 dark:border-slate-800">
               <Link
                 href={config.promo.ctaHref}
                 onClick={onClose}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-4 py-2.5 text-xs font-semibold shadow-sm transition-all"
+                className="inline-flex w-full h-11 items-center justify-center gap-2 rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-5 text-sm font-semibold shadow-xs transition-all"
               >
                 <span>{config.promo.ctaLabel}</span>
-                <ArrowRight className="h-3.5 w-3.5" />
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
         </div>
-      </div>
+      </MarketingContainer>
     </div>
   );
 }
