@@ -1,13 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import {
   Mail,
   MapPin,
   Phone,
   ArrowRight,
-  CheckCircle2,
   Github,
   Linkedin,
   Twitter,
@@ -19,73 +17,10 @@ import { MarketingContainer } from "./marketing-container";
 
 export function MarketingFooter() {
   const year = new Date().getFullYear();
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email.trim()) {
-      setSubscribed(true);
-      setEmail("");
-    }
-  };
 
   return (
     <footer className="relative overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-100 border-t border-slate-200 dark:border-slate-800">
       <MarketingContainer className="relative z-10 pt-16 pb-8">
-        {/* Top Section: Demo & Newsletter Bar */}
-        <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center border-b border-slate-200 dark:border-slate-800 pb-12">
-          <div className="lg:col-span-6 space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-sans">
-              Digitize your Susu enterprise with confidence
-            </h2>
-            <p className="text-[17px] text-slate-600 dark:text-slate-400 max-w-lg leading-relaxed">
-              Empowering modern Ghanaian microfinance institutions and susu
-              companies with gateway-confirmed deposits and 100% cashless audit
-              logs.
-            </p>
-          </div>
-
-          <div className="lg:col-span-6">
-            {subscribed ? (
-              <div className="flex items-center gap-3 rounded-2xl border border-[#0066cc]/30 bg-[#0066cc]/10 p-4 text-[#0066cc] dark:text-sky-300">
-                <CheckCircle2 className="h-5 w-5 text-[#0066cc] dark:text-sky-400 shrink-0" />
-                <div>
-                  <p className="font-semibold text-[17px]">
-                    Thank you for subscribing!
-                  </p>
-                  <p className="text-[15px] text-slate-600 dark:text-sky-400/80">
-                    We&apos;ve dispatched product documentation and compliance
-                    guides to your email.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <form
-                onSubmit={handleSubscribe}
-                className="flex flex-col sm:flex-row gap-3"
-              >
-                <div className="relative flex-1">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your work email address..."
-                    required
-                    className="w-full h-12 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 px-4 text-[17px] text-slate-900 dark:text-white placeholder-slate-400 focus:border-[#0066cc] focus:outline-none focus:ring-2 focus:ring-[#0066cc]/30 transition-all"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="h-12 px-6 rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white font-semibold text-[17px] transition-all duration-200 shadow-sm flex items-center justify-center shrink-0"
-                >
-                  <span>Request Demo</span>
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-
         {/* Main 4-Column Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10">
           {/* Column 1: Brand Information */}
