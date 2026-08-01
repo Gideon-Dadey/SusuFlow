@@ -8,7 +8,6 @@ import { PlatformOverviewSection } from "@/components/marketing/platform-overvie
 import { WorkflowAutomationSection } from "@/components/marketing/workflow-automation-section";
 import { SusuManagementSection } from "@/components/marketing/susu-management-section";
 import { SolutionsInActionSection } from "@/components/marketing/solutions-in-action-section";
-import { RealPeopleHelpSection } from "@/components/marketing/real-people-help-section";
 import { APP_NAME, APP_TAGLINE } from "@/lib/marketing-data";
 
 export const metadata: Metadata = {
@@ -26,7 +25,6 @@ export default function HomePage() {
       <MomoPayCapabilitiesSection />
       <SolutionsInActionSection />
       <WorkflowAutomationSection />
-      <RealPeopleHelpSection />
       <ApprovalWorkflowsCtaSection />
       <FaqSection />
     </>
