@@ -572,7 +572,8 @@ export default function StaffSettingsPage() {
                     />
                     <Button
                       type="submit"
-                      className="w-full flex items-center justify-center gap-2 font-bold"
+                      size="sm"
+                      className="w-full flex items-center justify-center gap-2 text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95"
                       disabled={updateProfileMutation.isPending}
                     >
                       {updateProfileMutation.isPending && (
@@ -626,8 +627,9 @@ export default function StaffSettingsPage() {
                     />
                     <Button
                       type="submit"
+                      size="sm"
                       variant="outline"
-                      className="w-full flex items-center justify-center gap-2 border-primary text-primary hover:bg-primary/5 font-bold"
+                      className="w-full flex items-center justify-center gap-2 text-xs font-semibold px-4 min-h-[36px] border-primary text-primary hover:bg-primary/5"
                       disabled={updatePasswordMutation.isPending}
                     >
                       {updatePasswordMutation.isPending && (
@@ -739,7 +741,8 @@ export default function StaffSettingsPage() {
                   <div className="flex justify-end pt-2">
                     <Button
                       type="submit"
-                      className="w-full sm:w-auto font-bold px-6"
+                      size="sm"
+                      className="w-full sm:w-auto text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95 flex items-center justify-center gap-1.5"
                       disabled={updateTenantMutation.isPending}
                     >
                       {updateTenantMutation.isPending && (
@@ -841,7 +844,8 @@ export default function StaffSettingsPage() {
                   <div className="flex justify-end pt-2">
                     <Button
                       type="submit"
-                      className="w-full sm:w-auto font-bold px-6"
+                      size="sm"
+                      className="w-full sm:w-auto text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95 flex items-center justify-center gap-1.5"
                       disabled={updateTenantMutation.isPending}
                     >
                       {updateTenantMutation.isPending && (
@@ -897,7 +901,8 @@ export default function StaffSettingsPage() {
                   <div className="flex justify-end pt-2">
                     <Button
                       type="submit"
-                      className="w-full sm:w-auto font-bold px-6"
+                      size="sm"
+                      className="w-full sm:w-auto text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95 flex items-center justify-center gap-1.5"
                       disabled={updateTenantMutation.isPending}
                     >
                       {updateTenantMutation.isPending && (
