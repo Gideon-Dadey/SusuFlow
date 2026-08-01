@@ -20,12 +20,16 @@ export function HowItWorksCtaSection() {
             collector onboarding, and your first verified MoMo collection cycle.
           </p>
           <div className="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-            <Link href="/contact?intent=demo" className="sm:w-auto">
+            <Link href="/register" className="sm:w-auto">
               <Button
                 size="lg"
-                className="h-12 w-full rounded-none text-[15px] font-bold shadow-[0_6px_20px_rgba(34,197,94,0.35)] sm:min-w-[11rem]"
+                className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center justify-center gap-2.5 sm:min-w-[11rem]"
               >
-                Request a demo
+                <span>Register</span>
+                <ArrowRight
+                  className="h-[18px] w-[18px] stroke-[2.25]"
+                  aria-hidden
+                />
               </Button>
             </Link>
             <Link

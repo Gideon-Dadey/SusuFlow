@@ -29,12 +29,16 @@ export function AboutHero() {
               risk.
             </p>
             <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-              <Link href="/contact?intent=demo" className="w-full sm:w-auto">
+              <Link href="/register" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-none px-6 text-[15px] font-bold shadow-[0_8px_24px_rgba(34,197,94,0.28)] lg:min-w-[12rem]"
+                  className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center justify-center gap-2.5 shadow-sm lg:min-w-[12rem]"
                 >
-                  Request a demo
+                  <span>Register</span>
+                  <ArrowRight
+                    className="h-[18px] w-[18px] stroke-[2.25]"
+                    aria-hidden
+                  />
                 </Button>
               </Link>
               <Link

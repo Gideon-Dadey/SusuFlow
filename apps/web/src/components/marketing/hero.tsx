@@ -25,12 +25,16 @@ export function MarketingHero() {
             </p>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center lg:justify-start">
-              <Link href="/contact?intent=demo" className="w-full sm:w-auto">
+              <Link href="/register" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="sr-load-more h-12 w-full rounded-[0.2rem] bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 font-bold shadow-[0_8px_24px_rgba(0,102,204,0.25)] sm:w-auto sm:min-w-[12rem] flex items-center justify-center"
+                  className="sr-load-more h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold shadow-sm sm:w-auto sm:min-w-[12rem] flex items-center justify-center gap-2.5"
                 >
-                  <span>Get Started</span>
+                  <span>Register</span>
+                  <ArrowRight
+                    className="h-[18px] w-[18px] stroke-[2.25]"
+                    aria-hidden
+                  />
                 </Button>
               </Link>
               <Link

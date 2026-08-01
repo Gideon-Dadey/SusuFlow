@@ -126,9 +126,6 @@ export default function ActionQueuePage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="dashboard-title">Action Queue</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            All pending approvals and reviews in one place
-          </p>
         </div>
         <Button
           variant="outline"

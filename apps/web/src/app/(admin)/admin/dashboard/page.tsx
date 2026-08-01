@@ -134,8 +134,8 @@ export default function AdminDashboardPage() {
           value={isLoading ? "..." : formatGhs(summary?.totalDeposits ?? 0)}
           subtitle="All organizations combined"
           icon={faWallet}
-          iconBgClassName="bg-emerald-50 dark:bg-emerald-950/40"
-          iconClassName="text-emerald-600 dark:text-emerald-400"
+          iconBgClassName="bg-[#0066cc]/10 dark:bg-[#0066cc]/20"
+          iconClassName="text-[#0066cc] dark:text-[#38bdf8]"
         />
         <StatCard
           title="Global Withdrawals Sum"

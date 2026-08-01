@@ -69,9 +69,9 @@ export function PricingComparisonSection() {
                         variant={plan.highlighted ? "primary" : "outline"}
                         size="sm"
                         className={cn(
-                          "h-10 min-w-[8.5rem] rounded-none text-[15px] font-bold",
+                          "h-10 min-w-[8.5rem] rounded-xl text-[15px] font-semibold transition-all duration-200 shadow-sm",
                           plan.highlighted &&
-                            "shadow-[0_4px_16px_rgba(34,197,94,0.24)]",
+                            "bg-[#0066cc] text-white hover:bg-[#0052a3]",
                         )}
                       >
                         {plan.cta}

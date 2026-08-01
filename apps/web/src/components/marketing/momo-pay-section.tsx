@@ -50,12 +50,16 @@ export function MomoPaySection() {
             </p>
 
             <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center lg:justify-start">
-              <Link href="/contact?intent=demo" className="w-full sm:w-auto">
+              <Link href="/register" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-none px-6 text-base font-bold shadow-sm sm:min-w-[10.5rem]"
+                  className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center justify-center gap-2.5 sm:min-w-[10.5rem]"
                 >
-                  Get started
+                  <span>Register</span>
+                  <ArrowRight
+                    className="h-[18px] w-[18px] stroke-[2.25]"
+                    aria-hidden
+                  />
                 </Button>
               </Link>
               <Link

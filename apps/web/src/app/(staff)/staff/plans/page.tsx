@@ -176,9 +176,6 @@ export default function SavingsGoalsTrackerPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="dashboard-title">Savings Goals</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage savings products and track customer enrollments
-          </p>
         </div>
         {activeTab === "plans" && !showForm && (
           <Button onClick={openCreate} className="gap-2 shrink-0">

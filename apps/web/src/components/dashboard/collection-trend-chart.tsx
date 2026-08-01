@@ -44,11 +44,11 @@ function formatDayLabel(date: Date): string {
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-border bg-popover px-3 py-2 text-xs shadow-xl">
+    <div className="rounded-lg border border-border bg-popover px-3 py-2 text-xs">
       <p className="mb-1 font-medium text-foreground">{label}</p>
       <p className="text-muted-foreground">
         Collections:{" "}
-        <span className="font-semibold text-emerald-500">
+        <span className="font-semibold text-[#0066cc]">
           {formatGhs(payload[0].value)}
         </span>
       </p>
@@ -108,7 +108,7 @@ export function CollectionTrendChart({
         <select
           value={period}
           onChange={(e) => setPeriod(e.target.value as Period)}
-          className="rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm outline-none transition hover:border-foreground/20 focus:outline-none focus:border-foreground/40"
+          className="rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground outline-none transition hover:border-foreground/20 focus:outline-none focus:border-foreground/40"
         >
           {Object.entries(PERIOD_LABELS).map(([key, label]) => (
             <option key={key} value={key}>
@@ -132,16 +132,8 @@ export function CollectionTrendChart({
                   x2="0"
                   y2="1"
                 >
-                  <stop
-                    offset="0%"
-                    stopColor="hsl(160, 84%, 50%)"
-                    stopOpacity={0.3}
-                  />
-                  <stop
-                    offset="100%"
-                    stopColor="hsl(160, 84%, 50%)"
-                    stopOpacity={0}
-                  />
+                  <stop offset="0%" stopColor="#0066cc" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="#0066cc" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid
@@ -171,14 +163,14 @@ export function CollectionTrendChart({
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="hsl(160, 84%, 50%)"
+                stroke="#0066cc"
                 strokeWidth={2.5}
                 fill="url(#collectionGradient)"
                 dot={false}
                 activeDot={{
                   r: 5,
                   strokeWidth: 2,
-                  fill: "hsl(160, 84%, 50%)",
+                  fill: "#0066cc",
                   stroke: "var(--background)",
                 }}
               />

@@ -109,9 +109,6 @@ export default function TeamManagementPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="dashboard-title">Team</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage collectors, account officers, and auditors
-          </p>
         </div>
         {isCompanyAdmin && !showForm && (
           <Button onClick={() => setShowForm(true)} className="gap-2">

@@ -63,8 +63,8 @@ const config: Config = {
         },
       },
       fontFamily: {
+        display: ['"Open Sans"', "system-ui", "-apple-system", "sans-serif"],
         sans: [
-          "ui-sans-serif",
           "system-ui",
           "-apple-system",
           "BlinkMacSystemFont",
@@ -74,10 +74,10 @@ const config: Config = {
           "Arial",
           "sans-serif",
         ],
+        mono: ["ui-monospace", "SFMono-Regular", "monospace"],
         heading: ["var(--font-open-sans)", "sans-serif"],
         hero: ["var(--font-open-sans)", "sans-serif"],
         "open-sans": ["var(--font-open-sans)", "sans-serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "monospace"],
       },
       fontSize: {
         body: ["18px", { lineHeight: "30.6px" }],

@@ -58,13 +58,17 @@ export function PricingPlansSection() {
                 <Button
                   size="lg"
                   className={cn(
-                    "h-12 w-full rounded-none text-[15px] font-bold",
+                    "h-12 w-full rounded-xl text-[17px] font-semibold transition-all duration-200 shadow-sm flex items-center justify-center gap-2",
                     plan.name === "Enterprise"
                       ? "bg-[#1a1a1a] text-white hover:bg-[#1a1a1a]/90 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-                      : "shadow-[0_4px_14px_rgba(34,197,94,0.25)]",
+                      : "bg-[#0066cc] text-white hover:bg-[#0052a3]",
                   )}
                 >
-                  {plan.cta}
+                  <span>{plan.cta}</span>
+                  <ArrowRight
+                    className="h-[18px] w-[18px] stroke-[2.25]"
+                    aria-hidden
+                  />
                 </Button>
               </Link>
 

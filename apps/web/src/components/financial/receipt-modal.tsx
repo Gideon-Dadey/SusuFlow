@@ -181,11 +181,11 @@ export function ReceiptModal({
           {/* Print-Only Professional Document Content */}
           <div className="hidden print:block space-y-8 text-black bg-white w-full text-sm">
             {/* Top Accent Line */}
-            <div className="h-1.5 w-full bg-green-600 mb-6" />
+            <div className="h-1.5 w-full bg-[#0066cc] mb-6" />
 
             {/* Centered Organization Title */}
             <div className="text-center space-y-2">
-              <h1 className="text-2xl font-extrabold uppercase tracking-wider text-green-600">
+              <h1 className="text-2xl font-extrabold uppercase tracking-wider text-[#0066cc]">
                 {companyName}
               </h1>
               <h2 className="text-sm font-bold tracking-widest text-gray-800 border-b-2 border-gray-900 pb-1.5 inline-block px-4">
@@ -263,7 +263,7 @@ export function ReceiptModal({
                   <span className="font-semibold text-gray-500">
                     Payment Status:
                   </span>
-                  <span className="font-bold text-green-600 uppercase">
+                  <span className="font-bold text-[#0066cc] uppercase">
                     {transaction.status === "completed"
                       ? "PAID"
                       : transaction.status}
@@ -333,7 +333,7 @@ export function ReceiptModal({
                 </div>
 
                 {/* Solid Pill block for Paid Status */}
-                <div className="flex justify-between items-center bg-green-600 text-white rounded-lg px-4 py-2 font-bold text-sm">
+                <div className="flex justify-between items-center bg-[#0066cc] text-white rounded-lg px-4 py-2 font-bold text-sm">
                   <span>Paid:</span>
                   <span className="font-mono">
                     GH¢ {formattedAmount.toFixed(2)}
@@ -359,7 +359,7 @@ export function ReceiptModal({
                   Verification Details
                 </p>
                 <div className="space-y-0.5">
-                  <p className="font-semibold text-green-700">
+                  <p className="font-semibold text-[#0066cc]">
                     Verification URL
                   </p>
                   <p className="font-mono text-gray-500 break-all">

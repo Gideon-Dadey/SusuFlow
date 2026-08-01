@@ -13,7 +13,7 @@ export function PageHero({
   return (
     <section className="page-hero-offset relative overflow-hidden border-b border-border bg-brand-dark dark:bg-background">
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_120%,rgba(34,197,94,0.2),transparent)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_120%,rgba(0,102,204,0.18),transparent)]"
         aria-hidden
       />
       <MarketingContainer className="relative pb-2">
