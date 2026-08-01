@@ -16,7 +16,7 @@ interface CollectionsByStatusChartProps {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  completed: { label: "Completed", color: "#16a34a" }, // SusuFlow Primary Green
+  completed: { label: "Completed", color: "#0066cc" }, // Primary Blue
   pending: { label: "Pending", color: "#f59e0b" }, // Warm Amber
   failed: { label: "Failed", color: "#ef4444" }, // Rose Red
   cancelled: { label: "Cancelled", color: "#64748b" }, // Slate Grey
@@ -66,7 +66,7 @@ export function CollectionsByStatusChart({
     <Card className="col-span-1 lg:col-span-5 flex flex-col justify-between">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400 shrink-0">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-foreground dark:bg-zinc-800 dark:text-zinc-300 shrink-0">
             <PieIcon className="h-4.5 w-4.5" />
           </div>
           <div>
@@ -92,7 +92,7 @@ export function CollectionsByStatusChart({
                       const item = payload[0].payload;
                       if (item.name === "No data") return null;
                       return (
-                        <div className="rounded-lg border border-border bg-popover px-2.5 py-1.5 shadow-md text-xs">
+                        <div className="rounded-lg border border-border bg-popover px-2.5 py-1.5 text-xs">
                           <p className="font-semibold text-foreground">
                             {item.name}
                           </p>

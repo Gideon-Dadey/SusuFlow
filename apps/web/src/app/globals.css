@@ -132,6 +132,26 @@
     scrollbar-color: rgb(148 163 184 / 0.35) transparent;
   }
 
+  @media (min-width: 1024px) {
+    html:not(:has(.auth-split)):not(:has(.dashboard-shell)) {
+      font-size: 90%;
+      zoom: 0.9;
+    }
+  }
+
+  html:has(.auth-split),
+  html:has(.dashboard-shell) {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  html:has(.auth-split) body,
+  html:has(.dashboard-shell) body {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+  }
+
   html:has(.dashboard-shell) {
     scrollbar-gutter: stable;
   }
@@ -237,7 +257,7 @@
   }
 
   ::selection {
-    background-color: rgb(34 197 94 / 0.2);
+    background-color: rgb(0 102 204 / 0.2);
     color: var(--foreground);
   }
 
@@ -304,7 +324,7 @@
   }
 
   .premium-card:hover {
-    border-color: rgb(34 197 94 / 0.25);
+    border-color: rgb(0 102 204 / 0.25);
     box-shadow: 0 12px 40px rgb(15 23 42 / 0.08);
   }
 
@@ -338,7 +358,7 @@
   }
 
   .dashboard-icon-emerald {
-    @apply bg-emerald-100;
+    @apply bg-blue-100 dark:bg-blue-950/40;
   }
 
   .dashboard-icon-violet {
@@ -358,7 +378,7 @@
   }
 
   .dark .dashboard-icon-emerald {
-    background-color: #152820;
+    background-color: #002047;
   }
 
   .dark .dashboard-icon-violet {
@@ -377,29 +397,48 @@
     @apply grid grid-cols-2 gap-3 xl:grid-cols-4 xl:gap-4;
   }
 
-  .dashboard-section-title,
-  .section-bar {
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 26px;
-    font-weight: 700;
-    line-height: 31.2px;
+  /* OmniH Standard Typography Rules */
+  .omnih-h1 {
+    @apply text-3xl md:text-4xl font-black tracking-tighter leading-none;
+    font-family: var(--font-open-sans), "Open Sans", sans-serif;
     color: var(--heading);
   }
 
   .dashboard-title {
-    font-family: var(--font-open-sans), sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 26px;
-    letter-spacing: -0.015em;
+    @apply text-lg md:text-xl font-bold tracking-tight leading-snug;
+    font-family: var(--font-open-sans), "Open Sans", sans-serif;
     color: var(--heading);
   }
 
-  @media (min-width: 640px) {
-    .dashboard-title {
-      font-size: 22px;
-      line-height: 28px;
-    }
+  .omnih-h2,
+  .omnih-h3 {
+    @apply text-xl md:text-2xl font-medium tracking-tight leading-[1.15];
+    color: var(--heading);
+  }
+
+  .dashboard-section-title,
+  .section-bar {
+    @apply text-base md:text-lg font-semibold tracking-tight leading-snug;
+    color: var(--heading);
+  }
+
+  .omnih-badge,
+  .omnih-pill {
+    @apply text-[10px] font-black uppercase tracking-[0.2em];
+  }
+
+  .omnih-btn-primary {
+    @apply text-[15px] font-bold rounded-xl;
+  }
+
+  .omnih-kpi,
+  .omnih-metric,
+  .kpi-number {
+    @apply text-4xl font-black tracking-tighter tabular-nums;
+  }
+
+  .omnih-body {
+    @apply text-sm font-medium leading-relaxed opacity-90;
   }
 
   .hero-page-title {
@@ -1082,7 +1121,9 @@
   }
 
   .auth-split {
-    @apply min-h-screen bg-background lg:grid lg:grid-cols-2;
+    @apply bg-background lg:grid lg:grid-cols-2;
+    height: 100dvh;
+    max-height: 100dvh;
   }
 
   /* iOS Safari zooms focused inputs below 16px — keep auth fields at 16px on touch devices */

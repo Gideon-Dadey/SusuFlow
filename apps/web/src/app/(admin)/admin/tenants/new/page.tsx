@@ -151,10 +151,6 @@ export default function CreateTenantPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="page-header mb-0">
           <h1 className="dashboard-title">Create organization</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Provision a new multi-tenant susu company workspace and
-            administrator account
-          </p>
         </div>
         <Link href="/admin/tenants">
           <Button size="sm" variant="outline">

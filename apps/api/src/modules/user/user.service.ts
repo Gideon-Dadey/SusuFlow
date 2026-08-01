@@ -39,6 +39,8 @@ export class UserService {
             customerNumber: true,
             status: true,
             kycLevel: true,
+            kycStatus: true,
+            ghanaCardNumber: true,
           },
         },
       },
@@ -115,6 +117,8 @@ export class UserService {
           customerNumber: customer.customerNumber,
           status: customer.status,
           kycLevel: customer.kycLevel,
+          kycStatus: customer.kycStatus,
+          ghanaCardNumber: customer.ghanaCardNumber,
         };
       }
     }

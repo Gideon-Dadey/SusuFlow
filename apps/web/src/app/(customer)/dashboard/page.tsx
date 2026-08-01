@@ -107,37 +107,57 @@ export default function CustomerDashboard() {
     )
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
+  const isKycVerified =
+    activeCustomer?.kycStatus === "verified" ||
+    activeCustomer?.kycStatus === "approved" ||
+    (typeof activeCustomer?.kycLevel === "number" &&
+      activeCustomer.kycLevel >= 2) ||
+    Boolean(activeCustomer?.ghanaCardNumber);
+
   return (
     <div className="space-y-6">
-      {/* KYC Verification Banner */}
-      {userProfile?.customer?.kycStatus !== "approved" &&
-        userProfile?.customer?.kycStatus !== "verified" && (
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
-            <div className="flex items-start gap-3">
-              <span className="text-2xl shrink-0">🛡️</span>
-              <div>
-                <div className="font-bold text-foreground text-sm flex items-center gap-2">
-                  Identity Verification Required (Ghana Card / Passport)
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 uppercase tracking-wider">
-                    Action Required
-                  </span>
-                </div>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Upload your Ghana Card or Passport to comply with Bank of
-                  Ghana anti-fraud regulations.
-                </p>
+      {/* KYC Verification Banner (Only shown if unverified) */}
+      {!isKycVerified && (
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <span className="text-2xl shrink-0">🛡️</span>
+            <div>
+              <div className="font-bold text-foreground text-sm flex items-center gap-2">
+                Identity Verification Required (Ghana Card / Passport)
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                  Action Required
+                </span>
               </div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Upload your Ghana Card or Passport to comply with Bank of Ghana
+                anti-fraud regulations.
+              </p>
             </div>
-            <Link href="/kyc" className="shrink-0">
-              <button className="w-full sm:w-auto px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity">
-                Verify Identity Now →
-              </button>
-            </Link>
           </div>
-        )}
+          <Link href="/kyc" className="shrink-0">
+            <button className="w-full sm:w-auto px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity">
+              Verify Identity Now →
+            </button>
+          </Link>
+        </div>
+      )}
 
-      <div>
-        <h2 className="dashboard-title text-foreground">{user?.firstName}</h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h2 className="dashboard-title text-foreground">{user?.firstName}</h2>
+          {isKycVerified && (
+            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#0066cc]/10 text-[#0066cc] dark:text-[#38bdf8] border border-[#0066cc]/20 flex items-center gap-1">
+              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Verified Account
+            </span>
+          )}
+        </div>
       </div>
 
       <BalanceCard balance={balance} todayChange={todayTotal} />
@@ -148,7 +168,7 @@ export default function CustomerDashboard() {
             href: "/deposit",
             label: "Deposit",
             icon: Wallet,
-            color: "bg-primary-100 text-primary",
+            color: "bg-[#0066cc]/10 text-[#0066cc]",
           },
           {
             href: "/withdraw",
@@ -160,7 +180,7 @@ export default function CustomerDashboard() {
             href: "/plans",
             label: "Goals",
             icon: Target,
-            color: "bg-green-50 text-green-600 dark:bg-green-950/20",
+            color: "bg-sky-50 text-sky-600 dark:bg-sky-950/20",
           },
           {
             href: "/transactions",
@@ -172,7 +192,7 @@ export default function CustomerDashboard() {
           <Link
             key={href}
             href={href}
-            className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-4 transition-all hover:border-secondary/40 hover:shadow-card"
+            className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-4 transition-all hover:border-secondary/40"
           >
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full ${color}`}

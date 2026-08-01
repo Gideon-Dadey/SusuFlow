@@ -17,6 +17,8 @@ import { cn } from "@/lib/utils";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { getDashboardPath } from "@/lib/utils";
+
 const REMEMBER_EMAIL_KEY = "susuflow-remember-email";
 
 function LoginContent() {
@@ -24,14 +26,28 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const tenantParam = searchParams.get("tenant") || "";
   const queryClient = useQueryClient();
-  const { login, error, clearError, setTenantSlug, tenantSlug } =
-    useAuthStore();
+  const {
+    login,
+    error,
+    clearError,
+    setTenantSlug,
+    tenantSlug,
+    isAuthenticated,
+    user,
+  } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const target = getDashboardPath(user.roles || []);
+      router.replace(target);
+    }
+  }, [isAuthenticated, user, router]);
 
   useEffect(() => {
     const saved = localStorage.getItem(REMEMBER_EMAIL_KEY);
@@ -76,12 +92,14 @@ function LoginContent() {
   return (
     <AuthShell>
       <div>
-        <h1 className="sr-hero-title text-foreground">Login</h1>
-        <p className="mt-2.5 text-base text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          Login
+        </h1>
+        <p className="mt-2.5 text-[17px] text-muted-foreground">
           or{" "}
           <Link
             href="/register"
-            className="font-semibold text-primary hover:text-primary/80"
+            className="font-semibold text-[#0066cc] dark:text-[#38bdf8] hover:underline"
           >
             Join your susu
           </Link>
@@ -92,7 +110,7 @@ function LoginContent() {
         <div className="space-y-1.5">
           <label
             htmlFor="email"
-            className="block text-sm sm:text-base font-semibold text-foreground"
+            className="block text-[17px] font-semibold text-foreground"
           >
             Email address <span className="text-destructive">*</span>
           </label>
@@ -113,13 +131,13 @@ function LoginContent() {
           <div className="flex items-center justify-between gap-2">
             <label
               htmlFor="password"
-              className="text-sm sm:text-base font-semibold text-foreground"
+              className="text-[17px] font-semibold text-foreground"
             >
               Password <span className="text-destructive">*</span>
             </label>
             <Link
               href="/contact"
-              className="text-sm font-semibold text-primary hover:text-primary/80"
+              className="text-[16px] font-semibold text-[#0066cc] dark:text-[#38bdf8] hover:underline"
             >
               Forgot Password?
             </Link>
@@ -151,14 +169,16 @@ function LoginContent() {
           </div>
         </div>
 
-        <label className="flex cursor-pointer items-center gap-2">
+        <label className="flex cursor-pointer items-center gap-2.5">
           <input
             type="checkbox"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
-            className="size-4 rounded-none border-input text-secondary focus:ring-ring"
+            className="size-4.5 rounded border-input text-secondary focus:ring-ring"
           />
-          <span className="text-sm text-foreground">Remember me</span>
+          <span className="text-[16px] font-medium text-foreground">
+            Remember me
+          </span>
         </label>
 
         {successMessage ? (
@@ -176,7 +196,7 @@ function LoginContent() {
 
         <Button
           type="submit"
-          className="h-[54px] min-h-[54px] w-full rounded-[0.25rem] text-base font-bold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
+          className="h-12 min-h-[48px] w-full rounded-xl text-[17px] font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white"
           loading={isSubmitting}
           loadingText="Logging in..."
           disabled={!!successMessage}

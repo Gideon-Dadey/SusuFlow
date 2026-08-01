@@ -32,9 +32,6 @@ export default function CollectorsPerformancePage() {
     <div className="space-y-6">
       <div>
         <h1 className="dashboard-title">Collector Performance</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Field agent metrics — collections, customers, and commissions
-        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">

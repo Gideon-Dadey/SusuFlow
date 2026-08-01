@@ -43,6 +43,18 @@ export default function RootLayout({
       className={`${openSans.variable} h-full`}
       suppressHydrationWarning
     >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-background font-sans text-foreground antialiased">
         <Providers>
           <PwaAutoUpdater />

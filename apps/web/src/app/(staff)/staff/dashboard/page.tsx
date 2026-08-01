@@ -83,7 +83,7 @@ export default function StaffDashboard() {
       label: "Agent Approvals",
       subtitle: "Review registrations",
       icon: Users,
-      bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+      bg: "bg-[#0066cc]/10 text-[#0066cc] dark:text-[#38bdf8]",
     },
   ];
 
@@ -98,8 +98,8 @@ export default function StaffDashboard() {
           title="Deposits Today"
           value={formatGhs(todayTotal)}
           icon={faWallet}
-          iconBgClassName="dashboard-icon-emerald"
-          iconClassName="text-emerald-600 dark:text-emerald-400"
+          iconBgClassName="bg-[#0066cc]/10 dark:bg-[#0066cc]/20"
+          iconClassName="text-[#0066cc] dark:text-[#38bdf8]"
         />
         <StatCard
           title="Active Customers"
@@ -146,10 +146,10 @@ export default function StaffDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickActions.map((action) => (
             <Link key={action.href} href={action.href} className="block group">
-              <Card className="p-4 h-full transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-1 border border-slate-200/90 dark:border-slate-800 bg-card">
+              <Card className="p-4 h-full transition-all duration-200 border border-border bg-card">
                 <div
                   className={cn(
-                    "size-9 rounded-lg flex items-center justify-center mb-3 shadow-sm",
+                    "size-9 rounded-lg flex items-center justify-center mb-3",
                     action.bg,
                   )}
                 >

@@ -16,12 +16,22 @@ import { cn } from "@/lib/utils";
 import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { getDashboardPath } from "@/lib/utils";
+
 function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tenantParam = searchParams.get("tenant") || "";
-  const { register, isLoading, error, clearError, tenantSlug, setTenantSlug } =
-    useAuthStore();
+  const {
+    register,
+    isLoading,
+    error,
+    clearError,
+    tenantSlug,
+    setTenantSlug,
+    isAuthenticated,
+    user,
+  } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     firstName: "",
@@ -31,6 +41,13 @@ function RegisterContent() {
     password: "",
     tenant: tenantSlug || tenantParam,
   });
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const target = getDashboardPath(user.roles || []);
+      router.replace(target);
+    }
+  }, [isAuthenticated, user, router]);
 
   useEffect(() => {
     if (tenantParam) {
@@ -65,12 +82,14 @@ function RegisterContent() {
   return (
     <AuthShell>
       <div>
-        <h1 className="sr-hero-title text-foreground">Join your susu</h1>
-        <p className="mt-2.5 text-base text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          Join your susu
+        </h1>
+        <p className="mt-2.5 text-[17px] text-muted-foreground">
           or{" "}
           <Link
             href="/login"
-            className="font-semibold text-primary hover:text-primary/80"
+            className="font-semibold text-[#0066cc] dark:text-[#38bdf8] hover:underline"
           >
             Login
           </Link>
@@ -81,7 +100,7 @@ function RegisterContent() {
         <div className="space-y-1.5">
           <label
             htmlFor="tenant"
-            className="block text-sm sm:text-base font-semibold text-foreground"
+            className="block text-[17px] font-semibold text-foreground"
           >
             Susu company <span className="text-destructive">*</span>
           </label>
@@ -102,7 +121,7 @@ function RegisterContent() {
           <div className="space-y-1.5">
             <label
               htmlFor="firstName"
-              className="block text-sm sm:text-base font-semibold text-foreground"
+              className="block text-[17px] font-semibold text-foreground"
             >
               First name <span className="text-destructive">*</span>
             </label>
@@ -121,7 +140,7 @@ function RegisterContent() {
           <div className="space-y-1.5">
             <label
               htmlFor="lastName"
-              className="block text-sm sm:text-base font-semibold text-foreground"
+              className="block text-[17px] font-semibold text-foreground"
             >
               Last name <span className="text-destructive">*</span>
             </label>
@@ -142,7 +161,7 @@ function RegisterContent() {
         <div className="space-y-1.5">
           <label
             htmlFor="email"
-            className="block text-sm sm:text-base font-semibold text-foreground"
+            className="block text-[17px] font-semibold text-foreground"
           >
             Email address <span className="text-destructive">*</span>
           </label>
@@ -162,7 +181,7 @@ function RegisterContent() {
         <div className="space-y-1.5">
           <label
             htmlFor="phone"
-            className="block text-sm sm:text-base font-semibold text-foreground"
+            className="block text-[17px] font-semibold text-foreground"
           >
             Phone <span className="text-destructive">*</span>
           </label>
@@ -182,7 +201,7 @@ function RegisterContent() {
         <div className="space-y-1.5">
           <label
             htmlFor="password"
-            className="block text-sm sm:text-base font-semibold text-foreground"
+            className="block text-[17px] font-semibold text-foreground"
           >
             Password <span className="text-destructive">*</span>
           </label>
@@ -221,7 +240,7 @@ function RegisterContent() {
 
         <Button
           type="submit"
-          className="h-[54px] min-h-[54px] w-full rounded-[0.25rem] text-base font-bold shadow-[0_6px_20px_rgba(34,197,94,0.22)]"
+          className="h-12 min-h-[48px] w-full rounded-xl text-[17px] font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white"
           loading={isLoading}
         >
           Create account

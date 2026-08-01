@@ -9,7 +9,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
   const year = new Date().getFullYear();
 
   return (
-    <div className="auth-split h-screen overflow-hidden bg-background lg:grid lg:grid-cols-2">
+    <div className="auth-split overflow-hidden bg-background lg:grid lg:grid-cols-2">
       <div className="relative flex h-full flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden bg-background">
         <div className="flex items-center justify-between gap-3 px-5 pt-5 sm:px-6 lg:hidden">
           <BrandLockup priority wordmarkClassName="text-xl" />
