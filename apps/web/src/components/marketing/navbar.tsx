@@ -12,6 +12,7 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BrandLockup } from "@/components/marketing/brand-logo";
 import { NAV_LINKS } from "@/lib/marketing-data";
 import { cn, getDashboardPath, getInitials } from "@/lib/utils";
@@ -84,6 +85,7 @@ export function MarketingNavbar() {
   const lastScrollY = useRef(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const navContainerRef = useRef<HTMLElement>(null);
+  const megaMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { user, isAuthenticated, logout } = useAuthStore();
   const dashboardPath = user
@@ -147,9 +149,44 @@ export function MarketingNavbar() {
     return null;
   };
 
+  const cancelMegaMenuClose = () => {
+    if (megaMenuCloseTimer.current) {
+      clearTimeout(megaMenuCloseTimer.current);
+      megaMenuCloseTimer.current = null;
+    }
+  };
+
+  const scheduleMegaMenuClose = () => {
+    cancelMegaMenuClose();
+    megaMenuCloseTimer.current = setTimeout(() => {
+      setActiveMegaMenu(null);
+      megaMenuCloseTimer.current = null;
+    }, 120);
+  };
+
+  const openMegaMenu = (label: "Product" | "Why SusuFlow") => {
+    cancelMegaMenuClose();
+    setActiveMegaMenu(label);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (megaMenuCloseTimer.current) {
+        clearTimeout(megaMenuCloseTimer.current);
+      }
+    };
+  }, []);
+
   return (
     <>
-      <header className="sticky top-0 z-[200] border-b border-slate-200/70 dark:border-slate-800/80 bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-md pt-[env(safe-area-inset-top,0px)] transition-all">
+      <header
+        className={cn(
+          "sticky top-0 z-[400] pt-[env(safe-area-inset-top,0px)] transition-all",
+          activeMegaMenu
+            ? "bg-white dark:bg-[#09090b]"
+            : "bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800/80",
+        )}
+      >
         <div className="marketing-container flex h-[4.5rem] sm:h-22 items-center justify-between gap-3 sm:gap-4 relative">
           <Link
             href="/"
@@ -163,7 +200,7 @@ export function MarketingNavbar() {
             ref={navContainerRef}
             className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 lg:flex xl:gap-3"
             aria-label="Main"
-            onMouseLeave={() => setActiveMegaMenu(null)}
+            onMouseLeave={scheduleMegaMenuClose}
           >
             {NAV_LINKS.map(({ href, label }) => {
               const hasMega = label === "Product" || label === "Why SusuFlow";
@@ -179,7 +216,7 @@ export function MarketingNavbar() {
                     key={label}
                     className="relative"
                     onMouseEnter={() =>
-                      setActiveMegaMenu(label as "Product" | "Why SusuFlow")
+                      openMegaMenu(label as "Product" | "Why SusuFlow")
                     }
                   >
                     <button
@@ -215,7 +252,10 @@ export function MarketingNavbar() {
                 <Link
                   key={href}
                   href={href}
-                  onMouseEnter={() => setActiveMegaMenu(null)}
+                  onMouseEnter={() => {
+                    cancelMegaMenuClose();
+                    setActiveMegaMenu(null);
+                  }}
                   className={cn(
                     "px-3.5 py-2 text-[17px] font-semibold transition-colors rounded-lg",
                     active
@@ -228,15 +268,6 @@ export function MarketingNavbar() {
               );
             })}
           </nav>
-
-          {/* Render Full-Width Desktop Mega Menu Dropdown */}
-          {activeMegaMenu && getMegaMenuConfig(activeMegaMenu) && (
-            <MegaDropdown
-              config={getMegaMenuConfig(activeMegaMenu)!}
-              isOpen={!!activeMegaMenu}
-              onClose={() => setActiveMegaMenu(null)}
-            />
-          )}
 
           {/* Right Header Controls */}
           <div className="relative z-10 flex shrink-0 items-center gap-3 sm:gap-4">
@@ -330,6 +361,15 @@ export function MarketingNavbar() {
         </div>
       </header>
 
+      {activeMegaMenu && getMegaMenuConfig(activeMegaMenu) && (
+        <MegaDropdown
+          config={getMegaMenuConfig(activeMegaMenu)!}
+          isOpen={!!activeMegaMenu}
+          onClose={() => setActiveMegaMenu(null)}
+          onMouseEnter={cancelMegaMenuClose}
+        />
+      )}
+
       {/* Mobile Drawer Navigation */}
       {mounted && menuOpen
         ? createPortal(
@@ -376,21 +416,34 @@ export function MarketingNavbar() {
                           </button>
 
                           {isExpanded && (
-                            <div className="pl-3 pr-1 py-2 space-y-4 border-l-2 border-[#0066cc]/30 ml-4">
+                            <div className="mt-2 space-y-6 px-1 mb-4">
                               {megaConfig.categories.map((cat) => (
-                                <div key={cat.title} className="space-y-2">
-                                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                <div key={cat.title} className="space-y-3">
+                                  <p className="text-[15px] font-bold text-slate-900 dark:text-white">
                                     {cat.title}
                                   </p>
-                                  <div className="space-y-1">
+                                  <div className="flex flex-col gap-4">
                                     {cat.items.map((item) => (
                                       <Link
                                         key={item.title}
                                         href={item.href}
                                         onClick={() => setMenuOpen(false)}
-                                        className="block py-1.5 text-sm font-semibold text-foreground hover:text-[#0066cc]"
+                                        className="group flex items-start gap-3 transition-colors"
                                       >
-                                        {item.title}
+                                        <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-500 transition-colors group-hover:border-[#0066cc]/30 group-hover:bg-[#0066cc]/5 group-hover:text-[#0066cc] dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-400">
+                                          <FontAwesomeIcon
+                                            icon={item.icon}
+                                            className="h-[14px] w-[14px]"
+                                          />
+                                        </div>
+                                        <div className="min-w-0">
+                                          <p className="text-[14px] font-bold text-slate-900 transition-colors group-hover:text-[#0066cc] dark:text-white">
+                                            {item.title}
+                                          </p>
+                                          <p className="text-[13px] leading-snug text-slate-600 dark:text-slate-400">
+                                            {item.description}
+                                          </p>
+                                        </div>
                                       </Link>
                                     ))}
                                   </div>

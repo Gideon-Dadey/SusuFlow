@@ -502,14 +502,14 @@
 
   /* Mobile Hero Paragraph Copy */
   .sr-hero-copy {
-    font-size: 1.0625rem !important; /* 17px mobile */
+    font-size: 17px !important; /* same as footer text */
     line-height: 1.65 !important;
   }
 
   @media (min-width: 768px) {
     .sr-hero-copy {
-      font-size: 1.1875rem !important; /* 19px desktop */
-      line-height: 1.7 !important;
+      font-size: 17px !important; /* same as footer text */
+      line-height: 1.65 !important;
     }
   }
 
@@ -813,7 +813,7 @@
     }
   }
 
-  .marketing-canvas {
+  :root {
     --marketing-safe-top: max(1rem, env(safe-area-inset-top, 0px));
     --marketing-gutter: 1rem;
     --marketing-max-width: 100%;
@@ -821,6 +821,9 @@
     --marketing-header-height: calc(var(--marketing-safe-top) + var(--marketing-nav-pill-height));
     --marketing-hero-content-gap: 3rem;
     --marketing-hero-content-offset: calc(var(--marketing-header-height) + var(--marketing-hero-content-gap));
+  }
+
+  .marketing-canvas {
     @apply min-h-screen overflow-x-hidden bg-background;
     background:
       radial-gradient(ellipse 80% 50% at 50% -20%, var(--surface-glow), transparent),
@@ -828,7 +831,7 @@
   }
 
   @media (min-width: 640px) {
-    .marketing-canvas {
+    :root {
       --marketing-safe-top: max(1.25rem, env(safe-area-inset-top, 0px));
       --marketing-gutter: 1.25rem;
       --marketing-nav-pill-height: 3.75rem;
@@ -837,7 +840,7 @@
   }
 
   @media (min-width: 1024px) {
-    .marketing-canvas {
+    :root {
       --marketing-gutter: 1.5rem;
       --marketing-nav-pill-height: 4rem;
       --marketing-hero-content-gap: 4rem;
@@ -846,13 +849,13 @@
   }
 
   @media (min-width: 1280px) {
-    .marketing-canvas {
+    :root {
       --marketing-max-width: min(1560px, 100%);
     }
   }
 
   @media (min-width: 1536px) {
-    .marketing-canvas {
+    :root {
       --marketing-gutter: 2rem;
       --marketing-max-width: min(1680px, 100%);
       --marketing-hero-content-gap: 3.5rem;
@@ -860,7 +863,7 @@
   }
 
   @media (min-width: 1920px) {
-    .marketing-canvas {
+    :root {
       --marketing-max-width: min(1780px, 100%);
     }
   }

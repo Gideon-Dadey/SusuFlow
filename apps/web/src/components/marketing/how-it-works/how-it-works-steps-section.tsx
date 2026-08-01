@@ -13,7 +13,7 @@ export function HowItWorksStepsSection() {
           <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-[2rem]">
             Four steps from signup to verified savings
           </h2>
-          <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground">
+          <p className="mt-5 text-pretty text-[17px] leading-relaxed text-muted-foreground">
             Whether you run a formal susu company or a growing collector
             network, the flow is the same. Simple for members. Accountable for
             management.

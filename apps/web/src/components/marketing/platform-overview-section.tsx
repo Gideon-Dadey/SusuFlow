@@ -18,7 +18,7 @@ export function PlatformOverviewSection() {
               <br />
               All in one place.
             </h2>
-            <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-base sm:text-lg leading-relaxed text-muted-foreground lg:mt-6">
+            <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-[17px] leading-relaxed text-muted-foreground lg:mt-6">
               Forget juggling books, WhatsApp receipts, and collector disputes.
               Run contributions, payouts, and MoMo verification from one
               streamlined platform built for Ghanaian susu.
@@ -41,7 +41,7 @@ export function PlatformOverviewSection() {
               className="pointer-events-none absolute -left-4 top-1/2 hidden h-3/4 w-3/4 -translate-y-1/2 rounded-full bg-primary/8 blur-3xl lg:block"
               aria-hidden
             />
-            <div className="relative aspect-[4/3] w-full max-h-[14rem] sm:max-h-none sm:aspect-[16/11] lg:aspect-[5/4]">
+            <div className="relative aspect-[4/3] w-full sm:aspect-[16/11] lg:aspect-[5/4]">
               <Image
                 src={BRAND_PLATFORM_OVERVIEW}
                 alt="SusuFlow admin dashboard on tablet, mobile saver app, and verified MoMo card"

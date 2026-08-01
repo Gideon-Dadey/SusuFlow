@@ -13,7 +13,7 @@ export function PricingRoiSection() {
           <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
             The cost of staying manual vs going digital
           </h2>
-          <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground">
+          <p className="mt-5 text-pretty text-[17px] leading-relaxed text-muted-foreground">
             Susu companies across Ghana still lose time and trust to cash
             disputes and manual books. SusuFlow pays for itself when collections
             are verified and records are always ready.

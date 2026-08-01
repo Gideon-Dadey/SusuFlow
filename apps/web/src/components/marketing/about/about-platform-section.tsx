@@ -11,7 +11,7 @@ export function AboutPlatformSection() {
           <h2 className="text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
             Everything susu companies need, in a single platform
           </h2>
-          <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground lg:mx-auto">
+          <p className="mt-5 text-pretty text-[17px] leading-relaxed text-muted-foreground lg:mx-auto">
             Designed to help susu operators manage collections, commissions, and
             payouts across branches. Verified MoMo deposits, live balances, and
             exportable reports make choosing SusuFlow straightforward.

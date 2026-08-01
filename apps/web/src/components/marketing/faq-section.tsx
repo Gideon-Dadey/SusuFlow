@@ -17,7 +17,7 @@ export function FaqSection() {
           <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Common questions
           </h2>
-          <p className="mt-2 text-base text-muted-foreground sm:text-lg">
+          <p className="mt-2 text-[17px] text-muted-foreground leading-relaxed">
             Everything you need to know about digital susu with SusuFlow.
             Can&apos;t find your answer?{" "}
             <Link
@@ -41,7 +41,7 @@ export function FaqSection() {
                     aria-hidden
                   />
                 </span>
-                <span className="min-w-0 flex-1 text-left text-base font-semibold leading-snug text-foreground sm:text-lg">
+                <span className="min-w-0 flex-1 text-left text-[17px] font-semibold leading-snug text-foreground">
                   {q}
                 </span>
                 <span className="flex size-6 shrink-0 items-center justify-center text-foreground">
@@ -53,7 +53,7 @@ export function FaqSection() {
                 </span>
               </summary>
               <div className="faq-item-answer">
-                <p className="text-base leading-relaxed text-muted-foreground">
+                <p className="text-[17px] leading-relaxed text-muted-foreground">
                   {a}
                 </p>
               </div>

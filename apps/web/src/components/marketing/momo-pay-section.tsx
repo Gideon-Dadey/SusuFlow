@@ -28,7 +28,7 @@ export function MomoPaySection() {
     <section className="bg-background">
       <MarketingContainer className="pt-2 pb-10 sm:pt-6 sm:pb-16 lg:py-24">
         <div className="flex flex-col gap-6 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
-          <div className="order-2 min-w-0 text-left lg:order-1">
+          <div className="min-w-0 text-left">
             <div className="mb-6 flex items-center justify-start gap-4 lg:mb-8">
               <BrandLogo className="h-8 max-w-[9rem] sm:max-w-[10rem]" />
               <span className="h-9 w-px shrink-0 bg-border" aria-hidden />
@@ -42,7 +42,7 @@ export function MomoPaySection() {
               </span>
             </h2>
 
-            <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-base sm:text-lg leading-relaxed text-muted-foreground lg:mt-6">
+            <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-[17px] leading-relaxed text-muted-foreground lg:mt-6">
               Savers pay straight from their MoMo wallet. Collectors send
               prompts in the field, and every cedi is verified against the
               gateway before it hits the ledger. No cash handoffs, no disputed
@@ -72,12 +72,12 @@ export function MomoPaySection() {
             </div>
           </div>
 
-          <div className="relative order-1 mx-auto w-full max-w-[13rem] sm:max-w-[16rem] lg:order-2 lg:max-w-none lg:justify-self-end">
+          <div className="relative mx-auto w-full max-w-[13rem] sm:max-w-[16rem] lg:max-w-none lg:justify-self-end">
             <div
               className="pointer-events-none absolute -right-2 top-1/2 hidden h-[70%] w-[80%] -translate-y-1/2 rounded-full bg-[#ffcc00]/12 blur-3xl lg:block"
               aria-hidden
             />
-            <div className="relative h-[15.5rem] w-full sm:h-[19rem] lg:aspect-[9/16] lg:h-auto lg:max-h-[36rem]">
+            <div className="relative aspect-[4/3] w-full sm:aspect-[16/11] lg:aspect-[9/16] lg:h-auto lg:max-h-[36rem]">
               <Image
                 src={BRAND_MOMO_PAY_SHOWCASE}
                 alt="SusuFlow mobile app showing a verified MTN MoMo Pay deposit with Done confirmation"

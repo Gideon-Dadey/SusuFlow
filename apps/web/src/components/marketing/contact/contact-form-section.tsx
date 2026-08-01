@@ -17,7 +17,7 @@ export function ContactFormSection() {
             <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               Need help creating your account?
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            <p className="mt-4 text-[17px] leading-relaxed text-muted-foreground">
               You can call or email us anytime. Our team helps susu companies
               onboard collectors and run their first verified MoMo collection
               cycle.

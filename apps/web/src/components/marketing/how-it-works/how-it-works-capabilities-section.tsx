@@ -15,12 +15,12 @@ export function HowItWorksCapabilitiesSection() {
             <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-[2rem]">
               Everything your company needs to go cashless
             </h2>
-            <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
+            <p className="mt-5 max-w-lg text-pretty text-[17px] leading-relaxed text-muted-foreground">
               The same tools you see on our homepage power your daily
               operations. MoMo deposits, verified settlements, collector
               prompts, and audit ready records in one place.
             </p>
-            <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
+            <p className="mt-4 max-w-lg text-pretty text-[17px] leading-relaxed text-muted-foreground">
               Start with a free trial, onboard your first collectors, and move
               your next savings cycle onto a ledger your staff and members can
               trust.

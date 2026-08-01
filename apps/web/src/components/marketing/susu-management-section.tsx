@@ -32,7 +32,7 @@ export function SusuManagementSection() {
               Become the world’s most relaxed expense control freak.
             </h2>
 
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed text-pretty max-w-xl">
+            <p className="text-[17px] text-muted-foreground leading-relaxed text-pretty max-w-xl">
               Earn unlimited cashback with our Full Suite package. Access 30+
               currency configurations, issue virtual cards to your staff
               globally and manage team budgets with greater transparency and

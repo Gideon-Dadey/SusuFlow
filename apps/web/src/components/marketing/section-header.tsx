@@ -21,7 +21,7 @@ export function SectionHeader({
     >
       <h2 className="sr-section-bar text-balance text-foreground">{title}</h2>
       {description ? (
-        <p className="mt-3 text-base leading-relaxed text-muted-foreground sm:text-lg">
+        <p className="mt-3 text-[17px] leading-relaxed text-muted-foreground">
           {description}
         </p>
       ) : null}
