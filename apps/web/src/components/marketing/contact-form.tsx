@@ -36,7 +36,7 @@ function ContactFormInner() {
     return (
       <div className="py-8 text-center">
         <p className="text-lg font-semibold text-foreground">Message sent</p>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="mt-2 text-[17px] text-muted-foreground">
           Thanks for reaching out. We&apos;ll get back to you within one
           business day.
         </p>
@@ -47,11 +47,11 @@ function ContactFormInner() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <input type="hidden" name="intent" value={intent} />
-      <p className="text-sm font-medium text-secondary">{copy.title}</p>
+      <p className="text-[17px] font-medium text-secondary">{copy.title}</p>
       <div>
         <label
           htmlFor="name"
-          className="mb-1.5 block text-sm font-medium text-foreground"
+          className="mb-1.5 block text-[17px] font-medium text-foreground"
         >
           Name
         </label>
@@ -60,7 +60,7 @@ function ContactFormInner() {
       <div>
         <label
           htmlFor="email"
-          className="mb-1.5 block text-sm font-medium text-foreground"
+          className="mb-1.5 block text-[17px] font-medium text-foreground"
         >
           Email
         </label>
@@ -69,7 +69,7 @@ function ContactFormInner() {
       <div>
         <label
           htmlFor="company"
-          className="mb-1.5 block text-sm font-medium text-foreground"
+          className="mb-1.5 block text-[17px] font-medium text-foreground"
         >
           Susu company
         </label>
@@ -78,7 +78,7 @@ function ContactFormInner() {
       <div>
         <label
           htmlFor="message"
-          className="mb-1.5 block text-sm font-medium text-foreground"
+          className="mb-1.5 block text-[17px] font-medium text-foreground"
         >
           Message
         </label>

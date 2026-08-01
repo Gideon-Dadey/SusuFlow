@@ -32,7 +32,7 @@ export function ContactFormSection() {
                   <p className="font-medium text-foreground">Email</p>
                   <a
                     href={`mailto:${SUPPORT_EMAIL}`}
-                    className="text-sm text-muted-foreground hover:text-secondary"
+                    className="text-[17px] text-muted-foreground hover:text-secondary"
                   >
                     {SUPPORT_EMAIL}
                   </a>
@@ -45,7 +45,9 @@ export function ContactFormSection() {
                 />
                 <div>
                   <p className="font-medium text-foreground">Office</p>
-                  <p className="text-sm text-muted-foreground">Accra, Ghana</p>
+                  <p className="text-[17px] text-muted-foreground">
+                    Accra, Ghana
+                  </p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -55,7 +57,7 @@ export function ContactFormSection() {
                 />
                 <div>
                   <p className="font-medium text-foreground">Response time</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-[17px] text-muted-foreground">
                     Within 1 business day
                   </p>
                 </div>

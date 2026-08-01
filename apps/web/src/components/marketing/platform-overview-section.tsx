@@ -25,7 +25,7 @@ export function PlatformOverviewSection() {
             </p>
             <Link
               href="/how-it-works"
-              className="mt-6 inline-flex items-center gap-2 text-base font-semibold text-muted-foreground transition-colors hover:text-foreground lg:mt-8"
+              className="mt-6 inline-flex items-center gap-2 text-[17px] font-semibold text-muted-foreground transition-colors hover:text-foreground lg:mt-8"
             >
               <span>Explore the platform</span>
               <ArrowRight className="h-4 w-4" />

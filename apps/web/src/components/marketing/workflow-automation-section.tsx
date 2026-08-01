@@ -24,7 +24,7 @@ export function WorkflowAutomationSection() {
 
           {/* Right Column: Text Content */}
           <div className="order-1 lg:order-2 space-y-4 sm:space-y-6 max-w-xl">
-            <span className="text-sm font-medium tracking-wide text-muted-foreground block">
+            <span className="text-[17px] font-medium tracking-wide text-muted-foreground block">
               Streamline workflows
             </span>
 
@@ -42,7 +42,7 @@ export function WorkflowAutomationSection() {
             <div className="pt-2">
               <Link
                 href="/how-it-works"
-                className="inline-flex items-center gap-2 text-sm sm:text-base font-semibold text-[#0066cc] hover:text-[#0052a3] transition-colors group"
+                className="inline-flex items-center gap-2 text-[17px] sm:text-[17px] font-semibold text-[#0066cc] hover:text-[#0052a3] transition-colors group"
               >
                 <span>Deposit automation</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

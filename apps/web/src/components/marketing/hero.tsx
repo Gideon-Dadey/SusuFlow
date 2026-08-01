@@ -39,7 +39,7 @@ export function MarketingHero() {
               </Link>
               <Link
                 href="/how-it-works"
-                className="inline-flex w-full items-center justify-center gap-1.5 text-base font-semibold text-muted-foreground transition-colors hover:text-foreground sm:w-auto sm:justify-start"
+                className="inline-flex w-full items-center justify-center gap-1.5 text-[17px] font-semibold text-muted-foreground transition-colors hover:text-foreground sm:w-auto sm:justify-start"
               >
                 <span>See how it works</span>
                 <ArrowRight className="h-4 w-4" />

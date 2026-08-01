@@ -11,7 +11,7 @@ export function AboutHero() {
       <MarketingContainer className="marketing-hero-platform-inner">
         <div className="flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 xl:gap-16">
           <div className="min-w-0 text-left">
-            <p className="text-sm font-medium text-muted-foreground">
+            <p className="text-[17px] font-medium text-muted-foreground">
               About us
             </p>
             <h1 className="sr-hero-title mt-3 text-balance text-foreground">

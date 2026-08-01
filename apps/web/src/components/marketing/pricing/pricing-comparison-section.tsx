@@ -27,7 +27,9 @@ function CellValue({ value }: { value: PricingCellValue }) {
       />
     );
   }
-  return <span className="text-sm font-medium text-foreground">{value}</span>;
+  return (
+    <span className="text-[17px] font-medium text-foreground">{value}</span>
+  );
 }
 
 const PLAN_KEYS = ["starter", "growth", "enterprise"] as const;
@@ -35,7 +37,7 @@ const PLAN_KEYS = ["starter", "growth", "enterprise"] as const;
 const COMPARISON_ROW_EVEN = "bg-white dark:bg-card";
 const COMPARISON_ROW_ODD = "bg-[#f5f6f8] dark:bg-muted";
 const COMPARISON_GROUP_HEADER =
-  "border-t border-border bg-[#1a1a1a] px-4 py-3 text-sm font-bold text-white dark:bg-muted dark:text-foreground";
+  "border-t border-border bg-[#1a1a1a] px-4 py-3 text-[17px] font-bold text-white dark:bg-muted dark:text-foreground";
 
 export function PricingComparisonSection() {
   return (
@@ -45,7 +47,7 @@ export function PricingComparisonSection() {
           <h2 className="text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
             Compare all features across the plans
           </h2>
-          <p className="mt-4 text-pretty text-base text-muted-foreground lg:mx-auto lg:max-w-2xl">
+          <p className="mt-4 text-pretty text-[17px] leading-relaxed text-muted-foreground lg:mx-auto lg:max-w-2xl">
             Every plan includes verified MoMo collections. Higher tiers add
             scale, team controls, and support for growing susu companies.
           </p>
@@ -61,7 +63,7 @@ export function PricingComparisonSection() {
                     key={plan.name}
                     className="px-4 pb-6 text-center align-bottom"
                   >
-                    <p className="text-base font-bold text-foreground">
+                    <p className="text-[17px] font-bold text-foreground">
                       {plan.name}
                     </p>
                     <Link href={plan.ctaHref} className="mt-4 inline-block">
@@ -102,7 +104,7 @@ export function PricingComparisonSection() {
                             striped ? COMPARISON_ROW_ODD : COMPARISON_ROW_EVEN,
                           )}
                         >
-                          <td className="py-4 pr-6 text-sm text-foreground">
+                          <td className="py-4 pr-6 text-[17px] text-foreground">
                             {row.feature}
                           </td>
                           {PLAN_KEYS.map((key) => (
@@ -135,7 +137,7 @@ export function PricingComparisonSection() {
                 )}
               >
                 <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-base font-bold text-foreground">
+                  <h3 className="text-[17px] font-bold text-foreground">
                     {plan.name}
                   </h3>
                   <Link href={plan.ctaHref}>
@@ -158,7 +160,7 @@ export function PricingComparisonSection() {
                         <li
                           key={row.feature}
                           className={cn(
-                            "flex items-center justify-between gap-3 px-3 py-2.5 text-sm",
+                            "flex items-center justify-between gap-3 px-3 py-2.5 text-[17px]",
                             rowIdx % 2 === 1
                               ? COMPARISON_ROW_ODD
                               : COMPARISON_ROW_EVEN,

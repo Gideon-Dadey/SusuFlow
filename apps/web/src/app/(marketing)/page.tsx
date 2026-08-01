@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ApprovalWorkflowsCtaSection } from "@/components/marketing/approval-workflows-cta-section";
-import { FaqSection } from "@/components/marketing/faq-section";
 import { MarketingHero } from "@/components/marketing/hero";
 import { MomoPayCapabilitiesSection } from "@/components/marketing/momo-pay-capabilities-section";
 import { MomoPaySection } from "@/components/marketing/momo-pay-section";
@@ -26,7 +25,6 @@ export default function HomePage() {
       <SolutionsInActionSection />
       <WorkflowAutomationSection />
       <ApprovalWorkflowsCtaSection />
-      <FaqSection />
     </>
   );
 }

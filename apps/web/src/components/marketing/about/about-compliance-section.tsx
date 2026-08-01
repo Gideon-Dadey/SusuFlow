@@ -26,7 +26,7 @@ export function AboutComplianceSection() {
               <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-[#22c55e] text-white">
                 <Check className="size-4" strokeWidth={2.5} aria-hidden />
               </span>
-              <span className="text-sm leading-relaxed text-foreground sm:text-base">
+              <span className="text-[17px] leading-relaxed text-foreground sm:text-[17px]">
                 {point}
               </span>
             </li>

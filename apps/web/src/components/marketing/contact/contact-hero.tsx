@@ -15,10 +15,10 @@ export function ContactHero() {
               {CONTACT_OFFICE.headline}
             </h1>
 
-            <h2 className="mt-10 text-base font-bold text-foreground sm:mt-12">
+            <h2 className="mt-10 text-[17px] font-bold text-foreground sm:mt-12">
               Office address
             </h2>
-            <address className="mt-3 not-italic text-sm leading-relaxed text-muted-foreground sm:text-base">
+            <address className="mt-3 not-italic text-[17px] leading-relaxed text-muted-foreground sm:text-[17px]">
               {CONTACT_OFFICE.addressLines.map((line) => (
                 <span key={line} className="block">
                   {line}

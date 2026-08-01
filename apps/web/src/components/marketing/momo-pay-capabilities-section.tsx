@@ -22,7 +22,7 @@ export function MomoPayCapabilitiesSection() {
                     className="h-8 w-8 text-[#111827] dark:text-foreground sm:h-9 sm:w-9"
                     aria-hidden
                   />
-                  <span className="mt-4 text-xs font-semibold leading-snug text-[#111827] dark:text-foreground sm:text-sm">
+                  <span className="mt-4 text-xs font-semibold leading-snug text-[#111827] dark:text-foreground sm:text-[17px]">
                     {label}
                   </span>
                 </div>

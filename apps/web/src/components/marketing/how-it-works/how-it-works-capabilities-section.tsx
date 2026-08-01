@@ -9,7 +9,7 @@ export function HowItWorksCapabilitiesSection() {
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="flex flex-col gap-8 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
           <div className="order-1 min-w-0 text-left lg:order-2">
-            <p className="text-sm font-medium text-muted-foreground">
+            <p className="text-[17px] font-medium text-muted-foreground">
               Platform capabilities
             </p>
             <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-[2rem]">
@@ -41,7 +41,7 @@ export function HowItWorksCapabilitiesSection() {
                     className="h-8 w-8 text-[#111827] dark:text-foreground sm:h-9 sm:w-9"
                     aria-hidden
                   />
-                  <span className="mt-4 text-xs font-semibold leading-snug text-[#111827] dark:text-foreground sm:text-sm">
+                  <span className="mt-4 text-xs font-semibold leading-snug text-[#111827] dark:text-foreground sm:text-[17px]">
                     {label}
                   </span>
                 </div>

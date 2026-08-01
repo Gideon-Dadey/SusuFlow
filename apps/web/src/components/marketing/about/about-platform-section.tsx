@@ -18,7 +18,7 @@ export function AboutPlatformSection() {
           </p>
           <Link
             href="/how-it-works"
-            className="mt-8 inline-flex items-center gap-1.5 text-sm font-semibold text-secondary transition-colors hover:text-secondary/80 lg:justify-center"
+            className="mt-8 inline-flex items-center gap-1.5 text-[17px] font-semibold text-secondary transition-colors hover:text-secondary/80 lg:justify-center"
           >
             Read more
             <ArrowRight className="h-4 w-4" aria-hidden />
@@ -31,10 +31,10 @@ export function AboutPlatformSection() {
               key={title}
               className="rounded-none border border-border/80 bg-white p-6 dark:border-border dark:bg-card"
             >
-              <h3 className="text-base font-bold text-foreground sm:text-lg">
+              <h3 className="text-[17px] font-bold text-foreground sm:text-lg">
                 {title}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+              <p className="mt-3 text-[17px] leading-relaxed text-muted-foreground sm:text-[17px]">
                 {body}
               </p>
             </article>

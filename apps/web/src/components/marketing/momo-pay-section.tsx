@@ -11,14 +11,14 @@ function MomoPayBadge({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full bg-[#ffcc00] px-3 py-1.5 text-sm font-bold tracking-tight text-[#1a1a1a] shadow-sm",
+        "inline-flex items-center gap-1 rounded-full bg-[#ffcc00] px-3 py-1.5 text-[17px] font-bold tracking-tight text-[#1a1a1a] shadow-sm",
         className,
       )}
     >
       <span className="text-[0.7rem] font-extrabold uppercase tracking-wider">
         MTN
       </span>
-      <span className="text-base font-extrabold leading-none">MoMo</span>
+      <span className="text-[17px] font-extrabold leading-none">MoMo</span>
     </span>
   );
 }
@@ -64,7 +64,7 @@ export function MomoPaySection() {
               </Link>
               <Link
                 href="/how-it-works"
-                className="inline-flex items-center gap-1.5 text-base font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                className="inline-flex items-center gap-1.5 text-[17px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
               >
                 How MoMo deposits work
                 <ArrowRight className="h-4 w-4" />

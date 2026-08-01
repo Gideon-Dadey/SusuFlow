@@ -11,7 +11,7 @@ export function HowItWorksHero() {
       <MarketingContainer className="marketing-hero-platform-inner">
         <div className="flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 xl:gap-16">
           <div className="min-w-0 text-left">
-            <p className="text-sm font-medium text-muted-foreground">
+            <p className="text-[17px] font-medium text-muted-foreground">
               How SusuFlow works
             </p>
             <h1 className="sr-hero-title mt-3 text-balance text-foreground">
@@ -38,7 +38,7 @@ export function HowItWorksHero() {
               </Link>
               <Link
                 href="/pricing"
-                className="inline-flex w-full items-center justify-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground sm:w-auto sm:justify-start"
+                className="inline-flex w-full items-center justify-center gap-1.5 text-[17px] font-semibold text-muted-foreground transition-colors hover:text-foreground sm:w-auto sm:justify-start"
               >
                 View pricing
                 <ArrowRight className="h-4 w-4" />
