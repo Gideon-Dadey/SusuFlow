@@ -28,7 +28,7 @@ export function MarketingHero() {
               <Link href="/register" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="sr-load-more h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold shadow-sm sm:w-auto sm:min-w-[12rem] flex items-center justify-center gap-2.5"
+                  className="sr-load-more h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-8 text-[17px] font-semibold shadow-sm sm:w-auto sm:min-w-[12rem] flex items-center justify-center gap-2.5"
                 >
                   <span>Register</span>
                   <ArrowRight

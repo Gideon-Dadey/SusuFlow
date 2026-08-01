@@ -336,7 +336,7 @@ export function MarketingNavbar() {
                 </Link>
 
                 <Link href="/register" className="hidden sm:block">
-                  <Button className="h-12 px-6 text-[17px] font-semibold rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white transition-all duration-200 shadow-sm flex items-center justify-center gap-2.5">
+                  <Button className="h-12 px-8 text-[17px] font-semibold rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white transition-all duration-200 shadow-sm flex items-center justify-center gap-2.5">
                     <span>Register</span>
                     <ArrowRight
                       className="h-[18px] w-[18px] stroke-[2.25]"
