@@ -57,7 +57,7 @@ export interface MegaMenuConfig {
 
 export const PRODUCT_MEGA_MENU: MegaMenuConfig = {
   label: "Product",
-  href: "/how-it-works",
+  href: "/product/accounts-and-payments",
   categories: [
     {
       title: "Accounts, Payments & Cards",
@@ -66,21 +66,21 @@ export const PRODUCT_MEGA_MENU: MegaMenuConfig = {
           title: "Digital Susu Accounts",
           description:
             "Collect, hold and manage daily Susu savings with 100% gateway verification",
-          href: "/how-it-works#susu-accounts",
+          href: "/product/accounts-and-payments#susu-accounts",
           icon: faWallet,
         },
         {
           title: "Instant MoMo Payouts",
           description:
             "Automated payouts to MTN, Telecel, and AT wallets with dual sign-off",
-          href: "/how-it-works#momo-payouts",
+          href: "/product/accounts-and-payments#momo-payouts",
           icon: faMobileScreenButton,
         },
         {
           title: "Field Collector App",
           description:
             "Mobile app for market collectors with instant digital receipts",
-          href: "/how-it-works#collector-app",
+          href: "/product/accounts-and-payments#collector-app",
           icon: faUsers,
         },
       ],
@@ -92,21 +92,21 @@ export const PRODUCT_MEGA_MENU: MegaMenuConfig = {
           title: "Multi-Branch Management",
           description:
             "Manage multiple market branches, staff roles, and collection targets",
-          href: "/how-it-works#branch-management",
+          href: "/product/manage-and-control#branch-management",
           icon: faBuilding,
         },
         {
           title: "Control Hub",
           description:
             "Approvals, multi-level sign-offs, budgets, workflows & user rights",
-          href: "/how-it-works#control-hub",
+          href: "/product/manage-and-control#control-hub",
           icon: faShieldHalved,
         },
         {
           title: "Savings & Loan Plans",
           description:
             "Flexible daily Susu, fixed goal savings, and loan packages",
-          href: "/how-it-works#savings-plans",
+          href: "/product/manage-and-control#savings-plans",
           icon: faChartLine,
         },
       ],
@@ -118,21 +118,21 @@ export const PRODUCT_MEGA_MENU: MegaMenuConfig = {
           title: "Automated Reconciliation",
           description:
             "Real-time double-entry ledger reconciliation against MoMo gateways",
-          href: "/how-it-works#reconciliation",
+          href: "/product/platform-capabilities#reconciliation",
           icon: faScaleBalanced,
         },
         {
           title: "Gateway Integrations",
           description:
             "MTN MoMo, Hubtel, and automated SMS gateway connectivity",
-          href: "/how-it-works#integrations",
+          href: "/product/platform-capabilities#integrations",
           icon: faLayerGroup,
         },
         {
           title: "Live Ledger & Reports",
           description:
             "Exportable trial balances, audit logs, and management balance sheets",
-          href: "/how-it-works#reporting",
+          href: "/product/platform-capabilities#reporting",
           icon: faFileLines,
         },
       ],
@@ -151,7 +151,7 @@ export const PRODUCT_MEGA_MENU: MegaMenuConfig = {
 
 export const WHY_SUSUFLOW_MEGA_MENU: MegaMenuConfig = {
   label: "Why SusuFlow",
-  href: "/about",
+  href: "/why-susuflow/susu-companies-and-mfis",
   categories: [
     {
       title: "Solutions For",
@@ -160,21 +160,21 @@ export const WHY_SUSUFLOW_MEGA_MENU: MegaMenuConfig = {
           title: "Susu Companies & MFIs",
           description:
             "Purpose-built software for Ghanaian microfinance operators to scale safely",
-          href: "/about#solutions-mfis",
+          href: "/why-susuflow/susu-companies-and-mfis",
           icon: faBuildingColumns,
         },
         {
           title: "Field Collectors",
           description:
             "Empower market agents with mobile collection tools & live tracking",
-          href: "/about#solutions-collectors",
+          href: "/why-susuflow/field-collectors",
           icon: faUserCheck,
         },
         {
           title: "Accountants & Management",
           description:
             "Reconcile books in seconds with double-entry ledgers & audit trails",
-          href: "/about#solutions-accountants",
+          href: "/why-susuflow/accountants-and-management",
           icon: faCalculator,
         },
       ],
@@ -186,21 +186,21 @@ export const WHY_SUSUFLOW_MEGA_MENU: MegaMenuConfig = {
           title: "Zero Notebook Fraud",
           description:
             "How partner MFIs eliminated ledger disputes & missing cash in 30 days",
-          href: "/about#case-studies",
+          href: "/why-susuflow/zero-notebook-fraud",
           icon: faShieldHalved,
         },
         {
           title: "100% Gateway Verification",
           description:
             "Guarantee every deposit hits the bank before crediting client balances",
-          href: "/about#verification",
+          href: "/why-susuflow/gateway-verification",
           icon: faCircleCheck,
         },
         {
           title: "Market Scale Story",
           description:
             "Scaling from 5 to 50+ collectors across Kumasi & Accra markets",
-          href: "/about#scale-story",
+          href: "/why-susuflow/market-scale-story",
           icon: faAward,
         },
       ],
@@ -212,21 +212,21 @@ export const WHY_SUSUFLOW_MEGA_MENU: MegaMenuConfig = {
           title: "Cashless Market Collections",
           description:
             "Direct Mobile Money wallet prompts right at the trader stall",
-          href: "/about#use-cases",
+          href: "/why-susuflow/cashless-market-collections",
           icon: faQrcode,
         },
         {
           title: "Role-Based Approvals",
           description:
             "Enforce manager sign-off on withdrawals and plan modifications",
-          href: "/about#security",
+          href: "/why-susuflow/role-based-approvals",
           icon: faLock,
         },
         {
           title: "Bank-Grade Accounting",
           description:
             "Complete transparency for auditors, partners, and regulators",
-          href: "/about#compliance",
+          href: "/why-susuflow/bank-grade-accounting",
           icon: faLandmark,
         },
       ],
