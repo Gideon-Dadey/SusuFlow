@@ -17,6 +17,10 @@ import {
   faSpinner,
   faCircleCheck,
   faCircleExclamation,
+  faEye,
+  faEyeSlash,
+  faCheck,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MIN_PASSWORD_LENGTH } from "@susuflow/shared";
@@ -70,6 +74,23 @@ export default function StaffSettingsPage() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrentPass, setShowCurrentPass] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
+
+  const getPasswordStrength = (pass: string) => {
+    if (!pass) return { score: 0, label: "", color: "" };
+    let score = 0;
+    if (pass.length >= MIN_PASSWORD_LENGTH) score += 1;
+    if (/[A-Z]/.test(pass)) score += 1;
+    if (/[0-9]/.test(pass)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+
+    if (score <= 1) return { score: 1, label: "Weak", color: "bg-red-500" };
+    if (score === 2 || score === 3)
+      return { score: 2, label: "Medium", color: "bg-amber-500" };
+    return { score: 3, label: "Strong", color: "bg-emerald-500" };
+  };
 
   useEffect(() => {
     if (userProfile) {
@@ -634,36 +655,146 @@ export default function StaffSettingsPage() {
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handlePasswordSave} className="space-y-4">
-                    <Input
-                      label="Current Password"
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="Enter current password"
-                      required
-                    />
-                    <Input
-                      label="New Password"
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder={`Minimum ${MIN_PASSWORD_LENGTH} characters`}
-                      required
-                    />
-                    <Input
-                      label="Confirm New Password"
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Confirm new password"
-                      required
-                    />
+                    {/* Current Password */}
+                    <div className="space-y-1.5">
+                      <label className="block text-sm font-medium text-foreground">
+                        Current Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type={showCurrentPass ? "text" : "password"}
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          placeholder="Enter current password"
+                          required
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrentPass(!showCurrentPass)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                        >
+                          <FontAwesomeIcon
+                            icon={showCurrentPass ? faEyeSlash : faEye}
+                            className="h-3.5 w-3.5"
+                          />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* New Password */}
+                    <div className="space-y-1.5">
+                      <label className="block text-sm font-medium text-foreground">
+                        New Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type={showNewPass ? "text" : "password"}
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          placeholder={`Minimum ${MIN_PASSWORD_LENGTH} characters`}
+                          required
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPass(!showNewPass)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                        >
+                          <FontAwesomeIcon
+                            icon={showNewPass ? faEyeSlash : faEye}
+                            className="h-3.5 w-3.5"
+                          />
+                        </button>
+                      </div>
+
+                      {/* Password Strength Meter */}
+                      {newPassword.length > 0 && (
+                        <div className="space-y-1.5 pt-1">
+                          <div className="flex items-center justify-between text-[11px]">
+                            <span className="text-muted-foreground">
+                              Strength:
+                            </span>
+                            <span className="font-semibold text-foreground">
+                              {getPasswordStrength(newPassword).label}
+                            </span>
+                          </div>
+                          <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                            <div
+                              className={`h-full transition-all duration-300 ${
+                                getPasswordStrength(newPassword).color
+                              }`}
+                              style={{
+                                width: `${
+                                  (getPasswordStrength(newPassword).score / 3) *
+                                  100
+                                }%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Confirm New Password */}
+                    <div className="space-y-1.5">
+                      <label className="block text-sm font-medium text-foreground">
+                        Confirm New Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type={showConfirmPass ? "text" : "password"}
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          placeholder="Confirm new password"
+                          required
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPass(!showConfirmPass)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                        >
+                          <FontAwesomeIcon
+                            icon={showConfirmPass ? faEyeSlash : faEye}
+                            className="h-3.5 w-3.5"
+                          />
+                        </button>
+                      </div>
+
+                      {/* Live Password Match Feedback */}
+                      {confirmPassword.length > 0 && (
+                        <div className="flex items-center gap-1.5 text-xs mt-1">
+                          {newPassword === confirmPassword ? (
+                            <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium text-[11px]">
+                              <FontAwesomeIcon
+                                icon={faCheck}
+                                className="h-3 w-3"
+                              />{" "}
+                              Passwords match
+                            </span>
+                          ) : (
+                            <span className="text-red-500 flex items-center gap-1 font-medium text-[11px]">
+                              <FontAwesomeIcon
+                                icon={faXmark}
+                                className="h-3 w-3"
+                              />{" "}
+                              Passwords do not match
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
                     <Button
                       type="submit"
                       size="sm"
-                      variant="outline"
-                      className="w-full flex items-center justify-center gap-2 text-xs font-semibold px-4 min-h-[36px] border-primary text-primary hover:bg-primary/5"
-                      disabled={updatePasswordMutation.isPending}
+                      className="w-full flex items-center justify-center gap-2 text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95"
+                      disabled={
+                        updatePasswordMutation.isPending ||
+                        (confirmPassword.length > 0 &&
+                          newPassword !== confirmPassword)
+                      }
                     >
                       {updatePasswordMutation.isPending && (
                         <FontAwesomeIcon
