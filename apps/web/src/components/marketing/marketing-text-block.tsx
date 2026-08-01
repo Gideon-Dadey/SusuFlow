@@ -14,11 +14,11 @@ export function MarketingTextBlock({
       <MarketingContainer>
         <div className="mx-auto max-w-3xl">
           {title && (
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl mb-8">
+            <h2 className="omnih-h2 text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-8">
               {title}
             </h2>
           )}
-          <div className="text-[17px] leading-8 text-slate-600 dark:text-slate-400 space-y-6">
+          <div className="omnih-body text-[17px] sm:text-[18px] leading-relaxed text-slate-600 dark:text-slate-400 space-y-6">
             {children}
           </div>
         </div>

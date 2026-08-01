@@ -40,17 +40,17 @@ export function ProductHero({
       <MarketingContainer>
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 lg:items-center">
           <div className="max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl text-balance">
+            <h1 className="omnih-h1 text-4xl sm:text-5xl lg:text-6xl text-balance text-slate-900 dark:text-white mb-6">
               {title}
             </h1>
-            <p className="mt-6 text-[17px] leading-8 text-slate-600 dark:text-slate-400 text-pretty">
+            <p className="omnih-body text-[17px] sm:text-[19px] text-pretty text-slate-600 dark:text-slate-400">
               {description}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6">
               <Link href="/register" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-8 text-[17px] font-semibold flex items-center gap-2 shadow-sm"
+                  className="omnih-btn-primary h-14 w-full bg-[#0066cc] hover:bg-[#0052a3] text-white px-8 flex items-center gap-2 shadow-md transition-all"
                 >
                   Get started
                   <ArrowRight className="h-[18px] w-[18px]" />
