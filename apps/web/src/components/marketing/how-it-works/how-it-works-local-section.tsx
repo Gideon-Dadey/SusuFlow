@@ -9,7 +9,7 @@ export function HowItWorksLocalSection() {
     <section className="bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="flex flex-col gap-10 sm:gap-12 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
-          <div className="relative order-1 mx-auto w-full max-w-xl overflow-hidden rounded-none lg:order-1 lg:max-w-none">
+          <div className="relative order-1 mx-auto w-full max-w-xl overflow-hidden rounded-[1.75rem] shadow-md border border-border/40 lg:order-1 lg:max-w-none">
             <div className="relative aspect-[4/3] w-full sm:aspect-[5/4]">
               <Image
                 src={HOW_IT_WORKS_DIGITAL_COLLECTOR}
