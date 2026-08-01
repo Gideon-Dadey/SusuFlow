@@ -1,9 +1,12 @@
-import { MarketingFooter } from '@/components/marketing/footer';
-import { MarketingNavbar } from '@/components/marketing/navbar';
-import { MarketingScrollToTop } from '@/components/marketing/marketing-scroll-to-top';
-import { ThemeToggleRail } from '@/components/theme-toggle-rail';
+import { MarketingFooter } from "@/components/marketing/footer";
+import { MarketingNavbar } from "@/components/marketing/navbar";
+import { MarketingScrollToTop } from "@/components/marketing/marketing-scroll-to-top";
 
-export default function MarketingLayout({ children }: { children: React.ReactNode }) {
+export default function MarketingLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
       <MarketingScrollToTop />
@@ -13,7 +16,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
       >
         Skip to content
       </a>
-      <ThemeToggleRail />
+
       <div className="marketing-canvas flex min-h-screen flex-col">
         <MarketingNavbar />
         <main id="main-content" className="flex-1">

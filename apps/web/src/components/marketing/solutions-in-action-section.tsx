@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { MarketingContainer } from "./marketing-container";
 import { Button } from "@/components/ui/button";
 
@@ -14,18 +15,22 @@ export function SolutionsInActionSection() {
               See our solutions in action
             </h2>
 
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed text-pretty">
+            <p className="text-[17px] text-muted-foreground leading-relaxed text-pretty">
               Book a personalised demo with our SusuFlow team. We’ll walk you
               through how our solutions can support your business needs.
             </p>
 
             <div className="pt-2">
-              <Link href="/contact">
+              <Link href="/contact" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="h-11 sm:h-12 rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-sm sm:text-base font-semibold"
+                  className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center justify-center gap-2.5 sm:w-auto sm:min-w-[12rem]"
                 >
-                  Book a Live Demo
+                  <span>Book a Live Demo</span>
+                  <ArrowRight
+                    className="h-[18px] w-[18px] stroke-[2.25]"
+                    aria-hidden
+                  />
                 </Button>
               </Link>
             </div>

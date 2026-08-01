@@ -34,12 +34,12 @@ export function MomoPayCapabilitiesSection() {
             <h2 className="text-balance text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-[2rem]">
               A simple end-to-end solution to help your susu thrive
             </h2>
-            <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
+            <p className="mt-5 max-w-lg text-pretty text-[17px] leading-relaxed text-muted-foreground">
               Forget juggling cash, WhatsApp screenshots, and manual books.
               Collect MoMo deposits, verify payments, and reconcile ledgers from
               one platform with just a few taps in the field.
             </p>
-            <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
+            <p className="mt-4 max-w-lg text-pretty text-[17px] leading-relaxed text-muted-foreground">
               MoMo prompts, gateway verification, collector tools, live
               dashboards, group payouts, and audit-ready records, built for how
               Ghanaian susu actually runs.

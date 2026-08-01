@@ -10,7 +10,7 @@ export function AboutComplianceSection() {
           <h2 className="text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
             Secure, auditable, and built for verified collections
           </h2>
-          <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground lg:mx-auto">
+          <p className="mt-5 text-pretty text-[17px] leading-relaxed text-muted-foreground lg:mx-auto">
             SusuFlow is designed around gateway confirmed Mobile Money deposits
             and transparent ledger records. Your team sees the same numbers your
             savers expect.

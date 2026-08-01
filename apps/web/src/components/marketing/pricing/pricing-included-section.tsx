@@ -14,7 +14,7 @@ export function PricingIncludedSection() {
           <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
             Core platform capabilities across all tiers
           </h2>
-          <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground">
+          <p className="mt-5 text-pretty text-[17px] leading-relaxed text-muted-foreground">
             Every plan includes the same verified MoMo foundation. Higher tiers
             add scale, roles, and support for growing susu companies.
           </p>

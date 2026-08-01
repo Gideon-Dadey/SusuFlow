@@ -184,7 +184,7 @@ export const customerLinks: NavItem[] = [
   { href: "/deposit", label: "Deposit", icon: faWallet },
   { href: "/withdraw", label: "Withdraw", icon: faWallet },
   { href: "/plans", label: "Goals", icon: faChartLine },
-  { href: "/kyc", label: "Identity Verification", icon: faUserCheck },
+  { href: "/kyc", label: "Verification", icon: faUserCheck },
   { href: "/profile", label: "Profile", icon: faUser },
 ];
 

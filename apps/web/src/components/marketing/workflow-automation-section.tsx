@@ -32,7 +32,7 @@ export function WorkflowAutomationSection() {
               Automate your deposit &amp; payout approvals
             </h2>
 
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed text-pretty">
+            <p className="text-[17px] text-muted-foreground leading-relaxed text-pretty">
               SusuFlow helps streamline collections with tailored approval
               workflows. Set clear rules for collector actions, MoMo deposit
               verification, payout sign-offs, and staff access, so every cedi
