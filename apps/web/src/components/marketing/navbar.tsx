@@ -16,6 +16,12 @@ import { BrandLockup } from "@/components/marketing/brand-logo";
 import { NAV_LINKS } from "@/lib/marketing-data";
 import { cn, getDashboardPath, getInitials } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth.store";
+import {
+  PRODUCT_MEGA_MENU,
+  WHY_SUSUFLOW_MEGA_MENU,
+  MegaDropdown,
+  MegaMenuConfig,
+} from "./mega-menu";
 
 const LIGHT_HERO_PATHS = [
   "/",
@@ -65,11 +71,19 @@ export function MarketingNavbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [activeMegaMenu, setActiveMegaMenu] = useState<
+    "Product" | "Why SusuFlow" | null
+  >(null);
+  const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | null>(
+    null,
+  );
+
   const [atTop, setAtTop] = useState(true);
   const [visible, setVisible] = useState(true);
   const [mounted, setMounted] = useState(false);
   const lastScrollY = useRef(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const navContainerRef = useRef<HTMLElement>(null);
 
   const { user, isAuthenticated, logout } = useAuthStore();
   const dashboardPath = user
@@ -90,6 +104,7 @@ export function MarketingNavbar() {
         setVisible(true);
       } else if (y > lastScrollY.current + SCROLL_DELTA) {
         setVisible(false);
+        setActiveMegaMenu(null);
       } else if (y < lastScrollY.current - SCROLL_DELTA) {
         setVisible(true);
       }
@@ -105,6 +120,7 @@ export function MarketingNavbar() {
   useEffect(() => {
     setMenuOpen(false);
     setUserMenuOpen(false);
+    setActiveMegaMenu(null);
   }, [pathname]);
 
   useEffect(() => {
@@ -125,10 +141,16 @@ export function MarketingNavbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [userMenuOpen]);
 
+  const getMegaMenuConfig = (label: string): MegaMenuConfig | null => {
+    if (label === "Product") return PRODUCT_MEGA_MENU;
+    if (label === "Why SusuFlow") return WHY_SUSUFLOW_MEGA_MENU;
+    return null;
+  };
+
   return (
     <>
       <header className="sticky top-0 z-[200] border-b border-slate-200/70 dark:border-slate-800/80 bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-md pt-[env(safe-area-inset-top,0px)] transition-all">
-        <div className="marketing-container flex h-[4.5rem] sm:h-22 items-center justify-between gap-3 sm:gap-4">
+        <div className="marketing-container flex h-[4.5rem] sm:h-22 items-center justify-between gap-3 sm:gap-4 relative">
           <Link
             href="/"
             className="relative z-10 flex min-w-0 shrink-0 items-center"
@@ -136,21 +158,66 @@ export function MarketingNavbar() {
             <BrandLockup priority />
           </Link>
 
+          {/* Desktop Navigation with Mega Menus */}
           <nav
-            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 lg:flex xl:gap-5"
+            ref={navContainerRef}
+            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 lg:flex xl:gap-3"
             aria-label="Main"
+            onMouseLeave={() => setActiveMegaMenu(null)}
           >
             {NAV_LINKS.map(({ href, label }) => {
+              const hasMega = label === "Product" || label === "Why SusuFlow";
+              const isOpen = activeMegaMenu === label;
               const active =
                 (href as string) === "/"
                   ? pathname === "/"
                   : pathname.startsWith(href);
+
+              if (hasMega) {
+                return (
+                  <div
+                    key={label}
+                    className="relative"
+                    onMouseEnter={() =>
+                      setActiveMegaMenu(label as "Product" | "Why SusuFlow")
+                    }
+                  >
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveMegaMenu((prev) =>
+                          prev === label
+                            ? null
+                            : (label as "Product" | "Why SusuFlow"),
+                        )
+                      }
+                      className={cn(
+                        "inline-flex items-center gap-1.5 px-3.5 py-2 text-[17px] font-semibold transition-colors rounded-lg",
+                        active || isOpen
+                          ? "text-[#0066cc] dark:text-[#38bdf8] font-bold"
+                          : "text-slate-800 hover:text-[#0066cc] dark:text-slate-200 dark:hover:text-white",
+                      )}
+                    >
+                      <span>{label}</span>
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 transition-transform duration-200 opacity-70",
+                          isOpen &&
+                            "rotate-180 text-[#0066cc] dark:text-[#38bdf8]",
+                        )}
+                      />
+                    </button>
+                  </div>
+                );
+              }
+
               return (
                 <Link
                   key={href}
                   href={href}
+                  onMouseEnter={() => setActiveMegaMenu(null)}
                   className={cn(
-                    "px-3 py-2 text-[17px] font-semibold transition-colors",
+                    "px-3.5 py-2 text-[17px] font-semibold transition-colors rounded-lg",
                     active
                       ? "text-[#0066cc] dark:text-[#38bdf8] font-bold"
                       : "text-slate-800 hover:text-[#0066cc] dark:text-slate-200 dark:hover:text-white",
@@ -160,8 +227,18 @@ export function MarketingNavbar() {
                 </Link>
               );
             })}
+
+            {/* Render Desktop Mega Menu Dropdown */}
+            {activeMegaMenu && getMegaMenuConfig(activeMegaMenu) && (
+              <MegaDropdown
+                config={getMegaMenuConfig(activeMegaMenu)!}
+                isOpen={!!activeMegaMenu}
+                onClose={() => setActiveMegaMenu(null)}
+              />
+            )}
           </nav>
 
+          {/* Right Header Controls */}
           <div className="relative z-10 flex shrink-0 items-center gap-3 sm:gap-4">
             {mounted && isAuthenticated && user ? (
               <div className="relative" ref={userMenuRef}>
@@ -253,6 +330,7 @@ export function MarketingNavbar() {
         </div>
       </header>
 
+      {/* Mobile Drawer Navigation */}
       {mounted && menuOpen
         ? createPortal(
             <div
@@ -266,10 +344,64 @@ export function MarketingNavbar() {
               >
                 <div className="flex flex-col gap-2.5">
                   {NAV_LINKS.map(({ href, label }) => {
+                    const megaConfig = getMegaMenuConfig(label);
+                    const isExpanded = expandedMobileMenu === label;
                     const active =
                       (href as string) === "/"
                         ? pathname === "/"
                         : pathname.startsWith(href);
+
+                    if (megaConfig) {
+                      return (
+                        <div key={label} className="space-y-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setExpandedMobileMenu(isExpanded ? null : label)
+                            }
+                            className={cn(
+                              "flex w-full min-h-[52px] items-center justify-between rounded-xl px-4 py-3.5 text-[17px] font-bold tracking-tight transition-all",
+                              active || isExpanded
+                                ? "bg-[#0066cc]/10 text-[#0066cc] dark:bg-[#0066cc]/20 dark:text-[#38bdf8]"
+                                : "text-foreground hover:bg-slate-100 dark:hover:bg-slate-800/60",
+                            )}
+                          >
+                            <span>{label}</span>
+                            <ChevronDown
+                              className={cn(
+                                "size-5 text-muted-foreground/80 transition-transform duration-200",
+                                isExpanded && "rotate-180 text-[#0066cc]",
+                              )}
+                            />
+                          </button>
+
+                          {isExpanded && (
+                            <div className="pl-3 pr-1 py-2 space-y-4 border-l-2 border-[#0066cc]/30 ml-4">
+                              {megaConfig.categories.map((cat) => (
+                                <div key={cat.title} className="space-y-2">
+                                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                    {cat.title}
+                                  </p>
+                                  <div className="space-y-1">
+                                    {cat.items.map((item) => (
+                                      <Link
+                                        key={item.title}
+                                        href={item.href}
+                                        onClick={() => setMenuOpen(false)}
+                                        className="block py-1.5 text-sm font-semibold text-foreground hover:text-[#0066cc]"
+                                      >
+                                        {item.title}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+
                     return (
                       <Link
                         key={href}
