@@ -23,7 +23,7 @@ export function HowItWorksCtaSection() {
             <Link href="/register" className="sm:w-auto">
               <Button
                 size="lg"
-                className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center justify-center gap-2.5 sm:min-w-[11rem]"
+                className="h-12 w-[85%] max-w-[320px] sm:max-w-none sm:w-auto rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center justify-center gap-2.5 sm:min-w-[11rem]"
               >
                 <span>Register</span>
                 <ArrowRight

@@ -24,10 +24,13 @@ export function HowItWorksHero() {
               digital ledger.
             </p>
             <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-              <Link href="/register" className="w-full sm:w-auto">
+              <Link
+                href="/register"
+                className="w-[85%] max-w-[320px] sm:max-w-none sm:w-auto"
+              >
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center justify-center gap-2.5 shadow-sm lg:min-w-[12rem]"
+                  className="h-12 w-[85%] max-w-[320px] sm:max-w-none sm:w-auto rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-6 text-[17px] font-semibold flex items-center justify-center gap-2.5 shadow-sm lg:min-w-[12rem]"
                 >
                   <span>Register</span>
                   <ArrowRight
