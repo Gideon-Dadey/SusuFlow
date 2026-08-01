@@ -146,12 +146,12 @@ export default function StaffSettingsPage() {
     const resolvedName =
       activeTenant?.name ||
       (tenantSlug
-        ? tenantSlug === "adipa"
-          ? "Adipa Microfinance"
+        ? tenantSlug === "adipa" || tenantSlug === "susuflow"
+          ? "SusuFlow"
           : tenantSlug.toUpperCase()
-        : "Adipa Microfinance");
+        : "SusuFlow");
     const resolvedEmail =
-      activeTenant?.email || user?.email || "admin@adipamicrofinance.com";
+      activeTenant?.email || user?.email || "support@susuflow.com";
     const resolvedPhone =
       activeTenant?.phone || userProfile?.phone || "+233240000000";
     const resolvedLogo = tenant?.logoUrl || tenantBranding?.logoUrl || "";
@@ -348,15 +348,12 @@ export default function StaffSettingsPage() {
       name.trim() ||
       tenant?.name ||
       (user?.tenantSlug
-        ? user.tenantSlug === "adipa"
-          ? "Adipa Microfinance"
+        ? user.tenantSlug === "adipa" || user.tenantSlug === "susuflow"
+          ? "SusuFlow"
           : user.tenantSlug.toUpperCase()
-        : "Adipa Microfinance");
+        : "SusuFlow");
     const targetEmail =
-      email.trim() ||
-      tenant?.email ||
-      user?.email ||
-      "admin@adipamicrofinance.com";
+      email.trim() || tenant?.email || user?.email || "support@susuflow.com";
     const targetPhone =
       phone.trim() || tenant?.phone || userProfile?.phone || "+233240000000";
 
@@ -836,7 +833,7 @@ export default function StaffSettingsPage() {
                     label="Company Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Adipa Microfinance"
+                    placeholder="e.g. SusuFlow"
                   />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -845,7 +842,7 @@ export default function StaffSettingsPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="admin@adipamicrofinance.com"
+                      placeholder="support@susuflow.com"
                     />
                     <Input
                       label="Support Phone"

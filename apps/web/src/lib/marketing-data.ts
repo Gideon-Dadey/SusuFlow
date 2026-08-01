@@ -1,11 +1,11 @@
-export const APP_NAME = "Credo";
+export const APP_NAME = "SusuFlow";
 export const APP_TAGLINE =
   "Enterprise Susu & Digital Savings Platform with verified deposits.";
 export const SUPPORT_EMAIL = "gideondadey@gmail.com";
 
 export const NAV_LINKS = [
   { href: "/how-it-works", label: "Product" },
-  { href: "/about", label: "Why Credo" },
+  { href: "/about", label: "Why SusuFlow" },
   { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" },
 ] as const;
@@ -405,7 +405,7 @@ export const PRICING_FAQ = [
   },
   {
     q: "Do you charge per deposit?",
-    a: "No. Credo pricing is for the platform. Member deposits go through your payment gateway. You do not pay us per transaction.",
+    a: "No. SusuFlow pricing is for the platform. Member deposits go through your payment gateway. You do not pay us per transaction.",
   },
   {
     q: "Is there a setup fee?",
@@ -416,8 +416,8 @@ export const PRICING_FAQ = [
     a: "Yes. Start on Starter or Growth and upgrade when your customer count or team size grows. Our team can help you migrate.",
   },
   {
-    q: "Do savers pay a fee to use Credo?",
-    a: "Savers join through your company tenant at no direct cost from Credo. Standard MoMo network fees from their provider still apply.",
+    q: "Do savers pay a fee to use SusuFlow?",
+    a: "Savers join through your company tenant at no direct cost from SusuFlow. Standard MoMo network fees from their provider still apply.",
   },
   {
     q: "Can I cancel monthly?",
@@ -494,7 +494,7 @@ export const ABOUT_COMPLIANCE_POINTS = [
 export const ABOUT_OPERATING_DETAILS = [
   {
     region: "Ghana",
-    entity: "Credo",
+    entity: "SusuFlow",
     partners: "MTN Mobile Money via Hubtel",
     standards:
       "Designed for Ghana susu operators and the MoMo payments ecosystem",
@@ -502,14 +502,14 @@ export const ABOUT_OPERATING_DETAILS = [
 ] as const;
 
 export const CONTACT_OFFICE = {
-  headline: "Credo Ghana",
+  headline: "SusuFlow Ghana",
   addressLines: ["Maakro SDA Church Kovak Road", "Kumasi", "Ghana"],
 } as const;
 
 export const FAQ_ITEMS = [
   {
     q: "What is susu?",
-    a: "Susu is a traditional rotating savings scheme in Ghana and West Africa. Members contribute regularly and receive a lump sum on their turn. Credo digitizes the collection side while keeping the trust model.",
+    a: "Susu is a traditional rotating savings scheme in Ghana and West Africa. Members contribute regularly and receive a lump sum on their turn. SusuFlow digitizes the collection side while keeping the trust model.",
   },
   {
     q: "Do collectors still handle cash?",

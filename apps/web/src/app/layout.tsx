@@ -13,14 +13,14 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Credo | Enterprise Susu & Digital Savings",
+  title: "SusuFlow | Enterprise Susu & Digital Savings",
   description:
     "Eliminate fraud in susu collection with gateway-confirmed digital deposits",
-  applicationName: "Credo",
+  applicationName: "SusuFlow",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "Credo",
+    title: "SusuFlow",
     statusBarStyle: "default",
   },
 };
