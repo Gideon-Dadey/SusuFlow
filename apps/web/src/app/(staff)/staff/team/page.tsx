@@ -111,8 +111,12 @@ export default function TeamManagementPage() {
           <h1 className="dashboard-title">Team</h1>
         </div>
         {isCompanyAdmin && !showForm && (
-          <Button onClick={() => setShowForm(true)} className="gap-2">
-            <Plus className="h-4 w-4" />
+          <Button
+            size="sm"
+            onClick={() => setShowForm(true)}
+            className="text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95 shrink-0 gap-1.5"
+          >
+            <Plus className="h-3.5 w-3.5" />
             Add Team Member
           </Button>
         )}

@@ -178,8 +178,12 @@ export default function SavingsGoalsTrackerPage() {
           <h1 className="dashboard-title">Savings Goals</h1>
         </div>
         {activeTab === "plans" && !showForm && (
-          <Button onClick={openCreate} className="gap-2 shrink-0">
-            <Plus className="h-4 w-4" />
+          <Button
+            size="sm"
+            onClick={openCreate}
+            className="text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95 shrink-0 gap-1.5"
+          >
+            <Plus className="h-3.5 w-3.5" />
             New Plan
           </Button>
         )}
