@@ -164,72 +164,60 @@ export function MarketingNavbar() {
 
           <div className="relative z-10 flex shrink-0 items-center gap-3 sm:gap-4">
             {mounted && isAuthenticated && user ? (
-              <>
-                <Link href={dashboardPath} className="hidden sm:block">
-                  <Button className="h-12 px-6 text-[17px] font-semibold rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white transition-all duration-200 shadow-sm flex items-center justify-center gap-2.5">
-                    <span>Dashboard</span>
-                    <ArrowRight
-                      className="h-[18px] w-[18px] stroke-[2.25]"
-                      aria-hidden
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setUserMenuOpen((v) => !v)}
+                  className="flex size-11 items-center justify-center overflow-hidden rounded-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 transition-all hover:ring-2 hover:ring-[#0066cc]/40 focus:outline-none"
+                  aria-label="User menu"
+                >
+                  {user.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.firstName}
+                      className="size-full object-cover"
                     />
-                  </Button>
-                </Link>
-
-                <div className="relative hidden lg:block" ref={userMenuRef}>
-                  <button
-                    type="button"
-                    onClick={() => setUserMenuOpen((v) => !v)}
-                    className="flex size-11 items-center justify-center overflow-hidden rounded-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 transition-all hover:ring-2 hover:ring-[#0066cc]/40 focus:outline-none"
-                    aria-label="User menu"
-                  >
-                    {user.avatarUrl ? (
-                      <img
-                        src={user.avatarUrl}
-                        alt={user.firstName}
-                        className="size-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-sm font-bold text-[#0066cc] dark:text-[#38bdf8]">
-                        {getInitials(user.firstName, user.lastName)}
-                      </span>
-                    )}
-                  </button>
-
-                  {userMenuOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#18181b] p-2 shadow-xl z-[300]">
-                      <div className="border-b border-slate-100 dark:border-slate-800 px-3 py-2">
-                        <p className="font-bold text-sm text-foreground truncate">
-                          {user.firstName} {user.lastName}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {user.email}
-                        </p>
-                      </div>
-                      <div className="pt-1.5 space-y-1">
-                        <Link
-                          href={dashboardPath}
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-foreground hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
-                        >
-                          <LayoutDashboard className="h-4 w-4 text-[#0066cc]" />
-                          <span>Go to Dashboard</span>
-                        </Link>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setUserMenuOpen(false);
-                            logout();
-                          }}
-                          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-destructive hover:bg-destructive/10 transition-colors"
-                        >
-                          <LogOut className="h-4 w-4" />
-                          <span>Sign out</span>
-                        </button>
-                      </div>
-                    </div>
+                  ) : (
+                    <span className="text-sm font-bold text-[#0066cc] dark:text-[#38bdf8]">
+                      {getInitials(user.firstName, user.lastName)}
+                    </span>
                   )}
-                </div>
-              </>
+                </button>
+
+                {userMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#18181b] p-2 shadow-xl z-[300]">
+                    <div className="border-b border-slate-100 dark:border-slate-800 px-3 py-2">
+                      <p className="font-bold text-sm text-foreground truncate">
+                        {user.firstName} {user.lastName}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                    <div className="pt-1.5 space-y-1">
+                      <Link
+                        href={dashboardPath}
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-foreground hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                      >
+                        <LayoutDashboard className="h-4 w-4 text-[#0066cc]" />
+                        <span>Go to Dashboard</span>
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          logout();
+                        }}
+                        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-destructive hover:bg-destructive/10 transition-colors"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span>Sign out</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <Link
