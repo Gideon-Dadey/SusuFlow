@@ -212,8 +212,7 @@ export default function StaffAiAnalyticsPage() {
       {/* Customer Scoring Table */}
       <Card className="shadow-sm border-border">
         <CardHeader className="pb-3 border-b border-border/40">
-          <CardTitle className="text-base font-bold flex items-center gap-2">
-            <FontAwesomeIcon icon={faUsers} className="text-primary" />
+          <CardTitle className="text-base font-semibold text-foreground">
             Customer Credit Risk Matrix
           </CardTitle>
         </CardHeader>

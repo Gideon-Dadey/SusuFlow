@@ -173,11 +173,11 @@ export default function AdminDashboardPage() {
       {/* Overview Metrics Grid (2x2 Mobile, 4-up Desktop) */}
       <section className="space-y-2">
         <h2 className="text-base font-semibold text-foreground sm:text-lg">
-          Platform Overview
+          Key Metrics
         </h2>
         <div className={portalDashboardMetricsGridClass}>
           <StatCard
-            title="Total Organizations"
+            title="Organizations"
             value={isLoading ? "..." : String(summary?.totalTenants ?? 0)}
             subtitle={
               isLoading ? undefined : `${summary?.activeTenants ?? 0} active`
@@ -187,7 +187,7 @@ export default function AdminDashboardPage() {
             iconClassName="text-indigo-500"
           />
           <StatCard
-            title="Global Deposits Sum"
+            title="Total Deposits"
             value={isLoading ? "..." : formatGhs(summary?.totalDeposits ?? 0)}
             subtitle="All organizations combined"
             icon={faWallet}
@@ -195,7 +195,7 @@ export default function AdminDashboardPage() {
             iconClassName="text-emerald-500"
           />
           <StatCard
-            title="Global Withdrawals Sum"
+            title="Total Withdrawals"
             value={
               isLoading ? "..." : formatGhs(summary?.totalWithdrawals ?? 0)
             }
@@ -205,7 +205,7 @@ export default function AdminDashboardPage() {
             iconClassName="text-amber-500"
           />
           <StatCard
-            title="Open Fraud Alerts"
+            title="Fraud Alerts"
             value={isLoading ? "..." : String(summary?.openFraudAlerts ?? 0)}
             subtitle={
               summary?.openFraudAlerts && summary.openFraudAlerts > 0
@@ -232,7 +232,7 @@ export default function AdminDashboardPage() {
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div>
             <CardTitle className="text-sm sm:text-base font-bold tracking-tight">
-              Recent Organizations
+              Organizations
             </CardTitle>
             <p className="text-xs text-muted-foreground">
               Quick action toggles for platform access control

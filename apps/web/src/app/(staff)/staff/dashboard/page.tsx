@@ -115,7 +115,7 @@ export default function StaffDashboard() {
       {/* 3. Metric Overview Cards Grid */}
       <section className="space-y-1 sm:space-y-2">
         <h2 className="text-sm sm:text-base font-semibold text-foreground">
-          Key Performance Metrics
+          Key Metrics
         </h2>
         <div className={portalDashboardMetricsGridClass}>
           <StatCard
@@ -166,7 +166,7 @@ export default function StaffDashboard() {
       {/* 4. Quick Actions Grid (4-column) */}
       <section className="space-y-1 sm:space-y-2">
         <h2 className="text-sm sm:text-base font-semibold text-foreground">
-          Quick Controls
+          Quick Actions
         </h2>
         <div className={portalDashboardCardGridClass}>
           <QuickActionCard
@@ -210,17 +210,17 @@ export default function StaffDashboard() {
         <CollectionsByStatusChart transactions={transactions} />
       </div>
 
-      {/* 6. Two-Column Row: Priority Queue & Recent Onboarded Members (Bimatro Leaderboard Layout) */}
+      {/* 6. Two-Column Row: Priority Queue & Recent Members (Bimatro Leaderboard Layout) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Left Column: Priority Operations Queue */}
         <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden lg:col-span-6">
           <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border/60">
             <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-tight">
-              Priority Action Queue
+              Priority Queue
             </h3>
             <Link
               href="/staff/queue"
-              className="text-xs sm:text-sm font-semibold text-secondary hover:underline transition-colors"
+              className="text-xs font-semibold text-secondary hover:underline transition-colors"
             >
               Full Queue →
             </Link>
@@ -292,11 +292,11 @@ export default function StaffDashboard() {
         <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden lg:col-span-6">
           <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border/60">
             <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-tight">
-              Recent Onboarded Members
+              Recent Members
             </h3>
             <Link
               href="/staff/customers"
-              className="text-xs sm:text-sm font-semibold text-secondary hover:underline transition-colors"
+              className="text-xs font-semibold text-secondary hover:underline transition-colors"
             >
               All Members →
             </Link>
@@ -366,11 +366,11 @@ export default function StaffDashboard() {
       <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
         <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border/60">
           <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-tight">
-            Recent Deposits Log
+            Recent Deposits
           </h3>
           <Link
             href="/staff/deposits"
-            className="text-xs sm:text-sm font-semibold text-secondary hover:underline transition-colors"
+            className="text-xs font-semibold text-secondary hover:underline transition-colors"
           >
             View all
           </Link>

@@ -163,11 +163,7 @@ export default function ActionQueuePage() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <FontAwesomeIcon
-              icon={faClipboardList}
-              className="h-4 w-4 text-primary"
-            />
+          <CardTitle className="text-base font-semibold text-foreground">
             Pending Actions
           </CardTitle>
         </CardHeader>

@@ -594,11 +594,7 @@ export default function StaffSettingsPage() {
               {/* Personal Details */}
               <Card className="shadow-sm border-none bg-card">
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <FontAwesomeIcon
-                      icon={faUser}
-                      className="h-4 w-4 text-primary"
-                    />
+                  <CardTitle className="text-base font-semibold text-foreground">
                     Personal Details
                   </CardTitle>
                 </CardHeader>
@@ -653,11 +649,7 @@ export default function StaffSettingsPage() {
               {/* Password Card */}
               <Card className="shadow-sm border-none bg-card">
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <FontAwesomeIcon
-                      icon={faLock}
-                      className="h-4 w-4 text-primary"
-                    />
+                  <CardTitle className="text-base font-semibold text-foreground">
                     Security & Password
                   </CardTitle>
                 </CardHeader>
