@@ -1009,15 +1009,9 @@ export default function StaffSettingsPage() {
                         size="sm"
                         disabled={isMfaLoading}
                         onClick={handleStartMfaSetup}
-                        className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-emerald-600 hover:bg-emerald-700 text-white border-none gap-2"
+                        className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-emerald-600 hover:bg-emerald-700 text-white border-none"
                       >
-                        <FontAwesomeIcon
-                          icon={faShieldHalved}
-                          className="h-3.5 w-3.5"
-                        />
-                        {isMfaLoading
-                          ? "Sending Code..."
-                          : "Enable MFA Security"}
+                        {isMfaLoading ? "Sending Code..." : "Enable MFA"}
                       </Button>
                     )}
                   </div>
