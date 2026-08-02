@@ -108,3 +108,36 @@ export class ResetPasswordDto {
   @MinLength(MIN_PASSWORD_LENGTH)
   newPassword!: string;
 }
+
+export class MfaEnableDto {
+  @ApiProperty({ example: "123456" })
+  @IsString()
+  @Length(4, 8)
+  code!: string;
+}
+
+export class MfaDisableDto {
+  @ApiProperty()
+  @IsString()
+  password!: string;
+
+  @ApiProperty({ example: "123456" })
+  @IsString()
+  @Length(4, 8)
+  code!: string;
+}
+
+export class MfaVerifyLoginDto {
+  @ApiProperty()
+  @IsString()
+  mfaToken!: string;
+
+  @ApiProperty()
+  @IsUUID()
+  userId!: string;
+
+  @ApiProperty({ example: "123456" })
+  @IsString()
+  @Length(4, 8)
+  code!: string;
+}

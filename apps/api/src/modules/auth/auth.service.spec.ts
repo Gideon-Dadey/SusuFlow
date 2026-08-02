@@ -96,7 +96,7 @@ describe("AuthService", () => {
       );
 
       expect(result.accessToken).toBe("access-token");
-      expect(result.user.email).toBe("test@example.com");
+      expect(result.user?.email).toBe("test@example.com");
       expect(prisma.user.update).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({ failedLoginCount: 0 }),

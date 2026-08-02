@@ -20,6 +20,9 @@ import {
   VerifyOtpDto,
   ForgotPasswordDto,
   ResetPasswordDto,
+  MfaEnableDto,
+  MfaDisableDto,
+  MfaVerifyLoginDto,
 } from "./dto/auth.dto";
 import { Public } from "../../common/decorators";
 import { TenantContext } from "@susuflow/shared";
@@ -123,5 +126,34 @@ export class AuthController {
   verificationStatus(@Param("userId") userId: string, @Req() req: Request) {
     if (!req.tenant) throw new BadRequestException("Tenant context required");
     return this.otpService.getVerificationStatus(userId, req.tenant.id);
+  }
+
+  @Post("mfa/setup")
+  @ApiOperation({ summary: "Initiate MFA setup challenge" })
+  setupMfa(@Req() req: Request) {
+    const user = (req as any).user;
+    return this.authService.setupMfa(user.id);
+  }
+
+  @Post("mfa/enable")
+  @ApiOperation({ summary: "Verify code and enable MFA" })
+  enableMfa(@Body() dto: MfaEnableDto, @Req() req: Request) {
+    const user = (req as any).user;
+    return this.authService.enableMfa(user.id, dto.code);
+  }
+
+  @Post("mfa/disable")
+  @ApiOperation({ summary: "Verify password + code and disable MFA" })
+  disableMfa(@Body() dto: MfaDisableDto, @Req() req: Request) {
+    const user = (req as any).user;
+    return this.authService.disableMfa(user.id, dto.password, dto.code);
+  }
+
+  @Public()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @Post("mfa/verify-login")
+  @ApiOperation({ summary: "Complete MFA login verification" })
+  verifyMfaLogin(@Body() dto: MfaVerifyLoginDto) {
+    return this.authService.verifyMfaLogin(dto.mfaToken, dto.userId, dto.code);
   }
 }

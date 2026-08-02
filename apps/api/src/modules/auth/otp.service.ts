@@ -58,7 +58,12 @@ export class OtpService {
     return String(randomInt(0, max)).padStart(length, "0");
   }
 
-  async send(userId: string, channel: OtpChannel, tenantId: string) {
+  async send(
+    userId: string,
+    channel: OtpChannel,
+    tenantId: string,
+    isMfa = false,
+  ) {
     if (!this.cache.isAvailable()) {
       throw new BadRequestException(
         "Verification service temporarily unavailable",
@@ -66,15 +71,15 @@ export class OtpService {
     }
 
     const user = await this.prisma.user.findFirst({
-      where: { id: userId, tenantId },
+      where: { id: userId },
       include: { tenant: { select: { name: true } } },
     });
     if (!user) throw new NotFoundException("User not found");
 
-    if (channel === "email" && user.emailVerified) {
+    if (!isMfa && channel === "email" && user.emailVerified) {
       throw new BadRequestException("Email already verified");
     }
-    if (channel === "phone" && user.phoneVerified) {
+    if (!isMfa && channel === "phone" && user.phoneVerified) {
       throw new BadRequestException("Phone already verified");
     }
 
@@ -116,7 +121,7 @@ export class OtpService {
     );
 
     await this.notificationQueue.add("send-verification-otp", {
-      tenantId,
+      tenantId: tenantId || user.tenantId,
       userId,
       channel,
       recipient,
@@ -137,6 +142,7 @@ export class OtpService {
     channel: OtpChannel,
     code: string,
     tenantId: string,
+    isMfa = false,
   ) {
     if (!this.cache.isAvailable()) {
       throw new BadRequestException(
@@ -145,7 +151,7 @@ export class OtpService {
     }
 
     const user = await this.prisma.user.findFirst({
-      where: { id: userId, tenantId },
+      where: { id: userId },
       include: { customer: true },
     });
     if (!user) throw new NotFoundException("User not found");

@@ -27,6 +27,18 @@ interface AuthState {
     email: string,
     password: string,
     tenantSlug?: string,
+  ) => Promise<{
+    mfaRequired?: boolean;
+    mfaToken?: string;
+    userId?: string;
+    email?: string;
+    path?: string;
+  }>;
+  verifyMfaLogin: (
+    mfaToken: string,
+    userId: string,
+    code: string,
+    tenantSlug?: string,
   ) => Promise<string>;
   register: (
     data: {
@@ -66,6 +78,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       hydrate: (data) => {
+        if (!data.accessToken || !data.refreshToken || !data.user) return;
         localStorage.setItem("access_token", data.accessToken);
         localStorage.setItem("refresh_token", data.refreshToken);
         const resolvedSlug = data.user.tenantSlug || "";
@@ -88,11 +101,43 @@ export const useAuthStore = create<AuthState>()(
         try {
           const slug = resolveLoginTenantSlug(email, tenantSlug);
           const data = await authApi.login(email, password, slug);
+          if (data.mfaRequired) {
+            get().setTenantSlug(slug);
+            return {
+              mfaRequired: true,
+              mfaToken: data.mfaToken,
+              userId: data.userId,
+              email: data.email || email,
+            };
+          }
           get().hydrate(data);
           get().setTenantSlug(slug);
-          return getDashboardPath(data.user.roles);
+          return { path: getDashboardPath(data.user?.roles || []) };
         } catch (err) {
           const message = err instanceof Error ? err.message : "Login failed";
+          set({ error: message });
+          throw err;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      verifyMfaLogin: async (mfaToken, userId, code, tenantSlug) => {
+        set({ isLoading: true, error: null });
+        try {
+          const slug = tenantSlug || get().tenantSlug;
+          const data = await authApi.mfaVerifyLogin(
+            mfaToken,
+            userId,
+            code,
+            slug,
+          );
+          get().hydrate(data);
+          get().setTenantSlug(slug);
+          return getDashboardPath(data.user?.roles || []);
+        } catch (err) {
+          const message =
+            err instanceof Error ? err.message : "MFA verification failed";
           set({ error: message });
           throw err;
         } finally {
