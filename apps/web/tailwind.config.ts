@@ -81,15 +81,22 @@ const config: Config = {
       },
       fontSize: {
         body: ["18px", { lineHeight: "30.6px" }],
+        "hero-body": ["18px", { lineHeight: "1.625" }],
+        "hero-body-mobile": ["17px", { lineHeight: "1.625" }],
         input: ["16px", { lineHeight: "1.5" }],
         nav: ["18px", { lineHeight: "30.6px" }],
         "section-bar": ["26px", { lineHeight: "31.2px" }],
         btn: ["15px", { lineHeight: "1.5" }],
         "hero-mobile": ["2.35rem", { lineHeight: "1.12" }],
         "hero-desktop": ["3.4rem", { lineHeight: "1.08" }],
+        "page-title": ["35px", { lineHeight: "42px" }],
         "hero-title": ["35px", { lineHeight: "42px" }],
+        "dashboard-title": ["24px", { lineHeight: "1.3" }],
+        "dashboard-title-mobile": ["18px", { lineHeight: "1.3" }],
+        "secondary-title": ["18px", { lineHeight: "1.5" }],
         "card-label": ["22px", { lineHeight: "37.4px" }],
         "hero-sub": ["18px", { lineHeight: "30.6px" }],
+        "dashboard-sub": ["14px", { lineHeight: "1.5" }],
         meta: ["12px", { lineHeight: "1.5" }],
         "modal-title": ["1.25rem", { lineHeight: "1.375" }],
         "modal-body": ["14px", { lineHeight: "1.625" }],
@@ -115,6 +122,34 @@ const config: Config = {
           "0 2px 8px -1px rgb(0 0 0 / 0.4), 0 8px 16px -2px rgb(0 0 0 / 0.3)",
         "elevated-dark":
           "0 12px 32px -4px rgb(0 0 0 / 0.5), 0 4px 12px -2px rgb(0 0 0 / 0.4)",
+        "premium-light":
+          "0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.08)",
+        "premium-dark":
+          "0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.08)",
+      },
+      keyframes: {
+        pop: {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        "slide-up": {
+          "0%": { transform: "translateY(10px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        "slide-in-from-bottom-2": {
+          "0%": { transform: "translateY(0.5rem)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+      },
+      animation: {
+        pop: "pop 0.3s ease-out",
+        "slide-up": "slide-up 0.4s ease-out",
+        "slide-in-from-bottom-2": "slide-in-from-bottom-2 0.3s ease-out",
+        shimmer: "shimmer 2s infinite",
       },
     },
   },
