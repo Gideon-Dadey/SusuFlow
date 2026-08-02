@@ -4,18 +4,11 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { StatusBadge } from "@/components/ui/badge";
 import { customerApi, depositApi } from "@/lib/api";
+import { formatDate } from "@/lib/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPaperPlane,
-  faCommentSms,
-  faCheckCircle,
-  faClock,
-  faUsers,
-  faRotateRight,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 
 interface DispatchLog {
   id: string;
@@ -78,8 +71,8 @@ export default function StaffNotificationsPage() {
       type: "Deposit Receipt",
       channel: "SMS & WhatsApp",
       content: `GH₵${Number(d.amount).toFixed(2)} deposited via ${d.payment?.paymentMethod || "MoMo"}. Status: ${d.status.toUpperCase()}.`,
-      status: d.status === "completed" ? "Delivered" : "Pending",
-      time: new Date(d.createdAt).toLocaleString(),
+      status: d.status === "completed" ? "completed" : "pending",
+      time: formatDate(d.createdAt),
     };
   });
 
@@ -107,8 +100,8 @@ export default function StaffNotificationsPage() {
         type: "Broadcast Message",
         channel: channel === "both" ? "SMS & WhatsApp" : channel.toUpperCase(),
         content: messageText,
-        status: "Delivered",
-        time: new Date().toLocaleString(),
+        status: "completed",
+        time: formatDate(new Date().toISOString()),
       };
 
       setLocalLogs((prev) => [newLog, ...prev]);
@@ -132,7 +125,7 @@ export default function StaffNotificationsPage() {
             refetchCustomers();
             refetchDeposits();
           }}
-          className="text-xs font-semibold gap-1.5"
+          className="text-xs font-semibold rounded-none min-h-[36px] gap-1.5"
         >
           <FontAwesomeIcon icon={faRotateRight} className="h-3.5 w-3.5" />
           Refresh Dispatch Logs
@@ -140,53 +133,44 @@ export default function StaffNotificationsPage() {
       </div>
 
       {/* Top Metrics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Total Active Customers
-              </p>
-              <p className="text-xl font-bold text-foreground mt-1">
-                {isLoading ? "..." : `${customers.length} Accounts`}
-              </p>
-            </div>
-            <div className="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-              <FontAwesomeIcon icon={faUsers} className="h-5 w-5" />
-            </div>
-          </CardContent>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Total Active Customers
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {isLoading ? "..." : `${customers.length}`}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Registered accounts
+          </p>
         </Card>
 
-        <Card>
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Total Dispatches
-              </p>
-              <p className="text-xl font-bold text-foreground mt-1">
-                {isLoading ? "..." : `${allLogs.length} Sent`}
-              </p>
-            </div>
-            <div className="size-10 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-              <FontAwesomeIcon icon={faCheckCircle} className="h-5 w-5" />
-            </div>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Total Dispatches
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {isLoading ? "..." : `${allLogs.length}`}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Messages sent
+          </p>
         </Card>
 
-        <Card>
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Gateway Status
-              </p>
-              <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
-                Active / Online
-              </p>
-            </div>
-            <div className="size-10 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center">
-              <FontAwesomeIcon icon={faCommentSms} className="h-5 w-5" />
-            </div>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Gateway Status
+          </p>
+          <div className="mt-1 flex items-center justify-between">
+            <span className="text-sm sm:text-lg font-bold text-foreground">
+              Online
+            </span>
+            <StatusBadge status="completed" />
+          </div>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            SMS & WhatsApp ready
+          </p>
         </Card>
       </div>
 
@@ -194,26 +178,22 @@ export default function StaffNotificationsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Form */}
         <div className="lg:col-span-5 space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-bold flex items-center gap-2">
-                <FontAwesomeIcon
-                  icon={faPaperPlane}
-                  className="text-primary h-4 w-4"
-                />
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+            <CardHeader className="px-6 py-4 border-b border-border/60">
+              <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
                 Dispatch Customer Message
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
               <form onSubmit={handleSendBulk} className="space-y-4 text-xs">
                 <div>
-                  <label className="font-semibold block mb-1">
+                  <label className="font-semibold text-xs text-muted-foreground block mb-1.5">
                     Target Recipient Group *
                   </label>
                   <select
                     value={recipientGroup}
                     onChange={(e) => setRecipientGroup(e.target.value)}
-                    className="w-full h-9 rounded border border-input bg-background px-3 font-medium text-xs"
+                    className="w-full rounded-none border border-border/60 bg-card px-3 py-2 text-xs text-foreground outline-none focus:border-primary min-h-[40px]"
                   >
                     <option value="all">
                       All Active Registered Customers ({customers.length})
@@ -228,7 +208,9 @@ export default function StaffNotificationsPage() {
                 </div>
 
                 <div>
-                  <label className="font-semibold block mb-1">Channel *</label>
+                  <label className="font-semibold text-xs text-muted-foreground block mb-1.5">
+                    Channel *
+                  </label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
                       { id: "sms", label: "SMS" },
@@ -239,10 +221,10 @@ export default function StaffNotificationsPage() {
                         key={ch.id}
                         type="button"
                         onClick={() => setChannel(ch.id as any)}
-                        className={`py-1.5 rounded font-semibold text-xs border transition-colors ${
+                        className={`py-2 rounded-none font-semibold text-xs border transition-colors ${
                           channel === ch.id
-                            ? "bg-primary text-white border-primary"
-                            : "bg-muted/40 text-muted-foreground border-border"
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "bg-card text-muted-foreground border-border/60 hover:bg-muted/20"
                         }`}
                       >
                         {ch.label}
@@ -252,21 +234,20 @@ export default function StaffNotificationsPage() {
                 </div>
 
                 <div>
-                  <label className="font-semibold block mb-1">
+                  <label className="font-semibold text-xs text-muted-foreground block mb-1.5">
                     Message Content *
                   </label>
                   <textarea
                     rows={4}
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
-                    className="w-full p-3 rounded border border-input bg-background font-medium text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full p-3 rounded-none border border-border/60 bg-card font-normal text-xs text-foreground focus:outline-none focus:border-primary"
                     placeholder="Type broadcast message..."
                   />
                 </div>
 
                 {sendSuccess && (
-                  <div className="p-3 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-2">
-                    <FontAwesomeIcon icon={faCheckCircle} />
+                  <div className="p-3 rounded-none bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
                     Message dispatched successfully!
                   </div>
                 )}
@@ -274,9 +255,12 @@ export default function StaffNotificationsPage() {
                 <Button
                   type="submit"
                   disabled={isSending}
-                  className="w-full font-semibold text-xs h-9 gap-2"
+                  className="w-full font-semibold text-xs min-h-[40px] rounded-none gap-2 bg-primary text-primary-foreground hover:bg-primary/95"
                 >
-                  <FontAwesomeIcon icon={faPaperPlane} />
+                  <FontAwesomeIcon
+                    icon={faPaperPlane}
+                    className="h-3.5 w-3.5"
+                  />
                   {isSending ? "Dispatching..." : "Send Customer Broadcast"}
                 </Button>
               </form>
@@ -286,14 +270,14 @@ export default function StaffNotificationsPage() {
 
         {/* Right Column: Real Dispatch Logs */}
         <div className="lg:col-span-7 space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-bold flex items-center justify-between">
-                <span>Recent System Dispatch Logs</span>
-                <Badge variant="neutral" className="text-[10px] font-mono">
-                  {allLogs.length} Records
-                </Badge>
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+            <CardHeader className="px-6 py-4 border-b border-border/60 flex flex-row items-center justify-between">
+              <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+                Recent Dispatch Logs
               </CardTitle>
+              <span className="text-xs font-semibold text-muted-foreground font-mono">
+                {allLogs.length} Records
+              </span>
             </CardHeader>
             <CardContent className="p-0">
               {isLoading ? (
@@ -302,44 +286,34 @@ export default function StaffNotificationsPage() {
                 </div>
               ) : allLogs.length === 0 ? (
                 <div className="p-8 text-center text-xs text-muted-foreground">
-                  No notifications recorded yet. Send your first broadcast
-                  message above.
+                  No notifications recorded yet.
                 </div>
               ) : (
-                <div className="divide-y divide-border max-h-[500px] overflow-y-auto">
+                <div className="divide-y divide-border/60 max-h-[500px] overflow-y-auto">
                   {allLogs.map((log) => (
                     <div
                       key={log.id}
-                      className="p-4 hover:bg-muted/30 transition-colors text-xs space-y-1.5"
+                      className="p-4 hover:bg-muted/20 transition-colors text-xs space-y-1.5"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-foreground">
+                          <span className="font-semibold text-foreground">
                             {log.customer}
                           </span>
-                          <Badge variant="neutral" className="text-[10px]">
+                          <span className="inline-flex items-center rounded-none bg-muted/60 px-2 py-0.5 text-[9px] font-semibold text-muted-foreground uppercase">
                             {log.channel}
-                          </Badge>
+                          </span>
                         </div>
-                        <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                          <FontAwesomeIcon
-                            icon={faCheckCircle}
-                            className="h-3 w-3"
-                          />
-                          {log.status}
-                        </span>
+                        <StatusBadge status={log.status} />
                       </div>
 
-                      <p className="text-muted-foreground font-medium bg-muted/30 p-2 rounded">
+                      <p className="text-muted-foreground font-normal bg-muted/20 p-2.5 rounded-none border border-border/40">
                         {log.content}
                       </p>
 
-                      <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-0.5">
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-0.5 font-mono">
                         <span>Phone: {log.phone}</span>
-                        <span className="flex items-center gap-1">
-                          <FontAwesomeIcon icon={faClock} className="h-3 w-3" />
-                          {log.time}
-                        </span>
+                        <span>{log.time}</span>
                       </div>
                     </div>
                   ))}

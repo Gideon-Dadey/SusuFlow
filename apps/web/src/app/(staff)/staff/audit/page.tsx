@@ -4,14 +4,14 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { auditApi } from "@/lib/api";
+import { formatDate } from "@/lib/utils";
 
 export default function AuditLogsPage() {
   return (
     <Suspense
-      fallback={<div className="h-40 animate-pulse rounded-lg bg-muted/60" />}
+      fallback={<div className="h-40 animate-pulse rounded-none bg-muted/60" />}
     >
       <AuditLogsContent />
     </Suspense>
@@ -47,63 +47,63 @@ function AuditLogsContent() {
       <div>
         <h1 className="dashboard-title">Security & Operations Audit Logs</h1>
         {userIdFilter && (
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Filtered to collector / user ID:{" "}
-            <span className="font-mono text-xs">{userIdFilter}</span>
+            <span className="font-mono text-xs font-semibold">
+              {userIdFilter}
+            </span>
           </p>
         )}
       </div>
 
       {/* Filters */}
-      <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm">
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-muted-foreground">
-                Filter by Action
-              </label>
-              <Input
-                type="text"
-                placeholder="e.g. user:login or customer:create"
-                value={actionFilter}
-                onChange={(e) => setActionFilter(e.target.value)}
-                className="min-h-[44px]"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-muted-foreground">
-                Filter by Resource Type
-              </label>
-              <Input
-                type="text"
-                placeholder="e.g. customer or transaction"
-                value={resourceTypeFilter}
-                onChange={(e) => setResourceTypeFilter(e.target.value)}
-                className="min-h-[44px]"
-              />
-            </div>
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground">
+              Filter by Action
+            </label>
+            <Input
+              type="text"
+              placeholder="e.g. user:login or customer:create"
+              value={actionFilter}
+              onChange={(e) => setActionFilter(e.target.value)}
+              className="rounded-none border border-border/60 text-xs min-h-[38px]"
+            />
           </div>
-        </CardContent>
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground">
+              Filter by Resource Type
+            </label>
+            <Input
+              type="text"
+              placeholder="e.g. customer or transaction"
+              value={resourceTypeFilter}
+              onChange={(e) => setResourceTypeFilter(e.target.value)}
+              className="rounded-none border border-border/60 text-xs min-h-[38px]"
+            />
+          </div>
+        </div>
       </Card>
 
       {/* Logs Table */}
-      <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm">
-        <CardHeader className="border-b border-border pb-4">
-          <CardTitle className="text-base font-bold text-foreground">
-            Activity Ledger
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+        <CardHeader className="px-6 py-4 border-b border-border/60">
+          <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+            Activity Ledger Log
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse text-left">
+            <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-border bg-muted/30 text-xs font-semibold text-muted-foreground">
-                  <th className="p-4">Timestamp</th>
-                  <th className="p-4">User</th>
-                  <th className="p-4">Action</th>
-                  <th className="p-4">Resource</th>
-                  <th className="p-4">IP Address</th>
-                  <th className="p-4">User Agent</th>
+                <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
+                  <th className="py-3.5 px-4">Timestamp</th>
+                  <th className="py-3.5 px-4">User</th>
+                  <th className="py-3.5 px-4">Action</th>
+                  <th className="py-3.5 px-4">Resource</th>
+                  <th className="py-3.5 px-4">IP Address</th>
+                  <th className="py-3.5 px-4">User Agent</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -111,7 +111,7 @@ function AuditLogsContent() {
                   <tr>
                     <td
                       colSpan={6}
-                      className="p-8 text-center text-muted-foreground"
+                      className="py-8 text-center text-xs text-muted-foreground"
                     >
                       Loading audit logs...
                     </td>
@@ -120,7 +120,7 @@ function AuditLogsContent() {
                   <tr>
                     <td
                       colSpan={6}
-                      className="p-8 text-center text-muted-foreground"
+                      className="py-8 text-center text-xs text-muted-foreground"
                     >
                       No matching audit records found
                     </td>
@@ -135,35 +135,36 @@ function AuditLogsContent() {
                       : "";
 
                     return (
-                      <tr key={log.id} className="hover:bg-muted/10">
-                        <td className="p-4 text-xs text-muted-foreground">
-                          {new Date(log.createdAt).toLocaleString()}
+                      <tr
+                        key={log.id}
+                        className="hover:bg-muted/20 transition-colors"
+                      >
+                        <td className="py-3.5 px-4 text-xs font-mono text-muted-foreground whitespace-nowrap">
+                          {formatDate(log.createdAt)}
                         </td>
-                        <td className="p-4 text-xs font-medium text-foreground">
+                        <td className="py-3.5 px-4 text-xs font-semibold text-foreground">
                           {userName}
                           <span className="block text-[10px] text-muted-foreground font-normal">
                             {userEmail}
                           </span>
                         </td>
-                        <td className="p-4 text-xs">
-                          <span className="font-semibold text-primary">
-                            {log.action}
-                          </span>
+                        <td className="py-3.5 px-4 text-xs font-mono font-semibold text-foreground">
+                          {log.action}
                         </td>
-                        <td className="p-4 text-xs text-muted-foreground">
-                          <span className="font-medium text-foreground">
+                        <td className="py-3.5 px-4 text-xs text-muted-foreground">
+                          <span className="font-semibold text-foreground">
                             {log.resourceType}
                           </span>
                           {log.resourceId && (
-                            <span className="block text-[10px] font-mono text-muted-foreground/80 overflow-hidden text-ellipsis whitespace-nowrap max-w-[150px]">
+                            <span className="block text-[10px] font-mono text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap max-w-[150px]">
                               {log.resourceId}
                             </span>
                           )}
                         </td>
-                        <td className="p-4 text-xs font-mono text-muted-foreground">
+                        <td className="py-3.5 px-4 text-xs font-mono text-muted-foreground">
                           {log.ipAddress || "Unknown"}
                         </td>
-                        <td className="p-4 text-xs text-muted-foreground max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <td className="py-3.5 px-4 text-xs text-muted-foreground max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap font-mono">
                           {log.userAgent || "N/A"}
                         </td>
                       </tr>
