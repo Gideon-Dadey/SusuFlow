@@ -62,17 +62,17 @@ export const staffNavGroups: NavGroup[] = [
     items: [
       {
         href: "/staff/analytics",
-        label: "AI Credit & Insights",
+        label: "Analytics",
         icon: faBrain,
       },
       {
         href: "/staff/notifications",
-        label: "SMS & WhatsApp",
+        label: "Notifications",
         icon: faPaperPlane,
       },
       {
         href: "/staff/collectors/map",
-        label: "Collector Field Map",
+        label: "Collectors Map",
         icon: faMapLocationDot,
       },
     ],
