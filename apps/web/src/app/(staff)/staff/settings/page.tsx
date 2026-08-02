@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { tenantApi, userApi } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth.store";
-import { getTenantSlug } from "@/lib/utils";
+import { getTenantSlug, getInitials } from "@/lib/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -22,28 +22,12 @@ import {
   faEyeSlash,
   faCheck,
   faXmark,
+  faUpload,
+  faTrash,
+  faCamera,
 } from "@fortawesome/free-solid-svg-icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MIN_PASSWORD_LENGTH } from "@susuflow/shared";
-
-function hexToRgba(hex: string, alpha: number): string {
-  const cleanHex = hex.replace("#", "");
-  let r = 0,
-    g = 0,
-    b = 0;
-  if (cleanHex.length === 3) {
-    r = parseInt(cleanHex[0] + cleanHex[0], 16);
-    g = parseInt(cleanHex[1] + cleanHex[1], 16);
-    b = parseInt(cleanHex[2] + cleanHex[2], 16);
-  } else if (cleanHex.length === 6) {
-    r = parseInt(cleanHex.substring(0, 2), 16);
-    g = parseInt(cleanHex.substring(2, 4), 16);
-    b = parseInt(cleanHex.substring(4, 6), 16);
-  } else {
-    return `rgba(30, 64, 175, ${alpha})`;
-  }
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
 
 export default function StaffSettingsPage() {
   const { user } = useAuthStore();
@@ -51,7 +35,7 @@ export default function StaffSettingsPage() {
 
   // Active navigation tab
   const [activeTab, setActiveTab] = useState<
-    "profile" | "branding" | "operations" | "commissions"
+    "profile" | "security" | "branding" | "operations" | "commissions"
   >("profile");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -70,6 +54,7 @@ export default function StaffSettingsPage() {
   const [lastName, setLastName] = useState("");
   const [profileEmail, setProfileEmail] = useState("");
   const [profilePhone, setProfilePhone] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   // Password States
   const [currentPassword, setCurrentPassword] = useState("");
@@ -99,6 +84,7 @@ export default function StaffSettingsPage() {
       setLastName(userProfile.lastName || "");
       setProfileEmail(userProfile.email || "");
       setProfilePhone(userProfile.phone || "");
+      if (userProfile.avatarUrl) setAvatarUrl(userProfile.avatarUrl);
     }
   }, [userProfile]);
 
@@ -195,6 +181,7 @@ export default function StaffSettingsPage() {
         lastName,
         email: profileEmail,
         phone: profilePhone,
+        avatarUrl: avatarUrl || undefined,
       }),
     onSuccess: (updatedUser) => {
       setSuccessMessage("Profile updated successfully!");
@@ -206,6 +193,7 @@ export default function StaffSettingsPage() {
               firstName: updatedUser.firstName,
               lastName: updatedUser.lastName,
               email: updatedUser.email,
+              avatarUrl: updatedUser.avatarUrl,
             }
           : null,
       }));
@@ -247,6 +235,40 @@ export default function StaffSettingsPage() {
     },
   });
 
+  const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setErrorMessage("Avatar image must be smaller than 5MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const rawResult = reader.result as string;
+        setAvatarUrl(rawResult);
+        setErrorMessage("");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setErrorMessage("Logo image must be smaller than 5MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const rawResult = reader.result as string;
+        setLogoUrl(rawResult);
+        setErrorMessage("");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // 4. Form Handlers
   const isValidEmail = (emailStr: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailStr);
@@ -285,58 +307,6 @@ export default function StaffSettingsPage() {
       return;
     }
     updatePasswordMutation.mutate();
-  };
-
-  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setErrorMessage("Logo image must be smaller than 5MB.");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const rawResult = reader.result as string;
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const maxDim = 400;
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height) {
-            if (width > maxDim) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            }
-          } else {
-            if (height > maxDim) {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, width, height);
-            const compressed = canvas.toDataURL("image/png", 0.9);
-            setLogoUrl(compressed);
-            setErrorMessage("");
-          } else {
-            setLogoUrl(rawResult);
-            setErrorMessage("");
-          }
-        };
-        img.onerror = () => {
-          setLogoUrl(rawResult);
-          setErrorMessage("");
-        };
-        img.src = rawResult;
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const handleBrandingSave = (e: React.FormEvent) => {
@@ -464,117 +434,110 @@ export default function StaffSettingsPage() {
     return (
       <div className="space-y-6 max-w-6xl">
         <div>
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-4 w-72 mt-2" />
+          <Skeleton className="h-8 w-48 rounded-none" />
+          <Skeleton className="h-4 w-72 mt-2 rounded-none" />
         </div>
 
         <div className="flex flex-col md:flex-row gap-6 animate-pulse">
-          {/* Navigation Sidebar Skeleton */}
-          <div className="w-full md:w-64 shrink-0 flex flex-row md:flex-col gap-1.5 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
-            <Skeleton className="h-11 w-full" />
-            {isCompanyAdmin && (
-              <>
-                <Skeleton className="h-11 w-full" />
-                <Skeleton className="h-11 w-full" />
-                <Skeleton className="h-11 w-full" />
-              </>
-            )}
+          <div className="w-full md:w-64 shrink-0 space-y-2">
+            <Skeleton className="h-14 w-full rounded-none" />
+            <Skeleton className="h-14 w-full rounded-none" />
+            <Skeleton className="h-14 w-full rounded-none" />
           </div>
-
-          {/* Content Panel Skeleton */}
           <div className="flex-1 space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-4 border border-border/50 bg-card p-6">
-                <Skeleton className="h-6 w-32 animate-pulse" />
-                <Skeleton className="h-11 w-full" />
-                <Skeleton className="h-11 w-full" />
-                <Skeleton className="h-11 w-full" />
-                <Skeleton className="h-11 w-full" />
-                <Skeleton className="h-11 w-full" />
-              </div>
-              <div className="space-y-4 border border-border/50 bg-card p-6">
-                <Skeleton className="h-6 w-32 animate-pulse" />
-                <Skeleton className="h-11 w-full" />
-                <Skeleton className="h-11 w-full" />
-                <Skeleton className="h-11 w-full" />
-                <Skeleton className="h-11 w-full" />
-              </div>
-            </div>
+            <Skeleton className="h-64 w-full rounded-none" />
           </div>
         </div>
       </div>
     );
   }
 
+  const tabsList = [
+    {
+      id: "profile",
+      title: "Account profile",
+      subtitle: "Identity & credentials",
+    },
+    {
+      id: "security",
+      title: "Security & Password",
+      subtitle: "Password & authentication",
+    },
+    ...(isCompanyAdmin
+      ? [
+          {
+            id: "branding",
+            title: "Branding",
+            subtitle: "Logo, color & public name",
+          },
+          {
+            id: "operations",
+            title: "Operations",
+            subtitle: "Currency, timezone & limits",
+          },
+          {
+            id: "commissions",
+            title: "Commissions",
+            subtitle: "Transaction fee & agent rates",
+          },
+        ]
+      : []),
+  ];
+
   return (
     <div className="space-y-6 max-w-6xl">
-      <div>
-        <h1 className="dashboard-title">Profile & Settings</h1>
-      </div>
-
       <div className="flex flex-col md:flex-row gap-6">
-        {/* Navigation Sidebar */}
-        <div className="w-full md:w-64 shrink-0 flex flex-row md:flex-col gap-1.5 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
-          <button
-            onClick={() => handleTabChange("profile")}
-            className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold rounded-none transition-colors whitespace-nowrap ${
-              activeTab === "profile"
-                ? "bg-primary text-primary-foreground font-bold"
-                : "bg-card text-foreground hover:bg-muted/20 border border-border/60"
-            }`}
-          >
-            <FontAwesomeIcon icon={faUser} className="h-3.5 w-3.5" />
-            My Profile
-          </button>
-          {isCompanyAdmin && (
-            <>
-              <button
-                onClick={() => handleTabChange("branding")}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold rounded-none transition-colors whitespace-nowrap ${
-                  activeTab === "branding"
-                    ? "bg-primary text-primary-foreground font-bold"
-                    : "bg-card text-foreground hover:bg-muted/20 border border-border/60"
-                }`}
-              >
-                <FontAwesomeIcon
-                  icon={faWandMagicSparkles}
-                  className="h-3.5 w-3.5"
-                />
-                Branding & Company
-              </button>
-              <button
-                onClick={() => handleTabChange("operations")}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold rounded-none transition-colors whitespace-nowrap ${
-                  activeTab === "operations"
-                    ? "bg-primary text-primary-foreground font-bold"
-                    : "bg-card text-foreground hover:bg-muted/20 border border-border/60"
-                }`}
-              >
-                <FontAwesomeIcon icon={faSliders} className="h-3.5 w-3.5" />
-                Operations & Limits
-              </button>
-              <button
-                onClick={() => handleTabChange("commissions")}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold rounded-none transition-colors whitespace-nowrap ${
-                  activeTab === "commissions"
-                    ? "bg-primary text-primary-foreground font-bold"
-                    : "bg-card text-foreground hover:bg-muted/20 border border-border/60"
-                }`}
-              >
-                <FontAwesomeIcon
-                  icon={faShieldHalved}
-                  className="h-3.5 w-3.5"
-                />
-                Commissions & Fees
-              </button>
-            </>
-          )}
+        {/* Left Navigation Sidebar matching screenshot */}
+        <div className="w-full md:w-64 shrink-0">
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+            <div className="px-4 py-3 border-b border-border/60 bg-muted/20">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Settings
+              </h2>
+            </div>
+            <div className="p-2 space-y-1">
+              {tabsList.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => handleTabChange(tab.id as any)}
+                    className={`w-full text-left p-3 rounded-none transition-colors border ${
+                      isActive
+                        ? "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-800 text-sky-900 dark:text-sky-100"
+                        : "bg-transparent border-transparent hover:bg-muted/30 text-foreground"
+                    }`}
+                  >
+                    <p
+                      className={`text-xs font-bold ${
+                        isActive
+                          ? "text-sky-700 dark:text-sky-300 font-bold"
+                          : "text-foreground font-semibold"
+                      }`}
+                    >
+                      {tab.title}
+                    </p>
+                    <p
+                      className={`text-[11px] mt-0.5 ${
+                        isActive
+                          ? "text-sky-600/80 dark:text-sky-400/80 font-medium"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {tab.subtitle}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </Card>
         </div>
 
-        {/* Content Form Panel */}
+        {/* Right Content Panel */}
         <div className="flex-1 space-y-6">
           {successMessage && (
-            <div className="flex items-center gap-2 p-3 text-xs bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400 border border-green-200 dark:border-green-900/50">
+            <div className="flex items-center gap-2 p-3 text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-medium">
               <FontAwesomeIcon
                 icon={faCircleCheck}
                 className="h-4 w-4 shrink-0"
@@ -583,7 +546,7 @@ export default function StaffSettingsPage() {
             </div>
           )}
           {errorMessage && (
-            <div className="flex items-center gap-2 p-3 text-xs bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400 border border-red-200 dark:border-red-900/50">
+            <div className="flex items-center gap-2 p-3 text-xs bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-medium">
               <FontAwesomeIcon
                 icon={faCircleExclamation}
                 className="h-4 w-4 shrink-0"
@@ -592,510 +555,653 @@ export default function StaffSettingsPage() {
             </div>
           )}
 
+          {/* TAB 1: ACCOUNT PROFILE */}
           {activeTab === "profile" && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Personal Details */}
-              <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
-                <CardHeader className="px-6 py-4 border-b border-border/60">
-                  <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
-                    Personal Details
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <form onSubmit={handleProfileSave} className="space-y-4">
-                    <Input
-                      label="First Name"
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm p-6 sm:p-8 space-y-6">
+              <div>
+                <h1 className="text-xl font-bold text-foreground">
+                  Account profile
+                </h1>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Manage your identity and professional credentials.
+                </p>
+              </div>
+
+              <form onSubmit={handleProfileSave} className="space-y-6">
+                {/* Profile Photo Box */}
+                <div className="border border-border/60 bg-muted/10 p-5 rounded-none flex flex-col sm:flex-row items-center gap-5">
+                  <div className="relative shrink-0">
+                    <div className="size-20 rounded-full bg-primary/10 text-primary flex items-center justify-center overflow-hidden font-bold text-lg border border-border/60">
+                      {avatarUrl ? (
+                        <img
+                          src={avatarUrl}
+                          alt="Profile Avatar"
+                          className="size-full object-cover"
+                        />
+                      ) : (
+                        getInitials(firstName, lastName)
+                      )}
+                    </div>
+                    <label
+                      htmlFor="avatar-upload-file"
+                      className="absolute bottom-0 right-0 size-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center cursor-pointer shadow-md hover:bg-primary/90 transition-colors"
+                      title="Upload new headshot"
+                    >
+                      <FontAwesomeIcon icon={faCamera} className="h-3 w-3" />
+                    </label>
+                    <input
+                      type="file"
+                      id="avatar-upload-file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleAvatarFileChange}
+                    />
+                  </div>
+
+                  <div className="space-y-2 flex-1 text-center sm:text-left">
+                    <div>
+                      <p className="text-xs font-bold text-foreground">
+                        Profile photo
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        Shown on your public staff profile and practitioner
+                        directory. Use a professional headshot (PNG, JPG, or
+                        WEBP, max 5 MB).
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                      <label htmlFor="avatar-upload-file">
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-sky-600 hover:bg-sky-700 text-white gap-2 pointer-events-none"
+                        >
+                          <FontAwesomeIcon
+                            icon={faUpload}
+                            className="h-3 w-3"
+                          />
+                          Replace photo
+                        </Button>
+                      </label>
+
+                      {avatarUrl && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setAvatarUrl("")}
+                          className="text-xs font-semibold rounded-none min-h-[36px] px-4 border-red-200 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:border-red-900 dark:text-red-400 gap-2"
+                        >
+                          <FontAwesomeIcon icon={faTrash} className="h-3 w-3" />
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Form Fields Grid matching screenshot 1-to-1 */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      First name *
+                    </label>
+                    <input
+                      type="text"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       placeholder="Enter first name"
                       required
-                      className="rounded-none border border-border/60 text-xs min-h-[38px]"
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
                     />
-                    <Input
-                      label="Last Name"
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Last name *
+                    </label>
+                    <input
+                      type="text"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       placeholder="Enter last name"
                       required
-                      className="rounded-none border border-border/60 text-xs min-h-[38px]"
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
                     />
-                    <Input
-                      label="Email Address"
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Email
+                    </label>
+                    <input
                       type="email"
                       value={profileEmail}
-                      onChange={(e) => setProfileEmail(e.target.value)}
-                      placeholder="Enter email address"
-                      required
-                      className="rounded-none border border-border/60 text-xs min-h-[38px]"
+                      disabled
+                      className="w-full rounded-none border border-border/60 bg-muted/40 px-3 py-2.5 text-xs text-muted-foreground min-h-[42px] cursor-not-allowed"
                     />
-                    <Input
-                      label="Phone Number"
+                    <p className="text-[11px] text-muted-foreground mt-1.5">
+                      Email is used for login and can't be changed here.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Phone number
+                    </label>
+                    <input
+                      type="text"
                       value={profilePhone}
                       onChange={(e) => setProfilePhone(e.target.value)}
-                      placeholder="Enter phone number"
-                      className="rounded-none border border-border/60 text-xs min-h-[38px]"
+                      placeholder="0551550530"
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
                     />
-                    <Button
-                      type="submit"
-                      size="sm"
-                      className="w-full flex items-center justify-center gap-2 text-xs font-semibold px-4 min-h-[36px] rounded-none bg-primary text-primary-foreground hover:bg-primary/95"
-                      disabled={updateProfileMutation.isPending}
-                    >
-                      {updateProfileMutation.isPending && (
-                        <FontAwesomeIcon
-                          icon={faSpinner}
-                          className="h-4 w-4 animate-spin"
-                        />
-                      )}
-                      Save Profile Changes
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
+                  </div>
+                </div>
 
-              {/* Password Card */}
-              <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
-                <CardHeader className="px-6 py-4 border-b border-border/60">
-                  <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
-                    Security & Password
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handlePasswordSave} className="space-y-4">
-                    {/* Current Password */}
-                    <div className="space-y-1.5">
-                      <label className="block text-sm font-medium text-foreground">
-                        Current Password
-                      </label>
-                      <div className="relative">
-                        <Input
-                          type={showCurrentPass ? "text" : "password"}
-                          value={currentPassword}
-                          onChange={(e) => setCurrentPassword(e.target.value)}
-                          placeholder="Enter current password"
-                          required
-                          className="pr-10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowCurrentPass(!showCurrentPass)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-                        >
-                          <FontAwesomeIcon
-                            icon={showCurrentPass ? faEyeSlash : faEye}
-                            className="h-3.5 w-3.5"
-                          />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* New Password */}
-                    <div className="space-y-1.5">
-                      <label className="block text-sm font-medium text-foreground">
-                        New Password
-                      </label>
-                      <div className="relative">
-                        <Input
-                          type={showNewPass ? "text" : "password"}
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          placeholder={`Minimum ${MIN_PASSWORD_LENGTH} characters`}
-                          required
-                          className="pr-10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowNewPass(!showNewPass)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-                        >
-                          <FontAwesomeIcon
-                            icon={showNewPass ? faEyeSlash : faEye}
-                            className="h-3.5 w-3.5"
-                          />
-                        </button>
-                      </div>
-
-                      {/* Password Strength Meter */}
-                      {newPassword.length > 0 && (
-                        <div className="space-y-1.5 pt-1">
-                          <div className="flex items-center justify-between text-[11px]">
-                            <span className="text-muted-foreground">
-                              Strength:
-                            </span>
-                            <span className="font-semibold text-foreground">
-                              {getPasswordStrength(newPassword).label}
-                            </span>
-                          </div>
-                          <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                            <div
-                              className={`h-full transition-all duration-300 ${
-                                getPasswordStrength(newPassword).color
-                              }`}
-                              style={{
-                                width: `${
-                                  (getPasswordStrength(newPassword).score / 3) *
-                                  100
-                                }%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Confirm New Password */}
-                    <div className="space-y-1.5">
-                      <label className="block text-sm font-medium text-foreground">
-                        Confirm New Password
-                      </label>
-                      <div className="relative">
-                        <Input
-                          type={showConfirmPass ? "text" : "password"}
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          placeholder="Confirm new password"
-                          required
-                          className="pr-10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowConfirmPass(!showConfirmPass)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-                        >
-                          <FontAwesomeIcon
-                            icon={showConfirmPass ? faEyeSlash : faEye}
-                            className="h-3.5 w-3.5"
-                          />
-                        </button>
-                      </div>
-
-                      {/* Live Password Match Feedback */}
-                      {confirmPassword.length > 0 && (
-                        <div className="flex items-center gap-1.5 text-xs mt-1">
-                          {newPassword === confirmPassword ? (
-                            <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium text-[11px]">
-                              <FontAwesomeIcon
-                                icon={faCheck}
-                                className="h-3 w-3"
-                              />{" "}
-                              Passwords match
-                            </span>
-                          ) : (
-                            <span className="text-red-500 flex items-center gap-1 font-medium text-[11px]">
-                              <FontAwesomeIcon
-                                icon={faXmark}
-                                className="h-3 w-3"
-                              />{" "}
-                              Passwords do not match
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    <Button
-                      type="submit"
-                      size="sm"
-                      className="w-full flex items-center justify-center gap-2 text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95"
-                      disabled={
-                        updatePasswordMutation.isPending ||
-                        (confirmPassword.length > 0 &&
-                          newPassword !== confirmPassword)
-                      }
-                    >
-                      {updatePasswordMutation.isPending && (
-                        <FontAwesomeIcon
-                          icon={faSpinner}
-                          className="h-4 w-4 animate-spin"
-                        />
-                      )}
-                      Update Password
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
+                <div className="flex justify-end pt-2">
+                  <Button
+                    type="submit"
+                    disabled={updateProfileMutation.isPending}
+                    className="text-xs font-semibold rounded-none min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
+                  >
+                    {updateProfileMutation.isPending && (
+                      <FontAwesomeIcon
+                        icon={faSpinner}
+                        className="h-3.5 w-3.5 animate-spin"
+                      />
+                    )}
+                    Save Profile Changes
+                  </Button>
+                </div>
+              </form>
+            </Card>
           )}
 
-          {isCompanyAdmin && activeTab === "branding" && (
-            <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
-              <CardHeader className="px-6 py-4 border-b border-border/60">
-                <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
-                  General & Branding
-                </CardTitle>
-                <p className="text-xs text-muted-foreground">
-                  Update your company details and logo for organization
-                  branding.
+          {/* TAB 2: SECURITY & PASSWORD */}
+          {activeTab === "security" && (
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm p-6 sm:p-8 space-y-6">
+              <div>
+                <h1 className="text-xl font-bold text-foreground">
+                  Security & Password
+                </h1>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Manage your security credentials and password preferences.
                 </p>
-              </CardHeader>
-              <CardContent className="p-6">
-                <form onSubmit={handleBrandingSave} className="space-y-4">
-                  <Input
-                    label="Company Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. SusuFlow"
-                  />
+              </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Input
-                      label="Support Email"
+              <form
+                onSubmit={handlePasswordSave}
+                className="space-y-5 max-w-xl"
+              >
+                <div>
+                  <label className="block text-xs font-bold text-foreground mb-1.5">
+                    Current Password *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showCurrentPass ? "text" : "password"}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Enter current password"
+                      required
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 pr-10 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPass(!showCurrentPass)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
+                    >
+                      <FontAwesomeIcon
+                        icon={showCurrentPass ? faEyeSlash : faEye}
+                        className="h-3.5 w-3.5"
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-foreground mb-1.5">
+                    New Password *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showNewPass ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder={`Minimum ${MIN_PASSWORD_LENGTH} characters`}
+                      required
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 pr-10 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPass(!showNewPass)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
+                    >
+                      <FontAwesomeIcon
+                        icon={showNewPass ? faEyeSlash : faEye}
+                        className="h-3.5 w-3.5"
+                      />
+                    </button>
+                  </div>
+
+                  {newPassword.length > 0 && (
+                    <div className="space-y-1 pt-1.5">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-muted-foreground">Strength:</span>
+                        <span className="font-semibold text-foreground">
+                          {getPasswordStrength(newPassword).label}
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full bg-muted rounded-none overflow-hidden">
+                        <div
+                          className={`h-full transition-all duration-300 ${
+                            getPasswordStrength(newPassword).color
+                          }`}
+                          style={{
+                            width: `${
+                              (getPasswordStrength(newPassword).score / 3) * 100
+                            }%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-foreground mb-1.5">
+                    Confirm New Password *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPass ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                      required
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 pr-10 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPass(!showConfirmPass)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
+                    >
+                      <FontAwesomeIcon
+                        icon={showConfirmPass ? faEyeSlash : faEye}
+                        className="h-3.5 w-3.5"
+                      />
+                    </button>
+                  </div>
+
+                  {confirmPassword.length > 0 && (
+                    <div className="flex items-center gap-1.5 text-xs mt-1">
+                      {newPassword === confirmPassword ? (
+                        <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold text-[11px]">
+                          <FontAwesomeIcon icon={faCheck} className="h-3 w-3" />{" "}
+                          Passwords match
+                        </span>
+                      ) : (
+                        <span className="text-red-500 flex items-center gap-1 font-semibold text-[11px]">
+                          <FontAwesomeIcon icon={faXmark} className="h-3 w-3" />{" "}
+                          Passwords do not match
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    disabled={
+                      updatePasswordMutation.isPending ||
+                      (confirmPassword.length > 0 &&
+                        newPassword !== confirmPassword)
+                    }
+                    className="text-xs font-semibold rounded-none min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
+                  >
+                    {updatePasswordMutation.isPending && (
+                      <FontAwesomeIcon
+                        icon={faSpinner}
+                        className="h-3.5 w-3.5 animate-spin"
+                      />
+                    )}
+                    Update Password
+                  </Button>
+                </div>
+              </form>
+            </Card>
+          )}
+
+          {/* TAB 3: BRANDING */}
+          {isCompanyAdmin && activeTab === "branding" && (
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm p-6 sm:p-8 space-y-6">
+              <div>
+                <h1 className="text-xl font-bold text-foreground">
+                  Branding & Company
+                </h1>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Update your organization details and logo for member branding.
+                </p>
+              </div>
+
+              <form onSubmit={handleBrandingSave} className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Company Name
+                    </label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="e.g. SusuFlow"
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Support Email
+                    </label>
+                    <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="support@susuflow.com"
-                    />
-                    <Input
-                      label="Support Phone"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+233..."
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-foreground">
-                      Company Logo
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Support Phone
                     </label>
-                    <div className="flex items-center gap-4">
-                      {logoUrl || tenant?.logoUrl || tenantBranding?.logoUrl ? (
-                        <img
-                          src={
-                            logoUrl ||
-                            tenant?.logoUrl ||
-                            tenantBranding?.logoUrl ||
-                            ""
-                          }
-                          alt="Company Logo preview"
-                          className="h-16 w-16 object-contain rounded-lg bg-muted border border-border p-1"
-                        />
-                      ) : (
-                        <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-muted text-xs text-muted-foreground font-semibold border border-border">
-                          No Logo
-                        </div>
-                      )}
-                      <div className="flex flex-col gap-1.5">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          id="settings-logo-file"
-                          className="hidden"
-                          onChange={handleLogoFileChange}
-                        />
-                        <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+233..."
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
+                    />
+                  </div>
+                </div>
+
+                <div className="border border-border/60 bg-muted/10 p-5 rounded-none space-y-3">
+                  <label className="block text-xs font-bold text-foreground">
+                    Company Logo
+                  </label>
+                  <div className="flex items-center gap-4">
+                    {logoUrl || tenant?.logoUrl || tenantBranding?.logoUrl ? (
+                      <img
+                        src={
+                          logoUrl ||
+                          tenant?.logoUrl ||
+                          tenantBranding?.logoUrl ||
+                          ""
+                        }
+                        alt="Company Logo preview"
+                        className="h-16 w-16 object-contain rounded-none bg-card border border-border/60 p-1"
+                      />
+                    ) : (
+                      <div className="flex h-16 w-16 items-center justify-center rounded-none bg-muted/50 text-xs text-muted-foreground font-semibold border border-border/60">
+                        No Logo
+                      </div>
+                    )}
+                    <div className="flex flex-col gap-1.5">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        id="settings-logo-file"
+                        className="hidden"
+                        onChange={handleLogoFileChange}
+                      />
+                      <div className="flex gap-2">
+                        <label htmlFor="settings-logo-file">
+                          <Button
+                            type="button"
+                            size="sm"
+                            className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-sky-600 hover:bg-sky-700 text-white gap-2 pointer-events-none"
+                          >
+                            <FontAwesomeIcon
+                              icon={faUpload}
+                              className="h-3 w-3"
+                            />
+                            Upload Logo
+                          </Button>
+                        </label>
+                        {logoUrl && (
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={() =>
-                              document
-                                .getElementById("settings-logo-file")
-                                ?.click()
-                            }
+                            onClick={() => setLogoUrl("")}
+                            className="text-xs font-semibold rounded-none min-h-[36px] px-4 border-red-200 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:border-red-900 dark:text-red-400 gap-2"
                           >
-                            Upload Image File
+                            <FontAwesomeIcon
+                              icon={faTrash}
+                              className="h-3 w-3"
+                            />
+                            Remove
                           </Button>
-                          {logoUrl && (
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="text-destructive hover:bg-destructive/10"
-                              onClick={() => setLogoUrl("")}
-                            >
-                              Remove Logo
-                            </Button>
-                          )}
-                        </div>
-                        <span className="text-[10px] text-muted-foreground">
-                          Supported format: PNG, JPG, WebP. Max 2MB.
-                        </span>
+                        )}
                       </div>
+                      <span className="text-[10px] text-muted-foreground">
+                        Supported format: PNG, JPG, WebP. Max 5MB.
+                      </span>
                     </div>
                   </div>
+                </div>
 
-                  <div className="flex justify-end pt-2">
-                    <Button
-                      type="submit"
-                      size="sm"
-                      className="w-full sm:w-auto text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95 flex items-center justify-center gap-1.5"
-                      disabled={updateTenantMutation.isPending}
-                    >
-                      {updateTenantMutation.isPending && (
-                        <FontAwesomeIcon
-                          icon={faSpinner}
-                          className="h-4 w-4 animate-spin"
-                        />
-                      )}
-                      Save Branding Settings
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
+                <div className="flex justify-end pt-2">
+                  <Button
+                    type="submit"
+                    disabled={updateTenantMutation.isPending}
+                    className="text-xs font-semibold rounded-none min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
+                  >
+                    {updateTenantMutation.isPending && (
+                      <FontAwesomeIcon
+                        icon={faSpinner}
+                        className="h-3.5 w-3.5 animate-spin"
+                      />
+                    )}
+                    Save Branding Settings
+                  </Button>
+                </div>
+              </form>
             </Card>
           )}
 
+          {/* TAB 4: OPERATIONS */}
           {isCompanyAdmin && activeTab === "operations" && (
-            <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
-              <CardHeader className="px-6 py-4 border-b border-border/60">
-                <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm p-6 sm:p-8 space-y-6">
+              <div>
+                <h1 className="text-xl font-bold text-foreground">
                   Operations & Limits
-                </CardTitle>
-                <p className="text-xs text-muted-foreground">
+                </h1>
+                <p className="text-xs text-muted-foreground mt-1">
                   Configure transactional requirements and operating boundaries.
                 </p>
-              </CardHeader>
-              <CardContent className="p-6">
-                <form onSubmit={handleOperationsSave} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-foreground">
-                        Currency
-                      </label>
-                      <select
-                        value={currency}
-                        onChange={(e) => setCurrency(e.target.value)}
-                        className="flex min-h-[38px] w-full rounded-none border border-border/60 bg-card px-3 py-2 text-xs text-foreground outline-none focus:border-primary"
-                      >
-                        <option value="GHS">GHS (Ghana Cedi)</option>
-                        <option value="USD">USD (US Dollar)</option>
-                        <option value="EUR">EUR (Euro)</option>
-                      </select>
-                    </div>
+              </div>
 
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-foreground">
-                        Timezone
-                      </label>
-                      <select
-                        value={timezone}
-                        onChange={(e) => setTimezone(e.target.value)}
-                        className="flex min-h-[38px] w-full rounded-none border border-border/60 bg-card px-3 py-2 text-xs text-foreground outline-none focus:border-primary"
-                      >
-                        <option value="Africa/Accra">Africa/Accra (GMT)</option>
-                        <option value="UTC">
-                          UTC (Coordinated Universal Time)
-                        </option>
-                        <option value="Europe/London">Europe/London</option>
-                      </select>
-                    </div>
+              <form onSubmit={handleOperationsSave} className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Currency
+                    </label>
+                    <select
+                      value={currency}
+                      onChange={(e) => setCurrency(e.target.value)}
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
+                    >
+                      <option value="GHS">GHS (Ghana Cedi)</option>
+                      <option value="USD">USD (US Dollar)</option>
+                      <option value="EUR">EUR (Euro)</option>
+                    </select>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                    <Input
-                      label={`Minimum Deposit (${currency})`}
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Timezone
+                    </label>
+                    <select
+                      value={timezone}
+                      onChange={(e) => setTimezone(e.target.value)}
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
+                    >
+                      <option value="Africa/Accra">Africa/Accra (GMT)</option>
+                      <option value="UTC">
+                        UTC (Coordinated Universal Time)
+                      </option>
+                      <option value="Europe/London">Europe/London</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Minimum Deposit ({currency})
+                    </label>
+                    <input
                       type="number"
                       value={minDeposit}
                       onChange={(e) => setMinDeposit(e.target.value)}
                       placeholder="5"
                       min="1"
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
                     />
-                    <Input
-                      label={`Maximum Deposit (${currency})`}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Maximum Deposit ({currency})
+                    </label>
+                    <input
                       type="number"
                       value={maxDeposit}
                       onChange={(e) => setMaxDeposit(e.target.value)}
                       placeholder="10000"
                       min="1"
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Input
-                      label={`Minimum Withdrawal (${currency})`}
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Minimum Withdrawal ({currency})
+                    </label>
+                    <input
                       type="number"
                       value={minWithdrawal}
                       onChange={(e) => setMinWithdrawal(e.target.value)}
                       placeholder="10"
                       min="1"
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
                     />
-                    <Input
-                      label={`Maximum Daily Withdrawal (${currency})`}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Maximum Daily Withdrawal ({currency})
+                    </label>
+                    <input
                       type="number"
                       value={maxWithdrawal}
                       onChange={(e) => setMaxWithdrawal(e.target.value)}
                       placeholder="5000"
                       min="1"
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
                     />
                   </div>
+                </div>
 
-                  <div className="flex justify-end pt-2">
-                    <Button
-                      type="submit"
-                      size="sm"
-                      className="w-full sm:w-auto text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95 flex items-center justify-center gap-1.5"
-                      disabled={updateTenantMutation.isPending}
-                    >
-                      {updateTenantMutation.isPending && (
-                        <FontAwesomeIcon
-                          icon={faSpinner}
-                          className="h-4 w-4 animate-spin"
-                        />
-                      )}
-                      Save Operations Settings
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
+                <div className="flex justify-end pt-2">
+                  <Button
+                    type="submit"
+                    disabled={updateTenantMutation.isPending}
+                    className="text-xs font-semibold rounded-none min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
+                  >
+                    {updateTenantMutation.isPending && (
+                      <FontAwesomeIcon
+                        icon={faSpinner}
+                        className="h-3.5 w-3.5 animate-spin"
+                      />
+                    )}
+                    Save Operations Settings
+                  </Button>
+                </div>
+              </form>
             </Card>
           )}
 
+          {/* TAB 5: COMMISSIONS */}
           {isCompanyAdmin && activeTab === "commissions" && (
-            <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
-              <CardHeader className="px-6 py-4 border-b border-border/60">
-                <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm p-6 sm:p-8 space-y-6">
+              <div>
+                <h1 className="text-xl font-bold text-foreground">
                   Commissions & Fees
-                </CardTitle>
-                <p className="text-xs text-muted-foreground">
+                </h1>
+                <p className="text-xs text-muted-foreground mt-1">
                   Adjust transaction-level fees and internal agent commission
                   rates.
                 </p>
-              </CardHeader>
-              <CardContent className="p-6">
-                <form onSubmit={handleCommissionsSave} className="space-y-4">
-                  <Input
-                    label={`Flat Transaction Fee (${currency})`}
-                    type="number"
-                    step="0.01"
-                    value={transactionFee}
-                    onChange={(e) => setTransactionFee(e.target.value)}
-                    placeholder="0.50"
-                    min="0"
-                  />
+              </div>
 
-                  <Input
-                    label="Collector Commission Rate (%)"
-                    type="number"
-                    step="0.1"
-                    value={commissionRate}
-                    onChange={(e) => setCommissionRate(e.target.value)}
-                    placeholder="1.5"
-                    min="0"
-                    max="100"
-                  />
-                  <p className="text-[11px] text-muted-foreground">
-                    This percentage is paid out directly to field agent
-                    collectors from deposit volumes collected.
-                  </p>
-
-                  <div className="flex justify-end pt-2">
-                    <Button
-                      type="submit"
-                      size="sm"
-                      className="w-full sm:w-auto text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95 flex items-center justify-center gap-1.5"
-                      disabled={updateTenantMutation.isPending}
-                    >
-                      {updateTenantMutation.isPending && (
-                        <FontAwesomeIcon
-                          icon={faSpinner}
-                          className="h-4 w-4 animate-spin"
-                        />
-                      )}
-                      Save Fees Settings
-                    </Button>
+              <form onSubmit={handleCommissionsSave} className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Flat Transaction Fee ({currency})
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={transactionFee}
+                      onChange={(e) => setTransactionFee(e.target.value)}
+                      placeholder="0.50"
+                      min="0"
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
+                    />
                   </div>
-                </form>
-              </CardContent>
+
+                  <div>
+                    <label className="block text-xs font-bold text-foreground mb-1.5">
+                      Collector Commission Rate (%)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={commissionRate}
+                      onChange={(e) => setCommissionRate(e.target.value)}
+                      placeholder="1.5"
+                      min="0"
+                      max="100"
+                      className="w-full rounded-none border border-border/60 bg-card px-3 py-2.5 text-xs text-foreground outline-none focus:border-primary min-h-[42px]"
+                    />
+                    <p className="text-[11px] text-muted-foreground mt-1.5">
+                      Paid out directly to field collectors from deposit volume.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-2">
+                  <Button
+                    type="submit"
+                    disabled={updateTenantMutation.isPending}
+                    className="text-xs font-semibold rounded-none min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
+                  >
+                    {updateTenantMutation.isPending && (
+                      <FontAwesomeIcon
+                        icon={faSpinner}
+                        className="h-3.5 w-3.5 animate-spin"
+                      />
+                    )}
+                    Save Fees Settings
+                  </Button>
+                </div>
+              </form>
             </Card>
           )}
         </div>
