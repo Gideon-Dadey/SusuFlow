@@ -8,7 +8,7 @@ import { AdminDashboardHero } from "@/components/dashboard/admin-dashboard-hero"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { formatGhs, formatDate } from "@/lib/utils";
+import { formatGhs, formatDate, getInitials } from "@/lib/utils";
 import {
   portalDashboardCardGridClass,
   portalDashboardMetricsGridClass,
@@ -342,17 +342,17 @@ export default function AdminDashboardPage() {
         </CardContent>
       </Card>
 
-      {/* Two Column Grid: Activity & Security Trail */}
+      {/* Two Column Grid: Activity & Security Trail (Ranked Bimatro List Containers) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Left Column: Recent Global Deposits & Withdrawals */}
-        <Card className="rounded-none border border-border/60 bg-card shadow-sm lg:col-span-6">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <Card className="rounded-none border border-border/60 bg-card shadow-sm lg:col-span-6 overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5 border-b border-border/60">
             <div>
               <CardTitle className="text-sm sm:text-base font-bold tracking-tight">
                 Global Ledger Activity
               </CardTitle>
-              <p className="text-xs text-muted-foreground">
-                Latest transactions across all registered tenants
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Real-time transactional log across all tenant accounts
               </p>
             </div>
             <div className="flex gap-2">
@@ -360,7 +360,7 @@ export default function AdminDashboardPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-xs font-semibold text-secondary hover:text-secondary/80"
+                  className="text-xs font-semibold text-secondary hover:text-secondary/80 h-7 px-2"
                 >
                   Deposits
                 </Button>
@@ -369,76 +369,118 @@ export default function AdminDashboardPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-xs font-semibold text-secondary hover:text-secondary/80"
+                  className="text-xs font-semibold text-secondary hover:text-secondary/80 h-7 px-2"
                 >
                   Withdrawals
                 </Button>
               </Link>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 divide-y divide-border/60">
             {isLoading ? (
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
+              <div className="space-y-3 p-4">
+                {[1, 2, 3, 4, 5].map((i) => (
                   <div
                     key={i}
-                    className="h-12 w-full animate-pulse rounded-none bg-muted/60"
+                    className="h-16 w-full animate-pulse rounded-none bg-muted/60"
                   />
                 ))}
               </div>
             ) : !summary?.recentTransactions ||
               summary.recentTransactions.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">
+              <p className="py-8 text-center text-xs text-muted-foreground">
                 No ledger transactions found.
               </p>
             ) : (
-              <div className="space-y-3">
-                {summary.recentTransactions.map((tx: any) => (
-                  <div
-                    key={tx.id}
-                    onClick={() => {
-                      setSelectedTxn(tx);
-                      setReceiptOpen(true);
-                    }}
-                    className="flex items-center justify-between rounded-none border border-border/60 p-3 hover:bg-muted/20 cursor-pointer transition-colors"
-                  >
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-semibold text-foreground">
-                          {tx.customer?.user
-                            ? `${tx.customer.user.firstName} ${tx.customer.user.lastName}`
-                            : "Unknown customer"}
+              summary.recentTransactions
+                .slice(0, 6)
+                .map((tx: any, idx: number) => {
+                  const customerName = tx.customer?.user
+                    ? `${tx.customer.user.firstName} ${tx.customer.user.lastName}`
+                    : "Unknown Customer";
+                  const customerEmail =
+                    tx.customer?.user?.email || "No email registered";
+                  const initials = getInitials(customerName);
+                  const avatarUrl = tx.customer?.user?.avatarUrl;
+
+                  return (
+                    <div
+                      key={tx.id}
+                      onClick={() => {
+                        setSelectedTxn(tx);
+                        setReceiptOpen(true);
+                      }}
+                      className="flex items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5 hover:bg-muted/30 cursor-pointer transition-colors gap-3"
+                    >
+                      {/* Left: Rank & Avatar */}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <span className="w-6 text-xs font-bold text-amber-500 shrink-0 text-center font-mono">
+                          #{idx + 1}
                         </span>
-                        <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-none font-mono uppercase">
-                          {tx.tenant?.name || "Platform"}
-                        </span>
+
+                        <div className="size-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden border border-border/40">
+                          {avatarUrl ? (
+                            <img
+                              src={avatarUrl}
+                              alt={customerName}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            initials
+                          )}
+                        </div>
+
+                        {/* Info block */}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-bold text-foreground truncate">
+                              {customerName}
+                            </span>
+                            <span className="inline-flex rounded-full bg-slate-100 dark:bg-slate-800 text-[9px] font-bold px-2 py-0.5 text-muted-foreground uppercase border border-border/60">
+                              {tx.type === "deposit" ? "SAVER" : "WITHDRAWAL"}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-muted-foreground truncate font-mono mt-0.5">
+                            {customerEmail}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground/80 truncate font-mono mt-0.5">
+                            Ref:{" "}
+                            <span className="font-semibold">
+                              {tx.reference}
+                            </span>{" "}
+                            · Org:{" "}
+                            <span className="font-semibold text-foreground">
+                              {tx.tenant?.name || "Platform"}
+                            </span>
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-xs text-muted-foreground font-mono">
-                        {tx.reference} · {formatDate(tx.createdAt)}
-                      </p>
+
+                      {/* Right: Amount & Timestamp */}
+                      <div className="text-right shrink-0">
+                        <p className="text-xs sm:text-sm font-bold tabular-nums tracking-tight text-foreground">
+                          {tx.type === "deposit" ? "+" : "-"}
+                          {formatGhs(tx.amount)}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">
+                          {formatDate(tx.createdAt)}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold tabular-nums text-foreground">
-                        {tx.type === "deposit" ? "+" : "-"}
-                        {formatGhs(tx.amount)}
-                      </p>
-                      <StatusBadge status={tx.status} />
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  );
+                })
             )}
           </CardContent>
         </Card>
 
         {/* Right Column: Platform Security Trail */}
-        <Card className="rounded-none border border-border/60 bg-card shadow-sm lg:col-span-6">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <Card className="rounded-none border border-border/60 bg-card shadow-sm lg:col-span-6 overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5 border-b border-border/60">
             <div>
               <CardTitle className="text-sm sm:text-base font-bold tracking-tight">
                 System Security Trail
               </CardTitle>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Live monitoring of user actions and admin overrides
               </p>
             </div>
@@ -446,61 +488,98 @@ export default function AdminDashboardPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-xs font-semibold text-secondary hover:text-secondary/80"
+                className="text-xs font-semibold text-secondary hover:text-secondary/80 h-7 px-2"
               >
                 View Logs
               </Button>
             </Link>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 divide-y divide-border/60">
             {isLoading ? (
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
+              <div className="space-y-3 p-4">
+                {[1, 2, 3, 4, 5].map((i) => (
                   <div
                     key={i}
-                    className="h-12 w-full animate-pulse rounded-none bg-muted/60"
+                    className="h-16 w-full animate-pulse rounded-none bg-muted/60"
                   />
                 ))}
               </div>
             ) : !summary?.recentAuditLogs ||
               summary.recentAuditLogs.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">
+              <p className="py-8 text-center text-xs text-muted-foreground">
                 No recent security events.
               </p>
             ) : (
-              <div className="space-y-3">
-                {summary.recentAuditLogs.map((log: any) => (
-                  <div
-                    key={log.id}
-                    className="flex flex-col gap-1 rounded-none border border-border/60 p-3 hover:bg-muted/20 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-foreground capitalize">
-                        {log.action.replace(/_/g, " ")}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">
-                        {formatDate(log.createdAt)}
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap items-center justify-between gap-1 text-xs text-muted-foreground">
-                      <span>
-                        Actor:{" "}
-                        <span className="font-medium text-foreground">
-                          {log.user
-                            ? `${log.user.firstName} ${log.user.lastName}`
-                            : "System"}
+              summary.recentAuditLogs
+                .slice(0, 6)
+                .map((log: any, idx: number) => {
+                  const actorName = log.user
+                    ? `${log.user.firstName} ${log.user.lastName}`
+                    : "System / Webhook";
+                  const actorEmail =
+                    log.user?.email || "system@susuflow.internal";
+                  const initials = getInitials(actorName);
+                  const actionTitle = log.action
+                    ? log.action.replace(/_/g, " ")
+                    : "Action Logged";
+
+                  return (
+                    <div
+                      key={log.id}
+                      className="flex items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5 hover:bg-muted/30 transition-colors gap-3"
+                    >
+                      {/* Left: Rank & Avatar */}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <span className="w-6 text-xs font-bold text-amber-500 shrink-0 text-center font-mono">
+                          #{idx + 1}
                         </span>
-                      </span>
-                      <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded-none font-mono uppercase">
-                        {log.tenant?.name || "Platform"}
-                      </span>
+
+                        <div className="size-9 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden border border-border/40">
+                          {initials}
+                        </div>
+
+                        {/* Info block */}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-bold text-foreground capitalize truncate">
+                              {actionTitle}
+                            </span>
+                            <span className="inline-flex rounded-full bg-slate-100 dark:bg-slate-800 text-[9px] font-bold px-2 py-0.5 text-muted-foreground uppercase border border-border/60">
+                              SECURITY
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-muted-foreground truncate font-mono mt-0.5">
+                            Actor:{" "}
+                            <span className="text-foreground font-semibold">
+                              {actorName}
+                            </span>{" "}
+                            ({actorEmail})
+                          </p>
+                          <p className="text-[10px] text-muted-foreground/80 truncate font-mono mt-0.5">
+                            Resource:{" "}
+                            <span className="font-semibold text-foreground">
+                              {log.resourceType}
+                            </span>{" "}
+                            ({log.resourceId || "N/A"}) · Org:{" "}
+                            <span className="font-semibold">
+                              {log.tenant?.name || "Platform"}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Right: IP / Details & Timestamp */}
+                      <div className="text-right shrink-0">
+                        <p className="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                          {log.ipAddress || "INTERNAL"}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">
+                          {formatDate(log.createdAt)}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-[10px] font-mono text-muted-foreground truncate">
-                      Resource: {log.resourceType} ({log.resourceId || "N/A"})
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  );
+                })
             )}
           </CardContent>
         </Card>
