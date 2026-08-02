@@ -4,16 +4,13 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { formatGhs, cn } from "@/lib/utils";
+import { StatusBadge } from "@/components/ui/badge";
+import { formatGhs } from "@/lib/utils";
 import { depositApi, withdrawalApi } from "@/lib/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faBuildingColumns,
-  faScaleBalanced,
   faUpload,
   faCheckCircle,
-  faTriangleExclamation,
   faRotateRight,
   faFileLines,
 } from "@fortawesome/free-solid-svg-icons";
@@ -76,7 +73,7 @@ export default function StaffReconciliationPage() {
       ledgerAmount: Number(d.amount),
       bankStatementAmount: Number(d.amount),
       difference: 0.0,
-      matchStatus: "Perfect Match",
+      matchStatus: "completed",
     };
   });
 
@@ -108,77 +105,64 @@ export default function StaffReconciliationPage() {
             refetchDeposits();
             refetchWithdrawals();
           }}
-          className="text-xs font-semibold gap-1.5"
+          className="text-xs font-semibold rounded-none min-h-[36px] gap-1.5"
         >
           <FontAwesomeIcon icon={faRotateRight} className="h-3.5 w-3.5" />
-          Re-Sync Ledger Records
+          Re-Sync Records
         </Button>
       </div>
 
       {/* Metric Cards Banner */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Total Ledger Deposits
-              </p>
-              <p className="text-lg font-bold text-foreground mt-1">
-                {isLoading ? "..." : formatGhs(totalLedgerDeposits)}
-              </p>
-            </div>
-            <div className="size-9 rounded bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-              <FontAwesomeIcon icon={faScaleBalanced} className="h-4 w-4" />
-            </div>
-          </CardContent>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-4 sm:gap-4">
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Total Ledger Deposits
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {isLoading ? "..." : formatGhs(totalLedgerDeposits)}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Inbound payments
+          </p>
         </Card>
 
-        <Card>
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Settled Withdrawals
-              </p>
-              <p className="text-lg font-bold text-foreground mt-1">
-                {isLoading ? "..." : formatGhs(totalLedgerWithdrawals)}
-              </p>
-            </div>
-            <div className="size-9 rounded bg-sky-500/10 text-sky-500 flex items-center justify-center">
-              <FontAwesomeIcon icon={faBuildingColumns} className="h-4 w-4" />
-            </div>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Settled Withdrawals
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {isLoading ? "..." : formatGhs(totalLedgerWithdrawals)}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Processed payouts
+          </p>
         </Card>
 
-        <Card>
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Unreconciled Variance
-              </p>
-              <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1">
-                GH₵0.00 (0.0%)
-              </p>
-            </div>
-            <div className="size-9 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-              <FontAwesomeIcon icon={faCheckCircle} className="h-4 w-4" />
-            </div>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Unreconciled Variance
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            GH₵0.00
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            0.0% variance
+          </p>
         </Card>
 
-        <Card>
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Reconciliation Status
-              </p>
-              <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1">
-                100% Balanced
-              </p>
-            </div>
-            <div className="size-9 rounded bg-primary/10 text-primary flex items-center justify-center">
-              <FontAwesomeIcon icon={faCheckCircle} className="h-4 w-4" />
-            </div>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Reconciliation Status
+          </p>
+          <div className="mt-1 flex items-center justify-between">
+            <span className="text-sm sm:text-lg font-bold text-foreground">
+              100% Balanced
+            </span>
+            <StatusBadge status="completed" />
+          </div>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Audit match verified
+          </p>
         </Card>
       </div>
 
@@ -186,25 +170,21 @@ export default function StaffReconciliationPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Bank Statement Upload */}
         <div className="lg:col-span-5 space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-bold flex items-center gap-2">
-                <FontAwesomeIcon
-                  icon={faUpload}
-                  className="text-primary h-4 w-4"
-                />
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+            <CardHeader className="px-6 py-4 border-b border-border/60">
+              <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
                 Upload Gateway / Bank Statement
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 text-xs">
+            <CardContent className="p-6 space-y-4 text-xs">
               <div>
-                <label className="font-semibold block mb-1">
+                <label className="font-semibold text-xs text-muted-foreground block mb-1.5">
                   Select Gateway / Account *
                 </label>
                 <select
                   value={selectedProvider}
                   onChange={(e) => setSelectedProvider(e.target.value)}
-                  className="w-full h-9 rounded border border-input bg-background px-3 font-medium text-xs"
+                  className="w-full rounded-none border border-border/60 bg-card px-3 py-2 text-xs text-foreground outline-none focus:border-primary min-h-[40px]"
                 >
                   <option value="momo">
                     MTN Mobile Money Merchant Gateway
@@ -214,12 +194,12 @@ export default function StaffReconciliationPage() {
                 </select>
               </div>
 
-              <div className="border-2 border-dashed border-border hover:border-primary rounded p-6 text-center transition-colors bg-muted/20">
+              <div className="border-2 border-dashed border-border/60 hover:border-border rounded-none p-6 text-center transition-colors bg-muted/20">
                 <label className="cursor-pointer space-y-2 block">
                   <div className="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
                     <FontAwesomeIcon icon={faFileLines} className="h-5 w-5" />
                   </div>
-                  <div className="font-bold text-foreground">
+                  <div className="font-semibold text-xs text-foreground">
                     {isParsing
                       ? "Parsing Statement File..."
                       : "Click to Upload CSV / Excel Statement"}
@@ -238,10 +218,9 @@ export default function StaffReconciliationPage() {
               </div>
 
               {parseSuccess && (
-                <div className="p-3 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-2">
+                <div className="p-3 rounded-none bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex items-center gap-2">
                   <FontAwesomeIcon icon={faCheckCircle} />
-                  Bank statement matched 100% against internal database
-                  transactions!
+                  Bank statement matched 100% against database transactions!
                 </div>
               )}
             </CardContent>
@@ -250,14 +229,14 @@ export default function StaffReconciliationPage() {
 
         {/* Right Column: Real Reconciled Transactions Table */}
         <div className="lg:col-span-7 space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-bold flex items-center justify-between">
-                <span>Database Transaction Audit & Reconciliation</span>
-                <Badge variant="neutral" className="text-[10px] font-mono">
-                  {realReconciledItems.length} Transactions
-                </Badge>
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+            <CardHeader className="px-6 py-4 border-b border-border/60 flex flex-row items-center justify-between">
+              <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+                Audit & Reconciliation Feed
               </CardTitle>
+              <span className="text-xs font-semibold text-muted-foreground font-mono">
+                {realReconciledItems.length} Txns
+              </span>
             </CardHeader>
             <CardContent className="p-0">
               {isLoading ? (
@@ -271,24 +250,24 @@ export default function StaffReconciliationPage() {
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-muted/60 border-b border-border uppercase text-[11px] font-bold text-muted-foreground">
-                      <tr>
-                        <th className="p-3">Reference / Tx ID</th>
-                        <th className="p-3">Customer</th>
-                        <th className="p-3">Ledger Amount</th>
-                        <th className="p-3">Match Status</th>
+                    <thead>
+                      <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
+                        <th className="py-3.5 px-4">Reference</th>
+                        <th className="py-3.5 px-4">Customer</th>
+                        <th className="py-3.5 px-4">Ledger Amount</th>
+                        <th className="py-3.5 px-4 text-right">Match Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-border">
+                    <tbody className="divide-y divide-border/60">
                       {realReconciledItems.map((item, idx) => (
                         <tr
                           key={idx}
-                          className="hover:bg-muted/30 transition-colors"
+                          className="hover:bg-muted/20 transition-colors"
                         >
-                          <td className="p-3 font-mono font-bold text-foreground">
+                          <td className="py-3.5 px-4 font-mono font-semibold text-foreground">
                             {item.txRef}
                           </td>
-                          <td className="p-3">
+                          <td className="py-3.5 px-4">
                             <div className="font-semibold text-foreground">
                               {item.customer}
                             </div>
@@ -296,17 +275,11 @@ export default function StaffReconciliationPage() {
                               {item.type}
                             </div>
                           </td>
-                          <td className="p-3 font-mono font-bold text-foreground">
+                          <td className="py-3.5 px-4 font-bold tabular-nums text-foreground">
                             {formatGhs(item.ledgerAmount)}
                           </td>
-                          <td className="p-3">
-                            <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded">
-                              <FontAwesomeIcon
-                                icon={faCheckCircle}
-                                className="h-3 w-3"
-                              />
-                              {item.matchStatus}
-                            </span>
+                          <td className="py-3.5 px-4 text-right">
+                            <StatusBadge status={item.matchStatus} />
                           </td>
                         </tr>
                       ))}
