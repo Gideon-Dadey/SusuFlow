@@ -184,7 +184,7 @@ export function MarketingNavbar() {
           "sticky top-0 z-[400] pt-[env(safe-area-inset-top,0px)] transition-all",
           activeMegaMenu
             ? "bg-white dark:bg-[#09090b]"
-            : "bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800/80",
+            : "bg-white/95 backdrop-blur-md border-b border-border/60",
         )}
       >
         <div className="marketing-container flex h-[4.5rem] sm:h-22 items-center justify-between gap-3 sm:gap-4 relative">
@@ -276,7 +276,7 @@ export function MarketingNavbar() {
                 <button
                   type="button"
                   onClick={() => setUserMenuOpen((v) => !v)}
-                  className="flex size-11 items-center justify-center overflow-hidden rounded-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 transition-all hover:ring-2 hover:ring-[#0066cc]/40 focus:outline-none"
+                  className="flex size-11 items-center justify-center overflow-hidden rounded-full border border-border/60 bg-slate-100 transition-all hover:ring-2 hover:ring-[#0066cc]/40 focus:outline-none"
                   aria-label="User menu"
                 >
                   {user.avatarUrl ? (
@@ -293,8 +293,8 @@ export function MarketingNavbar() {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#18181b] p-2 shadow-xl z-[300]">
-                    <div className="border-b border-slate-100 dark:border-slate-800 px-3 py-2">
+                  <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-border/60 bg-white dark:bg-[#18181b] p-2 shadow-xl z-[300]">
+                    <div className="border-b border-slate-100 px-3 py-2">
                       <p className="font-bold text-[17px] text-foreground truncate">
                         {user.firstName} {user.lastName}
                       </p>
@@ -375,7 +375,7 @@ export function MarketingNavbar() {
         ? createPortal(
             <div
               id="mobile-nav"
-              className="fixed inset-x-0 bottom-0 z-[190] bg-white dark:bg-[#09090b] lg:hidden flex flex-col border-t border-slate-200/80 dark:border-slate-800 shadow-2xl"
+              className="fixed inset-x-0 bottom-0 z-[190] bg-white dark:bg-[#09090b] lg:hidden flex flex-col border-t border-border/60 shadow-2xl"
               style={{ top: "calc(env(safe-area-inset-top, 0px) + 4.5rem)" }}
             >
               <nav
@@ -419,7 +419,7 @@ export function MarketingNavbar() {
                             <div className="mt-2 space-y-6 px-1 mb-4">
                               {megaConfig.categories.map((cat) => (
                                 <div key={cat.title} className="space-y-3">
-                                  <p className="text-[15px] font-bold text-slate-900 dark:text-white">
+                                  <p className="text-[15px] font-bold text-slate-900 text-foreground">
                                     {cat.title}
                                   </p>
                                   <div className="flex flex-col gap-4">
@@ -430,14 +430,14 @@ export function MarketingNavbar() {
                                         onClick={() => setMenuOpen(false)}
                                         className="group flex items-start gap-3 transition-colors"
                                       >
-                                        <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-500 transition-colors group-hover:border-[#0066cc]/30 group-hover:bg-[#0066cc]/5 group-hover:text-[#0066cc] dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-400">
+                                        <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border border-border/60 bg-slate-50 text-slate-500 transition-colors group-hover:border-[#0066cc]/30 group-hover:bg-[#0066cc]/5 group-hover:text-[#0066cc] dark:text-slate-400">
                                           <FontAwesomeIcon
                                             icon={item.icon}
                                             className="h-[14px] w-[14px]"
                                           />
                                         </div>
                                         <div className="min-w-0">
-                                          <p className="text-[14px] font-bold text-slate-900 transition-colors group-hover:text-[#0066cc] dark:text-white">
+                                          <p className="text-[14px] font-bold text-slate-900 transition-colors group-hover:text-[#0066cc] text-foreground">
                                             {item.title}
                                           </p>
                                           <p className="text-[13px] leading-snug text-slate-600 dark:text-slate-400">
@@ -477,7 +477,7 @@ export function MarketingNavbar() {
                   })}
                 </div>
 
-                <div className="mt-10 flex flex-col gap-3.5 border-t border-slate-200/80 dark:border-slate-800 pt-8 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
+                <div className="mt-10 flex flex-col gap-3.5 border-t border-border/60 pt-8 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
                   {isAuthenticated && user ? (
                     <>
                       <div className="flex items-center gap-3 px-1 mb-2">
@@ -511,7 +511,7 @@ export function MarketingNavbar() {
                           setMenuOpen(false);
                           logout();
                         }}
-                        className="h-12 w-full rounded-xl text-[16px] font-semibold border-slate-300 dark:border-slate-700 text-destructive hover:bg-destructive/10"
+                        className="h-12 w-full rounded-xl text-[16px] font-semibold border-border/60 text-destructive hover:bg-destructive/10"
                       >
                         Sign out
                       </Button>
@@ -521,7 +521,7 @@ export function MarketingNavbar() {
                       <Link href="/login" onClick={() => setMenuOpen(false)}>
                         <Button
                           variant="outline"
-                          className="h-[52px] w-full rounded-xl text-[16px] font-semibold border-slate-300 dark:border-slate-700 text-foreground hover:bg-slate-100 dark:hover:bg-slate-800"
+                          className="h-[52px] w-full rounded-xl text-[16px] font-semibold border-border/60 text-foreground hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                           Sign in
                         </Button>

@@ -115,12 +115,12 @@ function VerifyContent() {
 
         {status && (
           <p className="text-sm text-slate-600">
-            Email: {status.emailVerified ? "Verified" : "Pending"} · Phone:{" "}
+            Email: {status.emailVerified ? "Verified" : "Pending"} · Phone:{""}
             {status.phoneVerified ? "Verified" : "Pending"}
           </p>
         )}
 
-        <div className="space-y-2 rounded-none border border-slate-200 p-4">
+        <div className="space-y-2 rounded-none border border-border/60 p-4">
           <p className="text-sm font-semibold text-slate-800">
             Email verification
           </p>
@@ -150,7 +150,7 @@ function VerifyContent() {
           </div>
         </div>
 
-        <div className="space-y-2 rounded-none border border-slate-200 p-4">
+        <div className="space-y-2 rounded-none border border-border/60 p-4">
           <p className="text-sm font-semibold text-slate-800">
             Phone verification
           </p>
@@ -184,7 +184,7 @@ function VerifyContent() {
         {error && <p className="text-sm text-red-600">{error}</p>}
 
         <p className="text-center text-sm text-slate-500">
-          Already verified?{" "}
+          Already verified?{""}
           <Link href="/login" className="font-medium text-emerald-700">
             Sign in
           </Link>

@@ -6,7 +6,7 @@ export const Card = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        "bg-white/90 dark:bg-card/50 backdrop-blur-xl rounded-lg shadow-lg dark:shadow-black/50 p-5 sm:p-6 border border-white/40 dark:border-white/10 transition-all duration-300 hover:shadow-2xl dark:hover:shadow-black/70 hover:-translate-y-1 hover:scale-[1.01]",
+        "bg-card text-card-foreground rounded-none border border-border/60 shadow-sm transition-all duration-200 p-5 sm:p-6",
         className,
       )}
       {...props}
@@ -21,7 +21,10 @@ export const PremiumCard = forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("premium-card rounded-none p-5 sm:p-6", className)}
+    className={cn(
+      "bg-card text-card-foreground rounded-none border border-border/60 shadow-sm p-5 sm:p-6",
+      className,
+    )}
     {...props}
   />
 ));
@@ -46,7 +49,7 @@ export const CardTitle = forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "font-display text-[22px] font-medium leading-[37.4px] tracking-tight text-foreground",
+      "text-sm sm:text-base font-semibold tracking-tight text-foreground",
       className,
     )}
     {...props}
@@ -61,7 +64,7 @@ export const CardLabel = forwardRef<
   <p
     ref={ref}
     className={cn(
-      "font-display text-[22px] font-medium leading-[37.4px] text-foreground",
+      "text-sm sm:text-base font-semibold tracking-tight text-foreground",
       className,
     )}
     {...props}

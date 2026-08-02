@@ -65,7 +65,7 @@ export function BrandLockup({
         )}
       >
         <span
-          className={onDark ? "text-white" : "text-slate-900 dark:text-white"}
+          className={onDark ? "text-white" : "text-slate-900 text-foreground"}
         >
           SusuFlow
         </span>

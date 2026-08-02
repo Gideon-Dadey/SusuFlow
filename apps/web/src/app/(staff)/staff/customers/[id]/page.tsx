@@ -294,7 +294,8 @@ export default function CustomerDetailPage({
             <div className="space-y-1 flex-1 min-w-0">
               <div className="flex items-center gap-2.5 flex-wrap">
                 <h2 className="text-xl font-bold text-foreground">
-                  {customer.user?.firstName || "Pending"}{" "}
+                  {customer.user?.firstName || "Pending"}
+                  {""}
                   {customer.user?.lastName || "Onboarding"}
                 </h2>
                 <StatusBadge status={customer.status} />
@@ -314,25 +315,29 @@ export default function CustomerDetailPage({
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 pt-2 text-sm">
                 <div>
-                  <span className="text-muted-foreground">Phone:</span>{" "}
+                  <span className="text-muted-foreground">Phone:</span>
+                  {""}
                   <span className="font-medium text-foreground">
                     {customer.user?.phone || "N/A"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Email:</span>{" "}
+                  <span className="text-muted-foreground">Email:</span>
+                  {""}
                   <span className="font-medium text-foreground">
                     {customer.user?.email || "N/A"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">KYC Level:</span>{" "}
+                  <span className="text-muted-foreground">KYC Level:</span>
+                  {""}
                   <span className="font-medium text-foreground">
                     Level {customer.kycLevel}
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Ghana Card:</span>{" "}
+                  <span className="text-muted-foreground">Ghana Card:</span>
+                  {""}
                   <span className="font-medium text-foreground">
                     {customer.ghanaCardNumber || "Not verified"}
                   </span>
@@ -343,7 +348,7 @@ export default function CustomerDetailPage({
         </Card>
 
         {/* Balance Card */}
-        <Card className="bg-card dark:bg-zinc-900 border border-slate-200/90 dark:border-zinc-800 shadow-md">
+        <Card className="bg-card border border-border/60 shadow-md">
           <CardContent className="p-6 flex flex-col justify-between h-full min-h-[140px]">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -405,7 +410,7 @@ export default function CustomerDetailPage({
 
       {/* Tab Contents */}
       {activeTab === "overview" && (
-        <Card className="bg-card dark:bg-zinc-900 border border-slate-200/90 dark:border-zinc-800 shadow-md">
+        <Card className="bg-card border border-border/60 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
             <div>
               <CardTitle className="text-base font-semibold">

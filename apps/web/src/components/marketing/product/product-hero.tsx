@@ -40,7 +40,7 @@ export function ProductHero({
       <MarketingContainer>
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 lg:items-center">
           <div className="order-2 lg:order-1 max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
-            <h1 className="omnih-h1 text-4xl sm:text-5xl lg:text-6xl text-balance text-slate-900 dark:text-white mb-6">
+            <h1 className="omnih-h1 text-4xl sm:text-5xl lg:text-6xl text-balance text-slate-900 text-foreground mb-6">
               {title}
             </h1>
             <p className="omnih-body text-[17px] sm:text-[19px] text-pretty text-slate-600 dark:text-slate-400">
@@ -58,7 +58,7 @@ export function ProductHero({
               </Link>
               <Link
                 href="/pricing"
-                className="text-[17px] font-semibold leading-6 text-slate-900 dark:text-white flex items-center gap-1 hover:text-[#0066cc] dark:hover:text-[#38bdf8] transition-colors"
+                className="text-[17px] font-semibold leading-6 text-slate-900 text-foreground flex items-center gap-1 hover:text-[#0066cc] dark:hover:text-[#38bdf8] transition-colors"
               >
                 View pricing <ArrowRight className="h-4 w-4" />
               </Link>
