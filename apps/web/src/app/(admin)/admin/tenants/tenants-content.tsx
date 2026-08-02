@@ -7,6 +7,7 @@ import { useEffect, useState, useMemo } from "react";
 import { adminApi, type AdminTenant } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatusBadge } from "@/components/ui/badge";
 import { TenantListSkeleton } from "@/components/ui/skeleton";
 import { formatDate, getInitials, cn } from "@/lib/utils";
 import {
@@ -19,17 +20,22 @@ import {
   ListFilter,
   Copy,
   Check,
-  ExternalLink,
   Plus,
   RefreshCw,
-  AlertTriangle,
   Lock,
   Unlock,
-  ChevronRight,
   Eye,
   X,
   UserCheck,
+  Shield,
 } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUserShield,
+  faUserGear,
+  faUserTag,
+  faCircleCheck,
+} from "@fortawesome/free-solid-svg-icons";
 
 function CopyLinkButton({ label, url }: { label: string; url: string }) {
   const [copied, setCopied] = useState(false);
@@ -85,13 +91,28 @@ export default function AdminTenantsPage() {
     null,
   );
 
+  // Fetch Tenants
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-tenants"],
     queryFn: () => adminApi.listTenants(),
     placeholderData: (prev) => prev,
   });
 
+  // Fetch Global Users (Staff) for tenant detail breakdown
+  const { data: usersData } = useQuery({
+    queryKey: ["admin-global-users"],
+    queryFn: () => adminApi.getUsers(),
+  });
+
+  // Fetch Global Customers (Savers) for tenant detail breakdown
+  const { data: customersData } = useQuery({
+    queryKey: ["admin-global-customers"],
+    queryFn: () => adminApi.getCustomers(),
+  });
+
   const tenants = data?.items ?? [];
+  const allUsers = usersData?.items ?? [];
+  const allCustomers = customersData?.items ?? [];
 
   // Filtered tenants list
   const filteredTenants = useMemo(() => {
@@ -121,6 +142,25 @@ export default function AdminTenantsPage() {
     (sum, t) => sum + (t._count?.customers ?? 0),
     0,
   );
+
+  // Filter Individuals for Currently Inspected Tenant
+  const tenantPersonnel = useMemo(() => {
+    if (!selectedTenant) return [];
+    return allUsers.filter(
+      (u: any) =>
+        u.tenant?.slug === selectedTenant.slug ||
+        u.tenantId === selectedTenant.id,
+    );
+  }, [allUsers, selectedTenant]);
+
+  const tenantSavers = useMemo(() => {
+    if (!selectedTenant) return [];
+    return allCustomers.filter(
+      (c: any) =>
+        c.tenant?.slug === selectedTenant.slug ||
+        c.tenantId === selectedTenant.id,
+    );
+  }, [allCustomers, selectedTenant]);
 
   const activateMutation = useMutation({
     mutationFn: (id: string) => adminApi.activateTenant(id),
@@ -170,6 +210,31 @@ export default function AdminTenantsPage() {
         .catch(() => setActionMessage("Mock payment failed"));
     }
   }, [searchParams, queryClient]);
+
+  const getRoleBadge = (roles: string[]) => {
+    if (roles.includes("super_admin")) {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-none bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+          <FontAwesomeIcon icon={faUserShield} className="h-3 w-3" />
+          Super Admin
+        </span>
+      );
+    }
+    if (roles.includes("company_admin")) {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-none bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+          <FontAwesomeIcon icon={faUserGear} className="h-3 w-3" />
+          Company Admin
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1 rounded-none bg-muted text-muted-foreground border border-border/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+        <FontAwesomeIcon icon={faUserTag} className="h-3 w-3" />
+        Staff Account
+      </span>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -484,133 +549,284 @@ export default function AdminTenantsPage() {
         </Card>
       )}
 
-      {/* DEEP ORGANIZATION INSPECTION MODAL */}
+      {/* FULL-WIDTH PROFESSIONAL MVP-GRADE ORGANIZATION INSPECTION MODAL */}
       {selectedTenant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-fade-in overflow-y-auto">
-          <div className="relative w-full max-w-2xl bg-card border border-border rounded-none overflow-hidden flex flex-col my-auto shadow-2xl">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border bg-slate-900 text-white">
-              <div className="flex items-center gap-3">
-                <div className="size-10 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 animate-fade-in overflow-y-auto">
+          <div className="relative w-full max-w-6xl bg-card border border-border/60 rounded-none overflow-hidden flex flex-col my-auto shadow-2xl max-h-[92vh]">
+            {/* Clean Professional Light Header (No Black Background) */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-border/60 bg-card text-foreground">
+              <div className="flex items-center gap-3.5">
+                <div className="size-11 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm border border-primary/20 shrink-0">
                   {getInitials(selectedTenant.name)}
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  <h2 className="text-base font-bold text-foreground flex items-center gap-2.5">
                     <span>{selectedTenant.name}</span>
                     <span
-                      className={`inline-flex rounded-none px-2 py-0.5 text-[9px] font-bold uppercase ${
+                      className={`inline-flex rounded-none px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
                         statusStyles[selectedTenant.status] ??
-                        "bg-muted text-muted-foreground"
+                        "bg-muted text-muted-foreground border border-border/60"
                       }`}
                     >
                       {selectedTenant.status}
                     </span>
                   </h2>
-                  <p className="text-xs text-slate-400 font-mono">
-                    Slug: {selectedTenant.slug} · ID: {selectedTenant.id}
+                  <p className="text-xs text-muted-foreground font-mono mt-0.5">
+                    Tenant Slug:{" "}
+                    <span className="font-bold text-foreground">
+                      {selectedTenant.slug}
+                    </span>{" "}
+                    · Org ID: {selectedTenant.id}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedTenant(null)}
-                className="size-8 rounded-none text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
+                className="size-8 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 flex items-center justify-center transition-colors border border-border/60"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-5 space-y-5 overflow-y-auto max-h-[75vh]">
-              {/* 4 Mini Stat Boxes */}
+            {/* Full-Width Modal Scrollable Content */}
+            <div className="p-5 sm:p-6 space-y-6 overflow-y-auto max-h-[80vh]">
+              {/* Top 4 Metric Stat Boxes */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="p-3 bg-muted/40 border border-border/60">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase block">
-                    Active Savers
+                <div className="p-3.5 bg-muted/30 border border-border/60">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                    Registered Savers
                   </span>
-                  <span className="text-lg font-bold tabular-nums text-foreground">
-                    {selectedTenant._count?.customers ?? 0}
+                  <span className="text-xl font-bold tabular-nums text-foreground mt-0.5 block">
+                    {selectedTenant._count?.customers ?? 0} Customers
                   </span>
                 </div>
-                <div className="p-3 bg-muted/40 border border-border/60">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase block">
+                <div className="p-3.5 bg-muted/30 border border-border/60">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                     Staff Personnel
                   </span>
-                  <span className="text-lg font-bold tabular-nums text-foreground">
-                    {selectedTenant._count?.users ?? 0}
+                  <span className="text-xl font-bold tabular-nums text-foreground mt-0.5 block">
+                    {selectedTenant._count?.users ?? 0} Members
                   </span>
                 </div>
-                <div className="p-3 bg-muted/40 border border-border/60">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase block">
-                    Billing Plan
+                <div className="p-3.5 bg-muted/30 border border-border/60">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                    SaaS Billing Plan
                   </span>
-                  <span className="text-sm font-bold text-foreground uppercase">
-                    {selectedTenant.subscription?.plan || "Growth"}
+                  <span className="text-sm font-bold text-foreground uppercase mt-1 block">
+                    {selectedTenant.subscription?.plan || "Growth"} Tier
                   </span>
                 </div>
-                <div className="p-3 bg-muted/40 border border-border/60">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase block">
-                    Provisioned
+                <div className="p-3.5 bg-muted/30 border border-border/60">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                    Provisioned Date
                   </span>
-                  <span className="text-xs font-semibold text-foreground">
+                  <span className="text-xs font-semibold text-foreground mt-1 block">
                     {formatDate(selectedTenant.createdAt)}
                   </span>
                 </div>
               </div>
 
-              {/* Contact & Admin Credentials Info */}
-              <div className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Organization Contact & Admin Info
-                </h3>
-                <div className="p-3 rounded-none bg-muted/20 border border-border/60 space-y-2 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      Contact Email:
-                    </span>
-                    <span className="font-semibold text-foreground">
-                      {selectedTenant.email}
-                    </span>
+              {/* Organization Info & Direct Access Links Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                {/* Contact & Admin Credentials */}
+                <div className="lg:col-span-6 space-y-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Organization Contact & Specs
+                  </h3>
+                  <div className="p-3.5 rounded-none bg-muted/20 border border-border/60 space-y-2 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground font-medium">
+                        Contact Email:
+                      </span>
+                      <span className="font-semibold text-foreground">
+                        {selectedTenant.email}
+                      </span>
+                    </div>
+                    {selectedTenant.phone && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground font-medium">
+                          Contact Phone:
+                        </span>
+                        <span className="font-mono font-semibold text-foreground">
+                          {selectedTenant.phone}
+                        </span>
+                      </div>
+                    )}
+                    {selectedTenant.subscription?.trialEnd && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground font-medium">
+                          Trial Period End:
+                        </span>
+                        <span className="font-semibold text-amber-600 dark:text-amber-400">
+                          {formatDate(selectedTenant.subscription.trialEnd)}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  {selectedTenant.phone && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">
-                        Contact Phone:
-                      </span>
-                      <span className="font-mono font-semibold text-foreground">
-                        {selectedTenant.phone}
-                      </span>
-                    </div>
-                  )}
-                  {selectedTenant.subscription?.trialEnd && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">
-                        Trial Period End:
-                      </span>
-                      <span className="font-semibold text-amber-600 dark:text-amber-400">
-                        {formatDate(selectedTenant.subscription.trialEnd)}
-                      </span>
-                    </div>
-                  )}
+                </div>
+
+                {/* Direct Access Links */}
+                <div className="lg:col-span-6 space-y-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Portal Direct Access Shortcuts
+                  </h3>
+                  <CopyLinkButton
+                    label="Admin Login URL"
+                    url={`${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/login?tenant=${selectedTenant.slug}`}
+                  />
+                  <CopyLinkButton
+                    label="Saver Signup URL"
+                    url={`${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/register?tenant=${selectedTenant.slug}`}
+                  />
                 </div>
               </div>
 
-              {/* Direct Access URLs */}
-              <div className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Portal Direct Access Links
-                </h3>
-                <CopyLinkButton
-                  label="Admin Login"
-                  url={`${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/login?tenant=${selectedTenant.slug}`}
-                />
-                <CopyLinkButton
-                  label="Saver Registration"
-                  url={`${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/register?tenant=${selectedTenant.slug}`}
-                />
+              {/* INDIVIDUALS UNDER THIS TENANT SECTION 1: PERSONNEL & STAFF */}
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center justify-between border-b border-border/60 pb-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
+                    <Users className="h-4 w-4 text-primary" />
+                    <span>
+                      Enrolled Staff Personnel ({tenantPersonnel.length})
+                    </span>
+                  </h3>
+                  <span className="text-[10px] text-muted-foreground font-mono">
+                    Admins, Officers, Collectors & Auditors
+                  </span>
+                </div>
+
+                {tenantPersonnel.length === 0 ? (
+                  <div className="p-4 bg-muted/20 border border-border/60 text-center text-xs text-muted-foreground">
+                    No individual staff members found matching this tenant slug.
+                  </div>
+                ) : (
+                  <div className="border border-border/60 overflow-hidden">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-border/60 text-xs font-semibold text-muted-foreground uppercase bg-muted/30">
+                          <th className="py-2.5 px-3">Personnel Name</th>
+                          <th className="py-2.5 px-3">Email Address</th>
+                          <th className="py-2.5 px-3">Phone</th>
+                          <th className="py-2.5 px-3">Role Designation</th>
+                          <th className="py-2.5 px-3 text-right">
+                            Security Status
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/60">
+                        {tenantPersonnel.map((u: any) => {
+                          const roles =
+                            u.userRoles?.map((ur: any) => ur.role?.name) ?? [];
+                          return (
+                            <tr
+                              key={u.id}
+                              className="hover:bg-muted/20 transition-colors"
+                            >
+                              <td className="py-2.5 px-3 font-bold text-foreground">
+                                {u.firstName} {u.lastName}
+                              </td>
+                              <td className="py-2.5 px-3 font-mono text-xs text-muted-foreground">
+                                {u.email}
+                              </td>
+                              <td className="py-2.5 px-3 font-mono text-xs text-muted-foreground">
+                                {u.phone || "N/A"}
+                              </td>
+                              <td className="py-2.5 px-3">
+                                {getRoleBadge(roles)}
+                              </td>
+                              <td className="py-2.5 px-3 text-right">
+                                {u.emailVerified ? (
+                                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                                    <FontAwesomeIcon
+                                      icon={faCircleCheck}
+                                      className="mr-1 h-3 w-3 inline"
+                                    />{" "}
+                                    Verified
+                                  </span>
+                                ) : (
+                                  <span className="text-muted-foreground/60 italic">
+                                    Unverified
+                                  </span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
 
-              {/* Action Buttons */}
-              <div className="pt-3 border-t border-border/60 flex flex-wrap gap-2 justify-end">
+              {/* INDIVIDUALS UNDER THIS TENANT SECTION 2: REGISTERED SAVERS */}
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center justify-between border-b border-border/60 pb-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
+                    <UserCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    <span>
+                      Registered Savers & Customers ({tenantSavers.length})
+                    </span>
+                  </h3>
+                  <span className="text-[10px] text-muted-foreground font-mono">
+                    Customer savings accounts
+                  </span>
+                </div>
+
+                {tenantSavers.length === 0 ? (
+                  <div className="p-4 bg-muted/20 border border-border/60 text-center text-xs text-muted-foreground">
+                    No registered savers found for this organization yet.
+                  </div>
+                ) : (
+                  <div className="border border-border/60 overflow-hidden">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-border/60 text-xs font-semibold text-muted-foreground uppercase bg-muted/30">
+                          <th className="py-2.5 px-3">Saver Name</th>
+                          <th className="py-2.5 px-3">Customer Number</th>
+                          <th className="py-2.5 px-3">Contact Email / Phone</th>
+                          <th className="py-2.5 px-3 text-center">KYC Level</th>
+                          <th className="py-2.5 px-3 text-right">
+                            Account Status
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/60">
+                        {tenantSavers.map((c: any) => (
+                          <tr
+                            key={c.id}
+                            className="hover:bg-muted/20 transition-colors"
+                          >
+                            <td className="py-2.5 px-3 font-bold text-foreground">
+                              {c.user
+                                ? `${c.user.firstName} ${c.user.lastName}`
+                                : "Unknown Saver"}
+                            </td>
+                            <td className="py-2.5 px-3 font-mono text-xs text-foreground">
+                              {c.customerNumber}
+                            </td>
+                            <td className="py-2.5 px-3 font-mono text-xs text-muted-foreground">
+                              {c.user?.email || "N/A"}{" "}
+                              {c.user?.phone ? `· ${c.user.phone}` : ""}
+                            </td>
+                            <td className="py-2.5 px-3 text-center">
+                              <span className="inline-flex items-center gap-1 rounded-none bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 px-2 py-0.5 text-[10px] font-bold uppercase">
+                                <Shield className="h-3 w-3" /> Level{" "}
+                                {c.kycLevel}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 text-right">
+                              <StatusBadge status={c.status} />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Toolbar */}
+              <div className="pt-4 border-t border-border/60 flex flex-wrap gap-2 justify-end">
                 {selectedTenant.status !== "active" ? (
                   <Button
                     size="sm"
@@ -727,7 +943,7 @@ function TenantDeepCard({
             className="rounded-none text-xs font-semibold h-8"
             onClick={onInspect}
           >
-            <Eye className="h-3.5 w-3.5 mr-1" /> Full Details
+            <Eye className="h-3.5 w-3.5 mr-1" /> Full Details & Individuals
           </Button>
 
           {tenant.status !== "active" ? (
