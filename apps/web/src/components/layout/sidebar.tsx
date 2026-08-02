@@ -72,11 +72,12 @@ export function Sidebar({
   const pathname = usePathname();
   const { user } = useAuthStore();
 
-  const tenantSlug = user?.tenantSlug || getTenantSlug();
+  const isAdmin = variant === "admin" || user?.roles?.includes("super_admin");
+  const tenantSlug = isAdmin ? "" : user?.tenantSlug || getTenantSlug();
   const { data: tenantBranding } = useQuery({
     queryKey: ["tenant-branding", tenantSlug],
     queryFn: () => tenantApi.getBySlug(tenantSlug),
-    enabled: !!tenantSlug && variant !== "admin",
+    enabled: !!tenantSlug && !isAdmin,
   });
 
   const brandLabel =

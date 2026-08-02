@@ -26,12 +26,21 @@ export function DashboardUserMenu() {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
-  const tenantSlug = user?.tenantSlug || getTenantSlug();
+  const roles = user?.roles ?? [];
+  const portal = getPortalFromPathname(pathname);
+  const isSuperAdmin = portal === "admin" || roles.includes("super_admin");
+  const roleLabel = getRoleLabelForPortal(portal, roles);
+  const profilePath = getProfilePathForPortal(portal, roles);
+
+  const tenantSlug = isSuperAdmin ? "" : user?.tenantSlug || getTenantSlug();
   const { data: tenantBranding } = useQuery({
     queryKey: ["tenant-branding", tenantSlug],
     queryFn: () => tenantApi.getBySlug(tenantSlug),
-    enabled: !!tenantSlug,
+    enabled: !!tenantSlug && !isSuperAdmin,
   });
+
+  const avatarSrc =
+    user?.avatarUrl || (!isSuperAdmin ? tenantBranding?.logoUrl : null);
 
   useEffect(() => {
     if (!open) return;
@@ -60,11 +69,6 @@ export function DashboardUserMenu() {
     router.push("/login");
   };
 
-  const roles = user?.roles ?? [];
-  const portal = getPortalFromPathname(pathname);
-  const roleLabel = getRoleLabelForPortal(portal, roles);
-  const profilePath = getProfilePathForPortal(portal, roles);
-
   return (
     <div ref={rootRef} className="flex items-center gap-1 sm:gap-2">
       <ThemeToggle iconOnly />
@@ -80,9 +84,9 @@ export function DashboardUserMenu() {
           aria-haspopup="menu"
           aria-expanded={open}
         >
-          {user?.avatarUrl || tenantBranding?.logoUrl ? (
+          {avatarSrc ? (
             <img
-              src={user?.avatarUrl || tenantBranding?.logoUrl || undefined}
+              src={avatarSrc}
               alt={
                 user?.firstName ? `${user.firstName} Avatar` : "Profile Avatar"
               }
