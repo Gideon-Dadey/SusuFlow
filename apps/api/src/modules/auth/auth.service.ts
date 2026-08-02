@@ -4,6 +4,7 @@ import {
   ConflictException,
   BadRequestException,
   ForbiddenException,
+  NotFoundException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
@@ -240,6 +241,29 @@ export class AuthService {
     });
 
     const roles = user.userRoles.map((ur) => ur.role.name);
+
+    if (user.mfaEnabled) {
+      const mfaToken = randomBytes(24).toString("hex");
+      await this.cache.set(
+        `mfa_session:${user.id}:${mfaToken}`,
+        { userId: user.id, tenantId: user.tenantId },
+        300,
+      );
+      try {
+        await this.otpService.send(user.id, "email", user.tenantId || "", true);
+      } catch {
+        // Cooldown or sent code active
+      }
+
+      return {
+        mfaRequired: true,
+        mfaToken,
+        userId: user.id,
+        email: user.email,
+        message: "MFA code sent to your email address",
+      };
+    }
+
     const permissions = [
       ...new Set(
         user.userRoles.flatMap((ur) =>
@@ -491,5 +515,149 @@ export class AuthService {
     });
 
     return { message: "Password reset successfully. You can sign in now." };
+  }
+
+  async setupMfa(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) throw new NotFoundException("User not found");
+
+    return this.otpService.send(userId, "email", user.tenantId || "", true);
+  }
+
+  async enableMfa(userId: string, code: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) throw new NotFoundException("User not found");
+
+    await this.otpService.verify(
+      userId,
+      "email",
+      code,
+      user.tenantId || "",
+      true,
+    );
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { mfaEnabled: true },
+    });
+
+    return {
+      message: "Multi-Factor Authentication (MFA) enabled successfully.",
+      mfaEnabled: true,
+    };
+  }
+
+  async disableMfa(userId: string, password: string, code: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) throw new NotFoundException("User not found");
+
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) throw new UnauthorizedException("Invalid password");
+
+    await this.otpService.verify(
+      userId,
+      "email",
+      code,
+      user.tenantId || "",
+      true,
+    );
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { mfaEnabled: false },
+    });
+
+    return {
+      message: "Multi-Factor Authentication (MFA) disabled.",
+      mfaEnabled: false,
+    };
+  }
+
+  async verifyMfaLogin(mfaToken: string, userId: string, code: string) {
+    const session = await this.cache.get<{ userId: string; tenantId: string }>(
+      `mfa_session:${userId}:${mfaToken}`,
+    );
+
+    if (!session || session.userId !== userId) {
+      throw new UnauthorizedException(
+        "MFA session expired or invalid. Please log in again.",
+      );
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        tenant: { select: { slug: true } },
+        userRoles: {
+          include: {
+            role: {
+              include: { rolePermissions: { include: { permission: true } } },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user) throw new NotFoundException("User not found");
+
+    await this.otpService.verify(
+      userId,
+      "email",
+      code,
+      user.tenantId || "",
+      true,
+    );
+    await this.cache.del(`mfa_session:${userId}:${mfaToken}`);
+
+    const roles = user.userRoles.map((ur) => ur.role.name);
+    const permissions = [
+      ...new Set(
+        user.userRoles.flatMap((ur) =>
+          ur.role.rolePermissions.map((rp) => rp.permission.name),
+        ),
+      ),
+    ];
+
+    const payload = {
+      sub: user.id,
+      tenant_id: user.tenantId,
+      roles,
+      permissions,
+    };
+
+    const accessToken = this.jwt.sign(payload, {
+      expiresIn: this.config.get("JWT_ACCESS_EXPIRY", "15m"),
+    });
+
+    const refreshToken = randomBytes(48).toString("hex");
+    const tokenHash = createHash("sha256").update(refreshToken).digest("hex");
+
+    await this.prisma.refreshToken.create({
+      data: {
+        userId: user.id,
+        tokenHash,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+      expiresIn: 900,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        roles,
+        tenantSlug: user.tenant?.slug || "",
+      },
+    };
   }
 }

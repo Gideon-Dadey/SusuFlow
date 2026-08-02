@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { tenantApi, userApi } from "@/lib/api";
+import { tenantApi, userApi, authApi } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth.store";
 import { getTenantSlug, getInitials } from "@/lib/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -87,6 +87,99 @@ export default function StaffSettingsPage() {
       if (userProfile.avatarUrl) setAvatarUrl(userProfile.avatarUrl);
     }
   }, [userProfile]);
+
+  // MFA States & Handlers
+  const [showMfaBox, setShowMfaBox] = useState(false);
+  const [mfaBoxMode, setMfaBoxMode] = useState<"enable" | "disable">("enable");
+  const [mfaCode, setMfaCode] = useState("");
+  const [mfaDisablePassword, setMfaDisablePassword] = useState("");
+  const [isMfaLoading, setIsMfaLoading] = useState(false);
+
+  const handleStartMfaSetup = async () => {
+    setIsMfaLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+    try {
+      const res = await authApi.mfaSetup();
+      setShowMfaBox(true);
+      setMfaBoxMode("enable");
+      setMfaCode("");
+      setSuccessMessage(
+        res.message || "MFA code sent to your email. Enter code to enable.",
+      );
+    } catch (err: any) {
+      setErrorMessage(err?.message || "Failed to initiate MFA setup.");
+    } finally {
+      setIsMfaLoading(false);
+    }
+  };
+
+  const handleEnableMfa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!mfaCode || mfaCode.length < 4) {
+      setErrorMessage("Please enter the 6-digit code sent to your email.");
+      return;
+    }
+    setIsMfaLoading(true);
+    setErrorMessage("");
+    try {
+      const res = await authApi.mfaEnable(mfaCode);
+      setSuccessMessage(res.message);
+      setShowMfaBox(false);
+      setMfaCode("");
+      refetchProfile();
+    } catch (err: any) {
+      setErrorMessage(err?.message || "Failed to enable MFA. Check code.");
+    } finally {
+      setIsMfaLoading(false);
+    }
+  };
+
+  const handleStartMfaDisable = async () => {
+    setIsMfaLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+    try {
+      await authApi.mfaSetup();
+      setShowMfaBox(true);
+      setMfaBoxMode("disable");
+      setMfaCode("");
+      setMfaDisablePassword("");
+      setSuccessMessage("Security verification code sent to your email.");
+    } catch (err: any) {
+      setErrorMessage(
+        err?.message || "Failed to initiate MFA disable request.",
+      );
+    } finally {
+      setIsMfaLoading(false);
+    }
+  };
+
+  const handleDisableMfa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!mfaDisablePassword || !mfaCode) {
+      setErrorMessage(
+        "Password and verification code are required to disable MFA.",
+      );
+      return;
+    }
+    setIsMfaLoading(true);
+    setErrorMessage("");
+    try {
+      const res = await authApi.mfaDisable(mfaDisablePassword, mfaCode);
+      setSuccessMessage(res.message);
+      setShowMfaBox(false);
+      setMfaCode("");
+      setMfaDisablePassword("");
+      refetchProfile();
+    } catch (err: any) {
+      setErrorMessage(
+        err?.message || "Failed to disable MFA. Check password & code.",
+      );
+    } finally {
+      setIsMfaLoading(false);
+    }
+  };
 
   // 2. Tenant Settings Queries & States
   const isCompanyAdmin = user?.roles.includes("company_admin");
@@ -872,6 +965,182 @@ export default function StaffSettingsPage() {
                   </Button>
                 </div>
               </form>
+
+              {/* MFA Protection Section */}
+              <div className="pt-6 border-t border-border/60 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-border/60 bg-muted/10 p-5 rounded-none">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-bold text-foreground">
+                        Two-Factor Authentication (MFA)
+                      </h3>
+                      {userProfile?.mfaEnabled ? (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-none bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
+                          MFA Protected
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-none bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 uppercase tracking-wider">
+                          Recommended
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {userProfile?.mfaEnabled
+                        ? "Your Company Admin account is protected with 2-step 6-digit verification code challenges upon sign in."
+                        : "Enhance your Company Admin account security by requiring a 6-digit verification code sent to your email when logging in."}
+                    </p>
+                  </div>
+
+                  <div>
+                    {userProfile?.mfaEnabled ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={isMfaLoading}
+                        onClick={handleStartMfaDisable}
+                        className="text-xs font-semibold rounded-none min-h-[36px] px-4 border-red-200 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:border-red-900 dark:text-red-400"
+                      >
+                        {isMfaLoading ? "Sending Code..." : "Disable MFA"}
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={isMfaLoading}
+                        onClick={handleStartMfaSetup}
+                        className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-emerald-600 hover:bg-emerald-700 text-white border-none gap-2"
+                      >
+                        <FontAwesomeIcon
+                          icon={faShieldHalved}
+                          className="h-3.5 w-3.5"
+                        />
+                        {isMfaLoading
+                          ? "Sending Code..."
+                          : "Enable MFA Security"}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Inline MFA Setup / Disable Verification Box */}
+                {showMfaBox && (
+                  <Card className="rounded-none border border-primary/40 bg-primary/5 p-5 space-y-4">
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
+                        {mfaBoxMode === "enable"
+                          ? "Enter 6-Digit MFA Verification Code"
+                          : "Disable MFA Security Confirmation"}
+                      </h4>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        A 6-digit verification code was sent to{" "}
+                        <strong className="text-foreground">
+                          {userProfile?.email}
+                        </strong>
+                        .
+                      </p>
+                    </div>
+
+                    {mfaBoxMode === "enable" ? (
+                      <form
+                        onSubmit={handleEnableMfa}
+                        className="space-y-4 max-w-sm"
+                      >
+                        <div>
+                          <label className="block text-xs font-bold text-foreground mb-1.5">
+                            6-Digit Verification Code
+                          </label>
+                          <input
+                            type="text"
+                            maxLength={8}
+                            value={mfaCode}
+                            onChange={(e) => setMfaCode(e.target.value)}
+                            placeholder="123456"
+                            required
+                            className="w-full rounded-none border border-border/60 bg-card px-3 py-2 text-sm font-mono font-bold tracking-widest text-center text-foreground outline-none focus:border-primary min-h-[42px]"
+                          />
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Button
+                            type="submit"
+                            disabled={isMfaLoading}
+                            className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-emerald-600 hover:bg-emerald-700 text-white"
+                          >
+                            {isMfaLoading
+                              ? "Verifying..."
+                              : "Confirm & Enable MFA"}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setShowMfaBox(false)}
+                            className="text-xs font-semibold rounded-none min-h-[36px] px-4"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </form>
+                    ) : (
+                      <form
+                        onSubmit={handleDisableMfa}
+                        className="space-y-4 max-w-sm"
+                      >
+                        <div>
+                          <label className="block text-xs font-bold text-foreground mb-1.5">
+                            Current Password
+                          </label>
+                          <input
+                            type="password"
+                            value={mfaDisablePassword}
+                            onChange={(e) =>
+                              setMfaDisablePassword(e.target.value)
+                            }
+                            placeholder="Enter current password"
+                            required
+                            className="w-full rounded-none border border-border/60 bg-card px-3 py-2 text-xs text-foreground outline-none focus:border-primary min-h-[38px]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-foreground mb-1.5">
+                            6-Digit Verification Code
+                          </label>
+                          <input
+                            type="text"
+                            maxLength={8}
+                            value={mfaCode}
+                            onChange={(e) => setMfaCode(e.target.value)}
+                            placeholder="123456"
+                            required
+                            className="w-full rounded-none border border-border/60 bg-card px-3 py-2 text-sm font-mono font-bold tracking-widest text-center text-foreground outline-none focus:border-primary min-h-[42px]"
+                          />
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Button
+                            type="submit"
+                            disabled={isMfaLoading}
+                            className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-red-600 hover:bg-red-700 text-white"
+                          >
+                            {isMfaLoading
+                              ? "Verifying..."
+                              : "Confirm & Disable MFA"}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setShowMfaBox(false)}
+                            className="text-xs font-semibold rounded-none min-h-[36px] px-4"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </form>
+                    )}
+                  </Card>
+                )}
+              </div>
             </Card>
           )}
 

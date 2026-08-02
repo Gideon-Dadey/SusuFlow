@@ -169,10 +169,15 @@ function toQueryString(params?: Record<string, any>): string {
 }
 
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-  user: {
+  accessToken?: string;
+  refreshToken?: string;
+  expiresIn?: number;
+  mfaRequired?: boolean;
+  mfaToken?: string;
+  userId?: string;
+  email?: string;
+  message?: string;
+  user?: {
     id: string;
     email: string;
     firstName: string;
@@ -201,6 +206,7 @@ export interface User {
   avatarUrl?: string | null;
   status: string;
   emailVerified: boolean;
+  mfaEnabled?: boolean;
   createdAt: string;
   customer?: Customer;
 }
@@ -222,6 +228,32 @@ export const authApi = {
     api.post<LoginResponse>(
       "/auth/login",
       { email, password },
+      { skipAuth: true, tenantSlug },
+    ),
+
+  mfaSetup: () =>
+    api.post<{ message: string; expiresIn: number }>("/auth/mfa/setup"),
+
+  mfaEnable: (code: string) =>
+    api.post<{ message: string; mfaEnabled: boolean }>("/auth/mfa/enable", {
+      code,
+    }),
+
+  mfaDisable: (password: string, code: string) =>
+    api.post<{ message: string; mfaEnabled: boolean }>("/auth/mfa/disable", {
+      password,
+      code,
+    }),
+
+  mfaVerifyLogin: (
+    mfaToken: string,
+    userId: string,
+    code: string,
+    tenantSlug = "",
+  ) =>
+    api.post<LoginResponse>(
+      "/auth/mfa/verify-login",
+      { mfaToken, userId, code },
       { skipAuth: true, tenantSlug },
     ),
 

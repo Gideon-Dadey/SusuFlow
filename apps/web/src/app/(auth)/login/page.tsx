@@ -28,6 +28,7 @@ function LoginContent() {
   const queryClient = useQueryClient();
   const {
     login,
+    verifyMfaLogin,
     error,
     clearError,
     setTenantSlug,
@@ -41,6 +42,14 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+
+  // MFA Challenge State
+  const [mfaChallenge, setMfaChallenge] = useState<{
+    mfaToken: string;
+    userId: string;
+    email: string;
+  } | null>(null);
+  const [mfaCode, setMfaCode] = useState("");
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -76,9 +85,45 @@ function LoginContent() {
 
     setIsSubmitting(true);
     try {
-      const path = await login(email, password, tenantParam || tenantSlug);
+      const res = await login(email, password, tenantParam || tenantSlug);
       setIsSubmitting(false);
-      setSuccessMessage("You are logged in successfully");
+      if (res.mfaRequired && res.mfaToken && res.userId) {
+        setMfaChallenge({
+          mfaToken: res.mfaToken,
+          userId: res.userId,
+          email: res.email || email,
+        });
+        setSuccessMessage("Security verification code sent to your email");
+        return;
+      }
+      if (res.path) {
+        setSuccessMessage("You are logged in successfully");
+        router.prefetch(res.path);
+        window.setTimeout(() => {
+          queryClient.clear();
+          router.replace(res.path!);
+        }, 450);
+      }
+    } catch {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleMfaSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!mfaChallenge || !mfaCode) return;
+    clearError();
+    setSuccessMessage("");
+    setIsSubmitting(true);
+    try {
+      const path = await verifyMfaLogin(
+        mfaChallenge.mfaToken,
+        mfaChallenge.userId,
+        mfaCode,
+        tenantParam || tenantSlug,
+      );
+      setIsSubmitting(false);
+      setSuccessMessage("MFA verification successful!");
       router.prefetch(path);
       window.setTimeout(() => {
         queryClient.clear();
@@ -88,6 +133,82 @@ function LoginContent() {
       setIsSubmitting(false);
     }
   };
+
+  if (mfaChallenge) {
+    return (
+      <AuthShell>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            Two-Factor Verification
+          </h1>
+          <p className="mt-2.5 text-sm text-muted-foreground">
+            Enter the 6-digit verification code sent to{" "}
+            <strong className="text-foreground">{mfaChallenge.email}</strong> to
+            complete your sign in.
+          </p>
+        </div>
+
+        <form onSubmit={handleMfaSubmit} className="mt-8 space-y-5">
+          <div className="space-y-1.5">
+            <label className="block text-sm font-semibold text-foreground">
+              6-Digit MFA Security Code{" "}
+              <span className="text-destructive">*</span>
+            </label>
+            <input
+              type="text"
+              maxLength={8}
+              placeholder="123456"
+              className={cn(
+                authInputClassName,
+                "font-mono font-bold tracking-widest text-center text-lg h-12",
+              )}
+              value={mfaCode}
+              onChange={(e) => setMfaCode(e.target.value)}
+              required
+              autoFocus
+            />
+          </div>
+
+          {successMessage ? (
+            <p className="flex items-center gap-2 rounded-none bg-emerald-50 px-3 py-2 text-xs text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 font-semibold">
+              <CheckCircle className="h-4 w-4 shrink-0" aria-hidden />
+              <span>{successMessage}</span>
+            </p>
+          ) : null}
+
+          {error ? (
+            <p className="rounded-none bg-destructive/10 px-3 py-2 text-xs text-destructive font-semibold">
+              {error}
+            </p>
+          ) : null}
+
+          <div className="space-y-2">
+            <Button
+              type="submit"
+              className="h-12 min-h-[48px] w-full rounded-xl text-sm font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white"
+              loading={isSubmitting}
+              loadingText="Verifying code..."
+            >
+              Verify & Complete Sign In
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setMfaChallenge(null);
+                clearError();
+              }}
+              className="w-full text-xs font-semibold h-10 rounded-xl"
+            >
+              Back to Login
+            </Button>
+          </div>
+        </form>
+
+        <AuthFooterExtras action="signing in" mode="login" />
+      </AuthShell>
+    );
+  }
 
   return (
     <AuthShell>
