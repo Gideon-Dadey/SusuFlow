@@ -40,14 +40,18 @@ export default function AdminAuditLogsPage() {
   return (
     <div className="space-y-6">
       <div className="page-header mb-0">
-        <h1 className="dashboard-title">System Audit Logs</h1>
+        <h1 className="dashboard-title">System Security & Audit Trail</h1>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Immutable audit record of user logins, database mutations, and
+          administrative overrides across all tenants.
+        </p>
       </div>
 
       {/* Filter panel */}
-      <Card className="border-border/60">
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase">
+            <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               <FontAwesomeIcon icon={faFilter} className="h-3.5 w-3.5" />
               Filter By:
             </div>
@@ -58,7 +62,7 @@ export default function AdminAuditLogsPage() {
                 <select
                   value={selectedTenant}
                   onChange={(e) => setSelectedTenant(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-1.5 text-sm outline-none focus:border-primary"
+                  className="w-full rounded-none border border-border/60 bg-background px-3 py-1.5 text-xs outline-none focus:border-primary"
                 >
                   <option value="">All Organizations</option>
                   {tenants.map((tenant) => (
@@ -84,17 +88,19 @@ export default function AdminAuditLogsPage() {
       </Card>
 
       {/* Main Audit Logs Card */}
-      <Card className="portal-card border-border/60">
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm">
         <CardHeader>
-          <CardTitle>Global Activity Logs ({logs.length})</CardTitle>
+          <CardTitle className="text-sm sm:text-base font-bold">
+            Global Activity Logs ({logs.length})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-4 py-8">
+            <div className="space-y-3 py-4">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={i}
-                  className="h-12 w-full animate-pulse rounded-lg bg-muted/65"
+                  className="h-12 w-full animate-pulse rounded-none bg-muted/60"
                 />
               ))}
             </div>
@@ -104,15 +110,15 @@ export default function AdminAuditLogsPage() {
                 icon={faListUl}
                 className="mx-auto h-8 w-8 text-muted-foreground/50"
               />
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-xs text-muted-foreground font-medium">
                 No audit logs found matching criteria.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-border text-xs font-semibold text-muted-foreground uppercase">
+                  <tr className="border-b border-border/60 text-xs font-semibold text-muted-foreground uppercase bg-muted/20">
                     <th className="py-3 px-4">Timestamp</th>
                     <th className="py-3 px-4">Event Action</th>
                     <th className="py-3 px-4">Organization</th>
@@ -134,14 +140,14 @@ export default function AdminAuditLogsPage() {
                         {log.action.replace(/_/g, " ")}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
+                        <span className="inline-block rounded-none bg-muted px-2 py-0.5 text-xs font-medium text-foreground border border-border/60">
                           {log.tenant?.name || "Platform"}
                         </span>
                       </td>
                       <td className="py-3.5 px-4">
                         {log.user ? (
                           <>
-                            <span className="font-medium text-foreground">
+                            <span className="font-semibold text-foreground">
                               {log.user.firstName} {log.user.lastName}
                             </span>
                             <span className="block text-[10px] text-muted-foreground font-mono">

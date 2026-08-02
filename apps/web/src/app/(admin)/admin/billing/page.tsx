@@ -23,73 +23,77 @@ export default function AdminBillingPage() {
   return (
     <div className="space-y-6">
       <div className="page-header mb-0">
-        <h1 className="dashboard-title">Platform Revenue</h1>
+        <h1 className="dashboard-title">Platform Revenue & Subscriptions</h1>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          SaaS subscription tracking, recurring revenue metrics, and
+          organization billing status.
+        </p>
       </div>
 
       {isLoading ? (
         <div className="space-y-4">
-          <div className="h-32 w-full animate-pulse rounded-lg bg-muted/65" />
-          <div className="h-48 w-full animate-pulse rounded-lg bg-muted/65" />
+          <div className="h-32 w-full animate-pulse rounded-none bg-muted/60" />
+          <div className="h-48 w-full animate-pulse rounded-none bg-muted/60" />
         </div>
       ) : (
         <>
           {/* Revenue Breakdown */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <Card className="border-border/60">
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm">
               <CardHeader className="flex flex-row items-center gap-2 pb-2">
                 <FontAwesomeIcon
                   icon={faChartPie}
-                  className="h-5 w-5 text-indigo-500"
+                  className="h-4 w-4 text-indigo-500"
                 />
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Monthly Recurring (MRR)
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-2">
-                <p className="text-3xl font-extrabold text-foreground">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums tracking-tight text-foreground">
                   {formatGhs(billing?.monthlyRevenue ?? 0)}
                 </p>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-[11px] text-muted-foreground mt-2">
                   Sum of active subscription plans
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-border/60">
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm">
               <CardHeader className="flex flex-row items-center gap-2 pb-2">
                 <FontAwesomeIcon
                   icon={faCreditCard}
-                  className="h-5 w-5 text-emerald-500"
+                  className="h-4 w-4 text-emerald-500"
                 />
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Annual Run Rate (ARR)
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-2">
-                <p className="text-3xl font-extrabold text-foreground">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums tracking-tight text-foreground">
                   {formatGhs(billing?.annualRevenue ?? 0)}
                 </p>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-[11px] text-muted-foreground mt-2">
                   Projected annual collections
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-border/60">
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm">
               <CardHeader className="flex flex-row items-center gap-2 pb-2">
                 <FontAwesomeIcon
                   icon={faCalendarAlt}
-                  className="h-5 w-5 text-sky-500"
+                  className="h-4 w-4 text-sky-500"
                 />
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Tenant Subscriptions
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-2">
-                <p className="text-3xl font-extrabold text-foreground">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums tracking-tight text-foreground">
                   {subscriptions.length}
                 </p>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-[11px] text-muted-foreground mt-2">
                   {billing?.activeCount ?? 0} active ·{" "}
                   {billing?.trialCount ?? 0} on trial
                 </p>
@@ -98,20 +102,22 @@ export default function AdminBillingPage() {
           </div>
 
           {/* Subscriptions Table */}
-          <Card className="portal-card border-border/60">
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm">
             <CardHeader>
-              <CardTitle>Organization Subscriptions</CardTitle>
+              <CardTitle className="text-sm sm:text-base font-bold">
+                Organization Subscriptions
+              </CardTitle>
             </CardHeader>
             <CardContent>
               {subscriptions.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">
+                <p className="py-8 text-center text-xs text-muted-foreground">
                   No subscriptions registered.
                 </p>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
+                  <table className="w-full text-left text-xs">
                     <thead>
-                      <tr className="border-b border-border text-xs font-semibold text-muted-foreground uppercase">
+                      <tr className="border-b border-border/60 text-xs font-semibold text-muted-foreground uppercase bg-muted/20">
                         <th className="py-3 px-4">Organization</th>
                         <th className="py-3 px-4">Slug</th>
                         <th className="py-3 px-4">Plan</th>
@@ -126,14 +132,14 @@ export default function AdminBillingPage() {
                           key={sub.id}
                           className="hover:bg-muted/30 transition-colors"
                         >
-                          <td className="py-3.5 px-4 font-medium text-foreground">
+                          <td className="py-3.5 px-4 font-bold text-foreground">
                             {sub.tenant?.name || "N/A"}
                           </td>
                           <td className="py-3.5 px-4 font-mono text-xs text-muted-foreground">
                             {sub.tenant?.slug || "N/A"}
                           </td>
                           <td className="py-3.5 px-4">
-                            <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs font-semibold uppercase text-foreground">
+                            <span className="inline-block rounded-none bg-muted px-2 py-0.5 text-xs font-semibold uppercase text-foreground border border-border/60">
                               {sub.plan}
                             </span>
                           </td>

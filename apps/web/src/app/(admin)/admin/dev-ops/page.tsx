@@ -11,8 +11,6 @@ import {
   faTrashCan,
   faDatabase,
   faPlay,
-  faCheckCircle,
-  faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminDevOpsPage() {
@@ -71,15 +69,19 @@ export default function AdminDevOpsPage() {
   return (
     <div className="space-y-6">
       <div className="page-header mb-0">
-        <h1 className="dashboard-title">DevOps Control</h1>
+        <h1 className="dashboard-title">DevOps & System Utility Controls</h1>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Cache eviction tools, relational database diagnostics, and demo tenant
+          data seeders.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Controls */}
         <div className="space-y-6 lg:col-span-6">
-          <Card className="border-border/60">
-            <CardHeader>
-              <CardTitle className="text-base font-bold">
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-bold">
                 In-Memory Store
               </CardTitle>
               <p className="text-xs text-muted-foreground">
@@ -88,7 +90,7 @@ export default function AdminDevOpsPage() {
             </CardHeader>
             <CardContent className="flex items-center justify-between gap-4 pt-2">
               <div>
-                <h3 className="text-sm font-semibold text-foreground">
+                <h3 className="text-xs font-bold text-foreground">
                   Clear Redis Caches
                 </h3>
                 <p className="text-xs text-muted-foreground">
@@ -98,7 +100,7 @@ export default function AdminDevOpsPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-red-200 text-red-600 hover:bg-red-50 dark:border-red-950/50 dark:hover:bg-red-950/30"
+                className="rounded-none border-red-500/30 text-red-600 hover:bg-red-500/10 dark:text-red-400 text-xs font-semibold"
                 loading={clearCacheMutation.isPending}
                 onClick={() => clearCacheMutation.mutate()}
               >
@@ -111,9 +113,9 @@ export default function AdminDevOpsPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border/60">
-            <CardHeader>
-              <CardTitle className="text-base font-bold">
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-bold">
                 Relational Engine (Prisma)
               </CardTitle>
               <p className="text-xs text-muted-foreground">
@@ -122,14 +124,19 @@ export default function AdminDevOpsPage() {
             </CardHeader>
             <CardContent className="flex items-center justify-between gap-4 pt-2">
               <div>
-                <h3 className="text-sm font-semibold text-foreground">
+                <h3 className="text-xs font-bold text-foreground">
                   Integrity Diagnostic
                 </h3>
                 <p className="text-xs text-muted-foreground">
                   Verify database constraints and migration logs
                 </p>
               </div>
-              <Button variant="outline" size="sm" onClick={handleDiagnoseDb}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-none text-xs font-semibold"
+                onClick={handleDiagnoseDb}
+              >
                 <FontAwesomeIcon
                   icon={faDatabase}
                   className="mr-1.5 h-3.5 w-3.5"
@@ -139,9 +146,9 @@ export default function AdminDevOpsPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border/60">
-            <CardHeader>
-              <CardTitle className="text-base font-bold">
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-bold">
                 Staging & Demo Seeding
               </CardTitle>
               <p className="text-xs text-muted-foreground">
@@ -150,16 +157,17 @@ export default function AdminDevOpsPage() {
             </CardHeader>
             <CardContent className="flex items-center justify-between gap-4 pt-2">
               <div>
-                <h3 className="text-sm font-semibold text-foreground">
+                <h3 className="text-xs font-bold text-foreground">
                   Populate demo-tenant data
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  Runs seeder in current database space for abc-susu
+                  Runs seeder in current database space for adipa-susu
                 </p>
               </div>
               <Button
                 variant="primary"
                 size="sm"
+                className="rounded-none text-xs font-semibold"
                 loading={seedDemoMutation.isPending}
                 onClick={() => seedDemoMutation.mutate()}
               >
@@ -172,20 +180,20 @@ export default function AdminDevOpsPage() {
 
         {/* Live Logs Console */}
         <div className="lg:col-span-6">
-          <Card className="border-border/60 h-full flex flex-col">
-            <CardHeader className="pb-2">
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm h-full flex flex-col">
+            <CardHeader className="pb-3 border-b border-border/60">
               <div className="flex items-center gap-2">
                 <FontAwesomeIcon
                   icon={faTerminal}
                   className="h-4 w-4 text-primary"
                 />
                 <CardTitle className="text-sm font-bold">
-                  Live Execution Logs
+                  Live Execution Console
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col p-4 pt-0">
-              <div className="flex-1 bg-zinc-950 font-mono text-xs p-4 rounded-lg border border-border/80 text-emerald-400 overflow-y-auto max-h-[360px] min-h-[300px]">
+            <CardContent className="flex-1 flex flex-col p-4">
+              <div className="flex-1 bg-zinc-950 font-mono text-xs p-4 rounded-none border border-border/80 text-emerald-400 overflow-y-auto max-h-[360px] min-h-[300px]">
                 {consoleLog.map((log, index) => (
                   <div key={index} className="mb-1.5 leading-relaxed">
                     {log}

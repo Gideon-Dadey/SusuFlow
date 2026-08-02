@@ -35,25 +35,29 @@ export default function AdminLedgerPage() {
   return (
     <div className="space-y-6">
       <div className="page-header mb-0">
-        <h1 className="dashboard-title">Consolidated Ledger</h1>
+        <h1 className="dashboard-title">Consolidated General Ledger</h1>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Double-entry trial balance, asset float auditing, and customer
+          liability balancing across all organizations.
+        </p>
       </div>
 
       {isLoading ? (
         <div className="space-y-4">
-          <div className="h-28 w-full animate-pulse rounded-lg bg-muted/65" />
-          <div className="h-64 w-full animate-pulse rounded-lg bg-muted/65" />
+          <div className="h-28 w-full animate-pulse rounded-none bg-muted/60" />
+          <div className="h-64 w-full animate-pulse rounded-none bg-muted/60" />
         </div>
       ) : (
         <>
           {/* Balancing Alerts */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <Card className="border-border/60">
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm">
               <CardHeader className="flex flex-row items-center gap-2 pb-2">
                 <FontAwesomeIcon
                   icon={faBalanceScale}
-                  className="h-5 w-5 text-indigo-500"
+                  className="h-4 w-4 text-indigo-500"
                 />
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Debits vs Credits
                 </CardTitle>
               </CardHeader>
@@ -63,9 +67,9 @@ export default function AdminLedgerPage() {
                     <>
                       <FontAwesomeIcon
                         icon={faCheckCircle}
-                        className="h-5 w-5 text-emerald-600 dark:text-emerald-400"
+                        className="h-4 w-4 text-emerald-600 dark:text-emerald-400"
                       />
-                      <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
                         Ledger Balanced
                       </span>
                     </>
@@ -73,47 +77,47 @@ export default function AdminLedgerPage() {
                     <>
                       <FontAwesomeIcon
                         icon={faTriangleExclamation}
-                        className="h-5 w-5 text-destructive"
+                        className="h-4 w-4 text-red-600 dark:text-red-400"
                       />
-                      <span className="text-sm font-semibold text-destructive">
+                      <span className="text-xs font-bold text-red-600 dark:text-red-400">
                         Imbalance Detected
                       </span>
                     </>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-[11px] text-muted-foreground font-mono mt-2">
                   Difference: {formatGhs(diff)}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-border/60">
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Sum of Assets
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-2">
-                <p className="text-2xl font-extrabold text-foreground">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums tracking-tight text-foreground">
                   {formatGhs(ledger?.totalAssetBalance ?? 0)}
                 </p>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-[11px] text-muted-foreground mt-2">
                   Cash assets in float
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-border/60">
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Saver Liabilities
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-2">
-                <p className="text-2xl font-extrabold text-foreground">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums tracking-tight text-foreground">
                   {formatGhs(ledger?.totalLiabilityBalance ?? 0)}
                 </p>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-[11px] text-muted-foreground mt-2">
                   Customer cash balances
                 </p>
               </CardContent>
@@ -121,20 +125,22 @@ export default function AdminLedgerPage() {
           </div>
 
           {/* Ledger Table */}
-          <Card className="portal-card border-border/60">
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm">
             <CardHeader>
-              <CardTitle>Consolidated Trial Balance Sheet</CardTitle>
+              <CardTitle className="text-sm sm:text-base font-bold">
+                Consolidated Trial Balance Sheet
+              </CardTitle>
             </CardHeader>
             <CardContent>
               {accounts.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">
+                <p className="py-8 text-center text-xs text-muted-foreground">
                   No accounts configured.
                 </p>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
+                  <table className="w-full text-left text-xs">
                     <thead>
-                      <tr className="border-b border-border text-xs font-semibold text-muted-foreground uppercase">
+                      <tr className="border-b border-border/60 text-xs font-semibold text-muted-foreground uppercase bg-muted/20">
                         <th className="py-3 px-4">Code</th>
                         <th className="py-3 px-4">Account Name</th>
                         <th className="py-3 px-4">Type</th>
@@ -150,25 +156,27 @@ export default function AdminLedgerPage() {
                           key={acc.id}
                           className="hover:bg-muted/30 transition-colors"
                         >
-                          <td className="py-3 px-4 font-mono text-xs font-semibold text-foreground">
+                          <td className="py-3 px-4 font-mono text-xs font-bold text-foreground">
                             {acc.code}
                           </td>
-                          <td className="py-3 px-4 font-medium text-foreground">
+                          <td className="py-3 px-4 font-semibold text-foreground">
                             {acc.name}
                           </td>
                           <td className="py-3 px-4 text-xs capitalize text-muted-foreground">
                             {acc.accountType}
                           </td>
                           <td className="py-3 px-4 text-xs text-muted-foreground">
-                            {acc.tenant?.name || "N/A"}
+                            <span className="inline-block rounded-none bg-muted px-2 py-0.5 text-xs font-medium text-foreground border border-border/60">
+                              {acc.tenant?.name || "Global"}
+                            </span>
                           </td>
-                          <td className="py-3 px-4 text-right text-xs font-mono text-muted-foreground">
+                          <td className="py-3 px-4 text-right font-mono text-xs text-muted-foreground">
                             {formatGhs(acc.debitSum)}
                           </td>
-                          <td className="py-3 px-4 text-right text-xs font-mono text-muted-foreground">
+                          <td className="py-3 px-4 text-right font-mono text-xs text-muted-foreground">
                             {formatGhs(acc.creditSum)}
                           </td>
-                          <td className="py-3 px-4 text-right font-bold text-foreground font-mono">
+                          <td className="py-3 px-4 text-right font-bold tabular-nums text-foreground font-mono">
                             {formatGhs(acc.balance)}
                           </td>
                         </tr>

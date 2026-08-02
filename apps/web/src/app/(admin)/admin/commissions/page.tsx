@@ -22,76 +22,80 @@ export default function AdminCommissionsPage() {
   return (
     <div className="space-y-6">
       <div className="page-header mb-0">
-        <h1 className="dashboard-title">Collector Earnings</h1>
+        <h1 className="dashboard-title">Collector Earnings & Commissions</h1>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Consolidated tracking of field agent commission accrued, paid
+          disbursements, and net balances.
+        </p>
       </div>
 
       {isLoading ? (
         <div className="space-y-4">
-          <div className="h-28 w-full animate-pulse rounded-lg bg-muted/65" />
-          <div className="h-64 w-full animate-pulse rounded-lg bg-muted/65" />
+          <div className="h-28 w-full animate-pulse rounded-none bg-muted/60" />
+          <div className="h-64 w-full animate-pulse rounded-none bg-muted/60" />
         </div>
       ) : (
         <>
           {/* Commission KPI Cards */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <Card className="border-border/60">
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm">
               <CardHeader className="flex flex-row items-center gap-2 pb-2">
                 <FontAwesomeIcon
                   icon={faCoins}
-                  className="h-5 w-5 text-amber-500"
+                  className="h-4 w-4 text-amber-500"
                 />
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Total Earned
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-2">
-                <p className="text-3xl font-extrabold text-foreground">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums tracking-tight text-foreground">
                   {formatGhs(commissions?.totalEarned ?? 0)}
                 </p>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-[11px] text-muted-foreground mt-2">
                   1% of system-wide completed deposits
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-border/60">
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm">
               <CardHeader className="flex flex-row items-center gap-2 pb-2">
                 <FontAwesomeIcon
                   icon={faWallet}
-                  className="h-5 w-5 text-indigo-500"
+                  className="h-4 w-4 text-indigo-500"
                 />
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Total Disbursed
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-2">
-                <p className="text-3xl font-extrabold text-foreground">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums tracking-tight text-foreground">
                   {formatGhs(commissions?.totalPaid ?? 0)}
                 </p>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-[11px] text-muted-foreground mt-2">
                   Paid out via cash or momo channels
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-border/60">
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm">
               <CardHeader className="flex flex-row items-center gap-2 pb-2">
                 <FontAwesomeIcon
                   icon={faUserPlus}
-                  className="h-5 w-5 text-sky-500"
+                  className="h-4 w-4 text-sky-500"
                 />
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Net Outstanding
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-2">
-                <p className="text-3xl font-extrabold text-foreground">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums tracking-tight text-foreground">
                   {formatGhs(
                     (commissions?.totalEarned ?? 0) -
                       (commissions?.totalPaid ?? 0),
                   )}
                 </p>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-[11px] text-muted-foreground mt-2">
                   Unpaid collector balances
                 </p>
               </CardContent>
@@ -99,20 +103,22 @@ export default function AdminCommissionsPage() {
           </div>
 
           {/* Collectors Table */}
-          <Card className="portal-card border-border/60">
+          <Card className="rounded-none border border-border/60 bg-card shadow-sm">
             <CardHeader>
-              <CardTitle>Collector Ledger Balances</CardTitle>
+              <CardTitle className="text-sm sm:text-base font-bold">
+                Collector Ledger Balances
+              </CardTitle>
             </CardHeader>
             <CardContent>
               {items.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">
+                <p className="py-8 text-center text-xs text-muted-foreground">
                   No active collectors registered yet.
                 </p>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
+                  <table className="w-full text-left text-xs">
                     <thead>
-                      <tr className="border-b border-border text-xs font-semibold text-muted-foreground uppercase">
+                      <tr className="border-b border-border/60 text-xs font-semibold text-muted-foreground uppercase bg-muted/20">
                         <th className="py-3 px-4">Collector Name</th>
                         <th className="py-3 px-4">Email</th>
                         <th className="py-3 px-4">Organization</th>
@@ -127,14 +133,14 @@ export default function AdminCommissionsPage() {
                           key={idx}
                           className="hover:bg-muted/30 transition-colors"
                         >
-                          <td className="py-3.5 px-4 font-medium text-foreground">
+                          <td className="py-3.5 px-4 font-bold text-foreground">
                             {item.firstName} {item.lastName}
                           </td>
                           <td className="py-3.5 px-4 text-xs font-mono text-muted-foreground">
                             {item.email}
                           </td>
                           <td className="py-3.5 px-4">
-                            <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
+                            <span className="inline-block rounded-none bg-muted px-2 py-0.5 text-xs font-medium text-foreground border border-border/60">
                               {item.tenantName}
                             </span>
                           </td>
@@ -144,7 +150,7 @@ export default function AdminCommissionsPage() {
                           <td className="py-3.5 px-4 text-right text-xs font-mono text-muted-foreground">
                             {formatGhs(item.paid)}
                           </td>
-                          <td className="py-3.5 px-4 text-right font-bold text-foreground font-mono">
+                          <td className="py-3.5 px-4 text-right font-bold tabular-nums text-foreground font-mono">
                             {formatGhs(item.balance)}
                           </td>
                         </tr>

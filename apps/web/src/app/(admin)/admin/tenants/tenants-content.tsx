@@ -22,7 +22,7 @@ function CopyLinkButton({ label, url }: { label: string; url: string }) {
   };
 
   return (
-    <div className="flex items-center gap-2 rounded-lg bg-muted/40 px-3 py-1.5 text-xs border border-border/40">
+    <div className="flex items-center gap-2 rounded-none bg-muted/40 px-3 py-1.5 text-xs border border-border/60">
       <span className="font-semibold text-muted-foreground uppercase text-[9px] tracking-wider whitespace-nowrap">
         {label}:
       </span>
@@ -37,7 +37,7 @@ function CopyLinkButton({ label, url }: { label: string; url: string }) {
       >
         <FontAwesomeIcon
           icon={copied ? faCheck : faCopy}
-          className={`h-3.5 w-3.5 ${copied ? "text-green-600 dark:text-green-400" : ""}`}
+          className={`h-3.5 w-3.5 ${copied ? "text-emerald-600 dark:text-emerald-400" : ""}`}
         />
       </button>
     </div>
@@ -45,10 +45,13 @@ function CopyLinkButton({ label, url }: { label: string; url: string }) {
 }
 
 const statusStyles: Record<string, string> = {
-  trial: "bg-amber-50 text-amber-700",
-  active: "bg-green-50 text-green-700",
-  suspended: "bg-red-50 text-red-700",
-  closed: "bg-muted text-muted-foreground",
+  trial:
+    "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20",
+  active:
+    "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
+  suspended:
+    "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20",
+  closed: "bg-muted text-muted-foreground border border-border/60",
 };
 
 export default function AdminTenantsPage() {
@@ -109,37 +112,49 @@ export default function AdminTenantsPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="page-header mb-0">
-          <h1 className="dashboard-title">Platform Tenants</h1>
+          <h1 className="dashboard-title">Platform Organizations</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Manage registered Susu companies, tenant access rules, and
+            organization provisioning.
+          </p>
         </div>
         <Link href="/admin/tenants/new">
-          <Button size="sm">Create organization</Button>
+          <Button size="sm" className="rounded-none font-semibold text-xs">
+            Create organization
+          </Button>
         </Link>
       </div>
 
       {actionMessage ? (
-        <div className="rounded-lg border border-secondary/30 bg-secondary/10 px-4 py-3 text-sm text-foreground">
+        <div className="rounded-none border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-xs font-medium text-foreground">
           {actionMessage}
         </div>
       ) : null}
 
-      <Card className="portal-card border-border/60">
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm">
         <CardHeader>
-          <CardTitle>All organizations ({tenants.length})</CardTitle>
+          <CardTitle className="text-sm sm:text-base font-bold">
+            All organizations ({tenants.length})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
             <TenantListSkeleton count={3} />
           ) : error ? (
-            <p className="py-8 text-center text-sm text-destructive">
-              Failed to load tenants
+            <p className="py-8 text-center text-xs text-destructive">
+              Failed to load organizations
             </p>
           ) : tenants.length === 0 ? (
             <div className="py-8 text-center">
-              <p className="text-sm text-muted-foreground">
-                No organizations yet
+              <p className="text-xs text-muted-foreground">
+                No organizations registered yet
               </p>
               <Link href="/admin/tenants/new" className="mt-4 inline-block">
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-none text-xs"
+                >
                   Provision first organization
                 </Button>
               </Link>
@@ -182,16 +197,17 @@ function TenantRow({
   busy: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+    <div className="rounded-none border border-border/60 bg-card p-4 sm:p-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-lg font-semibold text-foreground">
+            <h2 className="text-base font-bold text-foreground">
               {tenant.name}
             </h2>
             <span
-              className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
-                statusStyles[tenant.status] ?? "bg-muted text-muted-foreground"
+              className={`inline-flex rounded-none px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                statusStyles[tenant.status] ??
+                "bg-muted text-muted-foreground border border-border/60"
               }`}
             >
               {tenant.status}
@@ -202,11 +218,13 @@ function TenantRow({
               </span>
             ) : null}
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{tenant.slug}</span> ·{" "}
-            {tenant.email}
-          </p>
           <p className="mt-1 text-xs text-muted-foreground">
+            <span className="font-mono font-medium text-foreground">
+              {tenant.slug}
+            </span>{" "}
+            · {tenant.email}
+          </p>
+          <p className="mt-1 text-[11px] text-muted-foreground">
             Created {formatDate(tenant.createdAt)}
             {tenant._count
               ? ` · ${tenant._count.users} users · ${tenant._count.customers} customers`
@@ -231,6 +249,7 @@ function TenantRow({
             <Button
               size="sm"
               variant="outline"
+              className="rounded-none text-xs font-semibold"
               disabled={busy}
               onClick={onActivate}
             >
@@ -241,6 +260,7 @@ function TenantRow({
             <Button
               size="sm"
               variant="outline"
+              className="rounded-none text-xs font-semibold border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
               disabled={busy}
               onClick={onSuspend}
             >
@@ -249,7 +269,12 @@ function TenantRow({
           ) : null}
           {tenant.subscription?.plan === "growth" &&
           tenant.status !== "active" ? (
-            <Button size="sm" disabled={busy} onClick={onCheckout}>
+            <Button
+              size="sm"
+              className="rounded-none text-xs font-semibold"
+              disabled={busy}
+              onClick={onCheckout}
+            >
               Collect payment
             </Button>
           ) : null}
