@@ -517,51 +517,54 @@ export default function StaffSettingsPage() {
         <div className="w-full md:w-64 shrink-0 flex flex-row md:flex-col gap-1.5 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
           <button
             onClick={() => handleTabChange("profile")}
-            className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
+            className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold rounded-none transition-colors whitespace-nowrap ${
               activeTab === "profile"
-                ? "bg-primary text-white font-bold"
-                : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
+                ? "bg-primary text-primary-foreground font-bold"
+                : "bg-card text-foreground hover:bg-muted/20 border border-border/60"
             }`}
           >
-            <FontAwesomeIcon icon={faUser} className="h-4 w-4" />
+            <FontAwesomeIcon icon={faUser} className="h-3.5 w-3.5" />
             My Profile
           </button>
           {isCompanyAdmin && (
             <>
               <button
                 onClick={() => handleTabChange("branding")}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold rounded-none transition-colors whitespace-nowrap ${
                   activeTab === "branding"
-                    ? "bg-primary text-white font-bold"
-                    : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
+                    ? "bg-primary text-primary-foreground font-bold"
+                    : "bg-card text-foreground hover:bg-muted/20 border border-border/60"
                 }`}
               >
                 <FontAwesomeIcon
                   icon={faWandMagicSparkles}
-                  className="h-4 w-4"
+                  className="h-3.5 w-3.5"
                 />
                 Branding & Company
               </button>
               <button
                 onClick={() => handleTabChange("operations")}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold rounded-none transition-colors whitespace-nowrap ${
                   activeTab === "operations"
-                    ? "bg-primary text-white font-bold"
-                    : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
+                    ? "bg-primary text-primary-foreground font-bold"
+                    : "bg-card text-foreground hover:bg-muted/20 border border-border/60"
                 }`}
               >
-                <FontAwesomeIcon icon={faSliders} className="h-4 w-4" />
+                <FontAwesomeIcon icon={faSliders} className="h-3.5 w-3.5" />
                 Operations & Limits
               </button>
               <button
                 onClick={() => handleTabChange("commissions")}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold rounded-none transition-colors whitespace-nowrap ${
                   activeTab === "commissions"
-                    ? "bg-primary text-white font-bold"
-                    : "bg-card text-foreground hover:bg-muted/50 border border-border/50"
+                    ? "bg-primary text-primary-foreground font-bold"
+                    : "bg-card text-foreground hover:bg-muted/20 border border-border/60"
                 }`}
               >
-                <FontAwesomeIcon icon={faShieldHalved} className="h-4 w-4" />
+                <FontAwesomeIcon
+                  icon={faShieldHalved}
+                  className="h-3.5 w-3.5"
+                />
                 Commissions & Fees
               </button>
             </>
@@ -592,13 +595,13 @@ export default function StaffSettingsPage() {
           {activeTab === "profile" && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Personal Details */}
-              <Card className="shadow-sm border-none bg-card">
-                <CardHeader>
-                  <CardTitle className="text-base font-semibold text-foreground">
+              <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+                <CardHeader className="px-6 py-4 border-b border-border/60">
+                  <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
                     Personal Details
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-6">
                   <form onSubmit={handleProfileSave} className="space-y-4">
                     <Input
                       label="First Name"
@@ -606,6 +609,7 @@ export default function StaffSettingsPage() {
                       onChange={(e) => setFirstName(e.target.value)}
                       placeholder="Enter first name"
                       required
+                      className="rounded-none border border-border/60 text-xs min-h-[38px]"
                     />
                     <Input
                       label="Last Name"
@@ -613,6 +617,7 @@ export default function StaffSettingsPage() {
                       onChange={(e) => setLastName(e.target.value)}
                       placeholder="Enter last name"
                       required
+                      className="rounded-none border border-border/60 text-xs min-h-[38px]"
                     />
                     <Input
                       label="Email Address"
@@ -621,17 +626,19 @@ export default function StaffSettingsPage() {
                       onChange={(e) => setProfileEmail(e.target.value)}
                       placeholder="Enter email address"
                       required
+                      className="rounded-none border border-border/60 text-xs min-h-[38px]"
                     />
                     <Input
                       label="Phone Number"
                       value={profilePhone}
                       onChange={(e) => setProfilePhone(e.target.value)}
                       placeholder="Enter phone number"
+                      className="rounded-none border border-border/60 text-xs min-h-[38px]"
                     />
                     <Button
                       type="submit"
                       size="sm"
-                      className="w-full flex items-center justify-center gap-2 text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95"
+                      className="w-full flex items-center justify-center gap-2 text-xs font-semibold px-4 min-h-[36px] rounded-none bg-primary text-primary-foreground hover:bg-primary/95"
                       disabled={updateProfileMutation.isPending}
                     >
                       {updateProfileMutation.isPending && (
@@ -647,9 +654,9 @@ export default function StaffSettingsPage() {
               </Card>
 
               {/* Password Card */}
-              <Card className="shadow-sm border-none bg-card">
-                <CardHeader>
-                  <CardTitle className="text-base font-semibold text-foreground">
+              <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+                <CardHeader className="px-6 py-4 border-b border-border/60">
+                  <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
                     Security & Password
                   </CardTitle>
                 </CardHeader>
@@ -811,15 +818,17 @@ export default function StaffSettingsPage() {
           )}
 
           {isCompanyAdmin && activeTab === "branding" && (
-            <Card className="shadow-sm border-none bg-card">
-              <CardHeader>
-                <CardTitle className="text-lg">General & Branding</CardTitle>
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+              <CardHeader className="px-6 py-4 border-b border-border/60">
+                <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+                  General & Branding
+                </CardTitle>
                 <p className="text-xs text-muted-foreground">
                   Update your company details and logo for organization
                   branding.
                 </p>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <form onSubmit={handleBrandingSave} className="space-y-4">
                   <Input
                     label="Company Name"
@@ -927,24 +936,26 @@ export default function StaffSettingsPage() {
           )}
 
           {isCompanyAdmin && activeTab === "operations" && (
-            <Card className="shadow-sm border-none bg-card">
-              <CardHeader>
-                <CardTitle className="text-lg">Operations & Limits</CardTitle>
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+              <CardHeader className="px-6 py-4 border-b border-border/60">
+                <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+                  Operations & Limits
+                </CardTitle>
                 <p className="text-xs text-muted-foreground">
                   Configure transactional requirements and operating boundaries.
                 </p>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <form onSubmit={handleOperationsSave} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="block text-sm font-medium text-foreground">
+                      <label className="block text-xs font-semibold text-foreground">
                         Currency
                       </label>
                       <select
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value)}
-                        className="flex h-11 w-full border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0"
+                        className="flex min-h-[38px] w-full rounded-none border border-border/60 bg-card px-3 py-2 text-xs text-foreground outline-none focus:border-primary"
                       >
                         <option value="GHS">GHS (Ghana Cedi)</option>
                         <option value="USD">USD (US Dollar)</option>
@@ -953,13 +964,13 @@ export default function StaffSettingsPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block text-sm font-medium text-foreground">
+                      <label className="block text-xs font-semibold text-foreground">
                         Timezone
                       </label>
                       <select
                         value={timezone}
                         onChange={(e) => setTimezone(e.target.value)}
-                        className="flex h-11 w-full border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0"
+                        className="flex min-h-[38px] w-full rounded-none border border-border/60 bg-card px-3 py-2 text-xs text-foreground outline-none focus:border-primary"
                       >
                         <option value="Africa/Accra">Africa/Accra (GMT)</option>
                         <option value="UTC">
@@ -1030,15 +1041,17 @@ export default function StaffSettingsPage() {
           )}
 
           {isCompanyAdmin && activeTab === "commissions" && (
-            <Card className="shadow-sm border-none bg-card">
-              <CardHeader>
-                <CardTitle className="text-lg">Commissions & Fees</CardTitle>
+            <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+              <CardHeader className="px-6 py-4 border-b border-border/60">
+                <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+                  Commissions & Fees
+                </CardTitle>
                 <p className="text-xs text-muted-foreground">
                   Adjust transaction-level fees and internal agent commission
                   rates.
                 </p>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <form onSubmit={handleCommissionsSave} className="space-y-4">
                   <Input
                     label={`Flat Transaction Fee (${currency})`}
