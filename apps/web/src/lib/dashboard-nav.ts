@@ -49,7 +49,7 @@ export const staffNavGroups: NavGroup[] = [
       { href: "/staff/deposits", label: "Deposits", icon: faWallet },
       { href: "/staff/withdrawals", label: "Withdrawals", icon: faHistory },
       { href: "/staff/commissions", label: "Commissions", icon: faCoins },
-      { href: "/staff/ledger", label: "Trial Balance", icon: faBook },
+      { href: "/staff/ledger", label: "Ledger", icon: faBook },
       {
         href: "/staff/reconciliation",
         label: "Reconciliation",
@@ -80,7 +80,7 @@ export const staffNavGroups: NavGroup[] = [
   {
     groupLabel: "OPERATIONS",
     items: [
-      { href: "/staff/plans", label: "Savings Goals", icon: faPiggyBank },
+      { href: "/staff/plans", label: "Plans", icon: faPiggyBank },
       { href: "/staff/reports", label: "Reports", icon: faChartPie },
       { href: "/staff/audit", label: "Audit Logs", icon: faListUl },
     ],
@@ -89,7 +89,7 @@ export const staffNavGroups: NavGroup[] = [
     groupLabel: "PEOPLE",
     items: [
       { href: "/staff/customers", label: "Customers", icon: faUsers },
-      { href: "/staff/kyc", label: "KYC Documents", icon: faUserCheck },
+      { href: "/staff/kyc", label: "KYC", icon: faUserCheck },
       { href: "/staff/team", label: "Team", icon: faUserTie },
       { href: "/staff/collectors", label: "Collectors", icon: faRoute },
     ],
@@ -99,10 +99,10 @@ export const staffNavGroups: NavGroup[] = [
     items: [
       {
         href: "/staff/calculator",
-        label: "Financial Calculator",
+        label: "Calculator",
         icon: faCalculator,
       },
-      { href: "/staff/excel", label: "Spreadsheet Studio", icon: faFileExcel },
+      { href: "/staff/excel", label: "Excel", icon: faFileExcel },
     ],
   },
   {
@@ -110,7 +110,7 @@ export const staffNavGroups: NavGroup[] = [
     items: [
       {
         href: "/staff/fraud",
-        label: "Fraud Alerts",
+        label: "Fraud",
         icon: faTriangleExclamation,
       },
       { href: "/staff/settings", label: "Settings", icon: faGear },
