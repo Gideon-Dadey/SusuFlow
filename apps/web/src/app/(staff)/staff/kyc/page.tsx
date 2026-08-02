@@ -255,72 +255,58 @@ export default function StaffKycReviewPage() {
       </div>
 
       {/* Metric Cards Banner */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-              <Clock className="h-4 w-4" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground font-medium">
-                Pending Review
-              </p>
-              <p className="text-lg font-bold text-foreground">
-                {pendingCount} Customers
-              </p>
-            </div>
-          </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Pending Review
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {pendingCount}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Needs verification
+          </p>
         </Card>
 
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-              <CheckCircle2 className="h-4 w-4" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground font-medium">
-                Approved
-              </p>
-              <p className="text-lg font-bold text-foreground">
-                {approvedCount} Customers
-              </p>
-            </div>
-          </div>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Approved
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {approvedCount}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Active compliance
+          </p>
         </Card>
 
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
-              <XCircle className="h-4 w-4" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground font-medium">
-                Rejected
-              </p>
-              <p className="text-lg font-bold text-foreground">
-                {rejectedCount} Submissions
-              </p>
-            </div>
-          </div>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Rejected
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {rejectedCount}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Declined submissions
+          </p>
         </Card>
 
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded bg-primary/10 text-primary flex items-center justify-center shrink-0">
-              <Building2 className="h-4 w-4" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground font-medium">
-                Compliance Target
-              </p>
-              <p className="text-lg font-bold text-foreground">Act 843 Ready</p>
-            </div>
-          </div>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Compliance Target
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tracking-tight text-foreground">
+            Act 843 Ready
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Data protection compliant
+          </p>
         </Card>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border pb-3">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border/60 pb-3">
         <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
           {[
             { label: "Pending", value: "pending" },
@@ -335,7 +321,7 @@ export default function StaffKycReviewPage() {
               className={cn(
                 "px-3 py-1.5 text-xs font-semibold transition-colors rounded-none border-b-2",
                 selectedStatus === tab.value
-                  ? "border-primary text-primary"
+                  ? "border-primary text-primary font-bold"
                   : "border-transparent text-muted-foreground hover:text-foreground",
               )}
             >
@@ -346,12 +332,12 @@ export default function StaffKycReviewPage() {
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
           {/* View Mode Toggle */}
-          <div className="flex items-center gap-1 p-1 bg-muted rounded">
+          <div className="flex items-center gap-1 p-1 bg-muted/60 rounded-none">
             <button
               type="button"
               onClick={() => setViewMode("grid")}
               className={cn(
-                "p-1.5 text-xs font-semibold rounded transition-colors",
+                "p-1.5 text-xs font-semibold rounded-none transition-colors",
                 viewMode === "grid"
                   ? "bg-card text-foreground"
                   : "text-muted-foreground",
@@ -364,7 +350,7 @@ export default function StaffKycReviewPage() {
               type="button"
               onClick={() => setViewMode("table")}
               className={cn(
-                "p-1.5 text-xs font-semibold rounded transition-colors",
+                "p-1.5 text-xs font-semibold rounded-none transition-colors",
                 viewMode === "table"
                   ? "bg-card text-foreground"
                   : "text-muted-foreground",
@@ -382,7 +368,7 @@ export default function StaffKycReviewPage() {
               placeholder="Search customer name, email or ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9 text-xs"
+              className="pl-9 h-9 text-xs rounded-none border border-border/60"
             />
           </div>
         </div>

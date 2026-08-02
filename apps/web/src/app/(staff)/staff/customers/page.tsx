@@ -93,14 +93,14 @@ export default function StaffCustomersPage() {
             size="sm"
             variant="outline"
             onClick={handleExportCsv}
-            className="text-xs font-semibold py-1.5"
+            className="text-xs font-semibold rounded-none min-h-[36px]"
             disabled={!data?.items?.length}
           >
             Download CSV
           </Button>
           <Link href="/staff/customers/new">
-            <Button className="flex items-center gap-1.5 font-semibold text-xs py-1.5">
-              <Plus className="h-4 w-4" />
+            <Button className="flex items-center gap-1.5 font-semibold text-xs rounded-none min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95">
+              <Plus className="h-3.5 w-3.5" />
               Onboard Customer
             </Button>
           </Link>
@@ -108,7 +108,7 @@ export default function StaffCustomersPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-border pb-1">
+      <div className="flex items-center gap-2 border-b border-border/60 pb-1">
         {[
           { label: "All Customers", value: "" },
           { label: "Active", value: "active" },
@@ -140,7 +140,7 @@ export default function StaffCustomersPage() {
             placeholder="Search by name, email, phone, or customer ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm rounded-none border border-border bg-card text-foreground focus:outline-none focus:border-primary"
+            className="w-full pl-9 pr-4 py-2 text-xs rounded-none border border-border/60 bg-card text-foreground focus:outline-none focus:border-primary min-h-[38px]"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -148,7 +148,7 @@ export default function StaffCustomersPage() {
           <select
             value={status}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="py-2 px-3 text-sm rounded-none border border-border bg-card text-foreground focus:outline-none focus:border-primary"
+            className="py-2 px-3 text-xs rounded-none border border-border/60 bg-card text-foreground focus:outline-none focus:border-primary min-h-[38px]"
           >
             <option value="">All Statuses</option>
             <option value="active">Active</option>
@@ -158,13 +158,13 @@ export default function StaffCustomersPage() {
         </div>
       </div>
 
-      <Card>
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
         <CardContent className="p-0">
           {isLoading ? (
             <CustomerListSkeleton count={4} />
           ) : customers.length === 0 ? (
             <div className="text-center py-12 px-4 space-y-3">
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-xs font-semibold">
                 No customers found matching current filters
                 {status ? ` (Status: "${status}")` : ""}.
               </p>
@@ -176,21 +176,21 @@ export default function StaffCustomersPage() {
                     setSearch("");
                     handleStatusChange("");
                   }}
-                  className="text-xs font-semibold"
+                  className="text-xs font-semibold rounded-none min-h-[36px]"
                 >
                   Show All Customers
                 </Button>
               )}
             </div>
           ) : (
-            <div className="divide-y divide-gray-100 dark:divide-border/40">
+            <div className="divide-y divide-border/60">
               {customers.map((c) => (
                 <Link
                   key={c.id}
                   href={`/staff/customers/${c.id}`}
-                  className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors"
+                  className="flex items-center gap-4 p-4 hover:bg-muted/20 transition-colors"
                 >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-primary font-semibold text-sm">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-primary font-semibold text-xs">
                     {c.user?.avatarUrl ? (
                       <img
                         src={c.user.avatarUrl}
@@ -202,12 +202,12 @@ export default function StaffCustomersPage() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-foreground">
+                    <p className="font-semibold text-xs sm:text-sm text-foreground">
                       {c.user?.firstName || "Pending"}{" "}
                       {c.user?.lastName || "Onboarding"}
                     </p>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mt-0.5">
-                      <span className="font-mono">{c.customerNumber}</span>
+                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground mt-0.5 font-mono">
+                      <span>{c.customerNumber}</span>
                       {c.user?.email && (
                         <span className="truncate">• {c.user.email}</span>
                       )}
@@ -220,7 +220,7 @@ export default function StaffCustomersPage() {
                   </div>
                   <div className="text-right">
                     <StatusBadge status={c.status} />
-                    <p className="text-[10px] text-muted-foreground mt-1 uppercase font-semibold">
+                    <p className="text-[10px] text-muted-foreground mt-1 uppercase font-semibold font-mono">
                       KYC L{c.kycLevel}
                     </p>
                   </div>

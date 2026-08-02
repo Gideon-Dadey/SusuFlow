@@ -7,7 +7,7 @@ import { StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { teamApi, type TeamMember } from "@/lib/api";
-import { getInitials } from "@/lib/utils";
+import { getInitials, formatDate } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth.store";
 import { Plus, X, Check, UserX, UserCheck } from "lucide-react";
 
@@ -114,7 +114,7 @@ export default function TeamManagementPage() {
           <Button
             size="sm"
             onClick={() => setShowForm(true)}
-            className="text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95 shrink-0 gap-1.5"
+            className="text-xs font-semibold px-4 min-h-[36px] rounded-none bg-primary text-primary-foreground hover:bg-primary/95 shrink-0 gap-1.5"
           >
             <Plus className="h-3.5 w-3.5" />
             Add Team Member
@@ -123,23 +123,23 @@ export default function TeamManagementPage() {
       </div>
 
       {credentials && (
-        <Card className="border-emerald-500/40 bg-emerald-500/5">
-          <CardContent className="pt-5 pb-5">
-            <p className="text-sm font-semibold text-foreground">
+        <Card className="rounded-none border border-emerald-500/40 bg-emerald-500/10 p-4">
+          <CardContent className="p-0">
+            <p className="text-xs font-semibold text-foreground">
               Team member created — share these credentials
             </p>
-            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
               <div>
                 <span className="text-muted-foreground">Email: </span>
-                <span className="font-mono font-medium">
+                <span className="font-semibold text-foreground">
                   {credentials.email}
                 </span>
               </div>
               <div>
                 <span className="text-muted-foreground">
-                  Temporary password:{" "}
+                  Temporary Password:{" "}
                 </span>
-                <span className="font-mono font-medium">
+                <span className="font-semibold text-foreground">
                   {credentials.temporaryPassword}
                 </span>
               </div>
@@ -147,7 +147,7 @@ export default function TeamManagementPage() {
             <Button
               variant="outline"
               size="sm"
-              className="mt-4"
+              className="mt-3 text-xs font-semibold rounded-none min-h-[32px]"
               onClick={() => setCredentials(null)}
             >
               Dismiss
@@ -157,71 +157,74 @@ export default function TeamManagementPage() {
       )}
 
       {showForm && isCompanyAdmin && (
-        <Card className="border-primary/30">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base">Add Team Member</CardTitle>
+        <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+          <CardHeader className="px-6 py-4 border-b border-border/60 flex flex-row items-center justify-between">
+            <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+              Add Team Member
+            </CardTitle>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowForm(false)}
+              className="rounded-none h-8 w-8 p-0"
             >
               <X className="h-4 w-4" />
             </Button>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <form
               onSubmit={handleSubmit}
               className="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
               <div>
-                <label className="text-xs font-medium text-muted-foreground">
-                  First name
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                  First Name *
                 </label>
                 <Input
                   value={form.firstName}
                   onChange={(e) =>
                     setForm({ ...form, firstName: e.target.value })
                   }
-                  className="mt-1"
+                  className="rounded-none border border-border/60 text-xs min-h-[38px]"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground">
-                  Last name
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                  Last Name *
                 </label>
                 <Input
                   value={form.lastName}
                   onChange={(e) =>
                     setForm({ ...form, lastName: e.target.value })
                   }
-                  className="mt-1"
+                  className="rounded-none border border-border/60 text-xs min-h-[38px]"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground">
-                  Email
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                  Email *
                 </label>
                 <Input
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="mt-1"
+                  className="rounded-none border border-border/60 text-xs min-h-[38px]"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground">
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">
                   Phone
                 </label>
                 <Input
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   placeholder="+233..."
-                  className="mt-1"
+                  className="rounded-none border border-border/60 text-xs min-h-[38px]"
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Role
+                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                  Role *
                 </label>
                 <select
                   value={form.role}
@@ -231,7 +234,7 @@ export default function TeamManagementPage() {
                       role: e.target.value as typeof form.role,
                     })
                   }
-                  className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  className="w-full rounded-none border border-border/60 bg-card px-3 py-2 text-xs text-foreground outline-none min-h-[38px]"
                 >
                   <option value="collector">
                     Collector — field collections
@@ -243,7 +246,7 @@ export default function TeamManagementPage() {
                 </select>
               </div>
               {formError && (
-                <p className="md:col-span-2 text-sm text-destructive">
+                <p className="md:col-span-2 text-xs font-semibold text-red-500">
                   {formError}
                 </p>
               )}
@@ -251,7 +254,7 @@ export default function TeamManagementPage() {
                 <Button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="gap-2"
+                  className="gap-2 rounded-none min-h-[36px] text-xs font-semibold bg-primary text-primary-foreground"
                 >
                   <Check className="h-4 w-4" />
                   {createMutation.isPending ? "Creating…" : "Create Account"}
@@ -260,6 +263,7 @@ export default function TeamManagementPage() {
                   type="button"
                   variant="outline"
                   onClick={() => setShowForm(false)}
+                  className="rounded-none min-h-[36px] text-xs font-semibold"
                 >
                   Cancel
                 </Button>
@@ -269,72 +273,84 @@ export default function TeamManagementPage() {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Team Size
-            </p>
-            <p className="text-3xl font-bold mt-1">{members.length}</p>
-          </CardContent>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Team Size
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {members.length}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Total staff accounts
+          </p>
         </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Active
-            </p>
-            <p className="text-3xl font-bold mt-1">{activeCount}</p>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Active Members
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {activeCount}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Active credentials
+          </p>
         </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Collectors
-            </p>
-            <p className="text-3xl font-bold mt-1">{collectorCount}</p>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Field Collectors
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {collectorCount}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">Field agents</p>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Organization Team</CardTitle>
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+        <CardHeader className="px-6 py-4 border-b border-border/60">
+          <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+            Organization Team Members
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {isLoading ? (
-            <div className="h-40 animate-pulse rounded-lg bg-muted/60" />
+            <div className="h-40 animate-pulse rounded-none bg-muted/60" />
           ) : members.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
+            <p className="py-8 text-center text-xs text-muted-foreground">
               No team members found
             </p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-border text-xs font-semibold text-muted-foreground uppercase">
-                    <th className="py-3 px-4">Member</th>
-                    <th className="py-3 px-4">Role</th>
-                    <th className="py-3 px-4">Customers</th>
-                    <th className="py-3 px-4">Last Login</th>
-                    <th className="py-3 px-4">Status</th>
+                  <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
+                    <th className="py-3.5 px-4">Member</th>
+                    <th className="py-3.5 px-4">Role</th>
+                    <th className="py-3.5 px-4">Savers</th>
+                    <th className="py-3.5 px-4">Last Login</th>
+                    <th className="py-3.5 px-4">Status</th>
                     {isCompanyAdmin && (
-                      <th className="py-3 px-4 text-right">Actions</th>
+                      <th className="py-3.5 px-4 text-right">Actions</th>
                     )}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
                   {members.map((member: TeamMember) => (
-                    <tr key={member.id} className="hover:bg-muted/30">
+                    <tr
+                      key={member.id}
+                      className="hover:bg-muted/20 transition-colors"
+                    >
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
+                          <div className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-semibold">
                             {getInitials(member.firstName, member.lastName)}
                           </div>
                           <div>
-                            <p className="font-medium text-foreground">
+                            <p className="font-semibold text-foreground text-xs">
                               {member.firstName} {member.lastName}
                             </p>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-[11px] text-muted-foreground font-mono">
                               {member.email}
                             </p>
                           </div>
@@ -344,20 +360,20 @@ export default function TeamManagementPage() {
                         {member.roles.map((r) => (
                           <span
                             key={r}
-                            className="inline-block text-xs font-medium capitalize bg-muted px-2 py-0.5 rounded mr-1"
+                            className="inline-block text-[10px] font-semibold uppercase bg-muted/60 px-2 py-0.5 rounded-none mr-1 text-muted-foreground"
                           >
                             {roleLabel(r)}
                           </span>
                         ))}
                       </td>
-                      <td className="py-3.5 px-4 text-muted-foreground">
+                      <td className="py-3.5 px-4 font-mono font-semibold text-foreground">
                         {member.roles.includes("collector")
                           ? member.customerCount
                           : "—"}
                       </td>
-                      <td className="py-3.5 px-4 text-xs text-muted-foreground">
+                      <td className="py-3.5 px-4 text-xs text-muted-foreground font-mono">
                         {member.lastLoginAt
-                          ? new Date(member.lastLoginAt).toLocaleDateString()
+                          ? formatDate(member.lastLoginAt)
                           : "Never"}
                       </td>
                       <td className="py-3.5 px-4">
@@ -369,7 +385,7 @@ export default function TeamManagementPage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="h-8 gap-1"
+                              className="h-7 text-xs font-semibold rounded-none gap-1"
                               disabled={statusMutation.isPending}
                               onClick={() =>
                                 statusMutation.mutate({
@@ -383,11 +399,11 @@ export default function TeamManagementPage() {
                             >
                               {member.status === "active" ? (
                                 <>
-                                  <UserX className="h-3.5 w-3.5" /> Suspend
+                                  <UserX className="h-3 w-3" /> Suspend
                                 </>
                               ) : (
                                 <>
-                                  <UserCheck className="h-3.5 w-3.5" /> Activate
+                                  <UserCheck className="h-3 w-3" /> Activate
                                 </>
                               )}
                             </Button>

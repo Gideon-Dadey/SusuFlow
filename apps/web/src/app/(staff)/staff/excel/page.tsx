@@ -454,8 +454,8 @@ export default function StaffExcelPage() {
       </div>
 
       {/* Toolbar & Template Chooser */}
-      <Card className="shadow-sm border-border">
-        <CardContent className="p-3 flex flex-wrap items-center justify-between gap-3">
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           {/* Templates */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">
@@ -470,7 +470,7 @@ export default function StaffExcelPage() {
                 else if (val.includes("Cash")) loadTemplate("cashflow");
                 else loadTemplate("blank");
               }}
-              className="py-1.5 px-3 text-xs rounded-none border border-border bg-card text-foreground font-semibold"
+              className="py-1.5 px-3 text-xs rounded-none border border-border/60 bg-card text-foreground font-semibold"
             >
               <option value="Susu Daily Audit Sheet">
                 Susu Daily Audit Sheet
@@ -573,7 +573,7 @@ export default function StaffExcelPage() {
               Clear All
             </Button>
           </div>
-        </CardContent>
+        </div>
       </Card>
 
       {/* Formula Bar */}

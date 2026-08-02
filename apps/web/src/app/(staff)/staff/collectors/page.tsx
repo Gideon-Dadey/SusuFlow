@@ -6,13 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
 import { operationsApi } from "@/lib/api";
 import { formatGhs, getInitials } from "@/lib/utils";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faRoute,
-  faUsers,
-  faWallet,
-  faCoins,
-} from "@fortawesome/free-solid-svg-icons";
 
 export default function CollectorsPerformancePage() {
   const { data, isLoading } = useQuery({
@@ -34,105 +27,107 @@ export default function CollectorsPerformancePage() {
         <h1 className="dashboard-title">Collector Performance</h1>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-2 pb-2">
-            <FontAwesomeIcon icon={faRoute} className="h-4 w-4 text-primary" />
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Collectors
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <p className="text-3xl font-bold">{collectors.length}</p>
-          </CardContent>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-4 sm:gap-4">
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Collectors
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {collectors.length}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Active field agents
+          </p>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-2 pb-2">
-            <FontAwesomeIcon icon={faUsers} className="h-4 w-4 text-sky-500" />
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Assigned Customers
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <p className="text-3xl font-bold">{totalCustomers}</p>
-          </CardContent>
+
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Assigned Customers
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {totalCustomers}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Managed saver accounts
+          </p>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-2 pb-2">
-            <FontAwesomeIcon
-              icon={faWallet}
-              className="h-4 w-4 text-emerald-500"
-            />
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Total Collected
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <p className="text-2xl font-bold">{formatGhs(totalVolume)}</p>
-          </CardContent>
+
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Total Collected
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {formatGhs(totalVolume)}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Field deposit volume
+          </p>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-2 pb-2">
-            <FontAwesomeIcon
-              icon={faCoins}
-              className="h-4 w-4 text-amber-500"
-            />
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Commission Payable
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <p className="text-2xl font-bold">{formatGhs(totalCommission)}</p>
-          </CardContent>
+
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Commission Payable
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {formatGhs(totalCommission)}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Available balance
+          </p>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Collector Leaderboard</CardTitle>
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+        <CardHeader className="px-6 py-4 border-b border-border/60 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+            Collector Leaderboard
+          </CardTitle>
           <Link
             href="/staff/commissions"
-            className="text-xs font-medium text-primary hover:underline"
+            className="text-xs font-semibold text-secondary hover:underline transition-colors"
           >
             Manage payouts →
           </Link>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {isLoading ? (
-            <div className="h-48 animate-pulse rounded-lg bg-muted/60" />
+            <div className="h-48 animate-pulse rounded-none bg-muted/60" />
           ) : collectors.length === 0 ? (
-            <div className="py-12 text-center">
-              <p className="text-sm text-muted-foreground">
+            <div className="py-12 text-center space-y-2">
+              <p className="text-xs text-muted-foreground font-semibold">
                 No collectors on your team yet
               </p>
               <Link
                 href="/staff/team"
-                className="text-xs text-primary font-medium mt-2 inline-block hover:underline"
+                className="text-xs text-secondary font-semibold hover:underline block"
               >
                 Add a collector from Team management →
               </Link>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-border text-xs font-semibold text-muted-foreground uppercase">
-                    <th className="py-3 px-4">Collector</th>
-                    <th className="py-3 px-4 text-right">Customers</th>
-                    <th className="py-3 px-4 text-right">Deposits</th>
-                    <th className="py-3 px-4 text-right">Volume</th>
-                    <th className="py-3 px-4 text-right">Commission</th>
-                    <th className="py-3 px-4 text-right">Balance</th>
-                    <th className="py-3 px-4 text-right">Status</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
+                  <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
+                    <th className="py-3.5 px-4">Collector</th>
+                    <th className="py-3.5 px-4 text-right">Savers</th>
+                    <th className="py-3.5 px-4 text-right">Deposits</th>
+                    <th className="py-3.5 px-4 text-right">Volume</th>
+                    <th className="py-3.5 px-4 text-right">Commission</th>
+                    <th className="py-3.5 px-4 text-right">Balance</th>
+                    <th className="py-3.5 px-4 text-right">Status</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
                   {collectors.map((collector, index) => (
-                    <tr key={collector.id} className="hover:bg-muted/30">
+                    <tr
+                      key={collector.id}
+                      className="hover:bg-muted/20 transition-colors"
+                    >
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
+                          <div className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-semibold">
                             {index < 3
                               ? `#${index + 1}`
                               : getInitials(
@@ -141,28 +136,28 @@ export default function CollectorsPerformancePage() {
                                 )}
                           </div>
                           <div>
-                            <p className="font-medium text-foreground">
+                            <p className="font-semibold text-foreground text-xs">
                               {collector.firstName} {collector.lastName}
                             </p>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-[11px] text-muted-foreground font-mono">
                               {collector.email}
                             </p>
                           </div>
                         </div>
                       </td>
-                      <td className="py-3.5 px-4 text-right font-medium">
+                      <td className="py-3.5 px-4 text-right font-bold tabular-nums text-foreground">
                         {collector.customerCount}
                       </td>
-                      <td className="py-3.5 px-4 text-right text-muted-foreground">
+                      <td className="py-3.5 px-4 text-right font-mono text-muted-foreground">
                         {collector.depositsCount}
                       </td>
-                      <td className="py-3.5 px-4 text-right font-mono text-xs font-semibold">
+                      <td className="py-3.5 px-4 text-right font-bold tabular-nums text-foreground">
                         {formatGhs(collector.depositsVolume)}
                       </td>
-                      <td className="py-3.5 px-4 text-right font-mono text-xs text-muted-foreground">
+                      <td className="py-3.5 px-4 text-right font-semibold tabular-nums text-muted-foreground">
                         {formatGhs(collector.commissionEarned)}
                       </td>
-                      <td className="py-3.5 px-4 text-right font-mono text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                      <td className="py-3.5 px-4 text-right font-bold tabular-nums text-foreground">
                         {formatGhs(collector.commissionBalance)}
                       </td>
                       <td className="py-3.5 px-4 text-right">
@@ -171,9 +166,9 @@ export default function CollectorsPerformancePage() {
                       <td className="py-3.5 px-4 text-right">
                         <Link
                           href={`/staff/audit?userId=${collector.id}`}
-                          className="text-xs font-medium text-primary hover:underline"
+                          className="text-xs font-semibold text-secondary hover:underline"
                         >
-                          View activity
+                          Activity Log
                         </Link>
                       </td>
                     </tr>

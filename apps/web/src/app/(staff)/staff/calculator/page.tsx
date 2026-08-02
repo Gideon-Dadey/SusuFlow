@@ -292,7 +292,7 @@ export default function StaffCalculatorPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-border overflow-x-auto pb-1">
+      <div className="flex items-center gap-2 border-b border-border/60 overflow-x-auto pb-1">
         {[
           { id: "keypad", label: "Smart Keypad", icon: faCalculator },
           { id: "compound", label: "Compound Growth", icon: faChartLine },
@@ -308,7 +308,7 @@ export default function StaffCalculatorPage() {
               "flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-none border-b-2 transition-colors whitespace-nowrap",
               activeTab === tab.id
                 ? "border-primary text-primary font-bold bg-primary/5"
-                : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50",
+                : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/20",
             )}
           >
             <FontAwesomeIcon icon={tab.icon} className="h-3.5 w-3.5" />
@@ -320,18 +320,17 @@ export default function StaffCalculatorPage() {
       {/* TAB 1: SMART KEYPAD */}
       {activeTab === "keypad" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="lg:col-span-2 shadow-sm border-border">
-            <CardHeader className="pb-3 border-b border-border/40">
+          <Card className="lg:col-span-2 rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+            <CardHeader className="px-6 py-4 border-b border-border/60">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-bold flex items-center gap-2">
-                  <FontAwesomeIcon
-                    icon={faCalculator}
-                    className="text-primary"
-                  />
-                  Financial Scientific Keypad
+                <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+                  Scientific Keypad
                 </CardTitle>
                 {calcMemory !== 0 && (
-                  <Badge variant="info" className="text-xs font-mono">
+                  <Badge
+                    variant="info"
+                    className="text-xs font-mono rounded-none"
+                  >
                     Memory: {calcMemory}
                   </Badge>
                 )}
