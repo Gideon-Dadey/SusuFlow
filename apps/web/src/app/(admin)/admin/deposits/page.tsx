@@ -82,14 +82,18 @@ export default function AdminDepositsPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="page-header mb-0">
-          <h1 className="dashboard-title">All Deposits</h1>
+          <h1 className="dashboard-title">All Inbound Deposits</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Global ledger of customer savings deposits and collector collections
+            across all organizations.
+          </p>
         </div>
         <Button
           size="sm"
           variant="outline"
           onClick={handleExportCsv}
           disabled={!deposits.length}
-          className="text-xs font-semibold"
+          className="rounded-none text-xs font-semibold"
         >
           <FontAwesomeIcon
             icon={faFileCsv}
@@ -100,10 +104,10 @@ export default function AdminDepositsPage() {
       </div>
 
       {/* Filter panel */}
-      <Card className="border-border/60">
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase">
+            <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               <FontAwesomeIcon icon={faFilter} className="h-3.5 w-3.5" />
               Filter By:
             </div>
@@ -155,19 +159,19 @@ export default function AdminDepositsPage() {
       </Card>
 
       {/* Main ledger list */}
-      <Card className="portal-card border-border/60 p-0 overflow-hidden">
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm overflow-hidden">
         <CardHeader className="px-6 py-4 border-b border-border/60">
-          <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+          <CardTitle className="text-sm sm:text-base font-bold text-foreground">
             Deposits Feed ({deposits.length})
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="space-y-4 p-6">
+            <div className="space-y-3 p-4">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={i}
-                  className="h-12 w-full animate-pulse rounded-none bg-muted/65"
+                  className="h-12 w-full animate-pulse rounded-none bg-muted/60"
                 />
               ))}
             </div>
@@ -177,13 +181,13 @@ export default function AdminDepositsPage() {
                 icon={faWallet}
                 className="mx-auto h-8 w-8 text-muted-foreground/50"
               />
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-xs text-muted-foreground font-medium">
                 No deposits match selected filter criteria.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-border/60 text-xs font-semibold text-muted-foreground uppercase bg-muted/20">
                     <th className="py-3 px-4">Date</th>
@@ -212,16 +216,16 @@ export default function AdminDepositsPage() {
                         {tx.reference}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="inline-block rounded-none bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
+                        <span className="inline-block rounded-none bg-muted px-2 py-0.5 text-xs font-medium text-foreground border border-border/60">
                           {tx.tenant?.name || "Platform"}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-medium text-foreground">
+                      <td className="py-3.5 px-4 font-semibold text-foreground">
                         {tx.customer?.user
                           ? `${tx.customer.user.firstName} ${tx.customer.user.lastName}`
                           : "N/A"}
                         {tx.customer?.customerNumber && (
-                          <span className="block text-[10px] text-muted-foreground font-mono">
+                          <span className="block text-[10px] text-muted-foreground font-mono font-normal">
                             {tx.customer.customerNumber}
                           </span>
                         )}
@@ -231,7 +235,7 @@ export default function AdminDepositsPage() {
                           ? tx.payment.paymentMethod.replace(/_/g, " ")
                           : "Momo"}
                       </td>
-                      <td className="py-3.5 px-4 font-bold text-foreground">
+                      <td className="py-3.5 px-4 font-bold tabular-nums tracking-tight text-foreground">
                         {formatGhs(tx.amount)}
                       </td>
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">

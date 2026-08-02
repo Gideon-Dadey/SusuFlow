@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { adminApi } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,27 +44,27 @@ export default function AdminFraudPage() {
     const sev = severity.toLowerCase();
     if (sev === "critical") {
       return (
-        <span className="inline-flex items-center rounded-full bg-red-100 dark:bg-red-950/80 px-2.5 py-0.5 text-xs font-semibold text-red-800 dark:text-red-300 animate-pulse">
+        <span className="inline-flex items-center rounded-none bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider animate-pulse">
           Critical
         </span>
       );
     }
     if (sev === "high") {
       return (
-        <span className="inline-flex items-center rounded-full bg-orange-100 dark:bg-orange-950/80 px-2.5 py-0.5 text-xs font-medium text-orange-800 dark:text-orange-300">
+        <span className="inline-flex items-center rounded-none bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
           High
         </span>
       );
     }
     if (sev === "medium") {
       return (
-        <span className="inline-flex items-center rounded-full bg-amber-100 dark:bg-amber-950/60 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:text-amber-300">
+        <span className="inline-flex items-center rounded-none bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
           Medium
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-950/50 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:text-blue-300">
+      <span className="inline-flex items-center rounded-none bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
         Low
       </span>
     );
@@ -75,27 +74,27 @@ export default function AdminFraudPage() {
     const stat = status.toLowerCase();
     if (stat === "open") {
       return (
-        <span className="inline-flex items-center rounded-full bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400 px-2 py-0.5 text-xs font-semibold uppercase">
+        <span className="inline-flex items-center rounded-none bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
           Open
         </span>
       );
     }
     if (stat === "investigating") {
       return (
-        <span className="inline-flex items-center rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 px-2 py-0.5 text-xs font-semibold uppercase">
+        <span className="inline-flex items-center rounded-none bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
           Investigating
         </span>
       );
     }
     if (stat === "resolved") {
       return (
-        <span className="inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 px-2 py-0.5 text-xs font-semibold uppercase">
+        <span className="inline-flex items-center rounded-none bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
           Resolved
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-semibold uppercase">
+      <span className="inline-flex items-center rounded-none bg-muted text-muted-foreground border border-border/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
         False Positive
       </span>
     );
@@ -104,14 +103,18 @@ export default function AdminFraudPage() {
   return (
     <div className="space-y-6">
       <div className="page-header mb-0">
-        <h1 className="dashboard-title">Fraud Alerts</h1>
+        <h1 className="dashboard-title">Fraud & Security Alerts</h1>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Real-time risk scoring, suspicious pattern detection, and security
+          incident monitoring.
+        </p>
       </div>
 
       {/* Filter panel */}
-      <Card className="border-border/60">
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase">
+            <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               <FontAwesomeIcon icon={faFilter} className="h-3.5 w-3.5" />
               Filter By:
             </div>
@@ -122,7 +125,7 @@ export default function AdminFraudPage() {
                 <select
                   value={selectedTenant}
                   onChange={(e) => setSelectedTenant(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-1.5 text-sm outline-none focus:border-primary"
+                  className="w-full rounded-none border border-border/60 bg-background px-3 py-1.5 text-xs outline-none focus:border-primary"
                 >
                   <option value="">All Organizations</option>
                   {tenants.map((tenant) => (
@@ -138,7 +141,7 @@ export default function AdminFraudPage() {
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-1.5 text-sm outline-none focus:border-primary"
+                  className="w-full rounded-none border border-border/60 bg-background px-3 py-1.5 text-xs outline-none focus:border-primary"
                 >
                   <option value="">All Statuses</option>
                   <option value="open">Open</option>
@@ -163,17 +166,19 @@ export default function AdminFraudPage() {
       </Card>
 
       {/* Main Alerts List */}
-      <Card className="portal-card border-border/60">
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm">
         <CardHeader>
-          <CardTitle>Security Risks & Fraud Flags ({alerts.length})</CardTitle>
+          <CardTitle className="text-sm sm:text-base font-bold">
+            Security Risks & Fraud Flags ({alerts.length})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-4 py-8">
+            <div className="space-y-3 py-4">
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="h-16 w-full animate-pulse rounded-lg bg-muted/65"
+                  className="h-16 w-full animate-pulse rounded-none bg-muted/60"
                 />
               ))}
             </div>
@@ -183,18 +188,18 @@ export default function AdminFraudPage() {
                 icon={faShield}
                 className="mx-auto h-8 w-8 text-emerald-600/50"
               />
-              <p className="mt-2 text-sm text-muted-foreground font-medium text-emerald-700 dark:text-emerald-500">
+              <p className="mt-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                 No security alerts triggered.
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 The platform is running smoothly and all operations are secured.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-border text-xs font-semibold text-muted-foreground uppercase">
+                  <tr className="border-b border-border/60 text-xs font-semibold text-muted-foreground uppercase bg-muted/20">
                     <th className="py-3 px-4">Date</th>
                     <th className="py-3 px-4">Severity</th>
                     <th className="py-3 px-4">Organization</th>
@@ -210,38 +215,38 @@ export default function AdminFraudPage() {
                       key={alert.id}
                       className="hover:bg-muted/30 transition-colors"
                     >
-                      <td className="py-4 px-4 text-xs text-muted-foreground whitespace-nowrap">
+                      <td className="py-3.5 px-4 text-xs text-muted-foreground whitespace-nowrap">
                         {formatDate(alert.createdAt)}
                       </td>
-                      <td className="py-4 px-4 whitespace-nowrap">
+                      <td className="py-3.5 px-4 whitespace-nowrap">
                         {getSeverityBadge(alert.severity)}
                       </td>
-                      <td className="py-4 px-4">
-                        <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
+                      <td className="py-3.5 px-4">
+                        <span className="inline-block rounded-none bg-muted px-2 py-0.5 text-xs font-medium text-foreground border border-border/60">
                           {alert.tenant?.name || "Platform"}
                         </span>
                       </td>
-                      <td className="py-4 px-4 font-semibold text-foreground">
+                      <td className="py-3.5 px-4 font-bold text-foreground">
                         {alert.rule.replace(/_/g, " ")}
                       </td>
-                      <td className="py-4 px-4 text-xs">
-                        <span className="font-medium text-foreground">
+                      <td className="py-3.5 px-4 text-xs">
+                        <span className="font-semibold text-foreground">
                           {alert.resourceType || "N/A"}
                         </span>
                         <span className="block text-[10px] font-mono text-muted-foreground truncate max-w-[120px]">
                           {alert.resourceId || "N/A"}
                         </span>
                       </td>
-                      <td className="py-4 px-4 text-xs text-muted-foreground max-w-xs">
+                      <td className="py-3.5 px-4 text-xs text-muted-foreground max-w-xs">
                         {alert.details ? (
-                          <div className="max-h-16 overflow-y-auto font-mono text-[10px] leading-tight bg-muted/20 p-1.5 rounded border border-border/40">
+                          <div className="max-h-16 overflow-y-auto font-mono text-[10px] leading-tight bg-muted/20 p-1.5 rounded-none border border-border/60">
                             {JSON.stringify(alert.details, null, 2)}
                           </div>
                         ) : (
                           "No details provided"
                         )}
                       </td>
-                      <td className="py-4 px-4 text-right whitespace-nowrap">
+                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
                         {getStatusBadge(alert.status)}
                       </td>
                     </tr>
