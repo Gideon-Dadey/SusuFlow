@@ -1,36 +1,41 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ledgerApi } from '@/lib/api';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { StatusBadge } from "@/components/ui/badge";
+import { ledgerApi } from "@/lib/api";
+import { formatGhs, formatDate } from "@/lib/utils";
 
 export default function CommissionsLedgerPage() {
   const queryClient = useQueryClient();
-  const [selectedCollectorId, setSelectedCollectorId] = useState<string>('');
-  const [payoutAmount, setPayoutAmount] = useState<string>('');
-  const [payoutDescription, setPayoutDescription] = useState<string>('');
+  const [selectedCollectorId, setSelectedCollectorId] = useState<string>("");
+  const [payoutAmount, setPayoutAmount] = useState<string>("");
+  const [payoutDescription, setPayoutDescription] = useState<string>("");
   const [isPayingOut, setIsPayingOut] = useState<boolean>(false);
 
   const { data: commissions, isLoading } = useQuery({
-    queryKey: ['staff-commissions'],
+    queryKey: ["staff-commissions"],
     queryFn: () => ledgerApi.listCommissions(),
   });
 
   const payoutMutation = useMutation({
-    mutationFn: (data: { collectorId: string; amount: number; description?: string }) =>
-      ledgerApi.payoutCommission(data),
+    mutationFn: (data: {
+      collectorId: string;
+      amount: number;
+      description?: string;
+    }) => ledgerApi.payoutCommission(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['staff-commissions'] });
-      setPayoutAmount('');
-      setPayoutDescription('');
-      setSelectedCollectorId('');
+      queryClient.invalidateQueries({ queryKey: ["staff-commissions"] });
+      setPayoutAmount("");
+      setPayoutDescription("");
+      setSelectedCollectorId("");
       setIsPayingOut(false);
     },
     onError: (err) => {
-      alert(err instanceof Error ? err.message : 'Payout failed');
+      alert(err instanceof Error ? err.message : "Payout failed");
     },
   });
 
@@ -66,14 +71,14 @@ export default function CommissionsLedgerPage() {
     }
 
     const summary = collectorMap[col.id];
-    if (tx.type === 'deposit') {
+    if (tx.type === "deposit") {
       const entry1200 = tx.ledgerEntries?.find(
-        (e: any) => e.account?.code === '1200',
+        (e: any) => e.account?.code === "1200",
       );
       const commissionAmt = entry1200 ? Number(entry1200.amount) : 0;
       summary.earned += commissionAmt;
       summary.balance += commissionAmt;
-    } else if (tx.type === 'commission') {
+    } else if (tx.type === "commission") {
       const payoutAmt = Number(tx.amount);
       summary.paid += payoutAmt;
       summary.balance -= payoutAmt;
@@ -85,18 +90,20 @@ export default function CommissionsLedgerPage() {
   const handlePayoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedCollectorId) {
-      alert('Please select a collector');
+      alert("Please select a collector");
       return;
     }
     const amt = parseFloat(payoutAmount);
     if (isNaN(amt) || amt <= 0) {
-      alert('Please enter a valid payout amount');
+      alert("Please enter a valid payout amount");
       return;
     }
 
     const collector = collectorMap[selectedCollectorId];
     if (collector && amt > collector.balance) {
-      alert(`Cannot payout more than available balance of GHS ${collector.balance.toFixed(2)}`);
+      alert(
+        `Cannot payout more than available balance of GHS ${collector.balance.toFixed(2)}`,
+      );
       return;
     }
 
@@ -108,27 +115,38 @@ export default function CommissionsLedgerPage() {
   };
 
   const handleExportCsv = () => {
-    const headers = ['Date', 'Type', 'Collector Name', 'Collector Email', 'Ref/Desc', 'Amount (GHS)'];
+    const headers = [
+      "Date",
+      "Type",
+      "Collector Name",
+      "Collector Email",
+      "Ref/Desc",
+      "Amount (GHS)",
+    ];
     const rows = transactions.map((t: any) => {
-      const entry1200 = t.ledgerEntries?.find((e: any) => e.account?.code === '1200');
+      const entry1200 = t.ledgerEntries?.find(
+        (e: any) => e.account?.code === "1200",
+      );
       const commissionAmt = entry1200 ? Number(entry1200.amount) : 0;
       return [
         new Date(t.createdAt).toLocaleDateString(),
-        t.type === 'deposit' ? 'Earned' : 'Paid Out',
-        t.collector ? `"${t.collector.firstName} ${t.collector.lastName}"` : 'N/A',
-        t.collector?.email || 'N/A',
-        t.type === 'deposit' ? t.reference : t.description || 'Payout',
-        t.type === 'deposit' ? commissionAmt : t.amount,
+        t.type === "deposit" ? "Earned" : "Paid Out",
+        t.collector
+          ? `"${t.collector.firstName} ${t.collector.lastName}"`
+          : "N/A",
+        t.collector?.email || "N/A",
+        t.type === "deposit" ? t.reference : t.description || "Payout",
+        t.type === "deposit" ? commissionAmt : t.amount,
       ];
     });
 
     const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `commissions_report_${Date.now()}.csv`);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `commissions_report_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -137,16 +155,14 @@ export default function CommissionsLedgerPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="dashboard-title">Collector Commissions</h1>
-        </div>
+        <h1 className="dashboard-title">Collector Commissions</h1>
 
         <div className="flex items-center gap-2">
           <Button
             size="sm"
             variant="outline"
             onClick={handleExportCsv}
-            className="text-xs font-semibold px-4 min-h-[36px]"
+            className="text-xs font-semibold rounded-none min-h-[36px]"
             disabled={!transactions.length}
           >
             Download CSV
@@ -154,39 +170,45 @@ export default function CommissionsLedgerPage() {
           <Button
             size="sm"
             onClick={() => setIsPayingOut(!isPayingOut)}
-            className="text-xs font-semibold px-4 min-h-[36px] bg-primary text-white hover:bg-primary/95"
+            className="text-xs font-semibold rounded-none min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95"
           >
-            {isPayingOut ? 'Close Payout Panel' : 'Record Payout'}
+            {isPayingOut ? "Close Panel" : "Record Payout"}
           </Button>
         </div>
       </div>
 
       {isPayingOut && (
-        <Card className="bg-card/70 backdrop-blur-md border border-border shadow-md max-w-xl">
-          <CardHeader>
-            <CardTitle className="text-base font-bold text-foreground">Record Commission Payout</CardTitle>
+        <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden max-w-xl">
+          <CardHeader className="px-6 py-4 border-b border-border/60">
+            <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+              Record Commission Payout
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <form onSubmit={handlePayoutSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-muted-foreground">Select Collector</label>
+                <label className="text-xs font-semibold text-muted-foreground">
+                  Select Collector
+                </label>
                 <select
                   value={selectedCollectorId}
                   onChange={(e) => setSelectedCollectorId(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]"
+                  className="w-full rounded-none border border-border/60 bg-card px-3 py-2 text-xs text-foreground outline-none focus:border-primary min-h-[40px]"
                   required
                 >
                   <option value="">-- Choose Collector --</option>
                   {collectors.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.firstName} {c.lastName} (Bal: GHS {c.balance.toFixed(2)})
+                      {c.firstName} {c.lastName} (Bal: {formatGhs(c.balance)})
                     </option>
                   ))}
                 </select>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-muted-foreground">Payout Amount (GHS)</label>
+                <label className="text-xs font-semibold text-muted-foreground">
+                  Payout Amount (GHS)
+                </label>
                 <Input
                   type="number"
                   step="0.01"
@@ -194,27 +216,28 @@ export default function CommissionsLedgerPage() {
                   placeholder="0.00"
                   value={payoutAmount}
                   onChange={(e) => setPayoutAmount(e.target.value)}
-                  className="min-h-[44px]"
+                  className="min-h-[40px] rounded-none border border-border/60 text-xs"
                   required
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-muted-foreground">Notes / Reference</label>
+                <label className="text-xs font-semibold text-muted-foreground">
+                  Notes / Reference
+                </label>
                 <Input
                   type="text"
                   placeholder="e.g. Paid via Mobile Money"
                   value={payoutDescription}
                   onChange={(e) => setPayoutDescription(e.target.value)}
-                  className="min-h-[44px]"
+                  className="min-h-[40px] rounded-none border border-border/60 text-xs"
                 />
               </div>
 
               <Button
                 type="submit"
-                variant="primary"
                 loading={payoutMutation.isPending}
-                className="w-full text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white border-none min-h-[44px]"
+                className="w-full text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-none min-h-[40px] border-none"
               >
                 Confirm Payout
               </Button>
@@ -224,46 +247,63 @@ export default function CommissionsLedgerPage() {
       )}
 
       {/* Collector balances summary card */}
-      <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm">
-        <CardHeader className="border-b border-border pb-4">
-          <CardTitle className="text-base font-bold text-foreground">Agent Balances</CardTitle>
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+        <CardHeader className="px-6 py-4 border-b border-border/60">
+          <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+            Agent Balances
+          </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse text-left">
+            <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-border bg-muted/30 text-xs font-semibold text-muted-foreground">
-                  <th className="p-4">Collector</th>
-                  <th className="p-4">Email</th>
-                  <th className="p-4">Total Earned</th>
-                  <th className="p-4">Total Paid</th>
-                  <th className="p-4 text-right">Available Balance</th>
+                <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
+                  <th className="py-3.5 px-6">Collector</th>
+                  <th className="py-3.5 px-6">Email</th>
+                  <th className="py-3.5 px-6">Total Earned</th>
+                  <th className="py-3.5 px-6">Total Paid</th>
+                  <th className="py-3.5 px-6 text-right">Available Balance</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                    <td
+                      colSpan={5}
+                      className="py-8 text-center text-xs text-muted-foreground"
+                    >
                       Loading collector summaries...
                     </td>
                   </tr>
                 ) : collectors.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                    <td
+                      colSpan={5}
+                      className="py-8 text-center text-xs text-muted-foreground"
+                    >
                       No collector commission data found
                     </td>
                   </tr>
                 ) : (
                   collectors.map((c) => (
-                    <tr key={c.id} className="hover:bg-muted/10">
-                      <td className="p-4 font-semibold text-foreground">
+                    <tr
+                      key={c.id}
+                      className="hover:bg-muted/20 transition-colors"
+                    >
+                      <td className="py-3.5 px-6 font-semibold text-xs text-foreground">
                         {c.firstName} {c.lastName}
                       </td>
-                      <td className="p-4 text-muted-foreground text-xs">{c.email}</td>
-                      <td className="p-4 text-foreground text-xs">GHS {c.earned.toFixed(2)}</td>
-                      <td className="p-4 text-muted-foreground text-xs">GHS {c.paid.toFixed(2)}</td>
-                      <td className="p-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
-                        GHS {c.balance.toFixed(2)}
+                      <td className="py-3.5 px-6 text-muted-foreground text-xs font-mono">
+                        {c.email}
+                      </td>
+                      <td className="py-3.5 px-6 text-foreground text-xs font-semibold tabular-nums">
+                        {formatGhs(c.earned)}
+                      </td>
+                      <td className="py-3.5 px-6 text-muted-foreground text-xs font-semibold tabular-nums">
+                        {formatGhs(c.paid)}
+                      </td>
+                      <td className="py-3.5 px-6 text-right font-bold text-xs tabular-nums text-foreground">
+                        {formatGhs(c.balance)}
                       </td>
                     </tr>
                   ))
@@ -275,73 +315,77 @@ export default function CommissionsLedgerPage() {
       </Card>
 
       {/* Audit ledger transaction list */}
-      <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm">
-        <CardHeader className="border-b border-border pb-4">
-          <CardTitle className="text-base font-bold text-foreground">Commissions Activity Log</CardTitle>
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+        <CardHeader className="px-6 py-4 border-b border-border/60">
+          <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+            Commissions Log
+          </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse text-left">
+            <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-border bg-muted/30 text-xs font-semibold text-muted-foreground">
-                  <th className="p-4">Date</th>
-                  <th className="p-4">Type</th>
-                  <th className="p-4">Collector</th>
-                  <th className="p-4">Reference/Description</th>
-                  <th className="p-4 text-right">Amount</th>
+                <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
+                  <th className="py-3.5 px-6">Date</th>
+                  <th className="py-3.5 px-6">Type</th>
+                  <th className="py-3.5 px-6">Collector</th>
+                  <th className="py-3.5 px-6">Reference / Notes</th>
+                  <th className="py-3.5 px-6 text-right">Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                    <td
+                      colSpan={5}
+                      className="py-8 text-center text-xs text-muted-foreground"
+                    >
                       Loading activity logs...
                     </td>
                   </tr>
                 ) : transactions.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                    <td
+                      colSpan={5}
+                      className="py-8 text-center text-xs text-muted-foreground"
+                    >
                       No recent activities recorded
                     </td>
                   </tr>
                 ) : (
                   transactions.map((t: any) => {
-                    const isEarned = t.type === 'deposit';
-                    const entry1200 = t.ledgerEntries?.find((e: any) => e.account?.code === '1200');
-                    const displayAmt = isEarned ? Number(entry1200?.amount || 0) : Number(t.amount);
+                    const isEarned = t.type === "deposit";
+                    const entry1200 = t.ledgerEntries?.find(
+                      (e: any) => e.account?.code === "1200",
+                    );
+                    const displayAmt = isEarned
+                      ? Number(entry1200?.amount || 0)
+                      : Number(t.amount);
 
                     return (
-                      <tr key={t.id} className="hover:bg-muted/10">
-                        <td className="p-4 text-xs text-muted-foreground">
-                          {new Date(t.createdAt).toLocaleString()}
+                      <tr
+                        key={t.id}
+                        className="hover:bg-muted/20 transition-colors"
+                      >
+                        <td className="py-3.5 px-6 text-xs text-muted-foreground font-mono">
+                          {formatDate(t.createdAt)}
                         </td>
-                        <td className="p-4 text-xs font-semibold">
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wider ${
-                              isEarned
-                                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
-                                : 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300'
-                            }`}
-                          >
-                            {isEarned ? 'Earning' : 'Payout'}
-                          </span>
+                        <td className="py-3.5 px-6 text-xs">
+                          <StatusBadge
+                            status={isEarned ? "completed" : "pending"}
+                          />
                         </td>
-                        <td className="p-4 text-foreground font-medium text-xs">
+                        <td className="py-3.5 px-6 text-foreground font-semibold text-xs">
                           {t.collector
                             ? `${t.collector.firstName} ${t.collector.lastName}`
-                            : 'System'}
+                            : "System"}
                         </td>
-                        <td className="p-4 text-muted-foreground text-xs">
+                        <td className="py-3.5 px-6 text-muted-foreground text-xs">
                           {isEarned ? `Deposit: ${t.reference}` : t.description}
                         </td>
-                        <td
-                          className={`p-4 text-right font-bold text-xs ${
-                            isEarned
-                              ? 'text-emerald-600 dark:text-emerald-400'
-                              : 'text-blue-600 dark:text-blue-400'
-                          }`}
-                        >
-                          {isEarned ? '+' : '-'} GHS {displayAmt.toFixed(2)}
+                        <td className="py-3.5 px-6 text-right font-bold text-xs tabular-nums text-foreground">
+                          {isEarned ? "+" : "-"}
+                          {formatGhs(displayAmt)}
                         </td>
                       </tr>
                     );
