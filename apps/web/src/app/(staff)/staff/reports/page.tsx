@@ -2,10 +2,9 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 import { Button } from "@/components/ui/button";
 import { reportApi, tenantApi } from "@/lib/api";
-import { getTenantSlug } from "@/lib/utils";
+import { formatGhs, getTenantSlug } from "@/lib/utils";
 import { useState } from "react";
 
 export default function ReportsHubPage() {
@@ -93,7 +92,7 @@ export default function ReportsHubPage() {
           <Button
             size="sm"
             onClick={handleSeedDemo}
-            className="text-xs font-semibold px-4 min-h-[36px] bg-emerald-600 hover:bg-emerald-700 text-white border-none"
+            className="text-xs font-semibold px-4 min-h-[36px] rounded-none bg-emerald-600 hover:bg-emerald-700 text-white border-none"
             loading={seeding}
           >
             Initialize Demo Data
@@ -102,7 +101,7 @@ export default function ReportsHubPage() {
             size="sm"
             variant="outline"
             onClick={handleExportCsv}
-            className="text-xs font-semibold px-4 min-h-[36px]"
+            className="text-xs font-semibold px-4 min-h-[36px] rounded-none"
             disabled={isLoading}
           >
             Export Summary CSV
@@ -111,98 +110,94 @@ export default function ReportsHubPage() {
       </div>
 
       {/* Summary KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm">
-          <CardContent className="p-6">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
-              Total Deposits
-            </span>
-            <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
-              GHS {summary.totalDeposits.toFixed(2)}
-            </span>
-          </CardContent>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4">
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Total Deposits
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {formatGhs(summary.totalDeposits)}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Inbound payments
+          </p>
         </Card>
 
-        <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm">
-          <CardContent className="p-6">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
-              Total Withdrawals
-            </span>
-            <span className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1 block">
-              GHS {summary.totalWithdrawals.toFixed(2)}
-            </span>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Total Withdrawals
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {formatGhs(summary.totalWithdrawals)}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Processed payouts
+          </p>
         </Card>
 
-        <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm">
-          <CardContent className="p-6">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
-              Platform Cash Reserve
-            </span>
-            <span className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1 block">
-              GHS {summary.platformCash.toFixed(2)}
-            </span>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Platform Cash Reserve
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {formatGhs(summary.platformCash)}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">Liquid funds</p>
         </Card>
 
-        <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm">
-          <CardContent className="p-6">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
-              Customer Liability
-            </span>
-            <span className="text-2xl font-bold text-foreground mt-1 block">
-              GHS {summary.outstandingLiability.toFixed(2)}
-            </span>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Customer Liability
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {formatGhs(summary.outstandingLiability)}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Saver balances
+          </p>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Additional liability and expense card */}
-        <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm flex flex-col justify-between">
-          <CardHeader>
-            <CardTitle className="text-base font-bold text-foreground">
+        <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden flex flex-col justify-between">
+          <CardHeader className="px-6 py-4 border-b border-border/60">
+            <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
               Accruals & Overhead
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center text-sm border-b border-border pb-3">
-              <span className="text-muted-foreground">
+          <CardContent className="p-6 space-y-4">
+            <div className="flex justify-between items-center text-xs border-b border-border/60 pb-3">
+              <span className="text-muted-foreground font-semibold">
                 Collector Commissions Payable
               </span>
-              <span className="font-bold text-foreground">
-                GHS {summary.collectorCommissionsPayable.toFixed(2)}
+              <span className="font-bold tabular-nums text-foreground">
+                {formatGhs(summary.collectorCommissionsPayable)}
               </span>
             </div>
-            <div className="flex justify-between items-center text-sm border-b border-border pb-3">
-              <span className="text-muted-foreground">
+            <div className="flex justify-between items-center text-xs border-b border-border/60 pb-3">
+              <span className="text-muted-foreground font-semibold">
                 Total Commission Expense
               </span>
-              <span className="font-bold text-foreground">
-                GHS {summary.totalCommissionExpense.toFixed(2)}
+              <span className="font-bold tabular-nums text-foreground">
+                {formatGhs(summary.totalCommissionExpense)}
               </span>
             </div>
-            <div className="flex justify-between items-center text-sm pb-1">
-              <span className="text-muted-foreground">
+            <div className="flex justify-between items-center text-xs pb-1">
+              <span className="text-muted-foreground font-semibold">
                 Net Operations Balance
               </span>
-              <span
-                className={`font-bold ${
-                  summary.netOperationsBalance >= 0
-                    ? "text-emerald-600"
-                    : "text-red-600"
-                }`}
-              >
-                GHS {summary.netOperationsBalance.toFixed(2)}
+              <span className="font-bold tabular-nums text-foreground">
+                {formatGhs(summary.netOperationsBalance)}
               </span>
             </div>
           </CardContent>
         </Card>
 
         {/* Daily operations activity trends */}
-        <Card className="bg-card/60 backdrop-blur-md border border-border shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-base font-bold text-foreground">
+        <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+          <CardHeader className="px-6 py-4 border-b border-border/60">
+            <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
               Daily Activity Trend
             </CardTitle>
           </CardHeader>
@@ -210,10 +205,10 @@ export default function ReportsHubPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left border-collapse">
                 <thead>
-                  <tr className="bg-muted/30 border-b border-border font-semibold text-muted-foreground">
-                    <th className="p-3">Date</th>
-                    <th className="p-3 text-right">Deposits</th>
-                    <th className="p-3 text-right">Withdrawals</th>
+                  <tr className="bg-muted/20 border-b border-border/60 font-semibold text-muted-foreground uppercase">
+                    <th className="py-3 px-4">Date</th>
+                    <th className="py-3 px-4 text-right">Deposits</th>
+                    <th className="py-3 px-4 text-right">Withdrawals</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
@@ -221,7 +216,7 @@ export default function ReportsHubPage() {
                     <tr>
                       <td
                         colSpan={3}
-                        className="p-4 text-center text-muted-foreground"
+                        className="py-8 text-center text-xs text-muted-foreground"
                       >
                         Loading trends...
                       </td>
@@ -230,22 +225,25 @@ export default function ReportsHubPage() {
                     <tr>
                       <td
                         colSpan={3}
-                        className="p-4 text-center text-muted-foreground"
+                        className="py-8 text-center text-xs text-muted-foreground"
                       >
                         No transactions trend available
                       </td>
                     </tr>
                   ) : (
                     trends.map((t) => (
-                      <tr key={t.date} className="hover:bg-muted/10">
-                        <td className="p-3 font-medium text-foreground">
+                      <tr
+                        key={t.date}
+                        className="hover:bg-muted/20 transition-colors"
+                      >
+                        <td className="py-3 px-4 font-mono font-semibold text-foreground">
                           {t.date}
                         </td>
-                        <td className="p-3 text-right text-emerald-600 dark:text-emerald-400 font-semibold">
-                          GHS {t.deposits.toFixed(2)}
+                        <td className="py-3 px-4 text-right font-bold tabular-nums text-foreground">
+                          {formatGhs(t.deposits)}
                         </td>
-                        <td className="p-3 text-right text-red-600 dark:text-red-400 font-semibold">
-                          GHS {t.withdrawals.toFixed(2)}
+                        <td className="py-3 px-4 text-right font-bold tabular-nums text-foreground">
+                          {formatGhs(t.withdrawals)}
                         </td>
                       </tr>
                     ))

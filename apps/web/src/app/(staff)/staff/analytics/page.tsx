@@ -4,21 +4,12 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { customerApi } from "@/lib/api";
-import { formatGhs, cn } from "@/lib/utils";
+import { formatGhs } from "@/lib/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBrain,
-  faChartLine,
-  faShieldHalved,
-  faTriangleExclamation,
-  faUsers,
-  faDownload,
-  faCheckCircle,
-  faCoins,
-} from "@fortawesome/free-solid-svg-icons";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
 
 export default function StaffAiAnalyticsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,7 +27,6 @@ export default function StaffAiAnalyticsPage() {
     const balance = Number(c.wallets?.[0]?.balance || c.wallet?.balance || 0);
     const kycLevel = Number(c.kycLevel || 0);
 
-    // Pseudo score base
     let score = 550 + kycLevel * 60 + Math.min(240, Math.floor(balance / 20));
     score = Math.min(850, Math.max(300, score));
 
@@ -101,92 +91,84 @@ export default function StaffAiAnalyticsPage() {
         </div>
         <Button
           size="sm"
-          className="flex items-center gap-2 text-xs font-semibold bg-primary text-primary-foreground"
+          className="flex items-center gap-2 text-xs font-semibold rounded-none min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95"
           onClick={() =>
             alert(
               "Credit Assessment Report generated and sent to management audit queue.",
             )
           }
         >
-          <FontAwesomeIcon icon={faDownload} />
+          <FontAwesomeIcon icon={faDownload} className="h-3.5 w-3.5" />
           Export Risk Assessment
         </Button>
       </div>
 
       {/* Top Metrics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <Card className="bg-primary/10 border-primary/30">
-          <CardContent className="p-4 text-center">
-            <span className="text-xs font-semibold text-muted-foreground uppercase">
-              Average Portfolio Score
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-4 sm:gap-4">
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Average Portfolio Score
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {avgScore}{" "}
+            <span className="text-xs font-normal text-muted-foreground">
+              / 850
             </span>
-            <div className="flex items-center justify-center gap-2 mt-1">
-              <FontAwesomeIcon
-                icon={faBrain}
-                className="text-primary text-xl"
-              />
-              <p className="text-3xl font-bold font-mono text-primary">
-                {avgScore}
-              </p>
-            </div>
-            <span className="text-[11px] text-emerald-500 font-semibold mt-1 inline-block">
-              Good Credit Quality
-            </span>
-          </CardContent>
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Good Credit Quality
+          </p>
         </Card>
 
-        <Card className="bg-emerald-500/10 border-emerald-500/30">
-          <CardContent className="p-4 text-center">
-            <span className="text-xs font-semibold text-muted-foreground uppercase">
-              Prime Tier (AAA) Customers
-            </span>
-            <p className="text-3xl font-bold font-mono text-emerald-500 mt-1">
-              {evaluatedCustomers.filter((c) => c.tier === "AAA").length}
-            </p>
-            <span className="text-[11px] text-muted-foreground mt-1 inline-block">
-              Zero Default Probability
-            </span>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Prime Tier (AAA) Savers
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {evaluatedCustomers.filter((c) => c.tier === "AAA").length}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Zero default probability
+          </p>
         </Card>
 
-        <Card className="bg-indigo-500/10 border-indigo-500/30">
-          <CardContent className="p-4 text-center">
-            <span className="text-xs font-semibold text-muted-foreground uppercase">
-              Max Micro-Loan Capacity
-            </span>
-            <p className="text-3xl font-bold font-mono text-indigo-400 mt-1">
-              {formatGhs(totalLoanCapacity)}
-            </p>
-            <span className="text-[11px] text-muted-foreground mt-1 inline-block">
-              Based on Collateral-Free Savings
-            </span>
-          </CardContent>
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Max Micro-Loan Capacity
+          </p>
+          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+            {formatGhs(totalLoanCapacity)}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Collateral-free savings
+          </p>
         </Card>
 
-        <Card className="bg-amber-500/10 border-amber-500/30">
-          <CardContent className="p-4 text-center">
-            <span className="text-xs font-semibold text-muted-foreground uppercase">
-              Monitored Anomalies
-            </span>
-            <p className="text-3xl font-bold font-mono text-amber-500 mt-1">
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Monitored Anomalies
+          </p>
+          <div className="mt-1 flex items-center justify-between">
+            <span className="text-sm sm:text-lg font-bold text-foreground">
               0 Alerts
-            </p>
-            <span className="text-[11px] text-emerald-500 font-semibold mt-1 inline-block">
-              Clean Ledger Integrity
             </span>
-          </CardContent>
+            <StatusBadge status="completed" />
+          </div>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Clean ledger integrity
+          </p>
         </Card>
       </div>
 
       {/* Filter Bar */}
-      <Card className="shadow-sm border-border">
-        <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="w-full sm:w-72">
             <Input
               placeholder="Search customer name or ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="text-xs font-mono"
+              className="text-xs font-mono rounded-none border border-border/60 h-9"
             />
           </div>
 
@@ -199,43 +181,43 @@ export default function StaffAiAnalyticsPage() {
                 key={tier}
                 size="sm"
                 variant={tierFilter === tier ? "primary" : "outline"}
-                className="text-xs h-8 capitalize font-mono"
+                className="text-xs h-8 capitalize rounded-none font-semibold px-3"
                 onClick={() => setTierFilter(tier)}
               >
                 {tier === "all" ? "All Tiers" : `Tier ${tier}`}
               </Button>
             ))}
           </div>
-        </CardContent>
+        </div>
       </Card>
 
       {/* Customer Scoring Table */}
-      <Card className="shadow-sm border-border">
-        <CardHeader className="pb-3 border-b border-border/40">
-          <CardTitle className="text-base font-semibold text-foreground">
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+        <CardHeader className="px-6 py-4 border-b border-border/60">
+          <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
             Customer Credit Risk Matrix
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left">
-              <thead className="bg-muted text-muted-foreground font-semibold uppercase">
-                <tr>
-                  <th className="p-3">Customer ID</th>
-                  <th className="p-3">Customer Name</th>
-                  <th className="p-3">Wallet Balance</th>
-                  <th className="p-3">Credit Score</th>
-                  <th className="p-3">Risk Tier</th>
-                  <th className="p-3">Deposit Consistency</th>
-                  <th className="p-3">Max Micro-Loan Limit</th>
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
+                  <th className="py-3.5 px-4">Customer ID</th>
+                  <th className="py-3.5 px-4">Customer Name</th>
+                  <th className="py-3.5 px-4">Wallet Balance</th>
+                  <th className="py-3.5 px-4">Credit Score</th>
+                  <th className="py-3.5 px-4">Risk Tier</th>
+                  <th className="py-3.5 px-4">Consistency</th>
+                  <th className="py-3.5 px-4 text-right">Loan Limit</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/40 font-mono">
+              <tbody className="divide-y divide-border/60">
                 {isLoading ? (
                   <tr>
                     <td
                       colSpan={7}
-                      className="p-6 text-center text-muted-foreground"
+                      className="py-8 text-center text-xs text-muted-foreground"
                     >
                       Running AI credit evaluation engine...
                     </td>
@@ -244,44 +226,44 @@ export default function StaffAiAnalyticsPage() {
                   <tr>
                     <td
                       colSpan={7}
-                      className="p-6 text-center text-muted-foreground"
+                      className="py-8 text-center text-xs text-muted-foreground"
                     >
                       No customer records found.
                     </td>
                   </tr>
                 ) : (
                   filtered.map((c) => (
-                    <tr key={c.id} className="hover:bg-muted/40">
-                      <td className="p-3 font-bold text-foreground">
+                    <tr
+                      key={c.id}
+                      className="hover:bg-muted/20 transition-colors"
+                    >
+                      <td className="py-3.5 px-4 font-mono font-semibold text-foreground">
                         {c.customerNumber}
                       </td>
-                      <td className="p-3 font-bold text-foreground">
+                      <td className="py-3.5 px-4 font-semibold text-foreground">
                         {c.user?.firstName} {c.user?.lastName}
                       </td>
-                      <td className="p-3 text-muted-foreground">
+                      <td className="py-3.5 px-4 font-bold tabular-nums text-foreground">
                         {formatGhs(c.walletBalance)}
                       </td>
-                      <td className="p-3">
-                        <span className="font-bold text-sm text-foreground">
-                          {c.creditScore}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground block">
+                      <td className="py-3.5 px-4 font-bold tabular-nums text-foreground">
+                        {c.creditScore}{" "}
+                        <span className="text-[10px] text-muted-foreground font-normal">
                           / 850
                         </span>
                       </td>
-                      <td className="p-3">
-                        <Badge
-                          className={cn(
-                            "text-xs px-2.5 py-0.5 font-bold",
-                            c.tier === "AAA" && "bg-emerald-600 text-white",
-                            c.tier === "AA" && "bg-indigo-600 text-white",
-                            c.tier === "B" && "bg-amber-600 text-white",
-                          )}
-                        >
-                          Tier {c.tier}
-                        </Badge>
+                      <td className="py-3.5 px-4">
+                        <StatusBadge
+                          status={
+                            c.tier === "AAA"
+                              ? "completed"
+                              : c.tier === "AA"
+                                ? "pending"
+                                : "failed"
+                          }
+                        />
                       </td>
-                      <td className="p-3">
+                      <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2">
                           <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
                             <div
@@ -289,12 +271,12 @@ export default function StaffAiAnalyticsPage() {
                               style={{ width: `${c.depositConsistencyPct}%` }}
                             />
                           </div>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs text-muted-foreground font-mono">
                             {c.depositConsistencyPct}%
                           </span>
                         </div>
                       </td>
-                      <td className="p-3 font-bold text-emerald-400">
+                      <td className="py-3.5 px-4 text-right font-bold tabular-nums text-foreground">
                         {formatGhs(c.maxLoanLimit)}
                       </td>
                     </tr>
