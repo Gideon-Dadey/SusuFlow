@@ -714,7 +714,7 @@ export default function StaffSettingsPage() {
                             icon={faUpload}
                             className="h-3 w-3"
                           />
-                          Replace photo
+                          Upload
                         </Button>
                       </label>
 
@@ -805,7 +805,7 @@ export default function StaffSettingsPage() {
                         className="h-3.5 w-3.5 animate-spin"
                       />
                     )}
-                    Save Profile Changes
+                    Save
                   </Button>
                 </div>
               </form>
@@ -961,7 +961,7 @@ export default function StaffSettingsPage() {
                         className="h-3.5 w-3.5 animate-spin"
                       />
                     )}
-                    Update Password
+                    Save
                   </Button>
                 </div>
               </form>
@@ -1270,7 +1270,7 @@ export default function StaffSettingsPage() {
                         className="h-3.5 w-3.5 animate-spin"
                       />
                     )}
-                    Save Branding Settings
+                    Save
                   </Button>
                 </div>
               </form>
@@ -1392,7 +1392,7 @@ export default function StaffSettingsPage() {
                         className="h-3.5 w-3.5 animate-spin"
                       />
                     )}
-                    Save Operations Settings
+                    Save
                   </Button>
                 </div>
               </form>
@@ -1461,7 +1461,7 @@ export default function StaffSettingsPage() {
                         className="h-3.5 w-3.5 animate-spin"
                       />
                     )}
-                    Save Fees Settings
+                    Save
                   </Button>
                 </div>
               </form>
