@@ -4,25 +4,29 @@ import { cn } from "@/lib/utils";
 import { ButtonHTMLAttributes, forwardRef } from "react";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2.5 transition-all duration-200 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 font-semibold min-h-[48px] px-6 py-2.5",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-[15px] rounded transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 font-bold",
   {
     variants: {
       variant: {
         primary:
-          "bg-[#0066cc] text-white text-[17px] font-semibold rounded-xl hover:bg-[#0052a3] shadow-sm active:scale-[0.98]",
+          "bg-primary-600 text-white font-bold hover:bg-primary-700 shadow-sm hover:shadow-md active:scale-[0.98]",
         secondary:
-          "bg-muted text-foreground text-[17px] font-semibold rounded-xl hover:bg-muted/80",
+          "bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-[#1a1a1a] dark:text-white font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm hover:shadow-md",
         outline:
-          "border border-border bg-card text-[17px] font-semibold rounded-xl hover:bg-muted/60 dark:border-zinc-800 dark:hover:border-zinc-700",
+          "border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-[#1a1a1a] dark:text-white font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm hover:shadow-md",
         ghost:
-          "hover:bg-muted/60 text-muted-foreground hover:text-foreground text-[17px] font-semibold rounded-xl",
+          "hover:bg-accent hover:text-accent-foreground font-semibold text-foreground",
         danger:
-          "bg-destructive text-destructive-foreground text-[17px] font-bold rounded-xl hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground font-bold shadow-sm hover:bg-destructive/90",
+        destructive:
+          "bg-destructive text-destructive-foreground font-bold shadow-sm hover:bg-destructive/90",
+        link: "text-primary underline-offset-4 hover:underline font-semibold p-0 h-auto",
       },
       size: {
-        sm: "h-10 min-h-[40px] px-4 text-sm font-semibold rounded-lg",
-        md: "h-12 min-h-[48px] px-6 text-[17px] font-semibold rounded-xl",
-        lg: "h-12 min-h-[48px] sm:h-[52px] sm:min-h-[52px] px-7 text-[17px] font-semibold rounded-xl",
+        sm: "h-8 rounded px-3 text-xs font-semibold",
+        md: "px-8 py-3 text-[15px] font-bold min-h-[44px]",
+        lg: "h-12 rounded px-8 text-base font-bold min-h-[48px]",
+        icon: "h-9 w-9 p-0 rounded items-center justify-center",
       },
     },
     defaultVariants: {
