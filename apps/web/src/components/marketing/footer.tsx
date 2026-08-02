@@ -19,7 +19,7 @@ export function MarketingFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-100 border-t border-slate-200 dark:border-slate-800">
+    <footer className="relative overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-100 border-t border-border/60">
       <MarketingContainer className="relative z-10 pt-16 pb-8">
         {/* Main 4-Column Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10">
@@ -28,7 +28,7 @@ export function MarketingFooter() {
             <Link href="/" className="inline-flex items-center">
               <BrandLockup wordmarkClassName="text-2xl" />
             </Link>
-            <h3 className="text-[17px] font-bold text-slate-900 dark:text-white leading-snug">
+            <h3 className="text-[17px] font-bold text-slate-900 text-foreground leading-snug">
               Enterprise Susu &amp; Digital Savings Platform with verified
               deposits.
             </h3>
@@ -172,7 +172,7 @@ export function MarketingFooter() {
         </div>
 
         {/* Bottom Status & Copyright Bar */}
-        <div className="mt-14 flex flex-col md:flex-row items-center justify-between gap-4 text-[16px] text-slate-600 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 pt-8">
+        <div className="mt-14 flex flex-col md:flex-row items-center justify-between gap-4 text-[16px] text-slate-600 dark:text-slate-400 border-t border-border/60 pt-8">
           <div className="text-center">
             © {year} {APP_NAME} Inc. All rights reserved. Built for Ghanaian
             Financial Enterprise.
@@ -221,7 +221,7 @@ export function MarketingFooter() {
 
         {/* GIANT BRAND WORDMARK BANNER */}
         <div className="relative mt-12 overflow-hidden select-none pointer-events-none text-center">
-          <span className="block text-[13vw] sm:text-[15vw] font-extrabold tracking-tighter leading-none text-slate-200/50 dark:text-white/[0.04] uppercase font-sans">
+          <span className="block text-[13vw] sm:text-[15vw] font-extrabold tracking-tighter leading-none text-slate-200/50 text-foreground/[0.04] uppercase font-sans">
             SusuFlow
           </span>
         </div>

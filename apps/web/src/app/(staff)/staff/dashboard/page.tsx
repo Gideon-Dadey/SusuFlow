@@ -1,26 +1,45 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { StatCard } from "@/components/dashboard/stat-card";
+import { QuickActionCard } from "@/components/dashboard/quick-action-card";
+import { AdminDashboardHero } from "@/components/dashboard/admin-dashboard-hero";
 import { CollectionTrendChart } from "@/components/dashboard/collection-trend-chart";
 import { CollectionsByStatusChart } from "@/components/dashboard/collections-by-status-chart";
-import { TransactionRow } from "@/components/financial/transaction-row";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { depositApi, customerApi, operationsApi } from "@/lib/api";
-import { formatGhs, getInitials, cn } from "@/lib/utils";
+import { formatGhs, getInitials, formatDate, getGreeting } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui/badge";
+import { useAuthStore } from "@/stores/auth.store";
+import {
+  portalDashboardCardGridClass,
+  portalDashboardMetricsGridClass,
+} from "@/lib/portal-dashboard-tokens";
 import {
   faChartLine,
   faClipboardList,
   faUsers,
   faWallet,
+  faUserPlus,
+  faCheckCircle,
+  faSignal,
+  faArrowRight,
+  faCircleDot,
+  faClock,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ArrowRight, UserPlus, Wallet, Users } from "lucide-react";
+import { ReceiptModal } from "@/components/financial/receipt-modal";
+import { useState } from "react";
 
 export default function StaffDashboard() {
+  const queryClient = useQueryClient();
+  const user = useAuthStore((s) => s.user);
+  const [actionSuccess, setActionSuccess] = useState<string | null>(null);
+  const [selectedTxn, setSelectedTxn] = useState<any | null>(null);
+  const [receiptOpen, setReceiptOpen] = useState(false);
+
   const { data: deposits } = useQuery({
     queryKey: ["staff-deposits"],
     queryFn: () => depositApi.list(),
@@ -48,251 +67,370 @@ export default function StaffDashboard() {
 
   const transactions = deposits?.items || [];
   const recentCustomers = allCustomers?.items || [];
+  const queueItems = queue?.items || [];
+
   const todayDeposits = transactions.filter(
     (t) =>
       t.status === "completed" &&
       new Date(t.createdAt).toDateString() === new Date().toDateString(),
   );
   const todayTotal = todayDeposits.reduce((s, t) => s + Number(t.amount), 0);
-  const pendingActions = queue?.summary?.total ?? 0;
+  const pendingActionsCount = queue?.summary?.total ?? 0;
 
-  const quickActions = [
-    {
-      href: "/staff/deposits",
-      label: "Manual Payments",
-      subtitle: "Verify MoMo claims",
-      icon: Wallet,
-      bg: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  // Activation mutation for pending accounts in queue
+  const activateCustomerMutation = useMutation({
+    mutationFn: (id: string) => customerApi.activate(id),
+    onSuccess: () => {
+      setActionSuccess("Customer account approved & activated successfully!");
+      queryClient.invalidateQueries({ queryKey: ["staff-all-customers"] });
+      queryClient.invalidateQueries({ queryKey: ["staff-active-customers"] });
+      queryClient.invalidateQueries({ queryKey: ["staff-action-queue"] });
+      setTimeout(() => setActionSuccess(null), 4000);
     },
-    {
-      href: "/staff/customers/new",
-      label: "Onboard Customer",
-      subtitle: "Register new account",
-      icon: UserPlus,
-      bg: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
-    },
-    {
-      href: "/staff/withdrawals",
-      label: "Review Withdrawals",
-      subtitle: "Process claims & payouts",
-      icon: Wallet,
-      bg: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
-    },
-    {
-      href: "/staff/team",
-      label: "Agent Approvals",
-      subtitle: "Review registrations",
-      icon: Users,
-      bg: "bg-[#0066cc]/10 text-[#0066cc] dark:text-[#38bdf8]",
-    },
-  ];
+  });
 
   return (
-    <div className="space-y-3.5 sm:space-y-6">
-      <div className="page-header hidden sm:block">
-        <h1>Company Overview</h1>
-      </div>
+    <div className="space-y-6">
+      {/* 1. Staff Hero Welcome Header */}
+      <AdminDashboardHero
+        greeting={`${getGreeting()}, ${user?.firstName || "Staff Member"} 👋`}
+        title="Staff Operations Control Center"
+        subtitle="Monitor real-time deposit collections, member onboarding, and action queues."
+        highlight1Label="Today's Collections"
+        highlight1Value={formatGhs(todayTotal)}
+        highlight2Label="Pending Approvals"
+        highlight2Value={String(pendingActionsCount)}
+      />
 
-      <div className="portal-metric-grid">
-        <StatCard
-          title="Deposits Today"
-          value={formatGhs(todayTotal)}
-          icon={faWallet}
-          iconBgClassName="bg-[#0066cc]/10 dark:bg-[#0066cc]/20"
-          iconClassName="text-[#0066cc] dark:text-[#38bdf8]"
-        />
-        <StatCard
-          title="Active Customers"
-          value={String(activeCustomers?.items?.length || 0)}
-          icon={faUsers}
-          iconBgClassName="dashboard-icon-sky"
-          iconClassName="text-sky-600 dark:text-sky-400"
-        />
-        <Link href="/staff/queue" className="block">
-          <StatCard
-            title="Pending Actions"
-            value={String(pendingActions)}
-            icon={faClipboardList}
-            iconBgClassName="dashboard-icon-amber"
-            iconClassName="text-amber-600 dark:text-amber-400"
-            subtitle={
-              pendingActions > 0 ? "Needs your attention" : "All caught up"
-            }
+      {actionSuccess && (
+        <div className="rounded-none border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[10px] sm:text-sm text-foreground transition-all duration-300">
+          <FontAwesomeIcon
+            icon={faCheckCircle}
+            className="mr-1.5 text-emerald-500"
           />
-        </Link>
-        <StatCard
-          title="Total Volume"
-          value={formatGhs(
-            transactions
-              .filter((t) => t.status === "completed")
-              .reduce((s, t) => s + Number(t.amount), 0),
-          )}
-          icon={faChartLine}
-          iconBgClassName="dashboard-icon-violet"
-          iconClassName="text-violet-600 dark:text-violet-400"
-        />
-      </div>
+          {actionSuccess}
+        </div>
+      )}
 
+      {/* 3. Metric Overview Cards Grid */}
+      <section className="space-y-1 sm:space-y-2">
+        <h2 className="text-sm sm:text-base font-semibold text-foreground">
+          Key Performance Metrics
+        </h2>
+        <div className={portalDashboardMetricsGridClass}>
+          <StatCard
+            title="Deposits Today"
+            value={formatGhs(todayTotal)}
+            subtitle={`${todayDeposits.length} transactions today`}
+            icon={faWallet}
+            iconBgClassName="bg-emerald-500/10"
+            iconClassName="text-emerald-500"
+          />
+          <StatCard
+            title="Active Customers"
+            value={String(activeCustomers?.items?.length || 0)}
+            subtitle={`${allCustomers?.items?.length || 0} total registered`}
+            icon={faUsers}
+            iconBgClassName="bg-sky-500/10"
+            iconClassName="text-sky-500"
+          />
+          <Link href="/staff/queue" className="block">
+            <StatCard
+              title="Pending Actions"
+              value={String(pendingActionsCount)}
+              icon={faClipboardList}
+              iconBgClassName="bg-amber-500/10"
+              iconClassName="text-amber-500"
+              subtitle={
+                pendingActionsCount > 0
+                  ? "Requires staff review"
+                  : "All caught up"
+              }
+            />
+          </Link>
+          <StatCard
+            title="Total Volume"
+            value={formatGhs(
+              transactions
+                .filter((t) => t.status === "completed")
+                .reduce((s, t) => s + Number(t.amount), 0),
+            )}
+            subtitle="Processed volume"
+            icon={faChartLine}
+            iconBgClassName="bg-indigo-500/10"
+            iconClassName="text-indigo-500"
+          />
+        </div>
+      </section>
+
+      {/* 4. Quick Actions Grid (4-column) */}
+      <section className="space-y-1 sm:space-y-2">
+        <h2 className="text-sm sm:text-base font-semibold text-foreground">
+          Quick Controls
+        </h2>
+        <div className={portalDashboardCardGridClass}>
+          <QuickActionCard
+            href="/staff/deposits"
+            title="Manual Payments"
+            description="Verify MoMo claims"
+            icon={faWallet}
+            iconBgClassName="bg-amber-500/10"
+            iconClassName="text-amber-500"
+          />
+          <QuickActionCard
+            href="/staff/customers/new"
+            title="Onboard Customer"
+            description="Register new account"
+            icon={faUserPlus}
+            iconBgClassName="bg-sky-500/10"
+            iconClassName="text-sky-500"
+          />
+          <QuickActionCard
+            href="/staff/withdrawals"
+            title="Review Withdrawals"
+            description="Process payouts & claims"
+            icon={faWallet}
+            iconBgClassName="bg-indigo-500/10"
+            iconClassName="text-indigo-500"
+          />
+          <QuickActionCard
+            href="/staff/team"
+            title="Agent Approvals"
+            description="Review field registrations"
+            icon={faUsers}
+            iconBgClassName="bg-emerald-500/10"
+            iconClassName="text-emerald-500"
+          />
+        </div>
+      </section>
+
+      {/* 5. Analytics Charts Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         <CollectionTrendChart transactions={transactions} />
         <CollectionsByStatusChart transactions={transactions} />
       </div>
 
-      {/* Elevated Pop-Up Quick Actions Grid */}
-      <div className="space-y-3">
-        <h2 className="text-sm font-bold tracking-tight text-foreground uppercase text-muted-foreground/80">
-          Quick Actions
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {quickActions.map((action) => (
-            <Link key={action.href} href={action.href} className="block group">
-              <Card className="p-4 h-full transition-all duration-200 border border-border bg-card">
-                <div
-                  className={cn(
-                    "size-9 rounded-lg flex items-center justify-center mb-3",
-                    action.bg,
-                  )}
-                >
-                  <action.icon className="h-4 w-4" />
-                </div>
-                <h4 className="font-bold text-xs text-foreground group-hover:text-primary transition-colors">
-                  {action.label}
-                </h4>
-                <p className="text-[11px] text-muted-foreground mt-0.5 font-medium">
-                  {action.subtitle}
-                </p>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Action Queue */}
+      {/* 6. Two-Column Row: Priority Queue & Recent Onboarded Members (Bimatro Leaderboard Layout) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <Card className="lg:col-span-12">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <FontAwesomeIcon
-                icon={faClipboardList}
-                className="h-4 w-4 text-amber-500"
-              />
-              Action Queue
-            </CardTitle>
-            <Link href="/staff/queue">
-              <Button variant="ghost" size="sm" className="gap-1 text-xs">
-                View all <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
+        {/* Left Column: Priority Operations Queue */}
+        <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden lg:col-span-6">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border/60">
+            <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-tight">
+              Priority Action Queue
+            </h3>
+            <Link
+              href="/staff/queue"
+              className="text-xs sm:text-sm font-semibold text-secondary hover:underline transition-colors"
+            >
+              Full Queue →
             </Link>
-          </CardHeader>
-          <CardContent className="p-0">
-            {!queue || queue.summary.total === 0 ? (
-              <p className="py-8 px-4 text-center text-sm text-muted-foreground">
-                No pending actions &mdash; you&apos;re all caught up
-              </p>
-            ) : (
-              <div className="divide-y divide-border/60">
-                {queue.items.slice(0, 5).map((item) => (
-                  <Link
-                    key={`${item.type}-${item.id}`}
-                    href="/staff/queue"
-                    className="flex items-center justify-between px-4 py-3 hover:bg-muted/40 transition-colors"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">
-                        {item.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {item.subtitle}
-                      </p>
+          </div>
+
+          {queueItems.length === 0 ? (
+            <div className="py-8 text-center text-xs text-muted-foreground">
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                className="mx-auto h-7 w-7 text-emerald-500 mb-2 block"
+              />
+              No pending queue items. All operational actions up to date.
+            </div>
+          ) : (
+            <div className="divide-y divide-border/60">
+              {queueItems.slice(0, 6).map((item: any, idx: number) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between px-4 sm:px-5 py-3 hover:bg-muted/20 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-3">
+                    <span
+                      className={`text-xs sm:text-sm font-bold shrink-0 w-6 text-center ${idx < 3 ? "text-amber-500" : "text-muted-foreground"}`}
+                    >
+                      #{idx + 1}
+                    </span>
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 font-bold text-xs">
+                      <FontAwesomeIcon
+                        icon={faClipboardList}
+                        className="h-4 w-4"
+                      />
                     </div>
-                    <div className="flex items-center gap-2 shrink-0 ml-3">
-                      {item.amount != null && (
-                        <span className="text-xs font-semibold">
-                          {formatGhs(item.amount)}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs font-semibold text-foreground capitalize">
+                          {item.type.replace(/_/g, " ")}
                         </span>
-                      )}
-                      <StatusBadge status={item.status} />
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Deposits</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {transactions.length === 0 ? (
-              <p className="py-8 px-4 text-center text-sm text-muted-foreground">
-                No deposits yet
-              </p>
-            ) : (
-              <div className="divide-y divide-gray-100 dark:divide-border/40">
-                {transactions.slice(0, 6).map((t) => (
-                  <TransactionRow key={t.id} transaction={t} />
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Customers</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {!recentCustomers || recentCustomers.length === 0 ? (
-              <p className="py-8 px-4 text-center text-sm text-muted-foreground">
-                No customers onboarded yet
-              </p>
-            ) : (
-              <div className="divide-y divide-gray-100 dark:divide-border/40">
-                {recentCustomers.slice(0, 6).map((c) => (
-                  <Link
-                    key={c.id}
-                    href={`/staff/customers/${c.id}`}
-                    className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-primary font-semibold text-xs">
-                        {c.user?.avatarUrl ? (
-                          <img
-                            src={c.user.avatarUrl}
-                            alt={`${c.user?.firstName || "Customer"} Avatar`}
-                            className="size-full object-cover"
-                          />
-                        ) : (
-                          getInitials(c.user?.firstName, c.user?.lastName)
-                        )}
+                        <span className="inline-flex items-center rounded-full bg-amber-500/10 px-2 py-0.5 text-[9px] font-semibold text-amber-600 dark:text-amber-400">
+                          Pending
+                        </span>
                       </div>
-                      <div className="min-w-0">
-                        <p className="font-semibold text-sm text-foreground truncate">
-                          {c.user?.firstName || "Pending"}{" "}
-                          {c.user?.lastName || "Onboarding"}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground font-mono truncate">
-                          {c.customerNumber}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <StatusBadge status={c.status} />
-                      <p className="text-[9px] text-muted-foreground mt-0.5 uppercase font-semibold">
-                        KYC L{c.kycLevel}
+                      <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                        {item.description || "Requires staff approval"}
                       </p>
                     </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
+                  </div>
+
+                  <div className="text-right shrink-0">
+                    <Link href={`/staff/queue?highlight=${item.id}`}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 text-[11px] px-2.5 rounded-none"
+                      >
+                        Review
+                      </Button>
+                    </Link>
+                    <p className="mt-1 text-[10px] text-muted-foreground font-mono">
+                      {formatDate(item.createdAt)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        {/* Right Column: Newly Registered Susu Members */}
+        <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden lg:col-span-6">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border/60">
+            <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-tight">
+              Recent Onboarded Members
+            </h3>
+            <Link
+              href="/staff/customers"
+              className="text-xs sm:text-sm font-semibold text-secondary hover:underline transition-colors"
+            >
+              All Members →
+            </Link>
+          </div>
+
+          {recentCustomers.length === 0 ? (
+            <p className="py-8 text-center text-xs text-muted-foreground">
+              No members registered yet.
+            </p>
+          ) : (
+            <div className="divide-y divide-border/60">
+              {recentCustomers.slice(0, 6).map((customer, idx: number) => (
+                <div
+                  key={customer.id}
+                  className="flex items-center justify-between px-4 sm:px-5 py-3 hover:bg-muted/20 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-3">
+                    <span
+                      className={`text-xs sm:text-sm font-bold shrink-0 w-6 text-center ${idx < 3 ? "text-amber-500" : "text-muted-foreground"}`}
+                    >
+                      #{idx + 1}
+                    </span>
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary font-bold text-xs">
+                      {getInitials(
+                        customer.user?.firstName,
+                        customer.user?.lastName,
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs font-semibold text-foreground truncate">
+                          {customer.user?.firstName} {customer.user?.lastName}
+                        </span>
+                        <span className="inline-flex items-center rounded-full bg-muted/60 px-2 py-0.5 text-[9px] font-semibold text-muted-foreground uppercase">
+                          MEMBER
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground truncate mt-0.5 font-mono">
+                        {customer.customerNumber} ·{" "}
+                        {customer.user?.phone ||
+                          customer.user?.email ||
+                          "No contact"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="text-right shrink-0 flex items-center gap-2">
+                    <StatusBadge status={customer.status} />
+                    <Link href={`/staff/customers/${customer.id}`}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 text-xs px-2 text-secondary hover:text-secondary/80"
+                      >
+                        Profile →
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
       </div>
+
+      {/* 7. Live Activity Log: Recent Deposits (Bimatro Layout) */}
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border/60">
+          <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-tight">
+            Recent Deposits Log
+          </h3>
+          <Link
+            href="/staff/deposits"
+            className="text-xs sm:text-sm font-semibold text-secondary hover:underline transition-colors"
+          >
+            View all
+          </Link>
+        </div>
+
+        {transactions.length === 0 ? (
+          <p className="py-8 text-center text-xs text-muted-foreground">
+            No deposit transactions recorded yet.
+          </p>
+        ) : (
+          <div className="divide-y divide-border/60">
+            {transactions.slice(0, 8).map((tx) => (
+              <div
+                key={tx.id}
+                onClick={() => {
+                  setSelectedTxn(tx);
+                  setReceiptOpen(true);
+                }}
+                className="flex items-center justify-between px-4 sm:px-6 py-3.5 hover:bg-muted/20 cursor-pointer transition-colors"
+              >
+                <div className="min-w-0 flex-1 pr-4">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-semibold text-foreground tracking-tight">
+                      {tx.reference}
+                    </span>
+                    <StatusBadge status={tx.status} />
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground truncate">
+                    {tx.customer?.user
+                      ? `${tx.customer.user.firstName} ${tx.customer.user.lastName}`
+                      : "Susu Member"}{" "}
+                    · {tx.customer?.customerNumber || "N/A"}
+                  </p>
+                </div>
+
+                <div className="text-right shrink-0">
+                  <p className="text-sm font-bold tabular-nums text-foreground">
+                    {formatGhs(tx.amount)}
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">
+                    {formatDate(tx.createdAt)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
+      {/* Transaction Receipt Modal */}
+      {receiptOpen && selectedTxn && (
+        <ReceiptModal
+          open={receiptOpen}
+          transaction={selectedTxn}
+          onClose={() => {
+            setReceiptOpen(false);
+            setSelectedTxn(null);
+          }}
+        />
+      )}
     </div>
   );
 }

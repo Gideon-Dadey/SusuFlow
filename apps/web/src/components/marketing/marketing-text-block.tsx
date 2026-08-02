@@ -14,7 +14,7 @@ export function MarketingTextBlock({
       <MarketingContainer>
         <div className="mx-auto max-w-3xl">
           {title && (
-            <h2 className="omnih-h2 text-3xl sm:text-4xl font-semibold text-slate-900 dark:text-white mb-8">
+            <h2 className="omnih-h2 text-3xl sm:text-4xl font-semibold text-slate-900 text-foreground mb-8">
               {title}
             </h2>
           )}

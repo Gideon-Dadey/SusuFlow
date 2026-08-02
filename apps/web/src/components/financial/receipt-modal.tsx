@@ -19,13 +19,13 @@ import { useAuthStore } from "@/stores/auth.store";
 
 interface ReceiptModalProps {
   transaction: Transaction | null;
-  open: boolean;
+  open?: boolean;
   onClose: () => void;
 }
 
 export function ReceiptModal({
   transaction,
-  open,
+  open = true,
   onClose,
 }: ReceiptModalProps) {
   const [mounted, setMounted] = useState(false);
@@ -67,7 +67,7 @@ export function ReceiptModal({
       : transaction.amount;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 bg-background/80 backdrop-blur-sm animate-fade-in md:items-center print:bg-white print:p-0 print:static print:block">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center overflow-y-auto p-0 sm:p-4 bg-background/80 backdrop-blur-sm animate-fade-in print:bg-white print:p-0 print:static print:block">
       {/* Background click handler */}
       <div
         className="fixed inset-0 cursor-default print:hidden"
@@ -75,7 +75,7 @@ export function ReceiptModal({
       />
 
       {/* Card Content Container */}
-      <div className="relative z-10 w-full max-w-md my-auto rounded-xl border border-border bg-card p-5 shadow-elevated animate-scale-in print:border-0 print:shadow-none print:p-0 print:static print:block print:max-w-none">
+      <div className="relative z-10 w-full sm:max-w-md rounded-none sm:rounded-xl border-x-0 sm:border-x border-t sm:border border-border/60 bg-card p-4 sm:p-5 shadow-elevated animate-scale-in print:border-0 print:shadow-none print:p-0 print:static print:block print:max-w-none">
         {/* Header (Hidden on Print) */}
         <div className="flex items-center justify-between pb-3.5 border-b border-border print:hidden">
           <div className="flex items-center gap-2 text-foreground font-semibold">
@@ -137,7 +137,8 @@ export function ReceiptModal({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Customer</span>
                   <span className="font-semibold text-foreground">
-                    {transaction.customer.user.firstName}{" "}
+                    {transaction.customer.user.firstName}
+                    {""}
                     {transaction.customer.user.lastName}
                   </span>
                 </div>
@@ -146,7 +147,7 @@ export function ReceiptModal({
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Payment Method</span>
                 <span className="font-semibold text-foreground capitalize">
-                  {methodLabel.replace("_", " ")}
+                  {methodLabel.replace("_", "")}
                 </span>
               </div>
 
@@ -228,7 +229,7 @@ export function ReceiptModal({
                     Payment Method:
                   </span>
                   <span className="font-bold text-gray-900 uppercase">
-                    {methodLabel.replace("_", " ")}
+                    {methodLabel.replace("_", "")}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -284,7 +285,7 @@ export function ReceiptModal({
             <div className="pt-6">
               <table className="w-full text-left border-collapse text-[13px]">
                 <thead>
-                  <tr className="bg-gray-100 border-b border-gray-300">
+                  <tr className="bg-gray-100 border-b border-border/60">
                     <th className="py-2.5 px-4 font-bold text-gray-700 w-12 text-left">
                       No.
                     </th>
@@ -302,7 +303,7 @@ export function ReceiptModal({
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 border-b border-gray-200">
+                <tbody className="divide-y divide-gray-200 border-b border-border/60">
                   <tr>
                     <td className="py-3 px-4 text-left text-gray-600">1</td>
                     <td className="py-3 px-4 font-medium text-gray-900 text-left">
@@ -348,11 +349,11 @@ export function ReceiptModal({
             </div>
 
             {/* Verification and QR Code section */}
-            <div className="flex gap-6 items-start border-t border-gray-200 pt-6 mt-8">
+            <div className="flex gap-6 items-start border-t border-border/60 pt-6 mt-8">
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verifyUrl)}`}
                 alt="Verification QR Code"
-                className="h-28 w-28 border border-gray-200 p-1.5 bg-white shrink-0"
+                className="h-28 w-28 border border-border/60 p-1.5 bg-white shrink-0"
               />
               <div className="space-y-1.5 text-xs text-gray-600 pt-1.5">
                 <p className="font-bold text-gray-800 uppercase tracking-wider text-[10px]">
@@ -366,7 +367,7 @@ export function ReceiptModal({
                     {verifyUrl}
                   </p>
                   <p className="text-[10px] text-gray-400 mt-1">
-                    Artifact SHA-256:{" "}
+                    Artifact SHA-256:{""}
                     <span className="font-mono">
                       {getReceiptArtifactHash(transaction.reference)}
                     </span>
@@ -376,9 +377,9 @@ export function ReceiptModal({
             </div>
 
             {/* Fine print footer */}
-            <div className="border-t border-gray-200 pt-4 mt-8 text-center text-[10px] text-gray-400">
+            <div className="border-t border-border/60 pt-4 mt-8 text-center text-[10px] text-gray-400">
               Issued by {transaction.tenant?.name || "SusuFlow Platform"}.
-              Printed on {new Date().toLocaleDateString("en-US")},{" "}
+              Printed on {new Date().toLocaleDateString("en-US")},{""}
               {new Date().toLocaleTimeString("en-US")}. Official receipt
               timestamp {formatDate(transaction.createdAt)}.
             </div>

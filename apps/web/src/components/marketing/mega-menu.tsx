@@ -282,7 +282,7 @@ export function MegaDropdown({
       />
 
       <div
-        className="fixed inset-x-0 top-[4.5rem] z-[300] border-b border-slate-200/90 bg-white shadow-[0_16px_48px_rgba(15,23,42,0.12)] dark:border-slate-800 dark:bg-[#09090b] dark:shadow-[0_16px_48px_rgba(0,0,0,0.45)]"
+        className="fixed inset-x-0 top-[4.5rem] z-[300] border-b border-border/60 bg-white shadow-[0_16px_48px_rgba(15,23,42,0.12)] dark:bg-[#09090b] dark:shadow-[0_16px_48px_rgba(0,0,0,0.45)]"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onClose}
       >
@@ -291,7 +291,7 @@ export function MegaDropdown({
             <div className="lg:col-span-9 flex flex-col gap-10">
               {config.categories.map((category) => (
                 <div key={category.title} className="w-full">
-                  <h3 className="mb-6 text-[18px] font-bold text-slate-900 dark:text-white">
+                  <h3 className="mb-6 text-[18px] font-bold text-slate-900 text-foreground">
                     {category.title}
                   </h3>
 
@@ -303,17 +303,17 @@ export function MegaDropdown({
                         onClick={onClose}
                         className="group flex items-start gap-4 transition-colors"
                       >
-                        <div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg border border-slate-200/90 bg-slate-50/50 text-slate-500 transition-colors group-hover:border-[#0066cc]/30 group-hover:bg-[#0066cc]/5 group-hover:text-[#0066cc] dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-400 dark:group-hover:border-[#38bdf8]/30 dark:group-hover:bg-[#38bdf8]/10 dark:group-hover:text-[#38bdf8]">
+                        <div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg border border-border/60 bg-slate-50/50 text-slate-500 transition-colors group-hover:border-[#0066cc]/30 group-hover:bg-[#0066cc]/5 group-hover:text-[#0066cc] dark:text-slate-400 dark:group-hover:border-[#38bdf8]/30 dark:group-hover:bg-[#38bdf8]/10 dark:group-hover:text-[#38bdf8]">
                           <FontAwesomeIcon
                             icon={item.icon}
                             className="h-[16px] w-[16px]"
                           />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[16px] font-semibold text-slate-900 transition-colors group-hover:text-[#0066cc] dark:text-white dark:group-hover:text-[#38bdf8]">
+                          <p className="text-[16px] font-semibold text-slate-900 transition-colors group-hover:text-[#0066cc] text-foreground dark:group-hover:text-[#38bdf8]">
                             {item.title}
                           </p>
-                          <p className="mt-1 text-[15px] leading-relaxed text-slate-900 dark:text-white pr-4">
+                          <p className="mt-1 text-[15px] leading-relaxed text-slate-900 text-foreground pr-4">
                             {item.description}
                           </p>
                         </div>
@@ -325,9 +325,9 @@ export function MegaDropdown({
             </div>
 
             <div className="lg:col-span-3">
-              <div className="overflow-hidden rounded-[0.3rem] border border-slate-200/90 bg-white shadow-sm dark:border-slate-800 dark:bg-[#141417]">
+              <div className="overflow-hidden rounded-[0.3rem] border border-border/60 bg-white shadow-sm dark:bg-[#141417]">
                 {config.promo.imageSrc && (
-                  <div className="relative aspect-[16/10] w-full bg-slate-100 dark:bg-slate-900">
+                  <div className="relative aspect-[16/10] w-full bg-slate-100">
                     <Image
                       src={config.promo.imageSrc}
                       alt={config.promo.title}
@@ -342,7 +342,7 @@ export function MegaDropdown({
                   <span className="inline-flex items-center rounded-full bg-[#0066cc]/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[#0066cc] dark:bg-[#38bdf8]/10 dark:text-[#38bdf8]">
                     {config.promo.badge}
                   </span>
-                  <h4 className="text-[15px] font-bold leading-snug text-slate-900 dark:text-white">
+                  <h4 className="text-[15px] font-bold leading-snug text-slate-900 text-foreground">
                     {config.promo.title}
                   </h4>
                   <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">

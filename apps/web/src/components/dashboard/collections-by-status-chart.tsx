@@ -16,7 +16,7 @@ interface CollectionsByStatusChartProps {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  completed: { label: "Completed", color: "#0066cc" }, // Primary Blue
+  completed: { label: "Completed", color: "#153e90" }, // Royal Blue
   pending: { label: "Pending", color: "#f59e0b" }, // Warm Amber
   failed: { label: "Failed", color: "#ef4444" }, // Rose Red
   cancelled: { label: "Cancelled", color: "#64748b" }, // Slate Grey
@@ -46,7 +46,7 @@ export function CollectionsByStatusChart({
     }
 
     const chartData = Object.entries(buckets)
-      .filter(([_, data]) => data.count > 0) // Only include categories with items
+      .filter(([_, data]) => data.count > 0)
       .map(([status, item]) => ({
         name: STATUS_CONFIG[status]?.label || status,
         value: item.amount,
@@ -63,10 +63,10 @@ export function CollectionsByStatusChart({
   }, [transactions]);
 
   return (
-    <Card className="col-span-1 lg:col-span-5 flex flex-col justify-between">
+    <Card className="col-span-1 lg:col-span-6 flex flex-col justify-between">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-foreground dark:bg-zinc-800 dark:text-zinc-300 shrink-0">
+          <div className="flex h-8 w-8 items-center justify-center rounded-none bg-secondary/10 text-secondary shrink-0">
             <PieIcon className="h-4.5 w-4.5" />
           </div>
           <div>
@@ -92,7 +92,7 @@ export function CollectionsByStatusChart({
                       const item = payload[0].payload;
                       if (item.name === "No data") return null;
                       return (
-                        <div className="rounded-lg border border-border bg-popover px-2.5 py-1.5 text-xs">
+                        <div className="rounded-none border border-border/60 bg-card p-2.5 text-xs shadow-md">
                           <p className="font-semibold text-foreground">
                             {item.name}
                           </p>
@@ -123,7 +123,7 @@ export function CollectionsByStatusChart({
                             name: "No data",
                             value: 1,
                             count: 0,
-                            color: "#e2e8f0",
+                            color: "#5c6b7f",
                           },
                         ]
                   }
@@ -142,7 +142,7 @@ export function CollectionsByStatusChart({
                           name: "No data",
                           value: 1,
                           count: 0,
-                          color: "#e2e8f0",
+                          color: "#5c6b7f",
                         },
                       ]
                   ).map((entry, i) => (
@@ -156,7 +156,7 @@ export function CollectionsByStatusChart({
               <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                 Total Vol.
               </span>
-              <span className="text-sm font-bold text-foreground font-mono mt-0.5">
+              <span className="text-sm font-bold text-foreground font-mono mt-0.5 tabular-nums">
                 {formatGhs(total)}
               </span>
             </div>
@@ -171,7 +171,7 @@ export function CollectionsByStatusChart({
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span
-                    className="block h-2.5 w-2.5 shrink-0 rounded-full"
+                    className="block h-2.5 w-2.5 shrink-0 rounded-none"
                     style={{ backgroundColor: item.color }}
                   />
                   <div className="min-w-0">
@@ -182,7 +182,7 @@ export function CollectionsByStatusChart({
                     </p>
                   </div>
                 </div>
-                <span className="font-bold text-foreground shrink-0 bg-muted/65 px-1.5 py-0.5 rounded text-[10px] font-mono">
+                <span className="font-bold text-foreground shrink-0 bg-muted/30 border border-border/40 px-1.5 py-0.5 rounded-none text-[10px] font-mono">
                   {item.percentage}%
                 </span>
               </div>
@@ -195,10 +195,10 @@ export function CollectionsByStatusChart({
           </div>
         </div>
 
-        <div className="mt-2 flex items-center justify-center border-t border-border pt-3">
+        <div className="mt-2 flex items-center justify-center border-t border-border/60 pt-3">
           <a
             href="/staff/deposits"
-            className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+            className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
           >
             Manage Deposits Details →
           </a>

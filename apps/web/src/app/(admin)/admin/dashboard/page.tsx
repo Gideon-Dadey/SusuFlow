@@ -3,18 +3,27 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "@/lib/api";
 import { StatCard } from "@/components/dashboard/stat-card";
+import { QuickActionCard } from "@/components/dashboard/quick-action-card";
+import { AdminDashboardHero } from "@/components/dashboard/admin-dashboard-hero";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge, StatusBadge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/badge";
 import { formatGhs, formatDate } from "@/lib/utils";
+import {
+  portalDashboardCardGridClass,
+  portalDashboardMetricsGridClass,
+} from "@/lib/portal-dashboard-tokens";
 import {
   faBuilding,
   faCircleCheck,
   faTriangleExclamation,
   faWallet,
   faHistory,
-  faListUl,
+  faShieldHalved,
+  faUsers,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
+import { ReceiptModal } from "@/components/financial/receipt-modal";
 import { useState } from "react";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,6 +31,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export default function AdminDashboardPage() {
   const queryClient = useQueryClient();
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [selectedTxn, setSelectedTxn] = useState<any | null>(null);
+  const [receiptOpen, setReceiptOpen] = useState(false);
 
   // Fetch global metrics and summaries
   const {
@@ -73,7 +84,7 @@ export default function AdminDashboardPage() {
           className="h-12 w-12 text-destructive"
         />
         <p className="text-sm font-medium text-destructive">
-          Failed to fetch platform metrics. Verify that the NestJS API is
+          Failed to fetch platform metrics. Verify that the API server is
           operational.
         </p>
         <Button
@@ -83,7 +94,7 @@ export default function AdminDashboardPage() {
             })
           }
         >
-          Retry
+          Retry Connection
         </Button>
       </div>
     );
@@ -93,90 +104,136 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="page-header mb-0">
-          <h1 className="dashboard-title">Super Admin Control Center</h1>
-        </div>
-        <div className="flex gap-2">
-          <Link href="/admin/tenants/new">
-            <Button size="sm">
-              <FontAwesomeIcon
-                icon={faBuilding}
-                className="mr-1.5 h-3.5 w-3.5"
-              />
-              New Organization
-            </Button>
-          </Link>
-        </div>
-      </div>
+      {/* Bimatro Hero Header Component */}
+      <AdminDashboardHero
+        greeting="Super Admin Control Center 👋"
+        title="System Overview & Platform Controls"
+        subtitle="Monitor real-time organizational deposits, ledger activities, and tenant access rules."
+        highlight1Label="Active Tenants"
+        highlight1Value={
+          isLoading ? "..." : String(summary?.activeTenants ?? 0)
+        }
+        highlight2Label="Global Volume"
+        highlight2Value={
+          isLoading ? "..." : formatGhs(summary?.totalDeposits ?? 0)
+        }
+      />
 
       {actionMessage && (
-        <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-foreground transition-all duration-300">
-          <FontAwesomeIcon icon={faCircleCheck} className="mr-2 text-primary" />
+        <div className="rounded-none border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-foreground transition-all duration-300">
+          <FontAwesomeIcon
+            icon={faCircleCheck}
+            className="mr-2 text-emerald-500"
+          />
           {actionMessage}
         </div>
       )}
 
-      {/* Metric Cards Grid */}
-      <div className="portal-metric-grid">
-        <StatCard
-          title="Total Organizations"
-          value={isLoading ? "..." : String(summary?.totalTenants ?? 0)}
-          subtitle={
-            isLoading ? undefined : `${summary?.activeTenants ?? 0} active`
-          }
-          icon={faBuilding}
-          iconBgClassName="bg-indigo-50 dark:bg-indigo-950/40"
-          iconClassName="text-indigo-600 dark:text-indigo-400"
-        />
-        <StatCard
-          title="Global Deposits Sum"
-          value={isLoading ? "..." : formatGhs(summary?.totalDeposits ?? 0)}
-          subtitle="All organizations combined"
-          icon={faWallet}
-          iconBgClassName="bg-[#0066cc]/10 dark:bg-[#0066cc]/20"
-          iconClassName="text-[#0066cc] dark:text-[#38bdf8]"
-        />
-        <StatCard
-          title="Global Withdrawals Sum"
-          value={isLoading ? "..." : formatGhs(summary?.totalWithdrawals ?? 0)}
-          subtitle="Processed disbursements"
-          icon={faHistory}
-          iconBgClassName="bg-amber-50 dark:bg-amber-950/40"
-          iconClassName="text-amber-600 dark:text-amber-400"
-        />
-        <StatCard
-          title="Open Fraud Alerts"
-          value={isLoading ? "..." : String(summary?.openFraudAlerts ?? 0)}
-          subtitle={
-            summary?.openFraudAlerts && summary.openFraudAlerts > 0
-              ? "Requires immediate action"
-              : "System secured"
-          }
-          icon={faTriangleExclamation}
-          iconBgClassName={
-            summary?.openFraudAlerts && summary.openFraudAlerts > 0
-              ? "bg-red-50 dark:bg-red-950/50 pulse-animation"
-              : "bg-slate-50 dark:bg-slate-900"
-          }
-          iconClassName={
-            summary?.openFraudAlerts && summary.openFraudAlerts > 0
-              ? "text-red-600 dark:text-red-400"
-              : "text-slate-600 dark:text-slate-400"
-          }
-          className={
-            summary?.openFraudAlerts && summary.openFraudAlerts > 0
-              ? "border-red-200 dark:border-red-900/40"
-              : undefined
-          }
-        />
-      </div>
+      {/* Quick Action Grid (4-up on desktop) */}
+      <section className="space-y-2">
+        <h2 className="text-base font-semibold text-foreground sm:text-lg">
+          Quick Actions
+        </h2>
+        <div className={portalDashboardCardGridClass}>
+          <QuickActionCard
+            href="/admin/tenants/new"
+            title="New Organization"
+            description="Register tenant organization"
+            icon={faPlus}
+            iconBgClassName="bg-blue-500/10"
+            iconClassName="text-blue-500"
+          />
+          <QuickActionCard
+            href="/admin/deposits"
+            title="Global Deposits"
+            description="View all inbound payments"
+            icon={faWallet}
+            iconBgClassName="bg-emerald-500/10"
+            iconClassName="text-emerald-500"
+          />
+          <QuickActionCard
+            href="/admin/withdrawals"
+            title="Disbursements"
+            description="Process tenant claims"
+            icon={faHistory}
+            iconBgClassName="bg-amber-500/10"
+            iconClassName="text-amber-500"
+          />
+          <QuickActionCard
+            href="/admin/fraud"
+            title="Security Center"
+            description="Review platform alerts"
+            icon={faShieldHalved}
+            iconBgClassName="bg-red-500/10"
+            iconClassName="text-red-500"
+          />
+        </div>
+      </section>
+
+      {/* Overview Metrics Grid (2x2 Mobile, 4-up Desktop) */}
+      <section className="space-y-2">
+        <h2 className="text-base font-semibold text-foreground sm:text-lg">
+          Platform Overview
+        </h2>
+        <div className={portalDashboardMetricsGridClass}>
+          <StatCard
+            title="Total Organizations"
+            value={isLoading ? "..." : String(summary?.totalTenants ?? 0)}
+            subtitle={
+              isLoading ? undefined : `${summary?.activeTenants ?? 0} active`
+            }
+            icon={faBuilding}
+            iconBgClassName="bg-indigo-500/10"
+            iconClassName="text-indigo-500"
+          />
+          <StatCard
+            title="Global Deposits Sum"
+            value={isLoading ? "..." : formatGhs(summary?.totalDeposits ?? 0)}
+            subtitle="All organizations combined"
+            icon={faWallet}
+            iconBgClassName="bg-emerald-500/10"
+            iconClassName="text-emerald-500"
+          />
+          <StatCard
+            title="Global Withdrawals Sum"
+            value={
+              isLoading ? "..." : formatGhs(summary?.totalWithdrawals ?? 0)
+            }
+            subtitle="Processed disbursements"
+            icon={faHistory}
+            iconBgClassName="bg-amber-500/10"
+            iconClassName="text-amber-500"
+          />
+          <StatCard
+            title="Open Fraud Alerts"
+            value={isLoading ? "..." : String(summary?.openFraudAlerts ?? 0)}
+            subtitle={
+              summary?.openFraudAlerts && summary.openFraudAlerts > 0
+                ? "Requires immediate action"
+                : "System secured"
+            }
+            icon={faTriangleExclamation}
+            iconBgClassName={
+              summary?.openFraudAlerts && summary.openFraudAlerts > 0
+                ? "bg-red-500/20 text-red-500"
+                : "bg-slate-500/10"
+            }
+            iconClassName={
+              summary?.openFraudAlerts && summary.openFraudAlerts > 0
+                ? "text-red-500"
+                : "text-slate-500"
+            }
+          />
+        </div>
+      </section>
 
       {/* Organization Status & Quick Management Card */}
-      <Card className="portal-card border-border/60">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <Card className="rounded-none border border-border/60 bg-card shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div>
-            <CardTitle>Recent Organizations</CardTitle>
+            <CardTitle className="text-sm sm:text-base font-bold tracking-tight">
+              Recent Organizations
+            </CardTitle>
             <p className="text-xs text-muted-foreground">
               Quick action toggles for platform access control
             </p>
@@ -185,7 +242,7 @@ export default function AdminDashboardPage() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-xs font-semibold text-primary"
+              className="text-xs font-semibold text-secondary hover:text-secondary/80"
             >
               View All Orgs
             </Button>
@@ -197,7 +254,7 @@ export default function AdminDashboardPage() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="h-16 w-full animate-pulse rounded-lg bg-muted/65"
+                  className="h-16 w-full animate-pulse rounded-none bg-muted/60"
                 />
               ))}
             </div>
@@ -209,7 +266,7 @@ export default function AdminDashboardPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-border text-xs font-semibold text-muted-foreground uppercase">
+                  <tr className="border-b border-border/60 text-xs font-semibold text-muted-foreground uppercase">
                     <th className="py-3 px-4">Name</th>
                     <th className="py-3 px-4">Slug</th>
                     <th className="py-3 px-4">Status</th>
@@ -231,12 +288,12 @@ export default function AdminDashboardPage() {
                       </td>
                       <td className="py-3 px-4">
                         <span
-                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
+                          className={`inline-flex items-center rounded-none px-2.5 py-0.5 text-xs font-medium capitalize ${
                             tenant.status === "active"
-                              ? "bg-green-50 text-green-700 dark:bg-green-950/60 dark:text-green-300"
+                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                               : tenant.status === "suspended"
-                                ? "bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-300"
-                                : "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300"
+                                ? "bg-red-500/10 text-red-600 dark:text-red-400"
+                                : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
                           }`}
                         >
                           {tenant.status}
@@ -251,7 +308,7 @@ export default function AdminDashboardPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="h-8 text-xs min-h-[32px] px-2.5"
+                              className="h-8 text-xs min-h-[32px] px-2.5 rounded-none"
                               disabled={
                                 activateMutation.isPending ||
                                 suspendMutation.isPending
@@ -264,7 +321,7 @@ export default function AdminDashboardPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="h-8 text-xs min-h-[32px] px-2.5 border-red-200 hover:bg-red-50 dark:border-red-950/50 dark:hover:bg-red-950/30 text-red-600 dark:text-red-400"
+                              className="h-8 text-xs min-h-[32px] px-2.5 rounded-none border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
                               disabled={
                                 activateMutation.isPending ||
                                 suspendMutation.isPending
@@ -285,13 +342,15 @@ export default function AdminDashboardPage() {
         </CardContent>
       </Card>
 
-      {/* Two Column Grid: Transactions & Security Audits */}
+      {/* Two Column Grid: Activity & Security Trail */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Left Column: Recent Global Deposits & Withdrawals */}
-        <Card className="portal-card border-border/60 lg:col-span-6">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <Card className="rounded-none border border-border/60 bg-card shadow-sm lg:col-span-6">
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
             <div>
-              <CardTitle>Global Ledger Activity</CardTitle>
+              <CardTitle className="text-sm sm:text-base font-bold tracking-tight">
+                Global Ledger Activity
+              </CardTitle>
               <p className="text-xs text-muted-foreground">
                 Latest transactions across all registered tenants
               </p>
@@ -301,7 +360,7 @@ export default function AdminDashboardPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-xs font-semibold text-primary"
+                  className="text-xs font-semibold text-secondary hover:text-secondary/80"
                 >
                   Deposits
                 </Button>
@@ -310,7 +369,7 @@ export default function AdminDashboardPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-xs font-semibold text-primary"
+                  className="text-xs font-semibold text-secondary hover:text-secondary/80"
                 >
                   Withdrawals
                 </Button>
@@ -323,7 +382,7 @@ export default function AdminDashboardPage() {
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="h-12 w-full animate-pulse rounded-lg bg-muted/65"
+                    className="h-12 w-full animate-pulse rounded-none bg-muted/60"
                   />
                 ))}
               </div>
@@ -337,7 +396,11 @@ export default function AdminDashboardPage() {
                 {summary.recentTransactions.map((tx: any) => (
                   <div
                     key={tx.id}
-                    className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/10 transition-colors"
+                    onClick={() => {
+                      setSelectedTxn(tx);
+                      setReceiptOpen(true);
+                    }}
+                    className="flex items-center justify-between rounded-none border border-border/60 p-3 hover:bg-muted/20 cursor-pointer transition-colors"
                   >
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
@@ -346,7 +409,7 @@ export default function AdminDashboardPage() {
                             ? `${tx.customer.user.firstName} ${tx.customer.user.lastName}`
                             : "Unknown customer"}
                         </span>
-                        <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded font-mono uppercase">
+                        <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-none font-mono uppercase">
                           {tx.tenant?.name || "Platform"}
                         </span>
                       </div>
@@ -355,7 +418,7 @@ export default function AdminDashboardPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-bold text-foreground">
+                      <p className="text-sm font-bold tabular-nums text-foreground">
                         {tx.type === "deposit" ? "+" : "-"}
                         {formatGhs(tx.amount)}
                       </p>
@@ -368,11 +431,13 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Right Column: Platform Audit Logs */}
-        <Card className="portal-card border-border/60 lg:col-span-6">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
+        {/* Right Column: Platform Security Trail */}
+        <Card className="rounded-none border border-border/60 bg-card shadow-sm lg:col-span-6">
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
             <div>
-              <CardTitle>System Security Trail</CardTitle>
+              <CardTitle className="text-sm sm:text-base font-bold tracking-tight">
+                System Security Trail
+              </CardTitle>
               <p className="text-xs text-muted-foreground">
                 Live monitoring of user actions and admin overrides
               </p>
@@ -381,7 +446,7 @@ export default function AdminDashboardPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-xs font-semibold text-primary"
+                className="text-xs font-semibold text-secondary hover:text-secondary/80"
               >
                 View Logs
               </Button>
@@ -393,7 +458,7 @@ export default function AdminDashboardPage() {
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="h-12 w-full animate-pulse rounded-lg bg-muted/65"
+                    className="h-12 w-full animate-pulse rounded-none bg-muted/60"
                   />
                 ))}
               </div>
@@ -407,7 +472,7 @@ export default function AdminDashboardPage() {
                 {summary.recentAuditLogs.map((log: any) => (
                   <div
                     key={log.id}
-                    className="flex flex-col gap-1 rounded-lg border border-border p-3 hover:bg-muted/10 transition-colors"
+                    className="flex flex-col gap-1 rounded-none border border-border/60 p-3 hover:bg-muted/20 transition-colors"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-foreground capitalize">
@@ -426,7 +491,7 @@ export default function AdminDashboardPage() {
                             : "System"}
                         </span>
                       </span>
-                      <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded font-mono uppercase">
+                      <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded-none font-mono uppercase">
                         {log.tenant?.name || "Platform"}
                       </span>
                     </div>
@@ -440,6 +505,18 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Transaction Receipt Modal */}
+      {receiptOpen && selectedTxn && (
+        <ReceiptModal
+          open={receiptOpen}
+          transaction={selectedTxn}
+          onClose={() => {
+            setReceiptOpen(false);
+            setSelectedTxn(null);
+          }}
+        />
+      )}
     </div>
   );
 }
