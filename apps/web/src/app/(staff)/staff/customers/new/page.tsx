@@ -1,29 +1,29 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { customerApi } from '@/lib/api';
-import { ArrowLeft, UserPlus, AlertCircle, Check } from 'lucide-react';
-import Link from 'next/link';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { customerApi } from "@/lib/api";
+import { ArrowLeft, UserPlus, AlertCircle, Check } from "lucide-react";
+import Link from "next/link";
 
 export default function OnboardCustomerPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [ghanaCardNumber, setGhanaCardNumber] = useState('');
-  const [address, setAddress] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [ghanaCardNumber, setGhanaCardNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
 
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -36,24 +36,24 @@ export default function OnboardCustomerPage() {
       });
     },
     onSuccess: (newCustomer) => {
-      setSuccess('Customer successfully registered!');
-      queryClient.invalidateQueries({ queryKey: ['staff-customers'] });
+      setSuccess("Customer successfully registered!");
+      queryClient.invalidateQueries({ queryKey: ["staff-customers"] });
       setTimeout(() => {
         router.push(`/staff/customers/${newCustomer.id}`);
       }, 1000);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Onboarding failed');
+      setError(err instanceof Error ? err.message : "Onboarding failed");
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     if (!firstName || !lastName) {
-      setError('First name and last name are required.');
+      setError("First name and last name are required.");
       return;
     }
 
@@ -75,11 +75,12 @@ export default function OnboardCustomerPage() {
 
       <Card className="max-w-2xl">
         <CardHeader>
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <UserPlus className="h-5 w-5 text-primary" />
+          <CardTitle className="text-base font-semibold text-foreground">
             Customer Information
           </CardTitle>
-          <p className="text-sm text-muted-foreground">Fill out the profile details to complete registration</p>
+          <p className="text-sm text-muted-foreground">
+            Fill out the profile details to complete registration
+          </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

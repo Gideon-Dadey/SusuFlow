@@ -45,10 +45,10 @@ function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-none border border-border/60 bg-card p-3 shadow-md text-xs">
-      <p className="mb-1 font-medium text-foreground">{label}</p>
+      <p className="mb-1 font-semibold text-foreground">{label}</p>
       <p className="text-muted-foreground">
         Collections:{" "}
-        <span className="font-semibold text-secondary">
+        <span className="font-bold text-secondary">
           {formatGhs(payload[0].value)}
         </span>
       </p>
@@ -95,20 +95,20 @@ export function CollectionTrendChart({
   }, [transactions, days]);
 
   return (
-    <Card className="col-span-1 lg:col-span-6">
-      <CardHeader className="flex flex-row items-start justify-between pb-2">
+    <Card className="col-span-1 lg:col-span-6 flex flex-col justify-between p-0 overflow-hidden">
+      <CardHeader className="flex flex-row items-start justify-between p-5 pb-2">
         <div>
-          <p className="text-sm font-medium text-muted-foreground">
+          <h3 className="text-sm sm:text-base font-semibold text-foreground">
             Collection Trend
-          </p>
-          <p className="mt-1 text-2xl font-bold tracking-tight text-foreground tabular-nums">
+          </h3>
+          <p className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-foreground tabular-nums">
             {formatGhs(total)}
           </p>
         </div>
         <select
           value={period}
           onChange={(e) => setPeriod(e.target.value as Period)}
-          className="rounded-none border border-border/60 bg-muted/20 px-3 py-1.5 text-xs font-medium text-foreground outline-none transition hover:border-border focus:outline-none"
+          className="rounded-none border border-border/60 bg-card px-3 py-1.5 text-xs font-semibold text-foreground outline-none shadow-sm transition hover:border-border focus:outline-none"
         >
           {Object.entries(PERIOD_LABELS).map(([key, label]) => (
             <option key={key} value={key} className="bg-card text-foreground">
@@ -117,12 +117,13 @@ export function CollectionTrendChart({
           ))}
         </select>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="h-[240px] w-full">
+
+      <CardContent className="px-3 pt-2 pb-0 flex-1">
+        <div className="h-[230px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={chartData}
-              margin={{ top: 8, right: 4, left: -20, bottom: 0 }}
+              margin={{ top: 12, right: 12, left: -22, bottom: 0 }}
             >
               <defs>
                 <linearGradient
@@ -132,12 +133,12 @@ export function CollectionTrendChart({
                   x2="0"
                   y2="1"
                 >
-                  <stop offset="0%" stopColor="#153e90" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="#153e90" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.25} />
+                  <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.01} />
                 </linearGradient>
               </defs>
               <CartesianGrid
-                strokeDasharray="3 3"
+                strokeDasharray="4 4"
                 vertical={false}
                 stroke="var(--border)"
                 strokeOpacity={0.4}
@@ -146,8 +147,9 @@ export function CollectionTrendChart({
                 dataKey="name"
                 axisLine={false}
                 tickLine={false}
+                padding={{ left: 10, right: 10 }}
                 tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
-                dy={8}
+                dy={6}
               />
               <YAxis
                 axisLine={false}
@@ -163,29 +165,35 @@ export function CollectionTrendChart({
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#153e90"
-                strokeWidth={2.5}
+                stroke="#3b82f6"
+                strokeWidth={3}
                 fill="url(#collectionGradient)"
-                dot={false}
-                activeDot={{
-                  r: 5,
-                  strokeWidth: 2,
-                  fill: "#153e90",
+                dot={{
+                  r: 3.5,
+                  fill: "#3b82f6",
                   stroke: "var(--background)",
+                  strokeWidth: 1.5,
+                }}
+                activeDot={{
+                  r: 6,
+                  fill: "#2563eb",
+                  stroke: "var(--background)",
+                  strokeWidth: 2,
                 }}
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <div className="mt-3 flex items-center justify-center">
-          <a
-            href="/staff/reports"
-            className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            View full analytics →
-          </a>
-        </div>
       </CardContent>
+
+      <div className="border-t border-border/60 py-3 text-center bg-card">
+        <a
+          href="/staff/reports"
+          className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
+        >
+          View full analytics →
+        </a>
+      </div>
     </Card>
   );
 }
