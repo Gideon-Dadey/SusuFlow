@@ -3,14 +3,17 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { TransactionRow } from "@/components/financial/transaction-row";
+import { ReceiptModal } from "@/components/financial/receipt-modal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { depositApi } from "@/lib/api";
+import { depositApi, type Transaction } from "@/lib/api";
 import { TransactionListSkeleton } from "@/components/ui/skeleton";
 
 export default function StaffDepositsPage() {
   const queryClient = useQueryClient();
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
+  const [receiptOpen, setReceiptOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["staff-deposits"],
@@ -84,8 +87,9 @@ export default function StaffDepositsPage() {
           Download CSV
         </Button>
       </div>
-      <Card>
-        <CardContent className="p-4">
+
+      <Card className="p-0 overflow-hidden">
+        <CardContent className="p-2 sm:p-4">
           {isLoading ? (
             <TransactionListSkeleton count={5} />
           ) : (
@@ -93,6 +97,10 @@ export default function StaffDepositsPage() {
               <TransactionRow
                 key={t.id}
                 transaction={t}
+                onClick={() => {
+                  setSelectedTxn(t);
+                  setReceiptOpen(true);
+                }}
                 action={
                   t.status === "pending" ? (
                     <Button
@@ -110,6 +118,12 @@ export default function StaffDepositsPage() {
           )}
         </CardContent>
       </Card>
+
+      <ReceiptModal
+        transaction={selectedTxn}
+        open={receiptOpen}
+        onClose={() => setReceiptOpen(false)}
+      />
     </div>
   );
 }

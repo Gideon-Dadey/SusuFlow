@@ -119,7 +119,7 @@ export default function StaffWithdrawalsPage() {
               No withdrawals recorded yet.
             </div>
           ) : (
-            <div className="divide-y divide-gray-100 dark:divide-border/40">
+            <div className="divide-y divide-border/60">
               {withdrawals.map((t) => {
                 const amt =
                   typeof t.amount === "string"
@@ -149,7 +149,7 @@ export default function StaffWithdrawalsPage() {
                     </div>
                     <div className="text-right flex items-center gap-4">
                       <div>
-                        <p className="font-bold text-sm text-red-600">
+                        <p className="font-bold text-sm text-foreground tabular-nums">
                           -{formatGhs(amt)}
                         </p>
                         <span className="text-[10px] text-muted-foreground uppercase font-semibold block">

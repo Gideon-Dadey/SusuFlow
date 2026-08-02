@@ -1,12 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { adminApi } from "@/lib/api";
+import { adminApi, type Transaction } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { formatGhs, formatDate } from "@/lib/utils";
 import { useState } from "react";
+import { ReceiptModal } from "@/components/financial/receipt-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faWallet,
@@ -18,6 +19,8 @@ import {
 export default function AdminDepositsPage() {
   const [selectedTenant, setSelectedTenant] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
+  const [receiptOpen, setReceiptOpen] = useState(false);
 
   // Fetch tenants for filtering dropdown
   const { data: tenantsData } = useQuery({
@@ -111,7 +114,7 @@ export default function AdminDepositsPage() {
                 <select
                   value={selectedTenant}
                   onChange={(e) => setSelectedTenant(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-1.5 text-sm outline-none focus:border-primary"
+                  className="w-full rounded-none border border-border/60 bg-background px-3 py-1.5 text-xs outline-none focus:border-primary"
                 >
                   <option value="">All Organizations</option>
                   {tenants.map((tenant) => (
@@ -127,7 +130,7 @@ export default function AdminDepositsPage() {
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-1.5 text-sm outline-none focus:border-primary"
+                  className="w-full rounded-none border border-border/60 bg-background px-3 py-1.5 text-xs outline-none focus:border-primary"
                 >
                   <option value="">All Statuses</option>
                   <option value="completed">Completed</option>
@@ -152,17 +155,19 @@ export default function AdminDepositsPage() {
       </Card>
 
       {/* Main ledger list */}
-      <Card className="portal-card border-border/60">
-        <CardHeader>
-          <CardTitle>Deposits Feed ({deposits.length})</CardTitle>
+      <Card className="portal-card border-border/60 p-0 overflow-hidden">
+        <CardHeader className="px-6 py-4 border-b border-border/60">
+          <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
+            Deposits Feed ({deposits.length})
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {isLoading ? (
-            <div className="space-y-4 py-8">
+            <div className="space-y-4 p-6">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={i}
-                  className="h-12 w-full animate-pulse rounded-lg bg-muted/65"
+                  className="h-12 w-full animate-pulse rounded-none bg-muted/65"
                 />
               ))}
             </div>
@@ -180,7 +185,7 @@ export default function AdminDepositsPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-border text-xs font-semibold text-muted-foreground uppercase">
+                  <tr className="border-b border-border/60 text-xs font-semibold text-muted-foreground uppercase bg-muted/20">
                     <th className="py-3 px-4">Date</th>
                     <th className="py-3 px-4">Reference</th>
                     <th className="py-3 px-4">Organization</th>
@@ -194,7 +199,11 @@ export default function AdminDepositsPage() {
                   {deposits.map((tx) => (
                     <tr
                       key={tx.id}
-                      className="hover:bg-muted/30 transition-colors"
+                      onClick={() => {
+                        setSelectedTxn(tx);
+                        setReceiptOpen(true);
+                      }}
+                      className="hover:bg-muted/30 cursor-pointer transition-colors"
                     >
                       <td className="py-3.5 px-4 text-xs text-muted-foreground whitespace-nowrap">
                         {formatDate(tx.createdAt)}
@@ -203,7 +212,7 @@ export default function AdminDepositsPage() {
                         {tx.reference}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="inline-block rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
+                        <span className="inline-block rounded-none bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
                           {tx.tenant?.name || "Platform"}
                         </span>
                       </td>
@@ -236,6 +245,12 @@ export default function AdminDepositsPage() {
           )}
         </CardContent>
       </Card>
+
+      <ReceiptModal
+        transaction={selectedTxn}
+        open={receiptOpen}
+        onClose={() => setReceiptOpen(false)}
+      />
     </div>
   );
 }
