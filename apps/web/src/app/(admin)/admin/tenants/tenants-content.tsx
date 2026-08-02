@@ -3,14 +3,33 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { adminApi, type AdminTenant } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TenantListSkeleton } from "@/components/ui/skeleton";
-import { formatDate } from "@/lib/utils";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { formatDate, getInitials, cn } from "@/lib/utils";
+import {
+  Building2,
+  Users,
+  ShieldCheck,
+  CreditCard,
+  Search,
+  LayoutGrid,
+  ListFilter,
+  Copy,
+  Check,
+  ExternalLink,
+  Plus,
+  RefreshCw,
+  AlertTriangle,
+  Lock,
+  Unlock,
+  ChevronRight,
+  Eye,
+  X,
+  UserCheck,
+} from "lucide-react";
 
 function CopyLinkButton({ label, url }: { label: string; url: string }) {
   const [copied, setCopied] = useState(false);
@@ -26,7 +45,7 @@ function CopyLinkButton({ label, url }: { label: string; url: string }) {
       <span className="font-semibold text-muted-foreground uppercase text-[9px] tracking-wider whitespace-nowrap">
         {label}:
       </span>
-      <span className="font-mono text-foreground truncate max-w-[200px] sm:max-w-none">
+      <span className="font-mono text-foreground truncate max-w-[180px] sm:max-w-none">
         {url}
       </span>
       <button
@@ -35,10 +54,11 @@ function CopyLinkButton({ label, url }: { label: string; url: string }) {
         title="Copy Link"
         type="button"
       >
-        <FontAwesomeIcon
-          icon={copied ? faCheck : faCopy}
-          className={`h-3.5 w-3.5 ${copied ? "text-emerald-600 dark:text-emerald-400" : ""}`}
-        />
+        {copied ? (
+          <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+        ) : (
+          <Copy className="h-3.5 w-3.5" />
+        )}
       </button>
     </div>
   );
@@ -58,8 +78,14 @@ export default function AdminTenantsPage() {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
+  const [selectedTenant, setSelectedTenant] = useState<AdminTenant | null>(
+    null,
+  );
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-tenants"],
     queryFn: () => adminApi.listTenants(),
     placeholderData: (prev) => prev,
@@ -67,20 +93,57 @@ export default function AdminTenantsPage() {
 
   const tenants = data?.items ?? [];
 
+  // Filtered tenants list
+  const filteredTenants = useMemo(() => {
+    return tenants.filter((t) => {
+      if (statusFilter && t.status !== statusFilter) return false;
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase();
+      return (
+        t.name.toLowerCase().includes(q) ||
+        t.slug.toLowerCase().includes(q) ||
+        t.email?.toLowerCase().includes(q)
+      );
+    });
+  }, [tenants, statusFilter, searchQuery]);
+
+  // Executive Metric Counts
+  const totalTenants = tenants.length;
+  const activeCount = tenants.filter((t) => t.status === "active").length;
+  const trialCount = tenants.filter((t) => t.status === "trial").length;
+  const suspendedCount = tenants.filter((t) => t.status === "suspended").length;
+
+  const totalUsersCount = tenants.reduce(
+    (sum, t) => sum + (t._count?.users ?? 0),
+    0,
+  );
+  const totalCustomersCount = tenants.reduce(
+    (sum, t) => sum + (t._count?.customers ?? 0),
+    0,
+  );
+
   const activateMutation = useMutation({
     mutationFn: (id: string) => adminApi.activateTenant(id),
     onSuccess: (res) => {
       setActionMessage(res.message);
       queryClient.invalidateQueries({ queryKey: ["admin-tenants"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-global-summary"] });
+      if (selectedTenant && selectedTenant.id === (res as any).tenant?.id) {
+        setSelectedTenant((res as any).tenant);
+      }
     },
   });
 
   const suspendMutation = useMutation({
     mutationFn: (id: string) =>
-      adminApi.suspendTenant(id, "Suspended by platform admin"),
+      adminApi.suspendTenant(id, "Suspended by platform administrator"),
     onSuccess: (res) => {
       setActionMessage(res.message);
       queryClient.invalidateQueries({ queryKey: ["admin-tenants"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-global-summary"] });
+      if (selectedTenant && selectedTenant.id === (res as any).tenant?.id) {
+        setSelectedTenant((res as any).tenant);
+      }
     },
   });
 
@@ -110,168 +173,592 @@ export default function AdminTenantsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Top Header Banner */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="page-header mb-0">
-          <h1 className="dashboard-title">Platform Organizations</h1>
+        <div>
+          <h1 className="dashboard-title">Platform Organizations (Tenants)</h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Manage registered Susu companies, tenant access rules, and
-            organization provisioning.
+            Enterprise multi-tenant administration, organization provisioning,
+            and global access governance.
           </p>
         </div>
-        <Link href="/admin/tenants/new">
-          <Button size="sm" className="rounded-none font-semibold text-xs">
-            Create organization
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            className="rounded-none text-xs font-semibold"
+          >
+            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+            Refresh
           </Button>
-        </Link>
+          <Link href="/admin/tenants/new">
+            <Button
+              size="sm"
+              className="rounded-none font-semibold text-xs gap-1.5"
+            >
+              <Plus className="h-4 w-4" />
+              Provision Organization
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {actionMessage ? (
-        <div className="rounded-none border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-xs font-medium text-foreground">
-          {actionMessage}
+        <div className="rounded-none border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-xs font-medium text-foreground flex items-center justify-between">
+          <span>{actionMessage}</span>
+          <button
+            onClick={() => setActionMessage(null)}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
       ) : null}
 
-      <Card className="rounded-none border border-border/60 bg-card shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-sm sm:text-base font-bold">
-            All organizations ({tenants.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <TenantListSkeleton count={3} />
-          ) : error ? (
-            <p className="py-8 text-center text-xs text-destructive">
-              Failed to load organizations
-            </p>
-          ) : tenants.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="text-xs text-muted-foreground">
-                No organizations registered yet
-              </p>
-              <Link href="/admin/tenants/new" className="mt-4 inline-block">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-none text-xs"
-                >
-                  Provision first organization
-                </Button>
-              </Link>
+      {/* Executive Metric Cards Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            Total Organizations
+          </p>
+          <p className="mt-1 text-2xl sm:text-3xl font-bold tabular-nums tracking-tight text-foreground">
+            {totalTenants}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground font-mono">
+            {activeCount} active · {trialCount} trial · {suspendedCount}{" "}
+            suspended
+          </p>
+        </Card>
+
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            Active Savers
+          </p>
+          <p className="mt-1 text-2xl sm:text-3xl font-bold tabular-nums tracking-tight text-foreground">
+            {totalCustomersCount}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground font-mono">
+            Registered customer accounts
+          </p>
+        </Card>
+
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            Personnel & Staff
+          </p>
+          <p className="mt-1 text-2xl sm:text-3xl font-bold tabular-nums tracking-tight text-foreground">
+            {totalUsersCount}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground font-mono">
+            Admins, officers & collectors
+          </p>
+        </Card>
+
+        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
+          <p className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            Platform License
+          </p>
+          <p className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
+            Multi-Tenant
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground font-mono">
+            SusuFlow Enterprise Engine
+          </p>
+        </Card>
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border/60 pb-3">
+        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+          {[
+            { label: "All Orgs", value: "" },
+            { label: "Active", value: "active" },
+            { label: "Trial", value: "trial" },
+            { label: "Suspended", value: "suspended" },
+          ].map((tab) => (
+            <button
+              key={tab.value}
+              type="button"
+              onClick={() => setStatusFilter(tab.value)}
+              className={cn(
+                "px-3 py-1.5 text-xs font-semibold transition-colors rounded-none border-b-2",
+                statusFilter === tab.value
+                  ? "border-primary text-primary font-bold"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          {/* View Mode Toggle */}
+          <div className="flex items-center gap-1 p-1 bg-muted/60 rounded-none">
+            <button
+              type="button"
+              onClick={() => setViewMode("grid")}
+              className={cn(
+                "p-1.5 text-xs font-semibold rounded-none transition-colors",
+                viewMode === "grid"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground",
+              )}
+              title="Grid View"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("table")}
+              className={cn(
+                "p-1.5 text-xs font-semibold rounded-none transition-colors",
+                viewMode === "table"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground",
+              )}
+              title="Table View"
+            >
+              <ListFilter className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="relative flex-1 sm:w-64">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search org name, slug or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 h-9 text-xs rounded-none border border-border/60 bg-background outline-none focus:border-primary"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Main Organizations Directory */}
+      {isLoading ? (
+        <TenantListSkeleton count={3} />
+      ) : error ? (
+        <Card className="p-8 text-center bg-card border-dashed">
+          <p className="text-xs text-destructive font-semibold">
+            Failed to load platform organizations.
+          </p>
+        </Card>
+      ) : filteredTenants.length === 0 ? (
+        <Card className="p-8 text-center bg-card border-dashed">
+          <Building2 className="mx-auto h-8 w-8 text-muted-foreground/50" />
+          <p className="mt-2 text-xs text-muted-foreground font-medium">
+            No organizations matching filter criteria.
+          </p>
+          <Link href="/admin/tenants/new" className="mt-4 inline-block">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-none text-xs"
+            >
+              Provision First Organization
+            </Button>
+          </Link>
+        </Card>
+      ) : viewMode === "grid" ? (
+        /* GRID DEEP CARDS VIEW */
+        <div className="space-y-4">
+          {filteredTenants.map((tenant) => (
+            <TenantDeepCard
+              key={tenant.id}
+              tenant={tenant}
+              onActivate={() => activateMutation.mutate(tenant.id)}
+              onSuspend={() => suspendMutation.mutate(tenant.id)}
+              onCheckout={() => checkoutMutation.mutate(tenant.id)}
+              onInspect={() => setSelectedTenant(tenant)}
+              busy={
+                activateMutation.isPending ||
+                suspendMutation.isPending ||
+                checkoutMutation.isPending
+              }
+            />
+          ))}
+        </div>
+      ) : (
+        /* TABLE VIEW */
+        <Card className="rounded-none border border-border/60 bg-card shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-border/60 text-xs font-semibold text-muted-foreground uppercase bg-muted/20">
+                  <th className="py-3 px-4">Organization</th>
+                  <th className="py-3 px-4">Tenant Slug</th>
+                  <th className="py-3 px-4">Contact Email</th>
+                  <th className="py-3 px-4 text-center">Savers</th>
+                  <th className="py-3 px-4 text-center">Staff</th>
+                  <th className="py-3 px-4">Provisioned</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60">
+                {filteredTenants.map((tenant) => (
+                  <tr
+                    key={tenant.id}
+                    className="hover:bg-muted/30 transition-colors"
+                  >
+                    <td className="py-3.5 px-4 font-bold text-foreground">
+                      <div className="flex items-center gap-2.5">
+                        <div className="size-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">
+                          {getInitials(tenant.name)}
+                        </div>
+                        <span>{tenant.name}</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 font-mono text-xs text-foreground">
+                      {tenant.slug}
+                    </td>
+                    <td className="py-3.5 px-4 text-muted-foreground">
+                      {tenant.email}
+                    </td>
+                    <td className="py-3.5 px-4 text-center font-bold tabular-nums text-foreground">
+                      {tenant._count?.customers ?? 0}
+                    </td>
+                    <td className="py-3.5 px-4 text-center font-bold tabular-nums text-foreground">
+                      {tenant._count?.users ?? 0}
+                    </td>
+                    <td className="py-3.5 px-4 text-muted-foreground whitespace-nowrap">
+                      {formatDate(tenant.createdAt)}
+                    </td>
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <span
+                        className={`inline-flex rounded-none px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                          statusStyles[tenant.status] ??
+                          "bg-muted text-muted-foreground border border-border/60"
+                        }`}
+                      >
+                        {tenant.status}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <div className="flex justify-end gap-1.5">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="rounded-none text-xs font-semibold h-7 px-2"
+                          onClick={() => setSelectedTenant(tenant)}
+                        >
+                          <Eye className="h-3.5 w-3.5 mr-1" /> Details
+                        </Button>
+                        {tenant.status !== "active" ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="rounded-none text-xs font-semibold h-7 px-2"
+                            disabled={
+                              activateMutation.isPending ||
+                              suspendMutation.isPending
+                            }
+                            onClick={() => activateMutation.mutate(tenant.id)}
+                          >
+                            Activate
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="rounded-none text-xs font-semibold h-7 px-2 border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
+                            disabled={
+                              activateMutation.isPending ||
+                              suspendMutation.isPending
+                            }
+                            onClick={() => suspendMutation.mutate(tenant.id)}
+                          >
+                            Suspend
+                          </Button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+
+      {/* DEEP ORGANIZATION INSPECTION MODAL */}
+      {selectedTenant && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-fade-in overflow-y-auto">
+          <div className="relative w-full max-w-2xl bg-card border border-border rounded-none overflow-hidden flex flex-col my-auto shadow-2xl">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 border-b border-border bg-slate-900 text-white">
+              <div className="flex items-center gap-3">
+                <div className="size-10 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm">
+                  {getInitials(selectedTenant.name)}
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                    <span>{selectedTenant.name}</span>
+                    <span
+                      className={`inline-flex rounded-none px-2 py-0.5 text-[9px] font-bold uppercase ${
+                        statusStyles[selectedTenant.status] ??
+                        "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {selectedTenant.status}
+                    </span>
+                  </h2>
+                  <p className="text-xs text-slate-400 font-mono">
+                    Slug: {selectedTenant.slug} · ID: {selectedTenant.id}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedTenant(null)}
+                className="size-8 rounded-none text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {tenants.map((tenant) => (
-                <TenantRow
-                  key={tenant.id}
-                  tenant={tenant}
-                  onActivate={() => activateMutation.mutate(tenant.id)}
-                  onSuspend={() => suspendMutation.mutate(tenant.id)}
-                  onCheckout={() => checkoutMutation.mutate(tenant.id)}
-                  busy={
-                    activateMutation.isPending ||
-                    suspendMutation.isPending ||
-                    checkoutMutation.isPending
-                  }
+
+            {/* Modal Body */}
+            <div className="p-5 space-y-5 overflow-y-auto max-h-[75vh]">
+              {/* 4 Mini Stat Boxes */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="p-3 bg-muted/40 border border-border/60">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase block">
+                    Active Savers
+                  </span>
+                  <span className="text-lg font-bold tabular-nums text-foreground">
+                    {selectedTenant._count?.customers ?? 0}
+                  </span>
+                </div>
+                <div className="p-3 bg-muted/40 border border-border/60">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase block">
+                    Staff Personnel
+                  </span>
+                  <span className="text-lg font-bold tabular-nums text-foreground">
+                    {selectedTenant._count?.users ?? 0}
+                  </span>
+                </div>
+                <div className="p-3 bg-muted/40 border border-border/60">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase block">
+                    Billing Plan
+                  </span>
+                  <span className="text-sm font-bold text-foreground uppercase">
+                    {selectedTenant.subscription?.plan || "Growth"}
+                  </span>
+                </div>
+                <div className="p-3 bg-muted/40 border border-border/60">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase block">
+                    Provisioned
+                  </span>
+                  <span className="text-xs font-semibold text-foreground">
+                    {formatDate(selectedTenant.createdAt)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Contact & Admin Credentials Info */}
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Organization Contact & Admin Info
+                </h3>
+                <div className="p-3 rounded-none bg-muted/20 border border-border/60 space-y-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">
+                      Contact Email:
+                    </span>
+                    <span className="font-semibold text-foreground">
+                      {selectedTenant.email}
+                    </span>
+                  </div>
+                  {selectedTenant.phone && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        Contact Phone:
+                      </span>
+                      <span className="font-mono font-semibold text-foreground">
+                        {selectedTenant.phone}
+                      </span>
+                    </div>
+                  )}
+                  {selectedTenant.subscription?.trialEnd && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        Trial Period End:
+                      </span>
+                      <span className="font-semibold text-amber-600 dark:text-amber-400">
+                        {formatDate(selectedTenant.subscription.trialEnd)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Direct Access URLs */}
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Portal Direct Access Links
+                </h3>
+                <CopyLinkButton
+                  label="Admin Login"
+                  url={`${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/login?tenant=${selectedTenant.slug}`}
                 />
-              ))}
+                <CopyLinkButton
+                  label="Saver Registration"
+                  url={`${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/register?tenant=${selectedTenant.slug}`}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-3 border-t border-border/60 flex flex-wrap gap-2 justify-end">
+                {selectedTenant.status !== "active" ? (
+                  <Button
+                    size="sm"
+                    className="rounded-none text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
+                    disabled={
+                      activateMutation.isPending || suspendMutation.isPending
+                    }
+                    onClick={() => activateMutation.mutate(selectedTenant.id)}
+                  >
+                    <Unlock className="h-3.5 w-3.5 mr-1.5" />
+                    Activate Organization
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="rounded-none text-xs font-semibold border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
+                    disabled={
+                      activateMutation.isPending || suspendMutation.isPending
+                    }
+                    onClick={() => suspendMutation.mutate(selectedTenant.id)}
+                  >
+                    <Lock className="h-3.5 w-3.5 mr-1.5" />
+                    Suspend Organization
+                  </Button>
+                )}
+
+                {selectedTenant.subscription?.plan === "growth" &&
+                  selectedTenant.status !== "active" && (
+                    <Button
+                      size="sm"
+                      className="rounded-none text-xs font-semibold"
+                      disabled={checkoutMutation.isPending}
+                      onClick={() => checkoutMutation.mutate(selectedTenant.id)}
+                    >
+                      <CreditCard className="h-3.5 w-3.5 mr-1.5" />
+                      Collect Payment
+                    </Button>
+                  )}
+              </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function TenantRow({
+function TenantDeepCard({
   tenant,
   onActivate,
   onSuspend,
   onCheckout,
+  onInspect,
   busy,
 }: {
   tenant: AdminTenant;
   onActivate: () => void;
   onSuspend: () => void;
   onCheckout: () => void;
+  onInspect: () => void;
   busy: boolean;
 }) {
+  const initials = getInitials(tenant.name);
+
   return (
-    <div className="rounded-none border border-border/60 bg-card p-4 sm:p-5">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-base font-bold text-foreground">
-              {tenant.name}
-            </h2>
-            <span
-              className={`inline-flex rounded-none px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-                statusStyles[tenant.status] ??
-                "bg-muted text-muted-foreground border border-border/60"
-              }`}
-            >
-              {tenant.status}
-            </span>
-            {tenant.subscription ? (
-              <span className="text-xs text-muted-foreground">
-                {tenant.subscription.plan} · {tenant.subscription.status}
-              </span>
-            ) : null}
+    <div className="rounded-none border border-border/60 bg-card p-4 sm:p-5 shadow-sm space-y-4 hover:border-primary/50 transition-colors">
+      {/* Top Header Row */}
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex items-start gap-3.5 min-w-0 flex-1">
+          {/* Org Logo Avatar */}
+          <div className="size-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0 border border-primary/20">
+            {initials}
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            <span className="font-mono font-medium text-foreground">
-              {tenant.slug}
-            </span>{" "}
-            · {tenant.email}
-          </p>
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            Created {formatDate(tenant.createdAt)}
-            {tenant._count
-              ? ` · ${tenant._count.users} users · ${tenant._count.customers} customers`
-              : ""}
-            {tenant.subscription?.trialEnd
-              ? ` · Trial ends ${formatDate(tenant.subscription.trialEnd)}`
-              : ""}
-          </p>
-          <div className="mt-3.5 max-w-xl space-y-2">
-            <CopyLinkButton
-              label="Admin Login"
-              url={`${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/login?tenant=${tenant.slug}`}
-            />
-            <CopyLinkButton
-              label="Saver Signup"
-              url={`${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/register?tenant=${tenant.slug}`}
-            />
+
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-base font-bold text-foreground truncate">
+                {tenant.name}
+              </h2>
+              <span
+                className={`inline-flex rounded-none px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                  statusStyles[tenant.status] ??
+                  "bg-muted text-muted-foreground border border-border/60"
+                }`}
+              >
+                {tenant.status}
+              </span>
+              {tenant.subscription ? (
+                <span className="text-xs text-muted-foreground font-mono">
+                  {tenant.subscription.plan} · {tenant.subscription.status}
+                </span>
+              ) : null}
+            </div>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Slug:{" "}
+              <span className="font-mono font-bold text-foreground">
+                {tenant.slug}
+              </span>{" "}
+              · Contact:{" "}
+              <span className="font-medium text-foreground">
+                {tenant.email}
+              </span>
+            </p>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+
+        {/* Action Controls */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="rounded-none text-xs font-semibold h-8"
+            onClick={onInspect}
+          >
+            <Eye className="h-3.5 w-3.5 mr-1" /> Full Details
+          </Button>
+
           {tenant.status !== "active" ? (
             <Button
               size="sm"
               variant="outline"
-              className="rounded-none text-xs font-semibold"
+              className="rounded-none text-xs font-semibold h-8"
               disabled={busy}
               onClick={onActivate}
             >
               Activate
             </Button>
           ) : null}
+
           {tenant.status !== "suspended" ? (
             <Button
               size="sm"
               variant="outline"
-              className="rounded-none text-xs font-semibold border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
+              className="rounded-none text-xs font-semibold h-8 border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
               disabled={busy}
               onClick={onSuspend}
             >
               Suspend
             </Button>
           ) : null}
+
           {tenant.subscription?.plan === "growth" &&
           tenant.status !== "active" ? (
             <Button
               size="sm"
-              className="rounded-none text-xs font-semibold"
+              className="rounded-none text-xs font-semibold h-8"
               disabled={busy}
               onClick={onCheckout}
             >
@@ -279,6 +766,57 @@ function TenantRow({
             </Button>
           ) : null}
         </div>
+      </div>
+
+      {/* 4 Micro Stat Cards Bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+        <div className="p-2.5 bg-muted/30 border border-border/60 rounded-none">
+          <span className="text-[9px] font-bold text-muted-foreground uppercase block">
+            Registered Savers
+          </span>
+          <span className="text-sm font-bold tabular-nums text-foreground">
+            {tenant._count?.customers ?? 0} Customers
+          </span>
+        </div>
+
+        <div className="p-2.5 bg-muted/30 border border-border/60 rounded-none">
+          <span className="text-[9px] font-bold text-muted-foreground uppercase block">
+            Staff Members
+          </span>
+          <span className="text-sm font-bold tabular-nums text-foreground">
+            {tenant._count?.users ?? 0} Personnel
+          </span>
+        </div>
+
+        <div className="p-2.5 bg-muted/30 border border-border/60 rounded-none">
+          <span className="text-[9px] font-bold text-muted-foreground uppercase block">
+            Provisioned Date
+          </span>
+          <span className="text-xs font-semibold text-foreground">
+            {formatDate(tenant.createdAt)}
+          </span>
+        </div>
+
+        <div className="p-2.5 bg-muted/30 border border-border/60 rounded-none">
+          <span className="text-[9px] font-bold text-muted-foreground uppercase block">
+            Subscription
+          </span>
+          <span className="text-xs font-semibold text-foreground uppercase">
+            {tenant.subscription?.plan || "Growth"}
+          </span>
+        </div>
+      </div>
+
+      {/* Access URL Copier */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+        <CopyLinkButton
+          label="Admin Login"
+          url={`${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/login?tenant=${tenant.slug}`}
+        />
+        <CopyLinkButton
+          label="Saver Signup"
+          url={`${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/register?tenant=${tenant.slug}`}
+        />
       </div>
     </div>
   );
