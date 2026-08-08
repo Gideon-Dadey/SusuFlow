@@ -5,6 +5,7 @@ import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormCardSkeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 const INTENT_COPY: Record<string, { title: string; cta: string }> = {
   demo: {
@@ -16,6 +17,15 @@ const INTENT_COPY: Record<string, { title: string; cta: string }> = {
     cta: "Contact sales",
   },
 };
+
+const fieldClassName =
+  "min-h-[3rem] rounded-xl border-border bg-background text-base";
+
+const textareaClassName = cn(
+  fieldClassName,
+  "flex w-full resize-y px-4 py-3 ring-offset-background",
+  "hover:border-border focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+);
 
 function ContactFormInner() {
   const searchParams = useSearchParams();
@@ -34,9 +44,11 @@ function ContactFormInner() {
 
   if (submitted) {
     return (
-      <div className="py-8 text-center">
-        <p className="text-lg font-semibold text-foreground">Message sent</p>
-        <p className="mt-2 text-[17px] text-muted-foreground">
+      <div className="rounded-2xl border border-[#c6e5df] bg-[#c6e5df]/20 px-6 py-10 text-center">
+        <p className="font-geist text-xl font-medium text-foreground">
+          Message sent
+        </p>
+        <p className="afrusan-body mt-3 text-balance">
           Thanks for reaching out. We&apos;ll get back to you within one
           business day.
         </p>
@@ -45,40 +57,57 @@ function ContactFormInner() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <input type="hidden" name="intent" value={intent} />
-      <p className="text-[17px] font-medium text-secondary">{copy.title}</p>
+      <p className="font-geist text-lg font-medium text-foreground">
+        {copy.title}
+      </p>
+
       <div>
         <label
           htmlFor="name"
-          className="mb-1.5 block text-[17px] font-medium text-foreground"
+          className="mb-2 block text-sm font-medium text-foreground"
         >
           Name
         </label>
-        <Input id="name" name="name" required />
+        <Input id="name" name="name" required className={fieldClassName} />
       </div>
+
       <div>
         <label
           htmlFor="email"
-          className="mb-1.5 block text-[17px] font-medium text-foreground"
+          className="mb-2 block text-sm font-medium text-foreground"
         >
           Email
         </label>
-        <Input id="email" name="email" type="email" required />
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          required
+          className={fieldClassName}
+        />
       </div>
+
       <div>
         <label
           htmlFor="company"
-          className="mb-1.5 block text-[17px] font-medium text-foreground"
+          className="mb-2 block text-sm font-medium text-foreground"
         >
           Susu company
         </label>
-        <Input id="company" name="company" required={intent === "demo"} />
+        <Input
+          id="company"
+          name="company"
+          required={intent === "demo"}
+          className={fieldClassName}
+        />
       </div>
+
       <div>
         <label
           htmlFor="message"
-          className="mb-1.5 block text-[17px] font-medium text-foreground"
+          className="mb-2 block text-sm font-medium text-foreground"
         >
           Message
         </label>
@@ -86,11 +115,15 @@ function ContactFormInner() {
           id="message"
           name="message"
           required
-          rows={4}
-          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-[16px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          rows={5}
+          className={textareaClassName}
         />
       </div>
-      <Button type="submit" className="w-full rounded-md text-[15px] font-bold">
+
+      <Button
+        type="submit"
+        className="h-12 w-full rounded-full text-base font-medium"
+      >
         {copy.cta}
       </Button>
     </form>

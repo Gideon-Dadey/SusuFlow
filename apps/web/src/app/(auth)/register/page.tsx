@@ -7,7 +7,11 @@ import { Eye, EyeOff } from "lucide-react";
 import { AuthShell } from "@/components/auth/auth-shell";
 import {
   AuthFooterExtras,
+  authHeadingClassName,
   authInputClassName,
+  authLabelClassName,
+  authLinkClassName,
+  authSubtextClassName,
 } from "@/components/auth/auth-form-ui";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth.store";
@@ -82,33 +86,25 @@ function RegisterContent() {
   return (
     <AuthShell>
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Join your susu
-        </h1>
-        <p className="mt-2.5 text-[17px] text-muted-foreground">
+        <h1 className={authHeadingClassName}>Create an account</h1>
+        <p className={authSubtextClassName}>
           or{" "}
-          <Link
-            href="/login"
-            className="font-semibold text-[#0066cc] dark:text-[#38bdf8] hover:underline"
-          >
-            Login
+          <Link href="/login" className={authLinkClassName}>
+            Sign in to your account
           </Link>
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         <div className="space-y-1.5">
-          <label
-            htmlFor="tenant"
-            className="block text-[17px] font-semibold text-foreground"
-          >
+          <label htmlFor="tenant" className={authLabelClassName}>
             Susu company <span className="text-destructive">*</span>
           </label>
           <input
             id="tenant"
             name="tenant"
             type="text"
-            placeholder="Company slug"
+            placeholder="Company slug (e.g. premier-susu)"
             className={authInputClassName}
             value={form.tenant}
             onChange={(e) => update("tenant", e.target.value)}
@@ -119,10 +115,7 @@ function RegisterContent() {
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <label
-              htmlFor="firstName"
-              className="block text-[17px] font-semibold text-foreground"
-            >
+            <label htmlFor="firstName" className={authLabelClassName}>
               First name <span className="text-destructive">*</span>
             </label>
             <input
@@ -138,10 +131,7 @@ function RegisterContent() {
             />
           </div>
           <div className="space-y-1.5">
-            <label
-              htmlFor="lastName"
-              className="block text-[17px] font-semibold text-foreground"
-            >
+            <label htmlFor="lastName" className={authLabelClassName}>
               Last name <span className="text-destructive">*</span>
             </label>
             <input
@@ -159,17 +149,14 @@ function RegisterContent() {
         </div>
 
         <div className="space-y-1.5">
-          <label
-            htmlFor="email"
-            className="block text-[17px] font-semibold text-foreground"
-          >
+          <label htmlFor="email" className={authLabelClassName}>
             Email address <span className="text-destructive">*</span>
           </label>
           <input
             id="email"
             name="email"
             type="email"
-            placeholder="Email"
+            placeholder="name@company.com"
             className={authInputClassName}
             value={form.email}
             onChange={(e) => update("email", e.target.value)}
@@ -179,17 +166,14 @@ function RegisterContent() {
         </div>
 
         <div className="space-y-1.5">
-          <label
-            htmlFor="phone"
-            className="block text-[17px] font-semibold text-foreground"
-          >
-            Phone <span className="text-destructive">*</span>
+          <label htmlFor="phone" className={authLabelClassName}>
+            Phone number <span className="text-destructive">*</span>
           </label>
           <input
             id="phone"
             name="phone"
             type="tel"
-            placeholder="Phone"
+            placeholder="024XXXXXXX"
             className={authInputClassName}
             value={form.phone}
             onChange={(e) => update("phone", e.target.value)}
@@ -199,10 +183,7 @@ function RegisterContent() {
         </div>
 
         <div className="space-y-1.5">
-          <label
-            htmlFor="password"
-            className="block text-[17px] font-semibold text-foreground"
-          >
+          <label htmlFor="password" className={authLabelClassName}>
             Password <span className="text-destructive">*</span>
           </label>
           <div className="relative">
@@ -210,7 +191,7 @@ function RegisterContent() {
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Password"
+              placeholder="At least 8 characters"
               className={cn(authInputClassName, "pr-10")}
               value={form.password}
               onChange={(e) => update("password", e.target.value)}
@@ -233,17 +214,20 @@ function RegisterContent() {
         </div>
 
         {error ? (
-          <p className="rounded-none bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <p className="rounded-xl bg-destructive/10 px-3.5 py-2.5 text-xs sm:text-sm text-destructive font-semibold border border-destructive/20">
             {error}
           </p>
         ) : null}
 
         <Button
           type="submit"
-          className="h-12 min-h-[48px] w-full rounded-xl text-[17px] font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white"
+          variant="primary"
+          size="lg"
+          className="w-full rounded-full font-medium"
           loading={isLoading}
+          loadingText="Creating account..."
         >
-          Create account
+          Create Account
         </Button>
       </form>
 

@@ -11,7 +11,7 @@ export function AboutPlatformLinksSection() {
             <li key={label} className="flex items-center gap-x-2 sm:gap-x-4">
               <Link
                 href={href}
-                className="text-[17px] font-semibold text-foreground transition-colors hover:text-secondary sm:text-[17px]"
+                className="text-base font-semibold text-foreground transition-colors hover:text-secondary sm:text-base"
               >
                 {label}
               </Link>

@@ -5,56 +5,56 @@
 @layer base {
  :root {
  color-scheme: light;
- /* Light Mode Base */
- --background: #f8f9fc; /* Subtle cool light gray canvas */
- --foreground: #0c1222; /* Deep navy text for maximum legibility */
- --heading: #0c1222;
- --card: #ffffff; /* Pure white card surface that pops against #f8f9fc */
- --card-foreground: #0c1222;
+ /* Afrusan-inspired light palette */
+ --background: #fafafa;
+ --foreground: #010517;
+ --heading: #010517;
+ --card: #ffffff;
+ --card-foreground: #010517;
  --popover: #ffffff;
- --popover-foreground: #0c1222;
+ --popover-foreground: #010517;
  
  /* Brand Accent Colors */
- --primary: #0c1222;
- --primary-foreground: #f8fafc;
- --secondary: #153e90; /* Deep Vibrant Royal Blue */
+ --primary: #010517;
+ --primary-foreground: #ffffff;
+ --secondary: #010517;
  --secondary-foreground: #ffffff;
- --accent: #10b981; /* Emerald Green */
- --accent-foreground: #ffffff;
+ --accent: #c6e5df;
+ --accent-foreground: #010517;
  
  /* Muted & Borders */
- --muted: #eef1f7;
- --muted-foreground: #5c6b7f;
- --border: #e2e8f2; /* Subtle clean card border */
- --input: #dce3ee;
- --ring: #153e90;
+ --muted: #f5f5f5;
+ --muted-foreground: #828282;
+ --border: #e0e0e0;
+ --input: #ededed;
+ --ring: #010517;
  --success: #22c55e;
  --warning: #f59e0b;
  --destructive: #ef4444;
  --destructive-foreground: #ffffff;
  
- /* Corner Radius Philosophy (Sharp Modern Design System) */
- --radius: 0px; /* Clean sharp corners for high-precision aesthetic */
- --surface-elevated: #ffffff;
- --surface-hover: #eef1f7;
- --surface-glow: rgba(21, 62, 144, 0.06);
- --brand-dark: #010e25;
+  --radius: 9999px;
+  --surface-elevated: #ffffff;
+  --surface-hover: #f5f5f5;
+  --surface-glow: rgba(198, 229, 223, 0.35);
+  --brand-dark: #010517;
+  --brand-mint: #c6e5df;
+  --brand-link: #0099ff;
 
- --primary-50: #ebf5ff;
- --primary-100: #d6ebff;
- --primary-200: #adcdff;
- --primary-300: #70a8ff;
- --primary-400: #337fff;
- --primary-500: #153e90;
- --primary-600: #0c1222;
- --primary-700: #080c18;
- --primary-800: #050810;
- --primary-900: #010e25;
+  --primary-50: #f5f5f5;
+  --primary-100: #ededed;
+  --primary-200: #e0e0e0;
+  --primary-300: #bfbfbf;
+  --primary-400: #828282;
+  --primary-500: #1e1e1f;
+  --primary-600: #010517;
+  --primary-700: #010517;
+  --primary-800: #010517;
+  --primary-900: #000000;
 
- /* Typography & Responsive Design Tokens */
- --font-sans: -apple-system, system-ui, BlinkMacSystemFont,"Segoe UI", Helvetica, Arial, sans-serif,
-"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
- --font-hero:"Open Sans", sans-serif;
+  /* Typography & Responsive Design Tokens */
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-hero: var(--font-geist), system-ui, sans-serif;
  --sr-container-max: 80rem;
  --sr-gutter: 1rem;
  }
@@ -73,37 +73,36 @@
 
  .dark {
  color-scheme: dark;
- /* Dark Mode Base */
- --background: #010e25; /* Deep rich Midnight Navy base canvas */
- --foreground: #f1f5f9; /* Crisp off-white text */
+ --background: #010517;
+ --foreground: #fafafa;
  --heading: #ffffff;
- --card: #010e25; /* High contrast dark surface */
- --card-foreground: #f1f5f9;
- --popover: #010e25;
- --popover-foreground: #f1f5f9;
- --primary: #f1f5f9;
- --primary-foreground: #010e25;
- --secondary: #153e90;
- --secondary-foreground: #ffffff;
- --accent: #34d399; /* Bright Mint Emerald */
- --accent-foreground: #010e25;
- --muted: color-mix(in srgb, var(--foreground) 7%, var(--background));
- --muted-foreground: #94a3b8;
- --border: #1e293b; /* Dark border */
- --input: #1e293b;
- --ring: #153e90;
+ --card: #1e1e1f;
+ --card-foreground: #fafafa;
+ --popover: #1e1e1f;
+ --popover-foreground: #fafafa;
+ --primary: #fafafa;
+ --primary-foreground: #010517;
+ --secondary: #fafafa;
+ --secondary-foreground: #010517;
+ --accent: #c6e5df;
+ --accent-foreground: #010517;
+ --muted: #1e1e1f;
+ --muted-foreground: #bfbfbf;
+ --border: #333333;
+ --input: #333333;
+ --ring: #c6e5df;
  --destructive: #ef4444;
  --destructive-foreground: #ffffff;
- --surface-elevated: #010e25;
- --surface-hover: #1e293b;
- --surface-glow: rgba(21, 62, 144, 0.12);
- --brand-dark: #010e25;
- --radius: 0px;
+ --surface-elevated: #1e1e1f;
+ --surface-hover: #333333;
+ --surface-glow: rgba(198, 229, 223, 0.08);
+ --brand-dark: #010517;
+ --radius: 0.75rem;
 
  --primary-50: #010e25;
  --primary-100: #080c18;
  --primary-200: #0c1222;
- --primary-300: #153e90;
+ --primary-300: #828282;
  --primary-400: #337fff;
  --primary-500: #70a8ff;
  --primary-600: #adcdff;
@@ -121,15 +120,15 @@
  [type='submit'],
  [type='reset'],
  .btn {
- border-radius: 0.2rem;
+ border-radius: var(--radius);
  }
 
  input,
  select,
  textarea {
- border-radius: 0.2rem;
- font-size: 16px;
- @apply focus:outline-none focus:ring-[3px] focus:ring-blue-500/20 dark:focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-300 shadow-sm;
+ border-radius: var(--radius);
+ font-size: 15px;
+ @apply focus:outline-none focus:ring-[3px] focus:ring-blue-500/20 focus:border-primary transition-all duration-200 shadow-sm;
  }
 
  html {
@@ -249,22 +248,22 @@
  h3,
  h4 {
  color: var(--heading);
- font-family: var(--font-open-sans), sans-serif;
- font-weight: 700;
+ font-family: var(--font-hero), system-ui, sans-serif;
+ font-weight: 500;
  }
 
  ::selection {
- background-color: rgb(0 102 204 / 0.2);
+ background-color: rgb(198 229 223 / 0.45);
  color: var(--foreground);
  }
 
  .auth-input {
- height: 54px !important;
- min-height: 54px !important;
+ height: 48px !important;
+ min-height: 48px !important;
  font-size: 16px !important;
- padding-left: 1.125rem !important;
- padding-right: 1.125rem !important;
- border-radius: 0.25rem !important;
+ padding-left: 1rem !important;
+ padding-right: 1rem !important;
+ border-radius: 0.75rem !important;
  }
 }
 
@@ -278,7 +277,11 @@
  .rounded-2xl,
  .rounded-3xl,
  .rounded {
- border-radius: 0.2rem !important;
+ border-radius: 0.5rem !important;
+ }
+
+ .rounded-full {
+ border-radius: 9999px !important;
  }
 }
 
@@ -318,12 +321,12 @@
  }
 
  .premium-card {
- @apply rounded-none border border-border/60 bg-white transition-all duration-300;
+ @apply rounded-xl border border-border/60 bg-white transition-all duration-300;
  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.08);
  }
 
  .premium-card:hover {
- border-color: rgb(0 102 204 / 0.25);
+ border-color: rgb(1 5 23 / 0.15);
  box-shadow: 0 12px 40px rgb(15 23 42 / 0.08);
  }
 
@@ -359,23 +362,23 @@
 
  /* App Button Classes */
  .btn-primary {
- @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-secondary text-secondary-foreground px-8 py-3 rounded-none text-[15px] font-bold hover:bg-secondary/90 transition-all duration-200 shadow-sm disabled:pointer-events-none disabled:opacity-50;
+ @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-medium hover:bg-primary/90 transition-all duration-200 shadow-sm disabled:pointer-events-none disabled:opacity-50;
  }
 
  .btn-secondary {
- @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-card border border-border/80 text-foreground px-8 py-3 rounded-none text-[15px] font-semibold hover:bg-muted/60 transition-all duration-200 shadow-sm disabled:pointer-events-none disabled:opacity-50;
+ @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-card border border-border/80 text-foreground px-8 py-3 rounded-full text-sm font-medium hover:bg-muted/60 transition-all duration-200 shadow-sm disabled:pointer-events-none disabled:opacity-50;
  }
 
  .btn-destructive {
- @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-destructive text-destructive-foreground px-8 py-3 rounded text-[15px] font-bold shadow-sm hover:bg-destructive/90 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50;
+ @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-destructive text-destructive-foreground px-8 py-3 rounded text-sm font-bold shadow-sm hover:bg-destructive/90 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50;
  }
 
  .btn-ghost {
- @apply inline-flex items-center justify-center gap-2 whitespace-nowrap px-4 py-2 rounded text-[15px] font-semibold hover:bg-accent hover:text-accent-foreground transition-all duration-300 disabled:pointer-events-none disabled:opacity-50;
+ @apply inline-flex items-center justify-center gap-2 whitespace-nowrap px-4 py-2 rounded text-sm font-semibold hover:bg-accent hover:text-accent-foreground transition-all duration-300 disabled:pointer-events-none disabled:opacity-50;
  }
 
  .btn-link {
- @apply inline-flex items-center justify-center gap-2 whitespace-nowrap text-primary underline-offset-4 hover:underline font-semibold text-[15px] transition-all duration-300 disabled:pointer-events-none disabled:opacity-50;
+ @apply inline-flex items-center justify-center gap-2 whitespace-nowrap text-primary underline-offset-4 hover:underline font-semibold text-sm transition-all duration-300 disabled:pointer-events-none disabled:opacity-50;
  }
 
  .btn-sm {
@@ -421,7 +424,7 @@
  }
 
  .dashboard-icon-emerald {
- @apply bg-blue-100 dark:bg-blue-950/40;
+ @apply bg-[#c6e5df]/30 dark:bg-[#c6e5df]/10;
  }
 
  .dashboard-icon-violet {
@@ -441,7 +444,7 @@
  }
 
  .dark .dashboard-icon-emerald {
- background-color: #002047;
+ background-color: rgb(198 229 223 / 0.12);
  }
 
  .dark .dashboard-icon-violet {
@@ -462,26 +465,29 @@
 
  /* OmniH Standard Typography Rules */
  .omnih-h1 {
- @apply text-3xl md:text-4xl font-bold tracking-tighter leading-none;
- font-family: var(--font-open-sans),"Open Sans", sans-serif;
+ @apply text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight leading-[1.08];
+ font-family: var(--font-hero), system-ui, sans-serif;
  color: var(--heading);
  }
 
  .dashboard-title {
- @apply text-lg md:text-xl font-bold tracking-tight leading-snug;
- font-family: var(--font-open-sans),"Open Sans", sans-serif;
+ @apply text-lg md:text-xl font-medium tracking-tight leading-snug;
+ font-family: var(--font-hero), system-ui, sans-serif;
  color: var(--heading);
  }
 
  .omnih-h2,
  .omnih-h3 {
- @apply text-xl md:text-2xl font-medium tracking-tight leading-[1.15];
+ @apply text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-[1.15];
+ font-family: var(--font-hero), system-ui, sans-serif;
  color: var(--heading);
  }
 
  .dashboard-section-title,
- .section-bar {
- @apply text-base md:text-lg font-semibold tracking-tight leading-snug;
+ .section-bar,
+ .sr-section-bar {
+ @apply text-xl md:text-2xl font-medium tracking-tight leading-snug;
+ font-family: var(--font-hero), system-ui, sans-serif;
  color: var(--heading);
  }
 
@@ -491,7 +497,7 @@
  }
 
  .omnih-btn-primary {
- @apply text-[15px] font-bold rounded-xl;
+ @apply text-sm font-bold rounded-xl;
  }
 
  .omnih-kpi,
@@ -501,20 +507,21 @@
  }
 
  .omnih-body {
- @apply text-sm font-medium leading-relaxed opacity-90;
+ @apply text-base font-normal leading-[1.7] text-muted-foreground;
+ font-family: var(--font-sans), system-ui, sans-serif;
  }
 
  .hero-page-title {
- font-family: var(--font-open-sans), sans-serif;
+ font-family: var(--font-hero), system-ui, sans-serif;
  font-size: 35px;
- font-weight: 700;
+ font-weight: 500;
  line-height: 42px;
  letter-spacing: -0.02em;
  color: var(--heading);
  }
 
  .card-label {
- font-family: var(--font-open-sans), sans-serif;
+ font-family: var(--font-hero), system-ui, sans-serif;
  font-size: 22px;
  font-weight: 500;
  line-height: 37.4px;
@@ -527,60 +534,53 @@
  /* Main Hero Heading (Mobile: 37.6px -> Desktop: 54.4px) */
  .sr-hero-headline {
  font-family: var(--font-hero);
- font-size: 37.6px !important;
- /* Mobile typography spec */
- font-weight: 700 !important;
- line-height: 1.12 !important;
+ font-size: 2.75rem !important;
+ font-weight: 500 !important;
+ line-height: 1.05 !important;
+ letter-spacing: -0.03em !important;
  }
 
  @media (min-width: 768px) {
  .sr-hero-headline {
- font-size: 54.4px !important;
- /* Desktop typography spec */
- line-height: 1.08 !important;
+ font-size: 3.5rem !important;
+ line-height: 1.05 !important;
  }
  }
 
- /* Hero Section Title (Page Hero for How It Works, About, Pricing, Contact) */
+ @media (min-width: 1024px) {
+ .sr-hero-headline {
+ font-size: 4.25rem !important;
+ }
+ }
+
  .sr-hero-title {
  font-family: var(--font-hero);
- font-size: 2.125rem !important;
- /* 34px mobile */
- font-weight: 800 !important;
- line-height: 1.15 !important;
- letter-spacing: -0.02em !important;
+ font-size: 2.25rem !important;
+ font-weight: 500 !important;
+ line-height: 1.1 !important;
+ letter-spacing: -0.03em !important;
  }
 
  @media (min-width: 768px) {
  .sr-hero-title {
  font-size: 2.75rem !important;
- /* 44px tablet */
- line-height: 1.12 !important;
- letter-spacing: -0.025em !important;
+ line-height: 1.08 !important;
  }
  }
 
  @media (min-width: 1024px) {
  .sr-hero-title {
- font-size: 3.125rem !important;
- /* 50px desktop */
- line-height: 1.10 !important;
+ font-size: 3.25rem !important;
+ line-height: 1.06 !important;
  }
  }
 
- /* Mobile Hero Paragraph Copy */
  .sr-hero-copy {
- font-size: 17px !important;
- /* same as footer text */
- line-height: 1.65 !important;
- }
-
- @media (min-width: 768px) {
- .sr-hero-copy {
- font-size: 17px !important;
- /* same as footer text */
- line-height: 1.65 !important;
- }
+ font-family: var(--font-sans);
+ font-size: 1rem !important;
+ font-weight: 400 !important;
+ line-height: 1.7 !important;
+ color: var(--muted-foreground);
  }
 
  /* Card Heading (H3) */
@@ -903,9 +903,65 @@
 
  .marketing-canvas {
  @apply min-h-screen bg-background;
- background:
- radial-gradient(ellipse 80% 50% at 50% -20%, var(--surface-glow), transparent),
- var(--background);
+ background: var(--background);
+ }
+
+ .afrusan-eyebrow {
+ @apply text-sm font-medium tracking-wide text-muted-foreground;
+ font-family: var(--font-sans);
+ }
+
+ .afrusan-section-title {
+ font-family: var(--font-hero);
+ @apply text-3xl sm:text-4xl lg:text-[2.65rem] font-medium leading-[1.12] tracking-[-0.02em] text-foreground;
+ }
+
+ .afrusan-hero-title {
+ font-family: var(--font-hero);
+ @apply text-[2.75rem] sm:text-5xl lg:text-[4.25rem] xl:text-[4.75rem] font-medium leading-[1.05] tracking-[-0.03em] text-foreground;
+ }
+
+ .afrusan-body {
+ @apply text-base sm:text-lg leading-[1.7] text-muted-foreground;
+ font-family: var(--font-sans);
+ }
+
+ .afrusan-cta-pill {
+ @apply inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-base font-medium text-primary-foreground transition-all hover:opacity-90;
+ }
+
+ .afrusan-card {
+ @apply rounded-2xl border border-border bg-card overflow-hidden transition-transform duration-300 hover:-translate-y-1;
+ }
+
+ .afrusan-section {
+ @apply py-16 sm:py-20 lg:py-28;
+ }
+
+ .afrusan-warm-section {
+ background-color: var(--background);
+ }
+
+ .marketing-band-height {
+ height: 22rem;
+ }
+
+ @media (min-width: 640px) {
+ .marketing-band-height {
+ height: 26rem;
+ }
+ }
+
+ @media (min-width: 1024px) {
+ .marketing-band-height {
+ height: 28rem;
+ }
+ }
+
+ @media (min-width: 1280px) {
+ .marketing-band-height {
+ height: 32rem;
+ }
  }
 
  @media (min-width: 640px) {
@@ -1177,12 +1233,12 @@
  }
 
  .legal-prose h2 {
- @apply text-xl font-semibold;
+ @apply text-xl font-medium font-heading;
  color: var(--heading);
  }
 
  .legal-prose p {
- @apply leading-relaxed;
+ @apply text-base leading-[1.7];
  }
 
  .legal-prose ul {
@@ -1190,11 +1246,7 @@
  }
 
  .legal-prose a {
- @apply font-medium text-primary;
- }
-
- .legal-prose a:hover {
- color: var(--primary-500);
+ @apply font-medium text-foreground underline-offset-4 hover:underline;
  }
 
  .auth-canvas {

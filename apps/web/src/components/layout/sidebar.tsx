@@ -42,7 +42,7 @@ function NavLink({
       prefetch={true}
       onClick={onClose}
       className={cn(
-        "flex items-center gap-2.5 rounded-none px-2.5 py-2 text-[0.8125rem] font-medium transition-colors",
+        "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.8125rem] font-medium transition-colors",
         active
           ? "bg-muted text-foreground font-semibold"
           : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",

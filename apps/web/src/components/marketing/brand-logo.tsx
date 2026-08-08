@@ -60,13 +60,11 @@ export function BrandLockup({
       <SusuFlowIconMark className="size-[1.9rem] sm:size-9 shrink-0" />
       <span
         className={cn(
-          "truncate text-[1.25rem] sm:text-[1.45rem] font-black tracking-[-0.035em] leading-none font-sans flex items-baseline",
+          "truncate text-[1.2rem] sm:text-[1.35rem] font-medium tracking-[-0.02em] leading-none font-geist flex items-baseline",
           wordmarkClassName,
         )}
       >
-        <span
-          className={onDark ? "text-white" : "text-slate-900 text-foreground"}
-        >
+        <span className={onDark ? "text-white" : "text-foreground"}>
           SusuFlow
         </span>
       </span>

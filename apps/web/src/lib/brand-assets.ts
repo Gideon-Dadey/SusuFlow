@@ -3,10 +3,11 @@ export const BRAND_LOGO = "/brand/logo-transparent.webp?v=4";
 export const PWA_ICON_192 = "/icons/icon-192.png";
 export const PWA_ICON_512 = "/icons/icon-512.png";
 export const PWA_APPLE_TOUCH_ICON = "/icons/apple-touch-icon.png";
-export const BRAND_HERO_IMAGE = "/marketing/myhero.webp";
-export const BRAND_HERO_SHOWCASE = "/marketing/myhero.webp?v=1";
-export const BRAND_PLATFORM_OVERVIEW = "/marketing/platform.webp?v=1";
-export const BRAND_MOMO_PAY_SHOWCASE = "/marketing/momo-transparent.webp?v=1";
+export const BRAND_HERO_IMAGE = "/marketing/myhero-transparent.png";
+export const BRAND_HERO_SHOWCASE = "/marketing/myhero-transparent.png?v=1";
+export const BRAND_PLATFORM_OVERVIEW =
+  "/marketing/platform-transparent.png?v=1";
+export const BRAND_MOMO_PAY_SHOWCASE = "/marketing/momo-transparent.png?v=2";
 export const BRAND_WORKFLOW_AUTOMATION =
   "/marketing/workflow-automation-bg.webp?v=2";
 export const HOW_IT_WORKS_GHANIAN_MARKET =

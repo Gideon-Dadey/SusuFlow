@@ -10,19 +10,15 @@ export function MarketingTextBlock({
   children,
 }: MarketingTextBlockProps) {
   return (
-    <div className="bg-background py-16 sm:py-24">
+    <section className="afrusan-section bg-background">
       <MarketingContainer>
         <div className="mx-auto max-w-3xl">
-          {title && (
-            <h2 className="omnih-h2 text-3xl sm:text-4xl font-semibold text-slate-900 text-foreground mb-8">
-              {title}
-            </h2>
-          )}
-          <div className="omnih-body text-[17px] sm:text-[18px] leading-relaxed text-slate-600 dark:text-slate-400 space-y-6">
-            {children}
-          </div>
+          {title ? (
+            <h2 className="afrusan-section-title mb-8 text-balance">{title}</h2>
+          ) : null}
+          <div className="afrusan-body space-y-6">{children}</div>
         </div>
       </MarketingContainer>
-    </div>
+    </section>
   );
 }

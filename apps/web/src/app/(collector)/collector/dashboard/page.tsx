@@ -47,8 +47,8 @@ export default function CollectorDashboardPage() {
           value={formatGhs(summary?.todayDepositsVolume ?? 0)}
           subtitle={`${summary?.todayDepositsCount ?? 0} deposits`}
           icon={faWallet}
-          iconBgClassName="bg-[#0066cc]/10 dark:bg-[#0066cc]/20"
-          iconClassName="text-[#0066cc] dark:text-[#38bdf8]"
+          iconBgClassName="bg-primary/5 dark:bg-primary/10"
+          iconClassName="text-foreground"
         />
         <StatCard
           title="This Week"

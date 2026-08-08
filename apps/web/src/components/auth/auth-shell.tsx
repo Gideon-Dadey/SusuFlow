@@ -15,7 +15,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           <BrandLockup priority wordmarkClassName="text-xl" />
           <Link
             href="/"
-            className="inline-flex size-9 shrink-0 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             aria-label="Back to home"
           >
             <X className="h-5 w-5" />
@@ -50,7 +50,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             <BrandLockup priority onDark wordmarkClassName="text-2xl" />
             <Link
               href="/"
-              className="inline-flex size-9 shrink-0 items-center justify-center rounded-none text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+              className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white"
               aria-label="Back to home"
             >
               <X className="h-5 w-5" />

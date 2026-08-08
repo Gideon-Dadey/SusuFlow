@@ -506,6 +506,68 @@ export const CONTACT_OFFICE = {
   addressLines: ["Maakro SDA Church Kovak Road", "Kumasi", "Ghana"],
 } as const;
 
+export const HOME_CAPABILITY_TABS = [
+  {
+    id: "momo-deposits",
+    label: "MoMo Deposits (1)",
+    title: "Gateway-verified Mobile Money deposits",
+    description:
+      "Savers pay directly from their MoMo wallet. Every deposit is confirmed against the payment gateway before it hits the ledger, eliminating disputed receipts and manual reconciliation.",
+  },
+  {
+    id: "field-ops",
+    label: "Field Operations (2)",
+    title: "Cashless collector workflows",
+    description:
+      "Collectors onboard members, send MoMo prompts in the field, and track activity from a mobile app. No cash handoffs, no notebook disputes, and every action leaves an audit trail.",
+  },
+  {
+    id: "multi-branch",
+    label: "Multi-Branch Control (3)",
+    title: "Run every branch from one hub",
+    description:
+      "Configure staff roles, approval rules, and branch settings from a single admin dashboard. Scale from one collector team to multi-branch susu companies without losing control.",
+  },
+  {
+    id: "audit",
+    label: "Audit & Reconcile (4)",
+    title: "Bank-grade ledger and reporting",
+    description:
+      "Double-entry accounting, exportable reports, and reference-linked receipts give management and accountants the visibility they need for audits, reviews, and daily operations.",
+  },
+  {
+    id: "payouts",
+    label: "Payouts & Approvals (5)",
+    title: "Role-based payout sign-offs",
+    description:
+      "Tailored approval workflows for deposits, payouts, and staff access ensure every cedi moves with accountability. Staff review requests with a full history before funds are released.",
+  },
+] as const;
+
+export const HOME_TESTIMONIALS = [
+  {
+    quote:
+      "SusuFlow sounds like the solution we have been waiting for. Verified MoMo deposits give confidence that our members' contributions are tracked properly. It will truly help us plan better for collections and payouts.",
+    author: "Grace M.",
+    role: "Susu company operator, Accra",
+    image: "/marketing/testimonials/grace-m-accra.png",
+    imageAlt: "Grace M., susu company operator in Accra, smiling in her office",
+    imagePosition: "58% 22%",
+  },
+  {
+    quote:
+      "As a susu manager, I am always worried about collector disputes and missing cash. The SusuFlow model is exciting because it focuses on affordable, reliable, gateway-confirmed collections. It gives me hope we can scale without fraud.",
+    author: "Amina K.",
+    role: "Operations lead, Kumasi",
+  },
+  {
+    quote:
+      "I send money home for family susu contributions from abroad. A platform like this would bring so much peace of mind — knowing deposits are verified and balances are visible without waiting for WhatsApp updates.",
+    author: "David M.",
+    role: "Diaspora member, Minnesota",
+  },
+] as const;
+
 export const FAQ_ITEMS = [
   {
     q: "What is susu?",

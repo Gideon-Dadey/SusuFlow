@@ -5,16 +5,16 @@ import { cn } from "@/lib/utils";
 
 export function PricingIncludedSection() {
   return (
-    <section className="border-t border-border bg-white dark:bg-background">
+    <section className="bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="max-w-2xl text-left">
-          <p className="text-[17px] font-medium text-muted-foreground">
+          <p className="text-base font-medium text-muted-foreground">
             Included on every plan
           </p>
           <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
             Core platform capabilities across all tiers
           </h2>
-          <p className="mt-5 text-pretty text-[17px] leading-relaxed text-muted-foreground">
+          <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground">
             Every plan includes the same verified MoMo foundation. Higher tiers
             add scale, roles, and support for growing susu companies.
           </p>
@@ -26,7 +26,7 @@ export function PricingIncludedSection() {
               <div
                 key={label}
                 className={cn(
-                  "flex aspect-square flex-col items-center justify-center rounded-none bg-[#f3f4f6] dark:bg-card px-3 py-5 text-center shadow-[0_2px_12px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.3)]",
+                  "flex aspect-square flex-col items-center justify-center rounded-none bg-transparent px-3 py-5 text-center",
                 )}
               >
                 <FontAwesomeIcon
@@ -34,7 +34,7 @@ export function PricingIncludedSection() {
                   className="h-8 w-8 text-[#111827] dark:text-foreground sm:h-9 sm:w-9"
                   aria-hidden
                 />
-                <span className="mt-4 text-xs font-semibold leading-snug text-[#111827] dark:text-foreground sm:text-[17px]">
+                <span className="mt-4 text-xs font-semibold leading-snug text-[#111827] dark:text-foreground sm:text-base">
                   {label}
                 </span>
               </div>

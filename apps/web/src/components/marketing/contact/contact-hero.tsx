@@ -1,60 +1,84 @@
-import Image from "next/image";
 import Link from "next/link";
-import { CONTACT_MAP_IMAGE } from "@/lib/brand-assets";
+import { ArrowRight, Mail, MapPin, MessageSquare } from "lucide-react";
 import { CONTACT_OFFICE, SUPPORT_EMAIL } from "@/lib/marketing-data";
-import { Button } from "@/components/ui/button";
 import { MarketingContainer } from "../marketing-container";
+import { SectionEyebrow } from "../section-eyebrow";
 
 export function ContactHero() {
   return (
-    <section className="bg-white dark:bg-background">
-      <MarketingContainer className="marketing-hero-platform-inner pb-14 sm:pb-16 lg:pb-20">
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
-          <div className="order-2 min-w-0 text-left lg:order-1">
-            <h1 className="sr-hero-title text-balance text-foreground">
-              {CONTACT_OFFICE.headline}
-            </h1>
+    <section className="bg-background">
+      <MarketingContainer className="py-16 sm:py-20 lg:py-24">
+        <div className="mx-auto max-w-3xl text-center">
+          <SectionEyebrow className="text-center">Contact</SectionEyebrow>
+          <h1 className="afrusan-hero-title text-balance !text-4xl sm:!text-5xl lg:!text-[3.5rem]">
+            {CONTACT_OFFICE.headline}
+          </h1>
+          <p className="afrusan-body mx-auto mt-5 max-w-2xl text-balance">
+            Contact us to learn more about our platform, pricing plans, and
+            onboarding for your susu company. Share your details and any
+            questions, and a member of our team will be in touch.
+          </p>
+        </div>
 
-            <h2 className="mt-10 text-[17px] font-bold text-foreground sm:mt-12">
-              Office address
-            </h2>
-            <address className="mt-3 not-italic text-[17px] leading-relaxed text-muted-foreground sm:text-[17px]">
+        <div className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-3 sm:gap-5">
+          <div className="afrusan-card p-6 text-center sm:text-left">
+            <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-[#c6e5df]/40 sm:mx-0">
+              <MapPin className="h-5 w-5 text-foreground" aria-hidden />
+            </div>
+            <p className="text-sm font-medium text-foreground">Address</p>
+            <address className="mt-2 not-italic text-sm leading-relaxed text-muted-foreground">
               {CONTACT_OFFICE.addressLines.map((line) => (
                 <span key={line} className="block">
                   {line}
                 </span>
               ))}
             </address>
-
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href={`mailto:${SUPPORT_EMAIL}`}>
-                <Button className="h-12 w-full rounded-xl px-8 text-[17px] font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white shadow-sm sm:w-auto">
-                  Email us
-                </Button>
-              </Link>
-              <Link href="#contact-form">
-                <Button
-                  variant="outline"
-                  className="h-12 w-full rounded-xl px-8 text-[17px] font-semibold sm:w-auto"
-                >
-                  Speak to our team
-                </Button>
-              </Link>
-            </div>
           </div>
 
-          <div className="relative order-1 mx-auto w-full max-w-xl lg:order-2 lg:max-w-none lg:justify-self-end">
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-none bg-white dark:bg-background sm:aspect-[5/4]">
-              <Image
-                src={CONTACT_MAP_IMAGE}
-                alt="World map highlighting SusuFlow office location in Ghana"
-                fill
-                priority
-                sizes="(max-width: 1024px) 90vw, 50vw"
-                className="object-contain object-center"
-              />
+          <div className="afrusan-card p-6 text-center sm:text-left">
+            <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-[#c6e5df]/40 sm:mx-0">
+              <Mail className="h-5 w-5 text-foreground" aria-hidden />
             </div>
+            <p className="text-sm font-medium text-foreground">Email</p>
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="mt-2 block text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {SUPPORT_EMAIL}
+            </a>
           </div>
+
+          <div className="afrusan-card p-6 text-center sm:text-left">
+            <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-[#c6e5df]/40 sm:mx-0">
+              <MessageSquare className="h-5 w-5 text-foreground" aria-hidden />
+            </div>
+            <p className="text-sm font-medium text-foreground">WhatsApp</p>
+            <a
+              href="https://wa.me/233551550530"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-2 block text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              +233 55 155 0530
+            </a>
+          </div>
+        </div>
+
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <Link
+            href={`mailto:${SUPPORT_EMAIL}`}
+            className="afrusan-cta-pill w-full sm:w-auto"
+          >
+            <span>Email us</span>
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
+          <Link
+            href="#contact-form"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border px-8 py-3.5 text-base font-medium text-foreground transition-colors hover:bg-muted sm:w-auto"
+          >
+            <span>Send a message</span>
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
         </div>
       </MarketingContainer>
     </section>

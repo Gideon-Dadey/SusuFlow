@@ -146,7 +146,7 @@ export default function CustomerDashboard() {
         <div className="flex items-center gap-3">
           <h2 className="dashboard-title text-foreground">{user?.firstName}</h2>
           {isKycVerified && (
-            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#0066cc]/10 text-[#0066cc] dark:text-[#38bdf8] border border-[#0066cc]/20 flex items-center gap-1">
+            <span className="flex items-center gap-1 rounded-full border border-primary/15 bg-primary/5 px-2.5 py-1 text-xs font-medium text-foreground">
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
@@ -168,7 +168,7 @@ export default function CustomerDashboard() {
             href: "/deposit",
             label: "Deposit",
             icon: Wallet,
-            color: "bg-[#0066cc]/10 text-[#0066cc]",
+            color: "bg-primary/5 text-foreground",
           },
           {
             href: "/withdraw",

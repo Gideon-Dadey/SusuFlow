@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MarketingContainer } from "../marketing-container";
+import { SectionEyebrow } from "../section-eyebrow";
 import { cn } from "@/lib/utils";
 
 export interface ProductHeroProps {
@@ -23,50 +24,37 @@ export function ProductHero({
   isMockup = false,
 }: ProductHeroProps) {
   return (
-    <section className="relative overflow-hidden bg-white dark:bg-background pb-14 pt-6 sm:pb-20 sm:pt-16 lg:pb-24 lg:pt-24">
-      <div
-        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
-        aria-hidden="true"
-      >
-        <div
-          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#0066cc] to-[#ffcc00] opacity-10 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
-          style={{
-            clipPath:
-              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-          }}
-        ></div>
-      </div>
-
-      <MarketingContainer>
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 lg:items-center">
-          <div className="order-2 lg:order-1 max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
-            <h1 className="omnih-h1 text-4xl sm:text-5xl lg:text-6xl text-balance text-slate-900 text-foreground mb-6">
+    <section className="bg-background">
+      <MarketingContainer className="py-16 sm:py-20 lg:py-24">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="order-2 max-w-2xl text-left lg:order-1">
+            {badge ? <SectionEyebrow>{badge}</SectionEyebrow> : null}
+            <h1 className="afrusan-hero-title text-balance !text-4xl sm:!text-5xl lg:!text-[3.25rem]">
               {title}
             </h1>
-            <p className="omnih-body text-[17px] sm:text-[19px] text-pretty text-slate-600 dark:text-slate-400">
-              {description}
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6">
+            <p className="afrusan-body mt-5 text-pretty">{description}</p>
+            <div className="mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
               <Link href="/register" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="omnih-btn-primary h-14 w-full bg-[#0066cc] hover:bg-[#0052a3] text-white px-8 flex items-center gap-2 shadow-md transition-all"
+                  className="h-12 w-full rounded-full px-8 font-medium sm:min-w-[11rem]"
                 >
                   Get started
-                  <ArrowRight className="h-[18px] w-[18px]" />
+                  <ArrowRight className="h-4 w-4" aria-hidden />
                 </Button>
               </Link>
               <Link
                 href="/pricing"
-                className="text-[17px] font-semibold leading-6 text-slate-900 text-foreground flex items-center gap-1 hover:text-[#0066cc] dark:hover:text-[#38bdf8] transition-colors"
+                className="inline-flex items-center justify-center gap-2 text-base font-medium text-muted-foreground transition-colors hover:text-foreground sm:justify-start"
               >
-                View pricing <ArrowRight className="h-4 w-4" />
+                View pricing
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
 
-          <div className="order-1 lg:order-2 relative mx-auto w-full max-w-xl lg:max-w-none">
-            <div className="relative w-full overflow-hidden aspect-[4/3] rounded-[1.75rem] shadow-md border border-border/40 bg-muted/30 sm:aspect-[16/11]">
+          <div className="relative order-1 mx-auto w-full max-w-xl lg:order-2 lg:max-w-none">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl sm:aspect-[16/11]">
               <Image
                 src={imageSrc}
                 alt={imageAlt}
@@ -75,7 +63,7 @@ export function ProductHero({
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className={cn(
                   isMockup
-                    ? "object-contain object-center drop-shadow-xl p-4 lg:p-8"
+                    ? "object-contain object-center"
                     : "object-cover object-center",
                 )}
               />
