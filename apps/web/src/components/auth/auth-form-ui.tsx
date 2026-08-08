@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const authInputClassName =
-  "auth-input flex h-12 min-h-[48px] w-full rounded-xl border border-input bg-card px-4 py-2.5 text-[17px] text-foreground placeholder:text-muted-foreground/60 transition-all duration-150 focus:border-[#0066cc] focus:outline-none focus:ring-1 focus:ring-[#0066cc] disabled:cursor-not-allowed disabled:opacity-50";
+  "auth-input flex h-12 min-h-[48px] w-full rounded-xl border border-border bg-background px-4 py-2.5 text-base font-normal text-foreground placeholder:text-muted-foreground/60 transition-all duration-200 focus:border-primary focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-50";
 
 export function GoogleIcon() {
   return (
@@ -40,8 +40,10 @@ export function AuthDivider() {
       <div className="absolute inset-0 flex items-center" aria-hidden>
         <div className="w-full border-t border-border" />
       </div>
-      <div className="relative flex justify-center text-sm">
-        <span className="bg-background px-3 text-muted-foreground">or</span>
+      <div className="relative flex justify-center text-xs uppercase tracking-wider">
+        <span className="bg-background px-3 font-medium text-muted-foreground">
+          or
+        </span>
       </div>
     </div>
   );
@@ -57,7 +59,7 @@ export function SocialButton({
   return (
     <button
       type="button"
-      className="flex h-12 min-h-[48px] w-full items-center justify-center gap-2.5 rounded-xl border border-input bg-card text-[17px] font-semibold text-foreground transition-all duration-150 hover:bg-muted/50 focus:outline-none focus:ring-1 focus:ring-[#0066cc]"
+      className="flex h-12 min-h-[48px] w-full items-center justify-center gap-2.5 rounded-full border border-border bg-card text-sm font-medium text-foreground transition-all duration-200 hover:bg-muted/60 hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/15 active:scale-[0.98]"
     >
       {icon}
       {label}
@@ -75,14 +77,14 @@ export function AuthLegalNotice({
       By {action}, you agree to SusuFlow&apos;s{" "}
       <Link
         href="/terms"
-        className="font-medium text-secondary hover:underline"
+        className="font-medium text-foreground hover:underline"
       >
         Terms of Service
       </Link>
       ,{" "}
       <Link
         href="/privacy"
-        className="font-medium text-secondary hover:underline"
+        className="font-medium text-foreground hover:underline"
       >
         Privacy Policy
       </Link>
@@ -124,3 +126,14 @@ export function AuthFooterExtras({
     </div>
   );
 }
+
+export const authHeadingClassName =
+  "font-geist text-3xl sm:text-4xl font-medium tracking-tight text-foreground";
+
+export const authSubtextClassName =
+  "mt-2 text-sm sm:text-base text-muted-foreground";
+
+export const authLabelClassName = "block text-sm font-medium text-foreground";
+
+export const authLinkClassName =
+  "font-medium text-foreground underline-offset-4 hover:underline";

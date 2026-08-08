@@ -9,7 +9,7 @@ export function AboutStorySection() {
     <section className="bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="mb-10 text-left lg:mb-12 lg:text-center">
-          <p className="text-[17px] font-medium text-muted-foreground">
+          <p className="text-base font-medium text-muted-foreground">
             Client stories
           </p>
           <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
@@ -17,7 +17,7 @@ export function AboutStorySection() {
           </h2>
         </div>
 
-        <div className="overflow-hidden rounded-none border border-border/80 bg-white dark:border-border dark:bg-card lg:grid lg:grid-cols-2">
+        <div className="overflow-hidden rounded-none border border-border/80 bg-card lg:grid lg:grid-cols-2">
           <div className="relative aspect-[4/3] lg:aspect-auto lg:min-h-[20rem]">
             <Image
               src={HOW_IT_WORKS_DIGITAL_COLLECTOR}
@@ -28,21 +28,21 @@ export function AboutStorySection() {
             />
           </div>
           <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10 xl:p-12">
-            <p className="text-[17px] font-medium text-muted-foreground">
+            <p className="text-base font-medium text-muted-foreground">
               Traditional susu, modern ledger
             </p>
             <h3 className="mt-3 text-balance text-xl font-bold leading-snug text-foreground sm:text-2xl">
               See how verified MoMo deposits reduce disputes and speed up
               reconciliation.
             </h3>
-            <p className="mt-4 text-pretty text-[17px] leading-relaxed text-muted-foreground sm:text-[17px]">
+            <p className="mt-4 text-pretty text-base leading-relaxed text-muted-foreground sm:text-base">
               When collectors stop carrying cash and every deposit is gateway
               confirmed, management teams spend less time chasing screenshots
               and more time growing membership.
             </p>
             <Link
               href="/how-it-works"
-              className="mt-8 inline-flex items-center gap-1.5 text-[17px] font-semibold text-secondary transition-colors hover:text-secondary/80"
+              className="mt-8 inline-flex items-center gap-1.5 text-base font-semibold text-secondary transition-colors hover:text-secondary/80"
             >
               Read how it works
               <ArrowRight className="h-4 w-4" aria-hidden />

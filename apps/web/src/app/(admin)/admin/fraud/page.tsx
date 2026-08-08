@@ -64,7 +64,7 @@ export default function AdminFraudPage() {
       );
     }
     return (
-      <span className="inline-flex items-center rounded-none bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+      <span className="inline-flex items-center rounded-none bg-blue-500/10 text-blue-600 dark:text-foreground border border-blue-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
         Low
       </span>
     );

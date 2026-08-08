@@ -7,7 +7,11 @@ import { CheckCircle, Eye, EyeOff } from "lucide-react";
 import { AuthShell } from "@/components/auth/auth-shell";
 import {
   AuthFooterExtras,
+  authHeadingClassName,
   authInputClassName,
+  authLabelClassName,
+  authLinkClassName,
+  authSubtextClassName,
 } from "@/components/auth/auth-form-ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -138,10 +142,8 @@ function LoginContent() {
     return (
       <AuthShell>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-            Two-Factor Verification
-          </h1>
-          <p className="mt-2.5 text-sm text-muted-foreground">
+          <h1 className={authHeadingClassName}>Two-Factor Verification</h1>
+          <p className={authSubtextClassName}>
             Enter the 6-digit verification code sent to{" "}
             <strong className="text-foreground">{mfaChallenge.email}</strong> to
             complete your sign in.
@@ -150,7 +152,7 @@ function LoginContent() {
 
         <form onSubmit={handleMfaSubmit} className="mt-8 space-y-5">
           <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-foreground">
+            <label className={authLabelClassName}>
               6-Digit MFA Security Code{" "}
               <span className="text-destructive">*</span>
             </label>
@@ -185,7 +187,9 @@ function LoginContent() {
           <div className="space-y-2">
             <Button
               type="submit"
-              className="h-12 min-h-[48px] w-full rounded-xl text-sm font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white"
+              variant="primary"
+              size="lg"
+              className="h-12 min-h-[48px] w-full rounded-full font-medium"
               loading={isSubmitting}
               loadingText="Verifying code..."
             >
@@ -198,7 +202,7 @@ function LoginContent() {
                 setMfaChallenge(null);
                 clearError();
               }}
-              className="w-full text-xs font-semibold h-10 rounded-xl"
+              className="w-full rounded-full font-medium h-10"
             >
               Back to Login
             </Button>
@@ -213,33 +217,25 @@ function LoginContent() {
   return (
     <AuthShell>
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Login
-        </h1>
-        <p className="mt-2.5 text-[17px] text-muted-foreground">
+        <h1 className={authHeadingClassName}>Welcome back</h1>
+        <p className={authSubtextClassName}>
           or{" "}
-          <Link
-            href="/register"
-            className="font-semibold text-[#0066cc] dark:text-[#38bdf8] hover:underline"
-          >
-            Join your susu
+          <Link href="/register" className={authLinkClassName}>
+            Create an account for your Susu
           </Link>
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         <div className="space-y-1.5">
-          <label
-            htmlFor="email"
-            className="block text-[17px] font-semibold text-foreground"
-          >
+          <label htmlFor="email" className={authLabelClassName}>
             Email address <span className="text-destructive">*</span>
           </label>
           <input
             id="email"
             name="email"
             type="email"
-            placeholder="Email"
+            placeholder="name@company.com"
             className={authInputClassName}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -250,17 +246,11 @@ function LoginContent() {
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-2">
-            <label
-              htmlFor="password"
-              className="text-[17px] font-semibold text-foreground"
-            >
+            <label htmlFor="password" className={authLabelClassName}>
               Password <span className="text-destructive">*</span>
             </label>
-            <Link
-              href="/contact"
-              className="text-[16px] font-semibold text-[#0066cc] dark:text-[#38bdf8] hover:underline"
-            >
-              Forgot Password?
+            <Link href="/contact" className={authLinkClassName}>
+              Forgot password?
             </Link>
           </div>
           <div className="relative">
@@ -268,7 +258,7 @@ function LoginContent() {
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Password"
+              placeholder="••••••••"
               className={cn(authInputClassName, "pr-10")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -290,39 +280,41 @@ function LoginContent() {
           </div>
         </div>
 
-        <label className="flex cursor-pointer items-center gap-2.5">
+        <label className="flex cursor-pointer items-center gap-2.5 select-none">
           <input
             type="checkbox"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
-            className="size-4.5 rounded border-input text-secondary focus:ring-ring"
+            className="size-4 rounded border-border/70 text-secondary focus:ring-primary/20"
           />
-          <span className="text-[16px] font-medium text-foreground">
-            Remember me
+          <span className="text-xs sm:text-sm font-medium text-foreground">
+            Remember me on this device
           </span>
         </label>
 
         {successMessage ? (
-          <p className="flex items-center gap-2 rounded-none bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
+          <p className="flex items-center gap-2 rounded-xl bg-emerald-50 px-3.5 py-2.5 text-xs sm:text-sm text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 font-semibold border border-emerald-500/20">
             <CheckCircle className="h-4 w-4 shrink-0" aria-hidden />
             <span>{successMessage}</span>
           </p>
         ) : null}
 
         {error ? (
-          <p className="rounded-none bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <p className="rounded-xl bg-destructive/10 px-3.5 py-2.5 text-xs sm:text-sm text-destructive font-semibold border border-destructive/20">
             {error}
           </p>
         ) : null}
 
         <Button
           type="submit"
-          className="h-12 min-h-[48px] w-full rounded-xl text-[17px] font-semibold bg-[#0066cc] hover:bg-[#0052a3] text-white"
+          variant="primary"
+          size="lg"
+          className="w-full rounded-full font-medium"
           loading={isSubmitting}
           loadingText="Logging in..."
           disabled={!!successMessage}
         >
-          Login
+          Sign In
         </Button>
       </form>
 

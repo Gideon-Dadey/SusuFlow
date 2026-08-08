@@ -12,7 +12,7 @@ const badgeVariants = cva(
         warning: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
         danger: "bg-red-500/10 text-red-600 dark:text-red-400",
         destructive: "bg-red-500/10 text-red-600 dark:text-red-400",
-        info: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+        info: "bg-blue-500/10 text-blue-600 dark:text-foreground",
         neutral: "bg-muted/80 text-muted-foreground",
         secondary: "bg-muted/80 text-muted-foreground",
       },

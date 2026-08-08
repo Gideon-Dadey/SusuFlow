@@ -14,6 +14,7 @@ export default function TermsPage() {
       <PageHero
         title="Terms of Service"
         description="Last updated: June 2026"
+        eyebrow="Legal"
         align="left"
       />
       <section className="marketing-section">

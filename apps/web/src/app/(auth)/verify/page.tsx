@@ -5,7 +5,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
-import { authInputClassName } from "@/components/auth/auth-form-ui";
+import {
+  authHeadingClassName,
+  authInputClassName,
+  authLabelClassName,
+  authLinkClassName,
+  authSubtextClassName,
+} from "@/components/auth/auth-form-ui";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth.store";
 
@@ -73,17 +79,15 @@ function VerifyContent() {
     return (
       <AuthShell>
         <div className="mb-6 space-y-1">
-          <h1 className="text-2xl font-bold text-foreground">Verify account</h1>
-          <p className="text-sm text-muted-foreground">
-            Missing user reference.
-          </p>
+          <h1 className={authHeadingClassName}>Verify account</h1>
+          <p className={authSubtextClassName}>Missing user reference.</p>
         </div>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-muted-foreground">
           Register first, then open the verification link from your email.
         </p>
         <Link
           href="/register"
-          className="mt-4 inline-block text-sm font-medium text-emerald-700"
+          className={`mt-4 inline-block ${authLinkClassName}`}
         >
           Go to registration
         </Link>
@@ -94,16 +98,14 @@ function VerifyContent() {
   return (
     <AuthShell>
       <div className="mb-6 space-y-1">
-        <h1 className="text-2xl font-bold text-foreground">
-          Verify your account
-        </h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className={authHeadingClassName}>Verify your account</h1>
+        <p className={authSubtextClassName}>
           Enter the codes sent to your email and phone to activate your savings
           account.
         </p>
       </div>
       <div className="space-y-4">
-        <label className="block text-sm font-medium text-slate-700">
+        <label className={`${authLabelClassName} space-y-2`}>
           Susu company slug
           <input
             className={authInputClassName}
@@ -114,14 +116,14 @@ function VerifyContent() {
         </label>
 
         {status && (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted-foreground">
             Email: {status.emailVerified ? "Verified" : "Pending"} · Phone:{""}
             {status.phoneVerified ? "Verified" : "Pending"}
           </p>
         )}
 
-        <div className="space-y-2 rounded-none border border-border/60 p-4">
-          <p className="text-sm font-semibold text-slate-800">
+        <div className="space-y-2 rounded-xl border border-border p-4">
+          <p className="text-sm font-medium text-foreground">
             Email verification
           </p>
           <input
@@ -150,8 +152,8 @@ function VerifyContent() {
           </div>
         </div>
 
-        <div className="space-y-2 rounded-none border border-border/60 p-4">
-          <p className="text-sm font-semibold text-slate-800">
+        <div className="space-y-2 rounded-xl border border-border p-4">
+          <p className="text-sm font-medium text-foreground">
             Phone verification
           </p>
           <input
@@ -183,9 +185,9 @@ function VerifyContent() {
         {message && <p className="text-sm text-emerald-700">{message}</p>}
         {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <p className="text-center text-sm text-slate-500">
-          Already verified?{""}
-          <Link href="/login" className="font-medium text-emerald-700">
+        <p className="text-center text-sm text-muted-foreground">
+          Already verified?{" "}
+          <Link href="/login" className={authLinkClassName}>
             Sign in
           </Link>
         </p>

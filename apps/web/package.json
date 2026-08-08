@@ -9,7 +9,8 @@
     "lint": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "optimize:images": "node scripts/optimize-images.mjs"
+    "optimize:images": "node scripts/optimize-images.mjs",
+    "apply-design-tokens": "node scripts/apply-design-tokens.mjs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",

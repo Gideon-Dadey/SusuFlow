@@ -1,53 +1,48 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { APP_NAME } from "@/lib/marketing-data";
 import { BRAND_PLATFORM_OVERVIEW } from "@/lib/brand-assets";
 import { MarketingContainer } from "./marketing-container";
-import { cn } from "@/lib/utils";
+import { SectionEyebrow } from "./section-eyebrow";
 
 export function PlatformOverviewSection() {
   return (
-    <section className="bg-white dark:bg-background">
-      <MarketingContainer className="pt-10 pb-5 sm:pt-16 sm:pb-10 lg:py-24">
-        <div className="flex flex-col gap-6 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
-          <div className="order-2 min-w-0 text-left lg:order-1">
-            <h2 className="text-balance text-3xl font-bold leading-snug tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] sm:leading-[1.12]">
-              Control everything.
-              <br />
-              See everything.
-              <br />
-              All in one place.
+    <section className="afrusan-section bg-background">
+      <MarketingContainer>
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
+          <div className="min-w-0">
+            <SectionEyebrow>Introduction</SectionEyebrow>
+            <h2 className="afrusan-section-title text-balance">
+              Transforming susu through verified MoMo deposits and a world-class
+              operations model
             </h2>
-            <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-[17px] leading-relaxed text-muted-foreground lg:mt-6">
-              Forget juggling books, WhatsApp receipts, and collector disputes.
-              Run contributions, payouts, and MoMo verification from one
-              streamlined platform built for Ghanaian susu.
+            <p className="afrusan-body mt-5 max-w-xl text-pretty">
+              {APP_NAME} was built for Ghanaian susu companies and microfinance
+              operators with a goal of increasing trust in collections through
+              gateway-verified Mobile Money deposits and scalable, audit-ready
+              ledger programs.
             </p>
             <Link
-              href="/how-it-works"
-              className="mt-6 inline-flex items-center gap-2 text-[17px] font-semibold text-muted-foreground transition-colors hover:text-foreground lg:mt-8"
+              href="/about"
+              className="mt-8 inline-flex items-center gap-2 text-base font-medium text-foreground transition-opacity hover:opacity-70"
             >
-              <span>Explore the platform</span>
-              <ArrowRight className="h-4 w-4" />
+              <span>Get to know us</span>
+              <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </div>
 
-          <div
-            className={cn(
-              "relative order-1 mx-auto w-full max-w-[36rem] lg:order-2 lg:max-w-none lg:justify-self-end",
-            )}
-          >
-            <div
-              className="pointer-events-none absolute -left-4 top-1/2 hidden h-3/4 w-3/4 -translate-y-1/2 rounded-full bg-primary/8 blur-3xl lg:block"
-              aria-hidden
-            />
+          <div className="relative">
+            <p className="mb-4 text-sm font-medium text-muted-foreground">
+              Our Technology
+            </p>
             <div className="relative aspect-[4/3] w-full sm:aspect-[16/11] lg:aspect-[5/4]">
               <Image
                 src={BRAND_PLATFORM_OVERVIEW}
-                alt="SusuFlow admin dashboard on tablet, mobile saver app, and verified MoMo card"
+                alt="SusuFlow admin dashboard, mobile saver app, and verified MoMo deposit flow"
                 fill
-                sizes="(max-width: 1024px) 90vw, 50vw"
-                className="object-contain object-center drop-shadow-[0_28px_56px_rgba(15,23,42,0.14)]"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-contain object-center"
               />
             </div>
           </div>

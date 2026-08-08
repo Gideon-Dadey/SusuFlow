@@ -14,6 +14,7 @@ export default function PrivacyPage() {
       <PageHero
         title="Privacy Policy"
         description="Last updated: June 2026"
+        eyebrow="Legal"
         align="left"
       />
       <section className="marketing-section">

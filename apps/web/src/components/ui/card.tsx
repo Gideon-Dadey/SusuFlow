@@ -6,7 +6,7 @@ export const Card = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        "bg-card text-card-foreground rounded-none border border-border/60 shadow-sm transition-all duration-200 p-5 sm:p-6",
+        "bg-card/95 text-card-foreground rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 p-5 sm:p-6 backdrop-blur-sm",
         className,
       )}
       {...props}
@@ -22,7 +22,7 @@ export const PremiumCard = forwardRef<
   <div
     ref={ref}
     className={cn(
-      "bg-card text-card-foreground rounded-none border border-border/60 shadow-sm p-5 sm:p-6",
+      "bg-gradient-to-b from-card via-card/95 to-muted/30 text-card-foreground rounded-2xl border border-border/60 shadow-md hover:shadow-lg transition-all duration-300 p-5 sm:p-6 backdrop-blur-sm",
       className,
     )}
     {...props}
@@ -49,7 +49,7 @@ export const CardTitle = forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-sm sm:text-base font-semibold tracking-tight text-foreground",
+      "text-base sm:text-lg font-heading font-medium tracking-tight text-foreground",
       className,
     )}
     {...props}

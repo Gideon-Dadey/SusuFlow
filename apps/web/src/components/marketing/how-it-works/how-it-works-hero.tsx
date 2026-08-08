@@ -4,41 +4,37 @@ import { ArrowRight } from "lucide-react";
 import { HOW_IT_WORKS_GHANIAN_MARKET } from "@/lib/brand-assets";
 import { Button } from "@/components/ui/button";
 import { MarketingContainer } from "../marketing-container";
+import { SectionEyebrow } from "../section-eyebrow";
 
 export function HowItWorksHero() {
   return (
-    <section className="bg-white dark:bg-background">
-      <MarketingContainer className="marketing-hero-platform-inner">
-        <div className="flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 xl:gap-16">
+    <section className="bg-background">
+      <MarketingContainer className="py-16 sm:py-20 lg:py-24">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="min-w-0 text-left">
-            <p className="text-[17px] font-medium text-muted-foreground">
-              How SusuFlow works
-            </p>
-            <h1 className="sr-hero-title mt-3 text-balance text-foreground">
+            <SectionEyebrow>How SusuFlow works</SectionEyebrow>
+            <h1 className="afrusan-hero-title text-balance !text-4xl sm:!text-5xl lg:!text-[3.5rem]">
               Move your susu company from notebooks to verified MoMo.
             </h1>
-            <p className="sr-hero-copy mt-5 max-w-xl text-pretty text-muted-foreground lg:mt-6">
+            <p className="afrusan-body mt-5 max-w-xl text-pretty">
               Built for Ghanaian susu operators still collecting cash, chasing
               WhatsApp screenshots, and reconciling by hand. SusuFlow keeps your
               relationships in the field and puts every cedi on a verified
               digital ledger.
             </p>
-            <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
               <Link href="/register" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-8 text-[17px] font-semibold flex items-center justify-center gap-2.5 shadow-sm lg:min-w-[12rem]"
+                  className="h-12 w-full rounded-full px-8 font-medium sm:min-w-[12rem]"
                 >
-                  <span>Register</span>
-                  <ArrowRight
-                    className="h-[18px] w-[18px] stroke-[2.25]"
-                    aria-hidden
-                  />
+                  Register
+                  <ArrowRight className="h-4 w-4" aria-hidden />
                 </Button>
               </Link>
               <Link
                 href="/pricing"
-                className="inline-flex w-full items-center justify-center gap-1.5 text-[17px] font-semibold text-muted-foreground transition-colors hover:text-foreground sm:w-auto sm:justify-start"
+                className="inline-flex items-center gap-2 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 View pricing
                 <ArrowRight className="h-4 w-4" />
@@ -46,7 +42,7 @@ export function HowItWorksHero() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-xl overflow-hidden rounded-[1.75rem] shadow-md border border-border/40 lg:max-w-none lg:justify-self-end">
+          <div className="relative mx-auto w-full max-w-xl overflow-hidden rounded-2xl lg:max-w-none">
             <div className="relative aspect-[4/3] w-full sm:aspect-[5/4]">
               <Image
                 src={HOW_IT_WORKS_GHANIAN_MARKET}
@@ -55,10 +51,6 @@ export function HowItWorksHero() {
                 priority
                 sizes="(max-width: 1024px) 90vw, 50vw"
                 className="object-cover object-center"
-              />
-              <div
-                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"
-                aria-hidden
               />
             </div>
           </div>

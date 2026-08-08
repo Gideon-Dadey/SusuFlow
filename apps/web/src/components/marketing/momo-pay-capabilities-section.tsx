@@ -14,7 +14,7 @@ export function MomoPayCapabilitiesSection() {
                 <div
                   key={label}
                   className={cn(
-                    "flex aspect-square flex-col items-center justify-center rounded-none bg-[#f3f4f6] dark:bg-card px-3 py-5 text-center shadow-[0_2px_12px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.3)]",
+                    "flex aspect-square flex-col items-center justify-center rounded-none bg-transparent px-3 py-5 text-center",
                   )}
                 >
                   <FontAwesomeIcon
@@ -22,7 +22,7 @@ export function MomoPayCapabilitiesSection() {
                     className="h-8 w-8 text-[#111827] dark:text-foreground sm:h-9 sm:w-9"
                     aria-hidden
                   />
-                  <span className="mt-4 text-xs font-semibold leading-snug text-[#111827] dark:text-foreground sm:text-[17px]">
+                  <span className="mt-4 text-xs font-semibold leading-snug text-[#111827] dark:text-foreground sm:text-base">
                     {label}
                   </span>
                 </div>
@@ -34,12 +34,12 @@ export function MomoPayCapabilitiesSection() {
             <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] tracking-tight">
               A simple end-to-end solution to help your susu thrive
             </h2>
-            <p className="mt-5 text-[17px] text-muted-foreground leading-relaxed text-pretty max-w-xl">
+            <p className="mt-5 text-base text-muted-foreground leading-relaxed text-pretty max-w-xl">
               Forget juggling cash, WhatsApp screenshots, and manual books.
               Collect MoMo deposits, verify payments, and reconcile ledgers from
               one platform with just a few taps in the field.
             </p>
-            <p className="mt-4 text-[17px] text-muted-foreground leading-relaxed text-pretty max-w-xl">
+            <p className="mt-4 text-base text-muted-foreground leading-relaxed text-pretty max-w-xl">
               MoMo prompts, gateway verification, collector tools, live
               dashboards, group payouts, and audit-ready records, built for how
               Ghanaian susu actually runs.

@@ -19,16 +19,16 @@ export function ProductFeatureSection({
   features,
 }: ProductFeatureSectionProps) {
   return (
-    <section className="bg-background py-16 sm:py-24 lg:py-32 overflow-hidden">
+    <section className="afrusan-section overflow-hidden bg-background">
       <MarketingContainer>
-        <div className="flex flex-col gap-24 sm:gap-32">
+        <div className="flex flex-col gap-20 sm:gap-24">
           {features.map((feature, index) => {
             const isReversed = index % 2 !== 0;
             return (
               <div
                 key={feature.id}
                 id={feature.id}
-                className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16 scroll-mt-24"
+                className="grid scroll-mt-24 items-center gap-10 lg:grid-cols-2 lg:gap-16"
               >
                 <div
                   className={cn(
@@ -36,21 +36,21 @@ export function ProductFeatureSection({
                     isReversed ? "lg:order-2" : "lg:order-1",
                   )}
                 >
-                  <h2 className="omnih-h2 text-3xl sm:text-4xl font-semibold text-foreground">
+                  <h2 className="afrusan-section-title text-balance">
                     {feature.title}
                   </h2>
-                  <div className="omnih-body mt-6 text-[17px] sm:text-[18px] leading-relaxed text-muted-foreground space-y-6">
+                  <div className="afrusan-body mt-6 space-y-6">
                     {feature.description}
                   </div>
                 </div>
 
                 <div
                   className={cn(
-                    "order-1 lg:order-none relative mx-auto w-full max-w-xl lg:max-w-none",
+                    "order-1 relative mx-auto w-full max-w-xl lg:order-none lg:max-w-none",
                     isReversed ? "lg:order-1" : "lg:order-2",
                   )}
                 >
-                  <div className="relative w-full overflow-hidden aspect-[4/3] rounded-[1.75rem] shadow-md border border-border/40 bg-muted/30">
+                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
                     <Image
                       src={feature.imageSrc}
                       alt={feature.imageAlt}
@@ -58,7 +58,7 @@ export function ProductFeatureSection({
                       sizes="(max-width: 1024px) 100vw, 50vw"
                       className={cn(
                         feature.isMockup
-                          ? "object-contain object-center drop-shadow-xl p-4 lg:p-8"
+                          ? "object-contain object-center"
                           : "object-cover object-center",
                       )}
                     />

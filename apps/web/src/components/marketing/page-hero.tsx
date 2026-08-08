@@ -1,34 +1,36 @@
 import { cn } from "@/lib/utils";
 import { MarketingContainer } from "./marketing-container";
+import { SectionEyebrow } from "./section-eyebrow";
 
 export function PageHero({
   title,
   description,
+  eyebrow,
   align = "center",
 }: {
   title: string;
   description: string;
+  eyebrow?: string;
   align?: "center" | "left";
 }) {
   return (
-    <section className="page-hero-offset relative overflow-hidden border-b border-border bg-brand-dark dark:bg-background">
-      <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_120%,rgba(0,102,204,0.18),transparent)]"
-        aria-hidden
-      />
-      <MarketingContainer className="relative pb-2">
+    <section className="bg-background">
+      <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div
           className={cn(
-            "max-w-3xl animate-fade-in py-4",
+            "max-w-3xl animate-fade-in",
             align === "center" ? "mx-auto text-center" : "text-left",
           )}
         >
-          <h1 className="sr-hero-title text-balance text-white dark:text-heading">
+          {eyebrow ? (
+            <SectionEyebrow className={align === "center" ? "text-center" : ""}>
+              {eyebrow}
+            </SectionEyebrow>
+          ) : null}
+          <h1 className="afrusan-hero-title text-balance !text-4xl sm:!text-5xl lg:!text-[3.5rem]">
             {title}
           </h1>
-          <p className="sr-hero-copy mt-4 font-normal leading-relaxed text-slate-300 dark:text-muted-foreground sm:mt-6">
-            {description}
-          </p>
+          <p className="afrusan-body mt-5 text-balance">{description}</p>
         </div>
       </MarketingContainer>
     </section>

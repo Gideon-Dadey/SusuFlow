@@ -1,4 +1,5 @@
 import { MarketingFooter } from "@/components/marketing/footer";
+import { FooterCtaSection } from "@/components/marketing/footer-cta-section";
 import { MarketingNavbar } from "@/components/marketing/navbar";
 import { MarketingScrollToTop } from "@/components/marketing/marketing-scroll-to-top";
 import { ThemeToggleRail } from "@/components/theme-toggle-rail";
@@ -23,6 +24,7 @@ export default function MarketingLayout({
         <main id="main-content" className="flex-1 overflow-x-hidden">
           {children}
         </main>
+        <FooterCtaSection />
         <MarketingFooter />
       </div>
       <ThemeToggleRail />

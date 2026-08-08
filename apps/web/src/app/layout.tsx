@@ -1,14 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Open_Sans } from "next/font/google";
+import { Geist, Inter } from "next/font/google";
 import "./globals.css";
 import "@/lib/fontawesome";
 import { Providers } from "@/components/providers";
 import { PwaAutoUpdater } from "@/components/pwa-auto-updater";
 
-const openSans = Open_Sans({
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-open-sans",
-  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-geist",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -29,7 +36,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#0056d2",
+  themeColor: "#010517",
 };
 
 export default function RootLayout({
@@ -40,7 +47,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${openSans.variable} h-full`}
+      className={`${geist.variable} ${inter.variable} --font-jakarta:${geist.variable} --font-open-sans:${geist.variable} h-full`}
       suppressHydrationWarning
     >
       <head>
@@ -50,12 +57,8 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600;700&display=swap"
-          rel="stylesheet"
-        />
       </head>
-      <body className="min-h-full flex flex-col bg-background font-sans text-foreground antialiased">
+      <body className="min-h-full flex flex-col bg-background font-sans text-foreground antialiased selection:bg-primary/20 selection:text-primary">
         <Providers>
           <PwaAutoUpdater />
           {children}

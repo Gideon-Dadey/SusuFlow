@@ -4,67 +4,56 @@ import { ArrowRight } from "lucide-react";
 import { BRAND_MOMO_PAY_SHOWCASE } from "@/lib/brand-assets";
 import { BrandLogo } from "./brand-logo";
 import { MarketingContainer } from "./marketing-container";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { SectionEyebrow } from "./section-eyebrow";
 
 function MomoPayBadge({ className }: { className?: string }) {
   return (
     <span
-      className={cn(
-        "inline-flex items-center gap-1 rounded-full bg-[#ffcc00] px-3 py-1.5 text-[17px] font-bold tracking-tight text-[#1a1a1a] shadow-sm",
-        className,
-      )}
+      className={`inline-flex items-center gap-1 rounded-full bg-[#ffcc00] px-3 py-1.5 text-sm font-bold tracking-tight text-[#1a1a1a] ${className ?? ""}`}
     >
-      <span className="text-[0.7rem] font-extrabold uppercase tracking-wider">
+      <span className="text-[0.65rem] font-extrabold uppercase tracking-wider">
         MTN
       </span>
-      <span className="text-[17px] font-extrabold leading-none">MoMo</span>
+      <span className="font-extrabold leading-none">MoMo</span>
     </span>
   );
 }
 
 export function MomoPaySection() {
   return (
-    <section className="bg-background">
-      <MarketingContainer className="pt-2 pb-10 sm:pt-6 sm:pb-16 lg:py-24">
-        <div className="flex flex-col gap-6 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
-          <div className="min-w-0 text-left">
-            <div className="mb-6 flex items-center justify-start gap-4 lg:mb-8">
-              <BrandLogo className="h-8 max-w-[9rem] sm:max-w-[10rem]" />
-              <span className="h-9 w-px shrink-0 bg-border" aria-hidden />
+    <section className="afrusan-section bg-background">
+      <MarketingContainer>
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
+          <div className="min-w-0">
+            <div className="mb-6 flex items-center gap-4">
+              <BrandLogo className="h-8 max-w-[9rem]" />
               <MomoPayBadge />
             </div>
 
-            <h2 className="text-balance text-3xl font-bold leading-snug tracking-tight sm:text-4xl lg:text-[2.65rem] sm:leading-[1.15]">
-              <span className="text-[#e8a317]">MoMo Pay is integrated.</span>{" "}
-              <span className="text-foreground">
-                a fast, secure, and local way to collect deposits.
-              </span>
+            <SectionEyebrow>Payments</SectionEyebrow>
+            <h2 className="afrusan-section-title text-balance">
+              MoMo Pay is integrated — a fast, secure, and local way to collect
+              deposits.
             </h2>
 
-            <p className="mt-4 sm:mt-5 max-w-lg text-pretty text-[17px] leading-relaxed text-muted-foreground lg:mt-6">
+            <p className="afrusan-body mt-5 max-w-xl text-pretty">
               Savers pay straight from their MoMo wallet. Collectors send
               prompts in the field, and every cedi is verified against the
               gateway before it hits the ledger. No cash handoffs, no disputed
               receipts.
             </p>
 
-            <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center lg:justify-start">
-              <Link href="/register" className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  className="h-12 w-full rounded-xl bg-[#0066cc] hover:bg-[#0052a3] text-white px-8 text-[17px] font-semibold flex items-center justify-center gap-2.5 sm:min-w-[10.5rem]"
-                >
-                  <span>Register</span>
-                  <ArrowRight
-                    className="h-[18px] w-[18px] stroke-[2.25]"
-                    aria-hidden
-                  />
-                </Button>
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+              <Link
+                href="/register"
+                className="afrusan-cta-pill w-full sm:w-auto"
+              >
+                <span>Register</span>
+                <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <Link
                 href="/how-it-works"
-                className="inline-flex items-center gap-1.5 text-[17px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                className="inline-flex items-center gap-2 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 How MoMo deposits work
                 <ArrowRight className="h-4 w-4" />
@@ -72,18 +61,14 @@ export function MomoPaySection() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[13rem] sm:max-w-[16rem] lg:max-w-none lg:justify-self-end">
-            <div
-              className="pointer-events-none absolute -right-2 top-1/2 hidden h-[70%] w-[80%] -translate-y-1/2 rounded-full bg-[#ffcc00]/12 blur-3xl lg:block"
-              aria-hidden
-            />
-            <div className="relative aspect-[4/3] w-full sm:aspect-[16/11] lg:aspect-[9/16] lg:h-auto lg:max-h-[36rem]">
+          <div className="relative mx-auto w-full max-w-[16rem] lg:max-w-none lg:justify-self-end">
+            <div className="relative aspect-[9/16] w-full lg:max-h-[36rem]">
               <Image
                 src={BRAND_MOMO_PAY_SHOWCASE}
-                alt="SusuFlow mobile app showing a verified MTN MoMo Pay deposit with Done confirmation"
+                alt="SusuFlow mobile app showing a verified MTN MoMo Pay deposit"
                 fill
                 sizes="(max-width: 1024px) 52vw, 42vw"
-                className="object-contain object-center drop-shadow-[0_20px_40px_rgba(15,23,42,0.12)] lg:object-bottom lg:drop-shadow-[0_32px_64px_rgba(15,23,42,0.16)]"
+                className="object-contain object-center"
               />
             </div>
           </div>

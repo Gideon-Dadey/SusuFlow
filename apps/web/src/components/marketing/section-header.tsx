@@ -19,12 +19,8 @@ export function SectionHeader({
         className,
       )}
     >
-      <h2 className="sr-section-bar text-balance text-foreground">{title}</h2>
-      {description ? (
-        <p className="mt-3 text-[17px] leading-relaxed text-muted-foreground">
-          {description}
-        </p>
-      ) : null}
+      <h2 className="afrusan-section-title text-balance">{title}</h2>
+      {description ? <p className="afrusan-body mt-4">{description}</p> : null}
     </div>
   );
 }
