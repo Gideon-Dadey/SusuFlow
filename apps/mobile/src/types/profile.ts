@@ -3,6 +3,7 @@ import type { AppIconName } from "@/components/icons/AppIcon";
 export type ProfileSectionId =
   | "account"
   | "personal"
+  | "kyc"
   | "security"
   | "notifications"
   | "appearance"
@@ -36,6 +37,12 @@ export const SETTINGS_GROUPS: SettingsGroup[] = [
         label: "Personal details",
         icon: "user",
         description: "Name, phone, and contact info",
+      },
+      {
+        id: "kyc",
+        label: "Identity verification",
+        icon: "shield",
+        description: "Ghana Card, passport, and selfie",
       },
     ],
   },
@@ -92,6 +99,7 @@ export const SECTION_ROUTES: Record<
 > = {
   account: "/(tabs)/profile/account",
   personal: "/(tabs)/profile/personal",
+  kyc: "/(tabs)/profile/kyc",
   security: "/(tabs)/profile/security",
   notifications: "/(tabs)/profile/notifications",
   appearance: "/(tabs)/profile/appearance",
@@ -110,6 +118,10 @@ export const PROFILE_SECTION_META: Record<
   personal: {
     title: "Personal details",
     subtitle: "Keep your profile accurate and up to date",
+  },
+  kyc: {
+    title: "Identity verification",
+    subtitle: "Verify your ID so you can start saving safely",
   },
   security: {
     title: "Security",

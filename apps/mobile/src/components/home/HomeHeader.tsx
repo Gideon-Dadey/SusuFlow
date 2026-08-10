@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
-import { getHomeGreeting } from "@/components/home/homeUtils";
+import { getHomeTimeGreeting } from "@/components/home/homeUtils";
+import { homeChrome } from "@/components/home/homeChrome";
 import { HomeNotificationBell } from "@/components/notifications/HomeNotificationBell";
 import { OptionsMenuButton } from "@/components/navigation/OptionsMenuButton";
 import { UserAvatar } from "@/components/profile/UserAvatar";
@@ -13,10 +14,10 @@ const HEADER_CONTROL_SIZE = 44;
 const HEADER_ICON_SIZE = 20;
 
 export function HomeHeader() {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const openOptions = useUiStore((s) => s.openOptions);
-  const { displayName, initials, isLoading } = useProfileData();
-  const firstName = displayName.split(/\s+/)[0] || "Member";
+  const { displayName, initials, isLoading, avatarUrl } = useProfileData();
+  const firstName = displayName.split(/\s+/)[0] || "there";
 
   return (
     <View style={styles.row}>
@@ -24,20 +25,37 @@ export function HomeHeader() {
         <UserAvatar
           initials={initials}
           seed={displayName}
+          imageUrl={avatarUrl}
           size="sm"
           loading={isLoading}
         />
 
         <View style={styles.greeting}>
           {isLoading ? (
-            <Skeleton width={148} height={20} />
+            <View style={styles.skeletonStack}>
+              <Skeleton width={100} height={12} />
+              <Skeleton width={140} height={20} />
+            </View>
           ) : (
-            <Text
-              style={[styles.title, { color: colors.foreground }]}
-              numberOfLines={1}
-            >
-              {getHomeGreeting(firstName)}
-            </Text>
+            <>
+              <Text
+                style={[
+                  styles.eyebrow,
+                  {
+                    color: isDark ? homeChrome.linkDark : homeChrome.link,
+                  },
+                ]}
+                numberOfLines={1}
+              >
+                {getHomeTimeGreeting()}
+              </Text>
+              <Text
+                style={[styles.title, { color: colors.foreground }]}
+                numberOfLines={1}
+              >
+                {firstName}
+              </Text>
+            </>
           )}
         </View>
       </View>
@@ -78,12 +96,21 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
     justifyContent: "center",
+    gap: 2,
+  },
+  skeletonStack: {
+    gap: 6,
+  },
+  eyebrow: {
+    fontFamily: typography.roles.caption,
+    fontSize: 11,
+    letterSpacing: 0.2,
   },
   title: {
     fontFamily: typography.roles.headline,
     fontSize: typography.size.lg,
     lineHeight: 24,
-    letterSpacing: -0.3,
+    letterSpacing: -0.35,
   },
   actions: {
     flexDirection: "row",

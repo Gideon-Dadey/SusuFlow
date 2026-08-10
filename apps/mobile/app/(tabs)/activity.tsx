@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { useCallback, useMemo, useState } from "react";
+import { RefreshControl, StyleSheet, View } from "react-native";
 import { ActivityAttentionQueue } from "@/components/activity/ActivityAttentionQueue";
 import { ActivityCashFlowPanel } from "@/components/activity/ActivityCashFlowPanel";
 import { ActivityEmptyState } from "@/components/activity/ActivityEmptyState";
@@ -20,6 +20,8 @@ import {
   TabScreenLayout,
   TabScreenHeader,
 } from "@/components/layout/TabScreen";
+import { OfflineBanner } from "@/components/ui/OfflineBanner";
+import { QueryErrorState } from "@/components/ui/QueryErrorState";
 import { ActivityScreenSkeleton } from "@/components/ui/Skeleton";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
 import type { Transaction } from "@/lib/api";
@@ -27,19 +29,25 @@ import {
   fetchCustomerDeposits,
   fetchCustomerWithdrawals,
   financialQueryOptions,
+  invalidateCustomerFinancials,
 } from "@/lib/financial-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { spacing } from "@/theme/tokens";
+import { useTheme } from "@/theme/ThemeProvider";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ActivityScreen() {
+  const queryClient = useQueryClient();
+  const { colors } = useTheme();
   const [filter, setFilter] = useState<ActivityFilter>("all");
   const [period, setPeriod] = useState<ActivityPeriod>("this_month");
   const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const { sessionKey } = useCustomerSession();
 
-  const { data: deposits, isPending: depositsPending } = useQuery({
+  const depositsQuery = useQuery({
     queryKey: sessionKey
       ? queryKeys.deposits(sessionKey.userId, sessionKey.customerId)
       : ["deposits", "inactive"],
@@ -48,7 +56,7 @@ export default function ActivityScreen() {
     ...financialQueryOptions,
   });
 
-  const { data: withdrawals, isPending: withdrawalsPending } = useQuery({
+  const withdrawalsQuery = useQuery({
     queryKey: sessionKey
       ? queryKeys.withdrawals(sessionKey.userId, sessionKey.customerId)
       : ["withdrawals", "inactive"],
@@ -56,6 +64,11 @@ export default function ActivityScreen() {
     enabled: !!sessionKey,
     ...financialQueryOptions,
   });
+
+  const deposits = depositsQuery.data;
+  const withdrawals = withdrawalsQuery.data;
+  const depositsPending = depositsQuery.isPending;
+  const withdrawalsPending = withdrawalsQuery.isPending;
 
   const allTransactions = useMemo(
     () =>
@@ -96,6 +109,10 @@ export default function ActivityScreen() {
     (depositsPending && deposits === undefined) ||
     (withdrawalsPending && withdrawals === undefined);
 
+  const showError =
+    (depositsQuery.isError && deposits === undefined) ||
+    (withdrawalsQuery.isError && withdrawals === undefined);
+
   const openReceipt = (transaction: Transaction) => {
     setSelectedTxn(transaction);
     setReceiptOpen(true);
@@ -106,38 +123,69 @@ export default function ActivityScreen() {
     setSelectedTxn(null);
   };
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      if (sessionKey) {
+        invalidateCustomerFinancials(queryClient, sessionKey);
+      }
+      await Promise.all([depositsQuery.refetch(), withdrawalsQuery.refetch()]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [depositsQuery, queryClient, sessionKey, withdrawalsQuery]);
+
   const hasAnyTransactions = allTransactions.length > 0;
 
   return (
     <>
-      <TabScreenLayout header={<TabScreenHeader title="Activity" />}>
-        {showSkeleton ? (
-          <ActivityScreenSkeleton />
-        ) : !hasAnyTransactions ? (
-          <ActivityEmptyState filter="all" />
-        ) : (
-          <View style={styles.content}>
-            <ActivityPeriodSelector value={period} onChange={setPeriod} />
+      <TabScreenLayout
+        header={<TabScreenHeader title="Activity" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh()}
+            tintColor={colors.primary}
+          />
+        }
+      >
+        <View style={styles.content}>
+          <OfflineBanner />
 
-            <ActivityCashFlowPanel insights={insights} />
-
-            <ActivityFilterBar value={filter} onChange={setFilter} />
-
-            <ActivityAttentionQueue
-              items={attentionItems}
-              onPressTransaction={openReceipt}
+          {showSkeleton ? (
+            <ActivityScreenSkeleton />
+          ) : showError ? (
+            <QueryErrorState
+              title="Couldn’t load activity"
+              message="Your transactions couldn’t be fetched. This is not an empty wallet — try again."
+              onRetry={() => void onRefresh()}
             />
+          ) : !hasAnyTransactions ? (
+            <ActivityEmptyState filter="all" />
+          ) : (
+            <>
+              <ActivityPeriodSelector value={period} onChange={setPeriod} />
 
-            {filtered.length === 0 ? (
-              <ActivityEmptyState filter={filter} />
-            ) : ledgerTransactions.length === 0 ? null : (
-              <ActivityLedger
-                transactions={ledgerTransactions}
+              <ActivityCashFlowPanel insights={insights} />
+
+              <ActivityFilterBar value={filter} onChange={setFilter} />
+
+              <ActivityAttentionQueue
+                items={attentionItems}
                 onPressTransaction={openReceipt}
               />
-            )}
-          </View>
-        )}
+
+              {filtered.length === 0 ? (
+                <ActivityEmptyState filter={filter} />
+              ) : ledgerTransactions.length === 0 ? null : (
+                <ActivityLedger
+                  transactions={ledgerTransactions}
+                  onPressTransaction={openReceipt}
+                />
+              )}
+            </>
+          )}
+        </View>
       </TabScreenLayout>
 
       <TransactionReceiptSheet

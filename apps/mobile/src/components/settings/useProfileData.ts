@@ -1,4 +1,5 @@
 import { useUserProfileQuery } from "@/hooks/useUserProfileQuery";
+import { useTenantBranding } from "@/hooks/useTenantBranding";
 import { useAuthStore } from "@/stores/auth.store";
 
 export function useProfileData() {
@@ -6,6 +7,7 @@ export function useProfileData() {
   const tenantSlug = useAuthStore((s) => s.tenantSlug);
 
   const query = useUserProfileQuery();
+  const branding = useTenantBranding();
   const profile = query.data;
   const displayName = profile
     ? `${profile.firstName} ${profile.lastName}`.trim()
@@ -17,9 +19,7 @@ export function useProfileData() {
   ).toUpperCase();
   const email = profile?.email || user?.email || "";
   const phone = profile?.phone || "";
-  const groupName = tenantSlug
-    ? tenantSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
-    : "My Susu Group";
+  const avatarUrl = profile?.avatarUrl ?? user?.avatarUrl ?? null;
 
   return {
     user,
@@ -28,9 +28,15 @@ export function useProfileData() {
     initials,
     email,
     phone,
-    groupName,
-    isLoading: query.isPending && !profile,
+    avatarUrl,
+    tenantSlug,
+    groupName: branding.groupName,
+    logoUrl: branding.logoUrl,
+    primaryColor: branding.primaryColor,
+    isLoading: (query.isPending && !profile) || branding.isLoading,
     isError: query.isError,
-    refetch: query.refetch,
+    refetch: async () => {
+      await Promise.all([query.refetch(), branding.refetch()]);
+    },
   };
 }

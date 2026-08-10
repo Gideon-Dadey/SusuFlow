@@ -296,7 +296,7 @@ export default function DepositPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <Link href="/dashboard">
-          <button className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-muted">
+          <button className="flex h-9 w-9 items-center justify-center hover:bg-muted">
             <ArrowLeft className="h-5 w-5" />
           </button>
         </Link>
@@ -354,7 +354,7 @@ export default function DepositPage() {
                   key={a}
                   type="button"
                   onClick={() => setAmount(String(a))}
-                  className="rounded-full border border-border px-4 py-1.5 text-sm font-medium hover:border-primary hover:text-primary"
+                  className="border border-border px-4 py-1.5 text-sm font-medium hover:border-primary hover:text-primary"
                 >
                   GHS {a}
                 </button>
@@ -387,11 +387,7 @@ export default function DepositPage() {
                     key={m.id}
                     type="button"
                     onClick={() => setMethod(m.id)}
-                    className={`w-full flex items-center gap-3.5 rounded-lg border p-3.5 text-left transition-colors ${
-                      isSelected
-                        ? "border-primary bg-primary-100 dark:bg-primary-950/20"
-                        : "border-border hover:bg-muted/50"
-                    }`}
+                    className={`w-full flex items-center gap-3.5 border p-3.5 text-left transition-colors ${isSelected ? "border-primary bg-primary-100 dark:bg-primary-950/20" : "border-border hover:bg-muted/50"}`}
                   >
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border transition-colors ${
@@ -461,7 +457,7 @@ export default function DepositPage() {
                           setCopiedAccount(true);
                           setTimeout(() => setCopiedAccount(false), 2000);
                         }}
-                        className="p-1 rounded hover:bg-muted"
+                        className="p-1 hover:bg-muted"
                       >
                         {copiedAccount ? (
                           <Check className="h-3.5 w-3.5 text-emerald-500" />

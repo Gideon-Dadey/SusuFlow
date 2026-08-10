@@ -652,6 +652,8 @@ enum AlertStatus {
 enum DocumentType {
   ghana_card
   passport
+  voter_id
+  nhis
   utility_bill
   selfie
 }

@@ -1,4 +1,5 @@
 import { HomeSectionTitle } from "@/components/home/HomeSectionTitle";
+import { homeChrome } from "@/components/home/homeChrome";
 import { CardSurface } from "@/components/ui/CardSurface";
 import { TransactionTypeIcon } from "@/components/activity/TransactionTypeIcon";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -9,7 +10,7 @@ import {
 } from "@/components/home/homeUtils";
 import type { Transaction } from "@/lib/api";
 import { useTheme } from "@/theme/ThemeProvider";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { spacing, typography } from "@/theme/tokens";
 
 interface HomeRecentActivityProps {
   transactions: Transaction[];
@@ -28,8 +29,9 @@ export function HomeRecentActivity({
   onViewAll,
   onPressTransaction,
 }: HomeRecentActivityProps) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const preview = transactions.slice(0, PREVIEW_LIMIT);
+  const linkColor = isDark ? homeChrome.linkDark : homeChrome.link;
 
   return (
     <View style={styles.section}>
@@ -38,7 +40,7 @@ export function HomeRecentActivity({
         right={
           totalCount > 0 ? (
             <Pressable onPress={onViewAll} hitSlop={10}>
-              <Text style={[styles.viewAll, { color: colors.mutedForeground }]}>
+              <Text style={[styles.viewAll, { color: linkColor }]}>
                 See all
               </Text>
             </Pressable>
@@ -49,6 +51,20 @@ export function HomeRecentActivity({
       <CardSurface innerStyle={styles.listCard}>
         {preview.length === 0 ? (
           <View style={styles.empty}>
+            <View
+              style={[
+                styles.emptyIcon,
+                {
+                  backgroundColor: isDark
+                    ? homeChrome.mintDarkWell
+                    : homeChrome.mintSoft,
+                },
+              ]}
+            >
+              <Text style={[styles.emptyIconMark, { color: homeChrome.mint }]}>
+                ₵
+              </Text>
+            </View>
             <Text style={[styles.emptyTitle, { color: colors.foreground }]}>
               Nothing here yet
             </Text>
@@ -68,7 +84,7 @@ export function HomeRecentActivity({
                 onPress={() => onPressTransaction?.(transaction)}
                 style={({ pressed }) => [
                   styles.row,
-                  pressed && onPressTransaction ? styles.pressed : null,
+                  pressed && styles.pressed,
                   index < preview.length - 1 && {
                     borderBottomWidth: StyleSheet.hairlineWidth,
                     borderBottomColor: colors.border,
@@ -99,7 +115,7 @@ export function HomeRecentActivity({
                   style={[
                     styles.amount,
                     {
-                      color: isDeposit ? colors.primary : colors.foreground,
+                      color: isDeposit ? homeChrome.mintInk : colors.foreground,
                     },
                   ]}
                 >
@@ -120,7 +136,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   viewAll: {
-    fontFamily: typography.roles.caption,
+    fontFamily: typography.roles.title,
     fontSize: typography.size.xs,
   },
   listCard: {
@@ -131,15 +147,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.md,
     paddingHorizontal: spacing.md,
-    paddingVertical: 13,
-    minHeight: 60,
+    paddingVertical: 14,
+    minHeight: 64,
   },
   pressed: {
     opacity: 0.82,
   },
   copy: {
     flex: 1,
-    gap: 2,
+    gap: 3,
     minWidth: 0,
   },
   title: {
@@ -161,7 +177,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.xl,
     alignItems: "center",
-    gap: 6,
+    gap: 8,
+  },
+  emptyIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 4,
+  },
+  emptyIconMark: {
+    fontFamily: typography.roles.display,
+    fontSize: 20,
   },
   emptyTitle: {
     fontFamily: typography.roles.title,

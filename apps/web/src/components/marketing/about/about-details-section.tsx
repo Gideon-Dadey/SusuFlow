@@ -3,57 +3,50 @@ import { MarketingContainer } from "../marketing-container";
 
 export function AboutDetailsSection() {
   return (
-    <section className="bg-background">
-      <MarketingContainer className="py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-3xl text-left lg:text-center">
-          <h2 className="text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
-            Our operating details in Ghana
-          </h2>
-          <p className="mt-4 text-pretty text-base text-muted-foreground lg:mx-auto">
+    <section className="bg-[var(--ofx-cream)]">
+      <MarketingContainer className="ofx-section">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="ofx-eyebrow">Operating details</p>
+          <h2 className="ofx-h2 mt-4">Where and how we operate.</h2>
+          <p className="ofx-lead mx-auto mt-5 max-w-2xl">
             SusuFlow serves susu companies across Ghana with Mobile Money
-            integrations and platform support aligned to local payment
-            practices.
+            integrations aligned to local payment practices.
           </p>
         </div>
 
-        <div className="mt-10 overflow-x-auto rounded-none border border-border lg:mt-12">
-          <table className="w-full min-w-[36rem] border-collapse text-left">
-            <thead className="bg-[#1a1a1a] text-white dark:bg-muted dark:text-foreground">
-              <tr>
-                <th className="px-4 py-3 text-base font-bold sm:px-6">
-                  Region
-                </th>
-                <th className="px-4 py-3 text-base font-bold sm:px-6">
-                  Entity
-                </th>
-                <th className="px-4 py-3 text-base font-bold sm:px-6">
-                  Payment partners
-                </th>
-                <th className="px-4 py-3 text-base font-bold sm:px-6">
-                  Standards
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {ABOUT_OPERATING_DETAILS.map((row) => (
-                <tr key={row.region} className="border-t border-border bg-card">
-                  <td className="px-4 py-4 text-base font-medium text-foreground sm:px-6">
-                    {row.region}
-                  </td>
-                  <td className="px-4 py-4 text-base text-muted-foreground sm:px-6">
-                    {row.entity}
-                  </td>
-                  <td className="px-4 py-4 text-base text-muted-foreground sm:px-6">
-                    {row.partners}
-                  </td>
-                  <td className="px-4 py-4 text-base text-muted-foreground sm:px-6">
-                    {row.standards}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {ABOUT_OPERATING_DETAILS.map((row) => (
+          <div
+            key={row.region}
+            className="ofx-card mx-auto mt-10 max-w-4xl p-7 sm:p-9 lg:mt-12"
+          >
+            <dl className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <dt className="ofx-eyebrow">Region</dt>
+                <dd className="mt-2 text-base font-semibold tracking-tight text-foreground">
+                  {row.region}
+                </dd>
+              </div>
+              <div>
+                <dt className="ofx-eyebrow">Entity</dt>
+                <dd className="mt-2 text-base font-semibold tracking-tight text-foreground">
+                  {row.entity}
+                </dd>
+              </div>
+              <div>
+                <dt className="ofx-eyebrow">Payment partners</dt>
+                <dd className="mt-2 text-base leading-relaxed text-muted-foreground">
+                  {row.partners}
+                </dd>
+              </div>
+              <div>
+                <dt className="ofx-eyebrow">Standards</dt>
+                <dd className="mt-2 text-base leading-relaxed text-muted-foreground">
+                  {row.standards}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        ))}
       </MarketingContainer>
     </section>
   );

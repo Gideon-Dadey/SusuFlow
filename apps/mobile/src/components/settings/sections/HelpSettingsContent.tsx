@@ -22,7 +22,7 @@ const FAQ_ITEMS = [
   {
     question: "When can I withdraw?",
     answer:
-      "Open Withdraw from your home shortcuts or profile to request a payout.",
+      "Open Withdraw from Quick Actions on home or from your profile to request a payout.",
   },
   {
     question: "Is my money safe?",

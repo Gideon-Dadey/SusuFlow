@@ -1,7 +1,12 @@
 import { AppIcon } from "@/components/icons/AppIcon";
 import { StyleSheet, Text, View } from "react-native";
 import { Input } from "@/components/Input";
-import { getDepositMethodLabel } from "@/components/deposit/depositUtils";
+import {
+  getDepositBankLabel,
+  getDepositMethodLabel,
+  isDepositBankTransfer,
+  isDepositMobileMoney,
+} from "@/components/deposit/depositUtils";
 import { formatGhs } from "@/lib/currency";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
@@ -9,6 +14,7 @@ import { radius, spacing, typography } from "@/theme/tokens";
 interface DepositConfirmStepProps {
   amount: number;
   method: string;
+  bankCode: string | null;
   phone: string;
   onChangePhone: (value: string) => void;
 }
@@ -30,10 +36,13 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
 export function DepositConfirmStep({
   amount,
   method,
+  bankCode,
   phone,
   onChangePhone,
 }: DepositConfirmStepProps) {
   const { colors, isDark } = useTheme();
+  const isBank = isDepositBankTransfer(method);
+  const isMoMo = isDepositMobileMoney(method);
 
   return (
     <View style={styles.root}>
@@ -57,27 +66,34 @@ export function DepositConfirmStep({
           label="Payment method"
           value={getDepositMethodLabel(method)}
         />
+        {isBank ? (
+          <SummaryRow label="Bank" value={getDepositBankLabel(bankCode)} />
+        ) : null}
         <SummaryRow label="Destination" value="Your Susu wallet" />
       </View>
 
-      <View
-        style={[
-          styles.phoneCard,
-          {
-            backgroundColor: colors.card,
-            borderColor: colors.border,
-          },
-        ]}
-      >
-        <Input
-          label="Mobile money number"
-          value={phone}
-          onChangeText={onChangePhone}
-          keyboardType="phone-pad"
-          placeholder="055 123 4567"
-          autoComplete="tel"
-        />
-      </View>
+      {isMoMo || isBank ? (
+        <View
+          style={[
+            styles.phoneCard,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+            },
+          ]}
+        >
+          <Input
+            label={
+              isBank ? "Phone for receipt (optional)" : "Mobile money number"
+            }
+            value={phone}
+            onChangeText={onChangePhone}
+            keyboardType="phone-pad"
+            placeholder="055 123 4567"
+            autoComplete="tel"
+          />
+        </View>
+      ) : null}
 
       <View
         style={[
@@ -90,8 +106,9 @@ export function DepositConfirmStep({
       >
         <AppIcon name="shield" size={16} color={colors.primary} />
         <Text style={[styles.noticeText, { color: colors.mutedForeground }]}>
-          After you confirm, you&apos;ll get a prompt on your phone to approve
-          the payment. Funds appear once your provider confirms.
+          {isBank
+            ? "After you confirm, you’ll complete payment in a secure checkout. Use the deposit reference as narration if asked. Funds appear only after bank confirmation — never share OTP or PIN."
+            : "After you confirm, you’ll get a prompt on your phone to approve the payment. Funds appear once your provider confirms. Never share your MoMo PIN."}
         </Text>
       </View>
     </View>

@@ -1,22 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useCallback, useMemo, useState } from "react";
+import { RefreshControl, StyleSheet, Text, View } from "react-native";
+import { TransactionReceiptSheet } from "@/components/activity/TransactionReceiptSheet";
 import { HomeActionGrid } from "@/components/home/HomeActionGrid";
 import { HomeBalanceCard } from "@/components/home/HomeBalanceCard";
 import { HomeDepositButton } from "@/components/home/HomeDepositButton";
 import { HomeHeader } from "@/components/home/HomeHeader";
+import { HomeKycBanner } from "@/components/home/HomeKycBanner";
 import { HomePromoCarousel } from "@/components/home/HomePromoCarousel";
 import { HomeRecentActivity } from "@/components/home/HomeRecentActivity";
 import { TabScreenLayout } from "@/components/layout/TabScreen";
 import { useProfileData } from "@/components/settings/useProfileData";
+import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { HomeBalanceSkeleton } from "@/components/ui/Skeleton";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
+import type { Transaction } from "@/lib/api";
 import { fetchCustomerWallet } from "@/lib/customer-wallet";
 import {
   fetchCustomerDeposits,
   fetchCustomerWithdrawals,
   financialQueryOptions,
+  invalidateCustomerFinancials,
 } from "@/lib/financial-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { useTheme } from "@/theme/ThemeProvider";
@@ -25,9 +30,13 @@ import { Button } from "@/components/Button";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { colors } = useTheme();
-  const { groupName } = useProfileData();
+  const { groupName, logoUrl, refetch: refetchBranding } = useProfileData();
   const { sessionKey, isProfileReady, profileQuery } = useCustomerSession();
+  const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
+  const [receiptOpen, setReceiptOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const {
     data: wallet,
@@ -43,7 +52,7 @@ export default function HomeScreen() {
     ...financialQueryOptions,
   });
 
-  const { data: deposits } = useQuery({
+  const { data: deposits, refetch: refetchDeposits } = useQuery({
     queryKey: sessionKey
       ? queryKeys.deposits(sessionKey.userId, sessionKey.customerId)
       : ["deposits", "inactive"],
@@ -52,7 +61,7 @@ export default function HomeScreen() {
     ...financialQueryOptions,
   });
 
-  const { data: withdrawals } = useQuery({
+  const { data: withdrawals, refetch: refetchWithdrawals } = useQuery({
     queryKey: sessionKey
       ? queryKeys.withdrawals(sessionKey.userId, sessionKey.customerId)
       : ["withdrawals", "inactive"],
@@ -75,105 +84,169 @@ export default function HomeScreen() {
 
   const showBalanceError = walletError && wallet === undefined;
 
+  const openReceipt = (transaction: Transaction) => {
+    setSelectedTxn(transaction);
+    setReceiptOpen(true);
+  };
+
+  const closeReceipt = () => {
+    setReceiptOpen(false);
+    setSelectedTxn(null);
+  };
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      if (sessionKey) {
+        invalidateCustomerFinancials(queryClient, sessionKey);
+      }
+      await Promise.all([
+        profileQuery.refetch(),
+        refetchWallet(),
+        refetchDeposits(),
+        refetchWithdrawals(),
+        refetchBranding(),
+      ]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [
+    profileQuery,
+    queryClient,
+    refetchBranding,
+    refetchDeposits,
+    refetchWallet,
+    refetchWithdrawals,
+    sessionKey,
+  ]);
+
   return (
-    <TabScreenLayout header={<HomeHeader />}>
-      {profileQuery.isError ? (
-        <View
-          style={[
-            styles.errorCard,
-            { backgroundColor: colors.card, borderColor: colors.border },
-          ]}
-        >
-          <Text style={[styles.errorTitle, { color: colors.foreground }]}>
-            Could not load your account
-          </Text>
-          <Text style={[styles.errorCopy, { color: colors.mutedForeground }]}>
-            Check your connection and try again.
-          </Text>
-          <Button
-            title="Retry"
-            variant="outline"
-            onPress={() => profileQuery.refetch()}
+    <>
+      <TabScreenLayout
+        header={<HomeHeader />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh()}
+            tintColor={colors.primary}
           />
-        </View>
-      ) : showBalanceSkeleton ? (
-        <View
-          style={[
-            styles.balanceSkeletonWrap,
-            { backgroundColor: colors.muted },
-          ]}
-        >
-          <HomeBalanceSkeleton />
-        </View>
-      ) : showBalanceError ? (
-        <View
-          style={[
-            styles.errorCard,
-            { backgroundColor: colors.card, borderColor: colors.border },
-          ]}
-        >
-          <Text style={[styles.errorTitle, { color: colors.foreground }]}>
-            Could not load balance
-          </Text>
-          <Button
-            title="Retry"
-            variant="outline"
-            onPress={() => refetchWallet()}
+        }
+      >
+        <OfflineBanner />
+        {profileQuery.isError ? (
+          <View
+            style={[
+              styles.errorCard,
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}
+          >
+            <Text style={[styles.errorTitle, { color: colors.foreground }]}>
+              Could not load your account
+            </Text>
+            <Text style={[styles.errorCopy, { color: colors.mutedForeground }]}>
+              Check your connection and try again.
+            </Text>
+            <Button
+              title="Retry"
+              variant="outline"
+              onPress={() => profileQuery.refetch()}
+            />
+          </View>
+        ) : showBalanceSkeleton ? (
+          <View
+            style={[
+              styles.balanceSkeletonWrap,
+              { backgroundColor: colors.muted },
+            ]}
+          >
+            <HomeBalanceSkeleton />
+          </View>
+        ) : showBalanceError ? (
+          <View
+            style={[
+              styles.errorCard,
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}
+          >
+            <Text style={[styles.errorTitle, { color: colors.foreground }]}>
+              Could not load balance
+            </Text>
+            <Button
+              title="Retry"
+              variant="outline"
+              onPress={() => refetchWallet()}
+            />
+          </View>
+        ) : (
+          <HomeBalanceCard
+            balance={wallet?.balance ?? 0}
+            groupName={groupName}
+            logoUrl={logoUrl}
+            transactions={allTransactions}
           />
-        </View>
-      ) : (
-        <HomeBalanceCard
-          balance={wallet?.balance ?? 0}
+        )}
+
+        <HomeKycBanner />
+
+        <HomePromoCarousel
           groupName={groupName}
-          transactions={allTransactions}
+          onDeposit={() => router.push("/(tabs)/deposit")}
+          onGoals={() => router.push("/(tabs)/plans")}
+          onActivity={() => router.push("/(tabs)/activity")}
         />
-      )}
 
-      <HomePromoCarousel
-        groupName={groupName}
-        onDeposit={() => router.push("/(tabs)/deposit")}
-        onGoals={() => router.push("/(tabs)/plans")}
-        onActivity={() => router.push("/(tabs)/activity")}
+        <HomeDepositButton onPress={() => router.push("/(tabs)/deposit")} />
+
+        <HomeActionGrid
+          actions={[
+            {
+              label: "Deposit",
+              icon: "wallet",
+              onPress: () => router.push("/(tabs)/deposit"),
+            },
+            {
+              label: "Withdraw",
+              icon: "arrow-up-right",
+              onPress: () => router.push("/(tabs)/withdraw"),
+            },
+            {
+              label: "Goals",
+              icon: "target",
+              onPress: () => router.push("/(tabs)/plans"),
+            },
+            {
+              label: "Activity",
+              icon: "activity",
+              onPress: () => router.push("/(tabs)/activity"),
+            },
+            {
+              label: "Statements",
+              icon: "file-text",
+              onPress: () => router.push("/transactions"),
+            },
+            {
+              label: "History",
+              icon: "receipt",
+              onPress: () => router.push("/(tabs)/activity"),
+            },
+          ]}
+        />
+
+        <HomeRecentActivity
+          transactions={allTransactions}
+          totalCount={allTransactions.length}
+          groupName={groupName}
+          onViewAll={() => router.push("/(tabs)/activity")}
+          onPressTransaction={openReceipt}
+        />
+      </TabScreenLayout>
+
+      <TransactionReceiptSheet
+        transaction={selectedTxn}
+        visible={receiptOpen}
+        onClose={closeReceipt}
       />
-
-      <HomeDepositButton onPress={() => router.push("/(tabs)/deposit")} />
-
-      <HomeActionGrid
-        actions={[
-          {
-            label: "Deposit History",
-            subtitle: "View all deposits",
-            icon: "receipt",
-            onPress: () => router.push("/(tabs)/activity"),
-          },
-          {
-            label: "Savings goals",
-            subtitle: "Track your targets",
-            icon: "target",
-            onPress: () => router.push("/(tabs)/plans"),
-          },
-          {
-            label: "Withdraw",
-            subtitle: "Request a withdrawal",
-            icon: "arrow-up-right",
-            onPress: () => router.push("/(tabs)/withdraw"),
-          },
-          {
-            label: "Statements",
-            subtitle: "View your statements",
-            icon: "file-text",
-            onPress: () => router.push("/transactions"),
-          },
-        ]}
-      />
-
-      <HomeRecentActivity
-        transactions={allTransactions}
-        totalCount={allTransactions.length}
-        groupName={groupName}
-        onViewAll={() => router.push("/(tabs)/activity")}
-      />
-    </TabScreenLayout>
+    </>
   );
 }
 

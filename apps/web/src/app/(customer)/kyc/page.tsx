@@ -466,7 +466,7 @@ export default function CustomerKycPage() {
               type="button"
               onClick={() => setCurrentStep(1)}
               className={cn(
-                "flex items-center justify-center gap-2 py-2 px-3 rounded text-xs font-semibold transition-all",
+                "flex items-center justify-center gap-2 py-2 px-3 text-xs font-semibold transition-all",
                 currentStep === 1
                   ? "bg-card text-foreground shadow-xs border border-border/50"
                   : "text-muted-foreground hover:text-foreground",
@@ -482,7 +482,7 @@ export default function CustomerKycPage() {
               type="button"
               onClick={() => setCurrentStep(2)}
               className={cn(
-                "flex items-center justify-center gap-2 py-2 px-3 rounded text-xs font-semibold transition-all",
+                "flex items-center justify-center gap-2 py-2 px-3 text-xs font-semibold transition-all",
                 currentStep === 2
                   ? "bg-card text-foreground shadow-xs border border-border/50"
                   : "text-muted-foreground hover:text-foreground",
@@ -498,7 +498,7 @@ export default function CustomerKycPage() {
               type="button"
               onClick={() => setCurrentStep(3)}
               className={cn(
-                "flex items-center justify-center gap-2 py-2 px-3 rounded text-xs font-semibold transition-all",
+                "flex items-center justify-center gap-2 py-2 px-3 text-xs font-semibold transition-all",
                 currentStep === 3
                   ? "bg-card text-foreground shadow-xs border border-border/50"
                   : "text-muted-foreground hover:text-foreground",
@@ -537,7 +537,7 @@ export default function CustomerKycPage() {
                       type="button"
                       onClick={() => setDocumentType("ghana_card")}
                       className={cn(
-                        "flex items-center gap-3 p-3 rounded border text-left transition-all",
+                        "flex items-center gap-3 p-3 border text-left transition-all",
                         documentType === "ghana_card"
                           ? "border-primary bg-primary/10 ring-1 ring-primary"
                           : "border-border hover:bg-muted/30",
@@ -558,7 +558,7 @@ export default function CustomerKycPage() {
                       type="button"
                       onClick={() => setDocumentType("passport")}
                       className={cn(
-                        "flex items-center gap-3 p-3 rounded border text-left transition-all",
+                        "flex items-center gap-3 p-3 border text-left transition-all",
                         documentType === "passport"
                           ? "border-primary bg-primary/10 ring-1 ring-primary"
                           : "border-border hover:bg-muted/30",

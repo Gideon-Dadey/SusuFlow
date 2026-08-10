@@ -100,6 +100,8 @@ export class AuthService {
           tenantId: tenant.id,
           userId: user.id,
           customerNumber,
+          dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined,
+          metadata: dto.gender ? { gender: dto.gender } : {},
           status: "pending",
           kycLevel: 0,
         },

@@ -1,10 +1,11 @@
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "@/theme/ThemeProvider";
+import { authChrome } from "@/theme/auth-chrome";
 
-const NAVY = "#1a365d";
-import { brandGreen } from "@/theme/tokens";
-
-const ACCENT = brandGreen;
+const INK = authChrome.ink;
+const ACCENT = "rgba(255,255,255,0.85)";
+const MUTED = "rgba(255,255,255,0.18)";
+const FAINT = "rgba(255,255,255,0.1)";
 
 export function IdDocumentIllustration() {
   const { colors, isDark } = useTheme();
@@ -15,42 +16,42 @@ export function IdDocumentIllustration() {
         style={[
           styles.blob,
           styles.blobGray,
-          { backgroundColor: isDark ? colors.muted : "#f1f5f9" },
+          { backgroundColor: isDark ? colors.muted : MUTED },
         ]}
       />
       <View
         style={[
           styles.blob,
           styles.blobPink,
-          { backgroundColor: isDark ? "rgba(34,197,94,0.15)" : "#ffe4e6" },
+          { backgroundColor: isDark ? "rgba(255,255,255,0.12)" : FAINT },
         ]}
       />
       <View
         style={[
           styles.card,
           {
-            backgroundColor: colors.card,
-            borderColor: isDark ? colors.border : NAVY,
+            backgroundColor: isDark ? colors.card : "#111111",
+            borderColor: isDark ? colors.border : INK,
           },
         ]}
       >
-        <View style={styles.cardPhoto} />
+        <View style={[styles.cardPhoto, { backgroundColor: MUTED }]} />
         <View
           style={[
             styles.cardLineWide,
-            { backgroundColor: isDark ? colors.mutedForeground : "#cbd5e1" },
+            { backgroundColor: isDark ? colors.mutedForeground : ACCENT },
           ]}
         />
         <View
           style={[
             styles.cardLine,
-            { backgroundColor: isDark ? colors.muted : "#f1f5f9" },
+            { backgroundColor: isDark ? colors.muted : MUTED },
           ]}
         />
         <View
           style={[
             styles.cardLine,
-            { backgroundColor: isDark ? colors.muted : "#f1f5f9" },
+            { backgroundColor: isDark ? colors.muted : MUTED },
           ]}
         />
         <View style={styles.cardSeal}>
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
-    shadowColor: NAVY,
+    shadowColor: INK,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 16,
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: NAVY,
+    backgroundColor: INK,
   },
   cardLineWide: {
     width: 88,
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: ACCENT,
+    backgroundColor: "rgba(255,255,255,0.85)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 44,
-    backgroundColor: ACCENT,
+    backgroundColor: "rgba(255,255,255,0.85)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: NAVY,
+    backgroundColor: INK,
   },
   pinStem: {
     width: 0,
@@ -194,14 +195,14 @@ const styles = StyleSheet.create({
     borderTopWidth: 24,
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
-    borderTopColor: NAVY,
+    borderTopColor: INK,
     marginTop: -4,
   },
   pinTip: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: "#fbbf24",
+    backgroundColor: "rgba(255,255,255,0.85)",
     marginTop: -2,
   },
   accentSquare: {
@@ -209,14 +210,14 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 4,
-    backgroundColor: "#fbbf24",
+    backgroundColor: "rgba(255,255,255,0.85)",
   },
   lensOuter: {
     width: 112,
     height: 112,
     borderRadius: 56,
     borderWidth: 8,
-    borderColor: NAVY,
+    borderColor: INK,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -233,13 +234,13 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: NAVY,
+    backgroundColor: INK,
   },
   lensLine: {
     position: "absolute",
     width: 140,
     height: 2,
-    backgroundColor: "#fbbf24",
+    backgroundColor: "rgba(255,255,255,0.85)",
     borderRadius: 1,
   },
   lensLineA: {
@@ -247,32 +248,32 @@ const styles = StyleSheet.create({
   },
   lensLineB: {
     transform: [{ rotate: "-35deg" }],
-    backgroundColor: ACCENT,
+    backgroundColor: "rgba(255,255,255,0.85)",
   },
   overlap: {
     position: "absolute",
     width: 96,
     height: 96,
     borderRadius: 48,
-    shadowColor: NAVY,
+    shadowColor: INK,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 4,
   },
   overlapNavy: {
-    backgroundColor: NAVY,
+    backgroundColor: INK,
     left: 34,
     top: 36,
   },
   overlapGreen: {
-    backgroundColor: ACCENT,
+    backgroundColor: "rgba(255,255,255,0.85)",
     right: 34,
     top: 52,
   },
   contactLine: {
     width: 120,
-    backgroundColor: NAVY,
+    backgroundColor: INK,
     transform: [{ rotate: "20deg" }],
     top: 88,
   },

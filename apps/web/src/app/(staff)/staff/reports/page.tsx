@@ -92,7 +92,7 @@ export default function ReportsHubPage() {
           <Button
             size="sm"
             onClick={handleSeedDemo}
-            className="text-xs font-semibold px-4 min-h-[36px] rounded-none bg-emerald-600 hover:bg-emerald-700 text-white border-none"
+            className="text-xs font-semibold px-4 min-h-[36px] bg-emerald-600 hover:bg-emerald-700 text-white border-none"
             loading={seeding}
           >
             Initialize Demo Data
@@ -101,7 +101,7 @@ export default function ReportsHubPage() {
             size="sm"
             variant="outline"
             onClick={handleExportCsv}
-            className="text-xs font-semibold px-4 min-h-[36px] rounded-none"
+            className="text-xs font-semibold px-4 min-h-[36px]"
             disabled={isLoading}
           >
             Export Summary CSV

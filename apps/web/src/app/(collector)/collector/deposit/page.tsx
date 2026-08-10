@@ -263,7 +263,7 @@ function CollectorDepositForm() {
                             setError("");
                           }}
                           className={cn(
-                            "group w-full flex items-center gap-3 rounded-xl border p-3.5 text-left transition-all",
+                            "group w-full flex items-center gap-3 border p-3.5 text-left transition-all",
                             selected
                               ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/20"
                               : "border-border/60 hover:border-primary/30 hover:bg-muted/30",
@@ -353,7 +353,7 @@ function CollectorDepositForm() {
                         type="button"
                         onClick={() => setAmount(String(a))}
                         className={cn(
-                          "rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors",
+                          "border px-3.5 py-1.5 text-xs font-semibold transition-colors",
                           amount === String(a)
                             ? "border-primary bg-primary text-primary-foreground"
                             : "border-border hover:border-primary/50 hover:text-primary",
@@ -377,7 +377,7 @@ function CollectorDepositForm() {
                         type="button"
                         onClick={() => setMethod(m.id)}
                         className={cn(
-                          "flex items-center gap-3 rounded-xl border p-4 text-left transition-all",
+                          "flex items-center gap-3 border p-4 text-left transition-all",
                           method === m.id
                             ? cn(
                                 m.accent,
@@ -505,7 +505,7 @@ function CollectorDepositForm() {
                       <button
                         type="button"
                         onClick={handleCopyRef}
-                        className="shrink-0 flex size-7 items-center justify-center rounded-md hover:bg-muted transition-colors"
+                        className="shrink-0 flex size-7 items-center justify-center hover:bg-muted transition-colors"
                         aria-label="Copy reference"
                       >
                         {copied ? (

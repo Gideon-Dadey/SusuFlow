@@ -4,10 +4,13 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   Bell,
+  Building2,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Clock,
   CreditCard,
+  Download,
   BadgeCheck,
   CircleHelp,
   Eye,
@@ -23,6 +26,7 @@ import {
   Plus,
   Receipt,
   Search,
+  Share2,
   ShieldCheck,
   Smartphone,
   Target,
@@ -67,7 +71,11 @@ export type AppIconName =
   | "alert-circle"
   | "smartphone"
   | "credit-card"
-  | "close";
+  | "building"
+  | "close"
+  | "clock"
+  | "download"
+  | "share";
 
 const ICON_MAP = {
   home: Home,
@@ -101,7 +109,11 @@ const ICON_MAP = {
   "alert-circle": AlertCircle,
   smartphone: Smartphone,
   "credit-card": CreditCard,
+  building: Building2,
   close: X,
+  clock: Clock,
+  download: Download,
+  share: Share2,
 } as const;
 
 export interface AppIconProps extends Omit<LucideProps, "color"> {

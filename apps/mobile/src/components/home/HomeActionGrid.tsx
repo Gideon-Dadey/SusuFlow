@@ -1,85 +1,97 @@
 import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
+import { homeChrome, type HomeWellIcon } from "@/components/home/homeChrome";
 import { HomeSectionTitle } from "@/components/home/HomeSectionTitle";
-import { CardSurface } from "@/components/ui/CardSurface";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { getIconAccent } from "@/lib/icon-accents";
 import { useTheme } from "@/theme/ThemeProvider";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { spacing, surfaceRadius, typography } from "@/theme/tokens";
 
-interface HomeAction {
+export interface HomeAction {
   label: string;
-  subtitle: string;
   icon: AppIconName;
   onPress: () => void;
+  /** @deprecated Kept for call-site compatibility; unused in the grid. */
+  subtitle?: string;
 }
 
-function ActionRow({
+const COLS = 3;
+const GAP = 10;
+
+function getWell(icon: AppIconName, isDark: boolean) {
+  const map = isDark ? homeChrome.wellsDark : homeChrome.wells;
+  if (icon in map) {
+    return map[icon as HomeWellIcon];
+  }
+  return isDark
+    ? { bg: "rgba(255,255,255,0.1)", fg: "#FFFFFF" }
+    : { bg: "#F1F5F9", fg: "#0F172A" };
+}
+
+function ActionTile({
   action,
   colors,
   isDark,
-  showDivider,
+  shadows,
 }: {
   action: HomeAction;
   colors: ReturnType<typeof useTheme>["colors"];
   isDark: boolean;
-  showDivider: boolean;
+  shadows: ReturnType<typeof useTheme>["shadows"];
 }) {
-  const accent = getIconAccent(action.icon, isDark);
+  const well = getWell(action.icon, isDark);
 
   return (
-    <>
-      <Pressable
-        accessibilityRole="button"
-        onPress={action.onPress}
-        style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={action.label}
+      onPress={action.onPress}
+      style={({ pressed }) => [
+        styles.tileOuter,
+        !isDark && shadows.card,
+        pressed && styles.pressed,
+      ]}
+    >
+      <View
+        style={[
+          styles.tile,
+          {
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            borderWidth: StyleSheet.hairlineWidth,
+          },
+        ]}
       >
-        <View style={[styles.iconWrap, { backgroundColor: accent.bg }]}>
-          <AppIcon name={action.icon} size={17} color={accent.fg} />
+        <View style={[styles.iconWell, { backgroundColor: well.bg }]}>
+          <AppIcon name={action.icon} size={18} color={well.fg} />
         </View>
-        <View style={styles.copy}>
-          <Text
-            style={[styles.label, { color: colors.foreground }]}
-            numberOfLines={1}
-          >
-            {action.label}
-          </Text>
-          <Text
-            style={[styles.subtitle, { color: colors.mutedForeground }]}
-            numberOfLines={1}
-          >
-            {action.subtitle}
-          </Text>
-        </View>
-        <AppIcon
-          name="chevron-right"
-          size={16}
-          color={colors.mutedForeground}
-        />
-      </Pressable>
-      {showDivider ? (
-        <View style={[styles.divider, { backgroundColor: colors.border }]} />
-      ) : null}
-    </>
+        <Text
+          style={[styles.label, { color: colors.foreground }]}
+          numberOfLines={2}
+        >
+          {action.label}
+        </Text>
+      </View>
+    </Pressable>
   );
 }
 
 export function HomeActionGrid({ actions }: { actions: HomeAction[] }) {
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, shadows } = useTheme();
 
   return (
     <View style={styles.section}>
-      <HomeSectionTitle title="Shortcuts" />
-      <CardSurface innerStyle={styles.card}>
-        {actions.map((action, index) => (
-          <ActionRow
-            key={action.label}
-            action={action}
-            colors={colors}
-            isDark={isDark}
-            showDivider={index < actions.length - 1}
-          />
+      <HomeSectionTitle title="Quick Actions" />
+      <View style={styles.grid}>
+        {actions.map((action) => (
+          <View key={action.label} style={styles.cell}>
+            <ActionTile
+              action={action}
+              colors={colors}
+              isDark={isDark}
+              shadows={shadows}
+            />
+          </View>
         ))}
-      </CardSurface>
+      </View>
     </View>
   );
 }
@@ -88,44 +100,44 @@ const styles = StyleSheet.create({
   section: {
     gap: spacing.sm,
   },
-  card: {
-    overflow: "hidden",
-  },
-  row: {
+  grid: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 13,
-    minHeight: 60,
+    flexWrap: "wrap",
+    marginHorizontal: -GAP / 2,
+    rowGap: GAP,
   },
-  iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.lg,
+  cell: {
+    width: `${100 / COLS}%`,
+    paddingHorizontal: GAP / 2,
+  },
+  tileOuter: {
+    borderRadius: surfaceRadius.card,
+  },
+  tile: {
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+    minHeight: 108,
+    borderRadius: surfaceRadius.card,
+  },
+  iconWell: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     alignItems: "center",
     justifyContent: "center",
   },
-  copy: {
-    flex: 1,
-    gap: 2,
-    minWidth: 0,
-  },
   label: {
     fontFamily: typography.roles.title,
-    fontSize: typography.size.sm,
+    fontSize: 12,
     letterSpacing: -0.1,
-  },
-  subtitle: {
-    fontFamily: typography.roles.caption,
-    fontSize: typography.size.xs,
+    textAlign: "center",
     lineHeight: 16,
   },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    marginLeft: 40 + spacing.md + spacing.md,
-  },
   pressed: {
-    opacity: 0.82,
+    opacity: 0.9,
+    transform: [{ scale: 0.98 }],
   },
 });

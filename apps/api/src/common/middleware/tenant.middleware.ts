@@ -34,6 +34,7 @@ export class TenantMiddleware implements NestMiddleware {
     const path = requestPath(req);
     const skipPaths = [
       "/api/health",
+      "/api/v1/health",
       "/api/docs",
       "/api/v1/admin",
       "/api/v1/webhooks",
@@ -42,11 +43,30 @@ export class TenantMiddleware implements NestMiddleware {
       return next();
     }
 
-    const tenantHeader = req.headers["x-tenant-slug"] as string;
-    const host = req.headers.host || "";
-    const subdomain = tenantHeader || host.split(".")[0];
+    const tenantHeader = req.headers["x-tenant-slug"] as string | undefined;
+    const host = (req.headers.host || "").split(":")[0].toLowerCase();
+    const hostLooksLikeIp =
+      /^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host.includes(":");
 
-    if (!subdomain || subdomain === "localhost:4000" || subdomain === "api") {
+    // Only derive tenant from Host on known multi-tenant domains.
+    // LAN IPs, localhost, and tunnels (loca.lt, ngrok, etc.) must use x-tenant-slug.
+    const tenantHostSuffixes = [".susuflow.com", ".adipa.com"];
+    let subdomainFromHost: string | undefined;
+    if (host && !hostLooksLikeIp && host !== "localhost" && host !== "api") {
+      for (const suffix of tenantHostSuffixes) {
+        if (host.endsWith(suffix)) {
+          const sub = host.slice(0, -suffix.length);
+          if (sub && !sub.includes(".") && sub !== "www" && sub !== "api") {
+            subdomainFromHost = sub;
+          }
+          break;
+        }
+      }
+    }
+
+    const subdomain = tenantHeader?.trim() || subdomainFromHost;
+
+    if (!subdomain) {
       return next();
     }
 

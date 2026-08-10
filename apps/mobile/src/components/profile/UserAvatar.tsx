@@ -1,6 +1,7 @@
 import { FontAwesome6 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
 import { getAvatarGradient } from "@/lib/avatar-palette";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, typography } from "@/theme/tokens";
@@ -9,17 +10,19 @@ export type UserAvatarSize = "sm" | "md" | "lg" | "xl";
 
 const SIZE_MAP: Record<
   UserAvatarSize,
-  { dimension: number; fontSize: number; ring: number; badge: number }
+  { dimension: number; fontSize: number; badge: number }
 > = {
-  sm: { dimension: 44, fontSize: 15, ring: 0, badge: 14 },
-  md: { dimension: 56, fontSize: 18, ring: 2.5, badge: 18 },
-  lg: { dimension: 80, fontSize: 28, ring: 3, badge: 22 },
-  xl: { dimension: 96, fontSize: 34, ring: 3, badge: 24 },
+  sm: { dimension: 44, fontSize: 15, badge: 14 },
+  md: { dimension: 56, fontSize: 18, badge: 18 },
+  lg: { dimension: 80, fontSize: 28, badge: 22 },
+  xl: { dimension: 96, fontSize: 34, badge: 24 },
 };
 
 interface UserAvatarProps {
   initials: string;
   seed?: string;
+  /** Remote URL or data URL — falls back to initials if missing/broken */
+  imageUrl?: string | null;
   size?: UserAvatarSize;
   loading?: boolean;
   showVerified?: boolean;
@@ -28,50 +31,21 @@ interface UserAvatarProps {
 export function UserAvatar({
   initials,
   seed,
+  imageUrl,
   size = "md",
   loading = false,
   showVerified = false,
 }: UserAvatarProps) {
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
+  const [imageFailed, setImageFailed] = useState(false);
   const spec = SIZE_MAP[size];
   const gradient = getAvatarGradient(seed ?? initials);
-  const ringColor = isDark
-    ? "rgba(255,255,255,0.22)"
-    : "rgba(255,255,255,0.95)";
-  const outerSize = spec.dimension + spec.ring * 2;
+  const outerSize = spec.dimension;
+  const showImage = !!imageUrl && !imageFailed && !loading;
 
-  const avatar = (dimension: number) => (
-    <LinearGradient
-      colors={gradient}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={[
-        styles.avatar,
-        {
-          width: dimension,
-          height: dimension,
-          borderRadius: radius.full,
-        },
-      ]}
-    >
-      {loading ? (
-        <ActivityIndicator color="#ffffff" size="small" />
-      ) : (
-        <Text
-          style={[
-            styles.initials,
-            {
-              fontSize: spec.fontSize,
-              lineHeight: spec.fontSize + 2,
-            },
-          ]}
-          numberOfLines={1}
-        >
-          {initials}
-        </Text>
-      )}
-    </LinearGradient>
-  );
+  useEffect(() => {
+    setImageFailed(false);
+  }, [imageUrl]);
 
   return (
     <View
@@ -83,24 +57,47 @@ export function UserAvatar({
         },
       ]}
     >
-      {spec.ring > 0 ? (
-        <View
-          style={[
-            styles.ring,
-            {
+      <LinearGradient
+        colors={gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[
+          styles.avatar,
+          {
+            width: outerSize,
+            height: outerSize,
+            borderRadius: radius.full,
+          },
+        ]}
+      >
+        {loading ? (
+          <ActivityIndicator color="#ffffff" size="small" />
+        ) : showImage ? (
+          <Image
+            source={{ uri: imageUrl }}
+            style={{
               width: outerSize,
               height: outerSize,
               borderRadius: radius.full,
-              borderColor: ringColor,
-              borderWidth: spec.ring,
-            },
-          ]}
-        >
-          {avatar(spec.dimension)}
-        </View>
-      ) : (
-        avatar(spec.dimension)
-      )}
+            }}
+            onError={() => setImageFailed(true)}
+            accessibilityIgnoresInvertColors
+          />
+        ) : (
+          <Text
+            style={[
+              styles.initials,
+              {
+                fontSize: spec.fontSize,
+                lineHeight: spec.fontSize + 2,
+              },
+            ]}
+            numberOfLines={1}
+          >
+            {initials}
+          </Text>
+        )}
+      </LinearGradient>
 
       {showVerified && !loading ? (
         <View
@@ -130,10 +127,6 @@ export function UserAvatar({
 const styles = StyleSheet.create({
   wrap: {
     position: "relative",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  ring: {
     alignItems: "center",
     justifyContent: "center",
   },

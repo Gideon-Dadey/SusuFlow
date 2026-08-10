@@ -37,7 +37,7 @@ export function ProductHero({
               <Link href="/register" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-full px-8 font-medium sm:min-w-[11rem]"
+                  className="h-12 w-full px-8 font-medium sm:min-w-[11rem]"
                 >
                   Get started
                   <ArrowRight className="h-4 w-4" aria-hidden />

@@ -181,7 +181,7 @@ export default function SavingsGoalsTrackerPage() {
           <Button
             size="sm"
             onClick={openCreate}
-            className="text-xs font-semibold px-4 min-h-[36px] rounded-none bg-primary text-primary-foreground hover:bg-primary/95 shrink-0 gap-1.5"
+            className="text-xs font-semibold px-4 min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95 shrink-0 gap-1.5"
           >
             <Plus className="h-3.5 w-3.5" />
             New Plan
@@ -193,22 +193,14 @@ export default function SavingsGoalsTrackerPage() {
         <button
           type="button"
           onClick={() => setActiveTab("plans")}
-          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-colors ${
-            activeTab === "plans"
-              ? "border-primary text-primary"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
+          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-colors ${activeTab === "plans" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
         >
           Savings Plans ({plans?.length ?? 0})
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("enrollments")}
-          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-colors ${
-            activeTab === "enrollments"
-              ? "border-primary text-primary"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
+          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-colors ${activeTab === "enrollments" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
         >
           Customer Enrollments ({enrollments?.length ?? 0})
         </button>
@@ -227,7 +219,7 @@ export default function SavingsGoalsTrackerPage() {
                   size="sm"
                   onClick={resetForm}
                   aria-label="Close form"
-                  className="rounded-none h-8 w-8 p-0"
+                  className="h-8 w-8 p-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -339,7 +331,7 @@ export default function SavingsGoalsTrackerPage() {
                     <Button
                       type="submit"
                       disabled={isSaving}
-                      className="gap-2 rounded-none min-h-[36px] text-xs font-semibold bg-primary text-primary-foreground"
+                      className="gap-2 min-h-[36px] text-xs font-semibold bg-primary text-primary-foreground"
                     >
                       <Check className="h-4 w-4" />
                       {isSaving
@@ -352,7 +344,7 @@ export default function SavingsGoalsTrackerPage() {
                       type="button"
                       variant="outline"
                       onClick={resetForm}
-                      className="rounded-none min-h-[36px] text-xs font-semibold"
+                      className="min-h-[36px] text-xs font-semibold"
                     >
                       Cancel
                     </Button>
@@ -415,7 +407,7 @@ export default function SavingsGoalsTrackerPage() {
                   <Button
                     onClick={openCreate}
                     variant="outline"
-                    className="gap-2 rounded-none text-xs font-semibold min-h-[36px]"
+                    className="gap-2 text-xs font-semibold min-h-[36px]"
                   >
                     <Plus className="h-4 w-4" />
                     Create your first plan
@@ -474,7 +466,7 @@ export default function SavingsGoalsTrackerPage() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => openEdit(plan)}
-                                className="h-7 text-xs font-semibold rounded-none gap-1"
+                                className="h-7 text-xs font-semibold gap-1"
                               >
                                 <Pencil className="h-3 w-3" />
                                 Edit
@@ -486,7 +478,7 @@ export default function SavingsGoalsTrackerPage() {
                                   toggleStatusMutation.mutate(plan)
                                 }
                                 disabled={toggleStatusMutation.isPending}
-                                className="h-7 text-xs font-semibold rounded-none"
+                                className="h-7 text-xs font-semibold"
                               >
                                 {plan.status === "active"
                                   ? "Deactivate"

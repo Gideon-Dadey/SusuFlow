@@ -12,12 +12,14 @@
       "bundleIdentifier": "com.susuflow.app",
       "buildNumber": "1",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Allow SusuFlow to use Face ID for quick and secure sign in."
+        "NSFaceIDUsageDescription": "Allow SusuFlow to use Face ID for quick and secure sign in.",
+        "NSPhotoLibraryUsageDescription": "Allow SusuFlow to access your photos so you can set a profile picture.",
+        "NSCameraUsageDescription": "Allow SusuFlow to use your camera so you can take a profile picture."
       }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0056d2",
+        "backgroundColor": "#000000",
         "foregroundImage": "./assets/images/android-icon-foreground.png"
       },
       "package": "com.susuflow.app",
@@ -30,6 +32,13 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow SusuFlow to access your photos so you can set a profile picture.",
+          "cameraPermission": "Allow SusuFlow to use your camera so you can take a profile picture."
+        }
+      ],
       [
         "expo-secure-store",
         {
@@ -47,10 +56,10 @@
         {
           "image": "./assets/images/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#1a365d",
+          "backgroundColor": "#000000",
           "dark": {
             "image": "./assets/images/splash-icon.png",
-            "backgroundColor": "#09090b"
+            "backgroundColor": "#000000"
           }
         }
       ],

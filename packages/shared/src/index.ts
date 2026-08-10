@@ -1,4 +1,5 @@
 export * from "./constants";
+export * from "./constants/ghana-banks";
 export * from "./types/api.types";
 export * from "./utils/reference";
 export * from "./utils/currency";

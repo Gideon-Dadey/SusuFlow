@@ -63,7 +63,7 @@ export function ActivityTransactionRow({
           style={[
             styles.amount,
             {
-              color: isDeposit ? colors.primary : colors.foreground,
+              color: isDeposit ? colors.success : colors.foreground,
             },
           ]}
         >

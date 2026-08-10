@@ -1,35 +1,39 @@
 import { PRICING_AUDIENCES } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
 
+const TILE_COLORS = [
+  "var(--ofx-sage)",
+  "var(--ofx-sand)",
+  "var(--ofx-sky)",
+] as const;
+
 export function PricingAudienceSection() {
   return (
-    <section className="bg-background">
-      <MarketingContainer className="py-16 sm:py-20 lg:py-24">
-        <div className="max-w-2xl text-left">
-          <p className="text-base font-medium text-muted-foreground">
-            Who it is for
-          </p>
-          <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
-            Pick the plan that matches how you operate today
-          </h2>
-        </div>
+    <section className="bg-[var(--ofx-cream)]">
+      <MarketingContainer className="ofx-section">
+        <h2 className="ofx-h2 mx-auto max-w-2xl text-center">
+          Which plan fits you?
+        </h2>
+        <p className="ofx-lead mx-auto mt-5 max-w-2xl text-center">
+          Wherever you are on the road from notebooks to fully cashless,
+          there&apos;s a plan built for that stage.
+        </p>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-3 lg:mt-12">
-          {PRICING_AUDIENCES.map(({ plan, title, description }) => (
-            <article
-              key={plan}
-              className="rounded-none border border-border/70 bg-card p-6 shadow-[0_8px_30px_rgba(15,23,42,0.05)] sm:p-7"
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {PRICING_AUDIENCES.map((audience, i) => (
+            <div
+              key={audience.plan}
+              className="flex flex-col rounded-[2rem] p-8"
+              style={{ backgroundColor: TILE_COLORS[i % TILE_COLORS.length] }}
             >
-              <span className="text-xs font-bold uppercase tracking-wide text-secondary">
-                {plan}
-              </span>
-              <h3 className="mt-2 text-lg font-bold tracking-tight text-foreground">
-                {title}
+              <p className="ofx-eyebrow text-foreground/70">{audience.plan}</p>
+              <h3 className="mt-4 text-xl font-semibold leading-snug tracking-tight text-foreground">
+                {audience.title}
               </h3>
-              <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                {description}
+              <p className="mt-3 text-[15px] leading-relaxed text-foreground/80">
+                {audience.description}
               </p>
-            </article>
+            </div>
           ))}
         </div>
       </MarketingContainer>

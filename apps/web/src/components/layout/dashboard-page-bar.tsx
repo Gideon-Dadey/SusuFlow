@@ -30,7 +30,7 @@ export function DashboardPageBar({
           <Link href={backHref} className="hidden lg:block">
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-none hover:bg-muted"
+              className="flex h-9 w-9 items-center justify-center hover:bg-muted"
               aria-label="Go back"
             >
               <ArrowLeft className="h-5 w-5" />

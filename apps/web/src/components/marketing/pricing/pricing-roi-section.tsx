@@ -1,51 +1,46 @@
-import { Check } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
 import { PRICING_ROI } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
 
 export function PricingRoiSection() {
   return (
-    <section className="bg-background">
-      <MarketingContainer className="py-16 sm:py-20 lg:py-24">
-        <div className="max-w-2xl text-left">
-          <p className="text-base font-medium text-muted-foreground">
-            Why upgrade
-          </p>
-          <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
-            The cost of staying manual vs going digital
-          </h2>
-          <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground">
-            Susu companies across Ghana still lose time and trust to cash
-            disputes and manual books. SusuFlow pays for itself when collections
-            are verified and records are always ready.
-          </p>
-        </div>
+    <section className="bg-[var(--ofx-paper)]">
+      <MarketingContainer className="ofx-section">
+        <div className="ofx-dark-section rounded-[2rem] px-6 py-12 sm:px-12 sm:py-16">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="ofx-eyebrow">Manual vs digital</p>
+            <h2 className="ofx-h2 mt-4">
+              What you leave behind. What you gain.
+            </h2>
+          </div>
 
-        <div className="mt-10 overflow-hidden rounded-none border border-border/70 lg:mt-12">
-          <div className="grid grid-cols-2 border-b border-border/70 bg-muted/40 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:text-base">
-            <div className="px-4 py-3 sm:px-6 sm:py-4">Manual susu</div>
-            <div className="border-l border-border/70 px-4 py-3 sm:px-6 sm:py-4">
-              On SusuFlow
+          <div className="mx-auto mt-12 max-w-4xl">
+            <div className="hidden grid-cols-2 gap-6 pb-4 sm:grid">
+              <p className="ofx-eyebrow">The manual way</p>
+              <p className="ofx-eyebrow text-[color:var(--foreground)]">
+                With SusuFlow
+              </p>
+            </div>
+            <div className="divide-y divide-[color:var(--border)] border-t border-[color:var(--border)]">
+              {PRICING_ROI.map((row) => (
+                <div
+                  key={row.digital}
+                  className="grid gap-2 py-5 sm:grid-cols-2 sm:gap-6"
+                >
+                  <p className="text-[15px] leading-snug text-muted-foreground line-through">
+                    {row.manual}
+                  </p>
+                  <p className="flex items-start gap-2.5 text-[15px] font-medium leading-snug text-foreground">
+                    <BadgeCheck
+                      className="mt-0.5 h-[18px] w-[18px] shrink-0 text-[var(--ofx-flame)]"
+                      aria-hidden
+                    />
+                    {row.digital}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
-          {PRICING_ROI.map(({ manual, digital }) => (
-            <div
-              key={manual}
-              className="grid grid-cols-2 border-b border-border/60 last:border-b-0"
-            >
-              <div className="px-4 py-4 text-base text-muted-foreground sm:px-6">
-                {manual}
-              </div>
-              <div className="flex items-start gap-2 border-l border-border/60 px-4 py-4 sm:px-6">
-                <Check
-                  className="mt-0.5 size-4 shrink-0 text-primary"
-                  aria-hidden
-                />
-                <span className="text-base font-medium text-foreground">
-                  {digital}
-                </span>
-              </div>
-            </div>
-          ))}
         </div>
       </MarketingContainer>
     </section>

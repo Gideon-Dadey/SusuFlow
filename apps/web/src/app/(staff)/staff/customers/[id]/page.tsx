@@ -267,7 +267,7 @@ export default function CustomerDetailPage({
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <Link href="/staff/customers">
-          <button className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-muted">
+          <button className="flex h-9 w-9 items-center justify-center hover:bg-muted">
             <ArrowLeft className="h-5 w-5" />
           </button>
         </Link>
@@ -380,11 +380,7 @@ export default function CustomerDetailPage({
               setFormError("");
               setFormSuccess("");
             }}
-            className={`pb-3 text-sm font-semibold capitalize relative transition-colors ${
-              activeTab === t
-                ? "text-primary"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
+            className={`pb-3 text-sm font-semibold capitalize relative transition-colors ${activeTab === t ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
           >
             {t}
             {activeTab === t ? (
@@ -525,11 +521,7 @@ export default function CustomerDetailPage({
                       key={m.id}
                       type="button"
                       onClick={() => setDepositMethod(m.id)}
-                      className={`py-2.5 px-3 text-xs font-semibold rounded-lg border transition-colors ${
-                        depositMethod === m.id
-                          ? "border-primary bg-primary-100 text-primary"
-                          : "border-border bg-card text-muted-foreground hover:text-foreground"
-                      }`}
+                      className={`py-2.5 px-3 text-xs font-semibold border transition-colors ${depositMethod === m.id ? "border-primary bg-primary-100 text-primary" : "border-border bg-card text-muted-foreground hover:text-foreground"}`}
                     >
                       {m.label}
                     </button>
@@ -597,11 +589,7 @@ export default function CustomerDetailPage({
                       key={m.id}
                       type="button"
                       onClick={() => setWithdrawMethod(m.id)}
-                      className={`py-2.5 px-3 text-xs font-semibold rounded-lg border transition-colors ${
-                        withdrawMethod === m.id
-                          ? "border-primary bg-primary-100 text-primary"
-                          : "border-border bg-card text-muted-foreground hover:text-foreground"
-                      }`}
+                      className={`py-2.5 px-3 text-xs font-semibold border transition-colors ${withdrawMethod === m.id ? "border-primary bg-primary-100 text-primary" : "border-border bg-card text-muted-foreground hover:text-foreground"}`}
                     >
                       {m.label}
                     </button>

@@ -16,7 +16,8 @@ function maskClientId(value?: string) {
 export function AccountSettingsContent() {
   const router = useRouter();
   const { colors } = useTheme();
-  const { profile, displayName, initials, email, phone } = useProfileData();
+  const { profile, displayName, initials, email, phone, avatarUrl } =
+    useProfileData();
   const [clientVisible, setClientVisible] = useState(false);
 
   const clientCode = profile?.customer?.customerNumber ?? "—";
@@ -30,6 +31,8 @@ export function AccountSettingsContent() {
         email={email || undefined}
         clientId={clientDisplay}
         seed={displayName}
+        imageUrl={avatarUrl}
+        editableAvatar
       />
 
       <AccountInfoField

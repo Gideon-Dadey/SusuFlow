@@ -9,14 +9,20 @@ interface BrandMarkProps {
   style?: ViewStyle;
 }
 
+/** Wide wordmark; `size` controls height. */
 export function BrandMark({ size = 56, framed = true, style }: BrandMarkProps) {
   const { colors } = useTheme();
+  const width = Math.round(size * 2.64);
 
   const image = (
     <Image
       source={BRAND_LOGO}
-      style={{ width: size * 0.72, height: size * 0.72 }}
+      style={{
+        width: framed ? width * 0.85 : width,
+        height: framed ? size * 0.72 : size,
+      }}
       resizeMode="contain"
+      accessibilityLabel="SusuFlow"
     />
   );
 
@@ -29,7 +35,7 @@ export function BrandMark({ size = 56, framed = true, style }: BrandMarkProps) {
       style={[
         styles.frame,
         {
-          width: size,
+          width: Math.round(size * 2.2),
           height: size,
           borderRadius: radius.lg,
           backgroundColor: colors.surfaceGlow,

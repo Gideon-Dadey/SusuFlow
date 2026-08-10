@@ -168,7 +168,7 @@ export default function WithdrawRequestPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <Link href="/dashboard">
-          <button className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-muted">
+          <button className="flex h-9 w-9 items-center justify-center hover:bg-muted">
             <ArrowLeft className="h-5 w-5 text-foreground" />
           </button>
         </Link>
@@ -229,7 +229,7 @@ export default function WithdrawRequestPage() {
                   key={a}
                   onClick={() => setAmount(String(a))}
                   disabled={a > availableBalance}
-                  className="rounded-full border border-border px-4 py-1.5 text-xs font-medium hover:border-primary hover:text-primary transition-all disabled:opacity-40 disabled:hover:border-border disabled:hover:text-muted-foreground"
+                  className="border border-border px-4 py-1.5 text-xs font-medium hover:border-primary hover:text-primary transition-all disabled:opacity-40 disabled:hover:border-border disabled:hover:text-muted-foreground"
                 >
                   GHS {a}
                 </button>
@@ -263,11 +263,7 @@ export default function WithdrawRequestPage() {
                   <button
                     key={m.id}
                     onClick={() => setMethod(m.id)}
-                    className={`w-full flex items-center gap-3 rounded-lg border p-4 text-left transition-colors ${
-                      method === m.id
-                        ? "border-primary bg-primary/5 text-primary"
-                        : "border-border bg-background text-foreground hover:bg-muted/50"
-                    }`}
+                    className={`w-full flex items-center gap-3 border p-4 text-left transition-colors ${method === m.id ? "border-primary bg-primary/5 text-primary" : "border-border bg-background text-foreground hover:bg-muted/50"}`}
                   >
                     <span className="text-xl">{m.emoji}</span>
                     <span className="font-semibold text-sm">{m.label}</span>

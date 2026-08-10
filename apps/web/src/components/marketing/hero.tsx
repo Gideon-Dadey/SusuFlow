@@ -51,15 +51,15 @@ export function MarketingHero() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[28rem] lg:max-w-none lg:justify-self-end">
-            <div className="relative aspect-[4/3] w-full sm:aspect-[16/11] lg:aspect-[5/4]">
+          <div className="relative mx-auto w-full max-w-[32rem] lg:max-w-none lg:justify-self-end">
+            <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/10] lg:aspect-[5/4]">
               <Image
                 src={BRAND_HERO_IMAGE}
-                alt="SusuFlow dashboard on tablet and mobile showing verified MoMo susu deposits and collection analytics"
+                alt="A susu operations leader reviewing verified Mobile Money collections on tablet and phone in a modern Ghanaian office"
                 fill
                 priority
                 sizes="(max-width: 1024px) 90vw, 50vw"
-                className="object-contain object-center"
+                className="object-cover object-center"
               />
             </div>
           </div>

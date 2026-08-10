@@ -16,6 +16,11 @@ import {
   AuthenticatedUser,
   clampPageLimit,
   ROLES,
+  findGhanaBank,
+  isLiveCustomerDepositMethod,
+  isMobileMoneyDepositMethod,
+  isValidGhanaPhone,
+  normalizeGhanaPhone,
 } from "@susuflow/shared";
 import {
   PAYMENT_GATEWAY,
@@ -51,6 +56,35 @@ export class DepositService {
       );
     }
 
+    if (!isLiveCustomerDepositMethod(dto.paymentMethod)) {
+      throw new BadRequestException(
+        "That payment method is not available yet. Choose MoMo or bank transfer.",
+      );
+    }
+
+    const isBank = dto.paymentMethod === "bank_transfer";
+    const bank = isBank ? findGhanaBank(dto.bankCode) : null;
+    if (isBank && !bank) {
+      throw new BadRequestException("Select a supported Ghana bank.");
+    }
+
+    let payerPhone: string | undefined;
+    if (dto.payerPhone?.trim()) {
+      const normalized = normalizeGhanaPhone(dto.payerPhone.trim());
+      if (!isValidGhanaPhone(normalized)) {
+        throw new BadRequestException(
+          "Enter a valid Ghana phone number (e.g. 0241234567).",
+        );
+      }
+      payerPhone = normalized;
+    }
+
+    if (isMobileMoneyDepositMethod(dto.paymentMethod) && !payerPhone) {
+      throw new BadRequestException(
+        "Enter the mobile money number that will approve this payment.",
+      );
+    }
+
     if (dto.idempotencyKey) {
       const existing = await this.prisma.transaction.findUnique({
         where: { idempotencyKey: dto.idempotencyKey },
@@ -80,6 +114,9 @@ export class DepositService {
     const expiresAt = new Date(Date.now() + DEPOSIT_EXPIRY_MINUTES * 60 * 1000);
 
     const isCollectorAssisted = initiatedBy.roles.includes("collector");
+    const methodLabel = isBank
+      ? `bank_transfer:${bank!.code}`
+      : dto.paymentMethod;
 
     const result = await this.prisma.$transaction(async (tx) => {
       const transaction = await tx.transaction.create({
@@ -94,7 +131,14 @@ export class DepositService {
           initiatedById: initiatedBy.id,
           collectorId: isCollectorAssisted ? initiatedBy.id : dto.collectorId,
           idempotencyKey: dto.idempotencyKey,
-          description: `Deposit via ${dto.paymentMethod}`,
+          description: `Deposit via ${methodLabel}`,
+          metadata: isBank
+            ? {
+                paymentChannel: "bank_transfer",
+                bankCode: bank!.code,
+                bankName: bank!.name,
+              }
+            : { paymentChannel: dto.paymentMethod },
         },
       });
 
@@ -106,8 +150,14 @@ export class DepositService {
           paymentMethod: dto.paymentMethod,
           amount: dto.amount,
           status: "initiated",
-          payerPhone: dto.payerPhone,
+          payerPhone: payerPhone ?? null,
           expiresAt,
+          gatewayResponse: isBank
+            ? {
+                bankCode: bank!.code,
+                bankName: bank!.name,
+              }
+            : undefined,
         },
       });
 
@@ -118,10 +168,14 @@ export class DepositService {
       amount: dto.amount,
       currency: "GHS",
       reference,
-      payerPhone: dto.payerPhone,
+      payerPhone,
       paymentMethod: dto.paymentMethod,
+      bankCode: bank?.code,
+      bankName: bank?.name,
       callbackUrl: `${this.config.get("API_URL")}/api/v1/webhooks/hubtel`,
-      description: `SusuFlow deposit ${reference}`,
+      description: isBank
+        ? `SusuFlow deposit ${reference} via ${bank!.name}`
+        : `SusuFlow deposit ${reference}`,
     });
 
     await this.prisma.payment.update({
@@ -129,6 +183,13 @@ export class DepositService {
       data: {
         gatewayReference: session.gatewayReference,
         status: "pending",
+        gatewayResponse: {
+          ...(isBank ? { bankCode: bank!.code, bankName: bank!.name } : {}),
+          ...(session.bankTransfer
+            ? { bankTransfer: session.bankTransfer }
+            : {}),
+          sessionId: session.sessionId,
+        } as object,
       },
     });
 
@@ -155,7 +216,8 @@ export class DepositService {
         customerId: customer.id,
         collectorId: isCollectorAssisted ? initiatedBy.id : dto.collectorId,
         paymentMethod: dto.paymentMethod,
-        payerPhone: dto.payerPhone,
+        bankCode: bank?.code,
+        payerPhone,
       },
     });
 
@@ -168,6 +230,7 @@ export class DepositService {
         gateway: "hubtel",
         paymentUrl: session.paymentUrl,
         expiresAt: session.expiresAt,
+        bankTransfer: session.bankTransfer ?? null,
       },
     };
   }

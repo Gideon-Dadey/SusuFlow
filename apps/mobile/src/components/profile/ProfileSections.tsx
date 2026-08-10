@@ -100,6 +100,7 @@ interface ProfileAccountRowProps {
   email?: string;
   clientId: string;
   seed?: string;
+  imageUrl?: string | null;
   onPress?: () => void;
 }
 
@@ -109,6 +110,7 @@ export function ProfileAccountRow({
   email,
   clientId,
   seed,
+  imageUrl,
   onPress,
 }: ProfileAccountRowProps) {
   const { colors } = useTheme();
@@ -122,6 +124,7 @@ export function ProfileAccountRow({
       <UserAvatar
         initials={initials}
         seed={seed ?? name}
+        imageUrl={imageUrl}
         size="md"
         showVerified
       />

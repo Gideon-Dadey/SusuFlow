@@ -1,11 +1,16 @@
+import { BadgeCheck } from "lucide-react";
 import { PRICING_TRUST_LINE } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
 
 export function PricingTrustStrip() {
   return (
-    <section className="afrusan-warm-section">
+    <section className="bg-[var(--ofx-cream-deep)]">
       <MarketingContainer className="py-10 sm:py-12">
-        <p className="mx-auto max-w-3xl text-center font-geist text-lg font-medium leading-snug text-foreground sm:text-xl">
+        <p className="mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-2.5 text-center text-lg font-medium leading-snug tracking-tight text-foreground sm:text-xl">
+          <BadgeCheck
+            className="h-5 w-5 shrink-0 text-[var(--ofx-flame)]"
+            aria-hidden
+          />
           {PRICING_TRUST_LINE}
         </p>
       </MarketingContainer>

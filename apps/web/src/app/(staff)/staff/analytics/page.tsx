@@ -91,7 +91,7 @@ export default function StaffAiAnalyticsPage() {
         </div>
         <Button
           size="sm"
-          className="flex items-center gap-2 text-xs font-semibold rounded-none min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95"
+          className="flex items-center gap-2 text-xs font-semibold min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95"
           onClick={() =>
             alert(
               "Credit Assessment Report generated and sent to management audit queue.",
@@ -181,7 +181,7 @@ export default function StaffAiAnalyticsPage() {
                 key={tier}
                 size="sm"
                 variant={tierFilter === tier ? "primary" : "outline"}
-                className="text-xs h-8 capitalize rounded-none font-semibold px-3"
+                className="text-xs h-8 capitalize font-semibold px-3"
                 onClick={() => setTierFilter(tier)}
               >
                 {tier === "all" ? "All Tiers" : `Tier ${tier}`}

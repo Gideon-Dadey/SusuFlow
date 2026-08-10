@@ -23,7 +23,7 @@ export function HowItWorksCtaSection() {
             <Link href="/register" className="sm:w-auto">
               <Button
                 size="lg"
-                className="h-12 w-full rounded-xl bg-primary hover:bg-primary/90 text-white px-8 text-base font-semibold flex items-center justify-center gap-2.5 sm:min-w-[11rem]"
+                className="h-12 w-full bg-primary hover:bg-primary/90 text-white px-8 text-base font-semibold flex items-center justify-center gap-2.5 sm:min-w-[11rem]"
               >
                 <span>Register</span>
                 <ArrowRight
@@ -34,7 +34,7 @@ export function HowItWorksCtaSection() {
             </Link>
             <Link
               href="/pricing"
-              className="inline-flex h-12 items-center justify-center gap-1.5 rounded-xl border border-white/35 px-8 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:min-w-[11rem]"
+              className="inline-flex h-12 items-center justify-center gap-1.5 border border-white/35 px-8 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:min-w-[11rem]"
             >
               View pricing
               <ArrowRight className="h-4 w-4" />

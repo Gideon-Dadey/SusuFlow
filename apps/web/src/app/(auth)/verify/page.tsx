@@ -77,8 +77,12 @@ function VerifyContent() {
 
   if (!userId) {
     return (
-      <AuthShell>
+      <AuthShell
+        visualTone="sky"
+        visualTagline="Verified savers. Verified deposits. Zero disputes."
+      >
         <div className="mb-6 space-y-1">
+          <p className="ofx-eyebrow mb-3">Verify your account</p>
           <h1 className={authHeadingClassName}>Verify account</h1>
           <p className={authSubtextClassName}>Missing user reference.</p>
         </div>
@@ -96,9 +100,13 @@ function VerifyContent() {
   }
 
   return (
-    <AuthShell>
+    <AuthShell
+      visualTone="sky"
+      visualTagline="Verified savers. Verified deposits. Zero disputes."
+    >
       <div className="mb-6 space-y-1">
-        <h1 className={authHeadingClassName}>Verify your account</h1>
+        <p className="ofx-eyebrow mb-3">Verify your account</p>
+        <h1 className={authHeadingClassName}>Confirm your email and phone</h1>
         <p className={authSubtextClassName}>
           Enter the codes sent to your email and phone to activate your savings
           account.
@@ -122,7 +130,7 @@ function VerifyContent() {
           </p>
         )}
 
-        <div className="space-y-2 rounded-xl border border-border p-4">
+        <div className="space-y-2 rounded-2xl border border-border bg-[var(--ofx-paper)] p-4">
           <p className="text-sm font-medium text-foreground">
             Email verification
           </p>
@@ -137,6 +145,7 @@ function VerifyContent() {
             <Button
               type="button"
               variant="outline"
+              className="ofx-btn ofx-btn-outline ofx-btn-sm"
               disabled={loading}
               onClick={() => sendCode("email")}
             >
@@ -144,6 +153,7 @@ function VerifyContent() {
             </Button>
             <Button
               type="button"
+              className="ofx-btn ofx-btn-dark ofx-btn-sm"
               disabled={loading || !emailCode}
               onClick={() => verify("email", emailCode)}
             >
@@ -152,7 +162,7 @@ function VerifyContent() {
           </div>
         </div>
 
-        <div className="space-y-2 rounded-xl border border-border p-4">
+        <div className="space-y-2 rounded-2xl border border-border bg-[var(--ofx-paper)] p-4">
           <p className="text-sm font-medium text-foreground">
             Phone verification
           </p>
@@ -167,6 +177,7 @@ function VerifyContent() {
             <Button
               type="button"
               variant="outline"
+              className="ofx-btn ofx-btn-outline ofx-btn-sm"
               disabled={loading}
               onClick={() => sendCode("phone")}
             >
@@ -174,6 +185,7 @@ function VerifyContent() {
             </Button>
             <Button
               type="button"
+              className="ofx-btn ofx-btn-dark ofx-btn-sm"
               disabled={loading || !phoneCode}
               onClick={() => verify("phone", phoneCode)}
             >

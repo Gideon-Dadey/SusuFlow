@@ -162,7 +162,7 @@ export default function CommissionsLedgerPage() {
             size="sm"
             variant="outline"
             onClick={handleExportCsv}
-            className="text-xs font-semibold rounded-none min-h-[36px]"
+            className="text-xs font-semibold min-h-[36px]"
             disabled={!transactions.length}
           >
             Download CSV
@@ -170,7 +170,7 @@ export default function CommissionsLedgerPage() {
           <Button
             size="sm"
             onClick={() => setIsPayingOut(!isPayingOut)}
-            className="text-xs font-semibold rounded-none min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95"
+            className="text-xs font-semibold min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95"
           >
             {isPayingOut ? "Close Panel" : "Record Payout"}
           </Button>
@@ -237,7 +237,7 @@ export default function CommissionsLedgerPage() {
               <Button
                 type="submit"
                 loading={payoutMutation.isPending}
-                className="w-full text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-none min-h-[40px] border-none"
+                className="w-full text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white min-h-[40px] border-none"
               >
                 Confirm Payout
               </Button>

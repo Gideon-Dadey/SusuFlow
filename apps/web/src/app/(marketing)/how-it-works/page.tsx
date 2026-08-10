@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { HowItWorksCapabilitiesSection } from "@/components/marketing/how-it-works/how-it-works-capabilities-section";
+import { HowItWorksFaqSection } from "@/components/marketing/how-it-works/how-it-works-faq-section";
 import { HowItWorksHero } from "@/components/marketing/how-it-works/how-it-works-hero";
-import { HowItWorksLocalSection } from "@/components/marketing/how-it-works/how-it-works-local-section";
 import { HowItWorksStepsSection } from "@/components/marketing/how-it-works/how-it-works-steps-section";
 import { HowItWorksTraditionalSection } from "@/components/marketing/how-it-works/how-it-works-traditional-section";
 import { APP_NAME } from "@/lib/marketing-data";
@@ -18,8 +17,7 @@ export default function HowItWorksPage() {
       <HowItWorksHero />
       <HowItWorksTraditionalSection />
       <HowItWorksStepsSection />
-      <HowItWorksLocalSection />
-      <HowItWorksCapabilitiesSection />
+      <HowItWorksFaqSection />
     </>
   );
 }

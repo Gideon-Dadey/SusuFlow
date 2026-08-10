@@ -2,10 +2,22 @@ export interface InitiatePaymentParams {
   amount: number;
   currency: string;
   reference: string;
-  payerPhone: string;
+  payerPhone?: string;
   paymentMethod: string;
   callbackUrl: string;
   description?: string;
+  bankCode?: string;
+  bankName?: string;
+}
+
+export interface BankTransferInstructions {
+  bankCode: string;
+  bankName: string;
+  /** Present when merchant receiving account is configured server-side. */
+  accountName?: string;
+  accountNumber?: string;
+  narration: string;
+  instructions: string;
 }
 
 export interface PaymentSession {
@@ -13,12 +25,13 @@ export interface PaymentSession {
   paymentUrl?: string;
   gatewayReference?: string;
   expiresAt: Date;
+  bankTransfer?: BankTransferInstructions;
 }
 
 export interface WebhookEvent {
   reference: string;
   gatewayReference: string;
-  status: 'success' | 'failed' | 'pending';
+  status: "success" | "failed" | "pending";
   amount: number;
   payerPhone?: string;
   rawPayload: unknown;
@@ -44,4 +57,4 @@ export interface PaymentGateway {
   disburseFunds(params: DisbursementParams): Promise<DisbursementResult>;
 }
 
-export const PAYMENT_GATEWAY = Symbol('PAYMENT_GATEWAY');
+export const PAYMENT_GATEWAY = Symbol("PAYMENT_GATEWAY");

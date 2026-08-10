@@ -1,62 +1,63 @@
 /**
- * Design tokens — SusuFlow Brand Blue palette (#0056d2).
- * Primary: #0056d2 for actions; #0043aa for active/pressed states.
+ * Design tokens — SusuFlow black / white system.
+ * Light: black primary on white surfaces.
+ * Dark: white primary on black surfaces.
  */
 
 export const lightColors = {
-  primary: "#0056d2",
-  primary50: "#ebf5ff",
-  primary100: "#d6ebff",
-  primary200: "#adcdff",
-  primary300: "#70a8ff",
-  primary400: "#337fff",
-  primary500: "#0066cc",
-  primary600: "#0056d2",
-  primary700: "#0043aa",
-  primary800: "#003585",
-  primary900: "#002359",
+  primary: "#000000",
+  primary50: "#f4f4f5",
+  primary100: "#e4e4e7",
+  primary200: "#d4d4d8",
+  primary300: "#a1a1aa",
+  primary400: "#71717a",
+  primary500: "#52525b",
+  primary600: "#3f3f46",
+  primary700: "#27272a",
+  primary800: "#18181b",
+  primary900: "#09090b",
   primaryForeground: "#ffffff",
-  brandDark: "#0056d2",
-  background: "#f5f7fa",
-  foreground: "#1e293b",
-  heading: "#0f172a",
+  brandDark: "#000000",
+  background: "#FFFFFF",
+  foreground: "#0F172A",
+  heading: "#020617",
   card: "#ffffff",
-  cardForeground: "#1e293b",
+  cardForeground: "#0F172A",
   popover: "#ffffff",
-  popoverForeground: "#1e293b",
-  muted: "#f1f5f9",
-  mutedForeground: "#475569",
-  border: "#e2e8f0",
-  input: "#e2e8f0",
-  ring: "#0056d2",
-  secondary: "#0056d2",
+  popoverForeground: "#0F172A",
+  muted: "#F1F5F9",
+  mutedForeground: "#64748B",
+  border: "#D0D7E2",
+  input: "#D0D7E2",
+  ring: "#000000",
+  secondary: "#0F172A",
   secondaryForeground: "#ffffff",
-  accent: "#0043aa",
+  accent: "#0F172A",
   accentForeground: "#ffffff",
-  destructive: "#ef4444",
-  warning: "#f59e0b",
-  success: "#10b981",
-  surfaceGlow: "rgba(0, 86, 210, 0.08)",
-  sidebar: "#f8fafc",
-  sidebarActive: "rgba(0, 86, 210, 0.12)",
-  splashBackground: "#0056d2",
+  destructive: "#E11D48",
+  warning: "#F59E0B",
+  success: "#059669",
+  surfaceGlow: "rgba(15, 23, 42, 0.06)",
+  sidebar: "#F8FAFC",
+  sidebarActive: "rgba(15, 23, 42, 0.06)",
+  splashBackground: "#000000",
   surfaceElevated: "#ffffff",
-  surfaceHover: "#f8fafc",
+  surfaceHover: "#F8FAFC",
 } as const;
 
 export const darkColors = {
-  primary: "#0056d2",
-  primary50: "#002359",
-  primary100: "#003585",
-  primary200: "#0043aa",
-  primary300: "#0056d2",
-  primary400: "#0066cc",
-  primary500: "#3385ff",
-  primary600: "#70a8ff",
-  primary700: "#38bdf8",
-  primary800: "#7dd3fc",
-  primary900: "#bae6fd",
-  primaryForeground: "#ffffff",
+  primary: "#ffffff",
+  primary50: "#09090b",
+  primary100: "#18181b",
+  primary200: "#27272a",
+  primary300: "#3f3f46",
+  primary400: "#52525b",
+  primary500: "#a1a1aa",
+  primary600: "#d4d4d8",
+  primary700: "#e4e4e7",
+  primary800: "#f4f4f5",
+  primary900: "#fafafa",
+  primaryForeground: "#000000",
   brandDark: "#000000",
   background: "#000000",
   foreground: "#ffffff",
@@ -66,20 +67,20 @@ export const darkColors = {
   popover: "#1a1a1a",
   popoverForeground: "#ffffff",
   muted: "#141414",
-  mutedForeground: "#8e8e93",
+  mutedForeground: "#a1a1aa",
   border: "#2c2c2e",
   input: "#2c2c2e",
-  ring: "#38bdf8",
-  secondary: "#38bdf8",
-  secondaryForeground: "#002359",
-  accent: "#60a5fa",
-  accentForeground: "#002359",
+  ring: "#ffffff",
+  secondary: "#ffffff",
+  secondaryForeground: "#000000",
+  accent: "#e4e4e7",
+  accentForeground: "#000000",
   destructive: "#f87171",
   warning: "#fbbf24",
-  success: "#10b981",
-  surfaceGlow: "rgba(56, 189, 248, 0.08)",
+  success: "#34D399",
+  surfaceGlow: "rgba(255, 255, 255, 0.08)",
   sidebar: "#1a1a1a",
-  sidebarActive: "rgba(56, 189, 248, 0.12)",
+  sidebarActive: "rgba(255, 255, 255, 0.12)",
   splashBackground: "#000000",
   surfaceElevated: "#1a1a1a",
   surfaceHover: "#141414",
@@ -92,47 +93,51 @@ export type ThemeColors = {
 /** @deprecated Use useTheme() for dynamic colors */
 export const colors = lightColors;
 
-/** Accent fills for quick-action / list icons (light + dark). */
+/** Accent fills for shortcut / list icons (light + dark). */
 export const iconAccents = {
   light: {
-    receipt: { bg: "#4A6FA5", fg: "#FFFFFF" },
-    target: { bg: "#C4A574", fg: "#FFFFFF" },
-    users: { bg: "#C4A574", fg: "#FFFFFF" },
-    "arrow-down-left": { bg: "#4A6FA5", fg: "#FFFFFF" },
-    "arrow-up-right": { bg: "#A3543F", fg: "#FFFFFF" },
-    "file-text": { bg: "#6E5B8C", fg: "#FFFFFF" },
+    receipt: { bg: "#F1F5F9", fg: "#334155" },
+    target: { bg: "#FFF7ED", fg: "#C2410C" },
+    users: { bg: "#ECFDF5", fg: "#047857" },
+    "arrow-down-left": { bg: "#ECFDF5", fg: "#047857" },
+    "arrow-up-right": { bg: "#FFF1F2", fg: "#BE123C" },
+    "file-text": { bg: "#F0FDFA", fg: "#0F766E" },
   },
   dark: {
-    receipt: { bg: "#3D5F85", fg: "#FFFFFF" },
-    target: { bg: "#9A7B4F", fg: "#FFFFFF" },
-    users: { bg: "#9A7B4F", fg: "#FFFFFF" },
-    "arrow-down-left": { bg: "#3D5F85", fg: "#FFFFFF" },
-    "arrow-up-right": { bg: "#8B4535", fg: "#FFFFFF" },
-    "file-text": { bg: "#5A4A72", fg: "#FFFFFF" },
+    receipt: { bg: "rgba(148, 163, 184, 0.16)", fg: "#E2E8F0" },
+    target: { bg: "rgba(249, 115, 22, 0.18)", fg: "#FDBA74" },
+    users: { bg: "rgba(16, 185, 129, 0.18)", fg: "#6EE7B7" },
+    "arrow-down-left": { bg: "rgba(16, 185, 129, 0.18)", fg: "#6EE7B7" },
+    "arrow-up-right": { bg: "rgba(244, 63, 94, 0.18)", fg: "#FDA4AF" },
+    "file-text": { bg: "rgba(20, 184, 166, 0.18)", fg: "#5EEAD4" },
   },
 } as const;
 
 export type IconAccentKey = keyof typeof iconAccents.light;
 
+/** Matches auth control radius (login / register fields & CTAs). */
+export const AUTH_CONTROL_RADIUS = 14;
+
 export const radius = {
   none: 0,
-  sm: 4,
-  md: 4,
-  /** Global surface radius — cards, banners, buttons, inputs, modals (0.2rem / 4px) */
-  lg: 4,
-  xl: 4,
+  sm: 8,
+  md: 12,
+  /** Cards, banners, list panels — same as login/register */
+  lg: AUTH_CONTROL_RADIUS,
+  /** Sheets / larger panels */
+  xl: 18,
   /** Pills, avatars, page dots */
   full: 9999,
 } as const;
 
 /** Canonical radii — prefer these over raw `radius.*` in components. */
 export const surfaceRadius = {
-  card: 4,
-  banner: 4,
-  chip: 4,
-  control: 4,
+  card: AUTH_CONTROL_RADIUS,
+  banner: AUTH_CONTROL_RADIUS,
+  chip: 12,
+  control: AUTH_CONTROL_RADIUS,
   avatar: radius.full,
-  sheet: 4,
+  sheet: 18,
 } as const;
 
 export const spacing = {
@@ -146,23 +151,23 @@ export const spacing = {
 
 export const typography = {
   fontFamily: {
-    regular: "System",
-    medium: "System",
-    semibold: "System",
-    bold: "OpenSans_700Bold",
-    heading: "OpenSans_700Bold",
-    cardLabel: "OpenSans_500Medium",
+    regular: "Geist_400Regular",
+    medium: "Geist_500Medium",
+    semibold: "Geist_600SemiBold",
+    bold: "Geist_700Bold",
+    heading: "Geist_700Bold",
+    cardLabel: "Geist_500Medium",
   },
   /** Prefer these over raw bold — keeps UI refined and consistent. */
   roles: {
-    display: "OpenSans_700Bold",
-    headline: "OpenSans_700Bold",
-    title: "OpenSans_500Medium",
-    label: "System",
-    body: "System",
-    caption: "System",
-    amount: "OpenSans_700Bold",
-    cta: "System",
+    display: "Geist_700Bold",
+    headline: "Geist_700Bold",
+    title: "Geist_600SemiBold",
+    label: "Geist_500Medium",
+    body: "Geist_400Regular",
+    caption: "Geist_400Regular",
+    amount: "Geist_700Bold",
+    cta: "Geist_600SemiBold",
   },
   size: {
     xs: 12, // small meta / labels
@@ -199,15 +204,15 @@ export const shadows = {
   subtle: {
     shadowColor: "#0f172a",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 1,
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   card: {
     shadowColor: "#0f172a",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 14,
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
     elevation: 4,
   },
   elevated: {
@@ -219,6 +224,8 @@ export const shadows = {
   },
 } as const;
 
-/** Primary brand color for native assets / auth screens that cannot use useTheme(). */
-export const brandGreen = "#0056d2";
-export const brandBlue = "#0056d2";
+/** Primary brand color for native assets that cannot use useTheme(). */
+export const brandGreen = "#000000";
+export const brandBlue = "#000000";
+export const brandInk = "#000000";
+export const brandPaper = "#ffffff";

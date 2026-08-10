@@ -11,6 +11,8 @@ import {
 } from "@/components/layout/TabScreen";
 import { ProfileRow } from "@/components/profile/ProfileSections";
 import type { AppIconName } from "@/components/icons/AppIcon";
+import { KycActionGate } from "@/components/security/KycActionGate";
+import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
 import { withdrawalApi } from "@/lib/api";
 import { fetchCustomerWallet } from "@/lib/customer-wallet";
@@ -20,12 +22,14 @@ import {
 } from "@/lib/financial-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { formatGhs } from "@/lib/currency";
+import { monitoring } from "@/lib/monitoring";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
 
 const METHODS: { id: string; label: string; icon: AppIconName }[] = [
   { id: "mtn_momo", label: "MTN MoMo", icon: "smartphone" },
-  { id: "telecel_cash", label: "Telecel Cash", icon: "credit-card" },
+  { id: "telecel_cash", label: "Telecel Cash", icon: "smartphone" },
+  { id: "airteltigo", label: "AirtelTigo Money", icon: "smartphone" },
 ];
 
 export default function WithdrawScreen() {
@@ -61,102 +65,115 @@ export default function WithdrawScreen() {
         disbursementPhone: phone,
       });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       if (sessionKey) {
         invalidateCustomerFinancials(queryClient, sessionKey);
       }
+      const reference =
+        (data as { reference?: string })?.reference || "submitted";
       Alert.alert(
         "Withdrawal requested",
-        "Your request has been submitted for approval.",
+        `Your request is pending staff approval.\n\nReference: ${reference}\n\nYou'll be notified when it's paid out.`,
       );
       setAmount("");
     },
     onError: (err: Error) => {
+      monitoring.captureException(err, { scope: "withdrawal.request" });
       Alert.alert("Withdrawal failed", err.message);
     },
   });
 
   return (
     <TabScreenLayout header={<TabScreenHeader title="Withdraw" />}>
-      <TabScreenSection title="Available balance">
-        <View style={styles.balanceWrap}>
-          {walletPending && wallet === undefined ? (
-            <Text
-              style={[styles.balanceLabel, { color: colors.mutedForeground }]}
-            >
-              Loading balance…
-            </Text>
-          ) : (
-            <Text style={[styles.balanceValue, { color: colors.foreground }]}>
-              {formatGhs(wallet?.balance ?? 0)}
-            </Text>
-          )}
-        </View>
-      </TabScreenSection>
-
-      <TabScreenSection title="Amount">
-        <View style={styles.fieldWrap}>
-          <Input
-            label="Amount (₵)"
-            value={amount}
-            onChangeText={setAmount}
-            keyboardType="decimal-pad"
-            placeholder="0.00"
-          />
-        </View>
-      </TabScreenSection>
-
-      <TabScreenSection title="MoMo number">
-        <View style={styles.fieldWrap}>
-          <Input
-            label="Mobile money number"
-            value={phone}
-            onChangeText={setPhone}
-            keyboardType="phone-pad"
-            placeholder="+233..."
-          />
-        </View>
-      </TabScreenSection>
-
-      <TabScreenSection title="Disbursement method">
-        {METHODS.map((item, index) => (
-          <View key={item.id}>
-            {index > 0 ? <TabScreenDivider /> : null}
-            <ProfileRow
-              icon={item.icon}
-              label={item.label}
-              onPress={() => setMethod(item.id)}
-              right={
-                <View
+      <View style={{ gap: 12 }}>
+        <OfflineBanner />
+        <KycActionGate actionLabel="withdraw">
+          <TabScreenSection title="Available balance">
+            <View style={styles.balanceWrap}>
+              {walletPending && wallet === undefined ? (
+                <Text
                   style={[
-                    styles.radio,
-                    {
-                      borderColor:
-                        method === item.id ? colors.primary : colors.border,
-                    },
+                    styles.balanceLabel,
+                    { color: colors.mutedForeground },
                   ]}
                 >
-                  {method === item.id ? (
+                  Loading balance…
+                </Text>
+              ) : (
+                <Text
+                  style={[styles.balanceValue, { color: colors.foreground }]}
+                >
+                  {formatGhs(wallet?.balance ?? 0)}
+                </Text>
+              )}
+            </View>
+          </TabScreenSection>
+
+          <TabScreenSection title="Amount">
+            <View style={styles.fieldWrap}>
+              <Input
+                label="Amount (₵)"
+                value={amount}
+                onChangeText={setAmount}
+                keyboardType="decimal-pad"
+                placeholder="0.00"
+              />
+            </View>
+          </TabScreenSection>
+
+          <TabScreenSection title="MoMo number">
+            <View style={styles.fieldWrap}>
+              <Input
+                label="Mobile money number"
+                value={phone}
+                onChangeText={setPhone}
+                keyboardType="phone-pad"
+                placeholder="+233..."
+              />
+            </View>
+          </TabScreenSection>
+
+          <TabScreenSection title="Disbursement method">
+            {METHODS.map((item, index) => (
+              <View key={item.id}>
+                {index > 0 ? <TabScreenDivider /> : null}
+                <ProfileRow
+                  icon={item.icon}
+                  label={item.label}
+                  onPress={() => setMethod(item.id)}
+                  right={
                     <View
                       style={[
-                        styles.radioFill,
-                        { backgroundColor: colors.primary },
+                        styles.radio,
+                        {
+                          borderColor:
+                            method === item.id ? colors.primary : colors.border,
+                        },
                       ]}
-                    />
-                  ) : null}
-                </View>
-              }
+                    >
+                      {method === item.id ? (
+                        <View
+                          style={[
+                            styles.radioFill,
+                            { backgroundColor: colors.primary },
+                          ]}
+                        />
+                      ) : null}
+                    </View>
+                  }
+                />
+              </View>
+            ))}
+          </TabScreenSection>
+
+          <View style={styles.ctaWrap}>
+            <Button
+              title="Request withdrawal"
+              loading={mutation.isPending}
+              onPress={() => mutation.mutate()}
             />
           </View>
-        ))}
-      </TabScreenSection>
-
-      <View style={styles.ctaWrap}>
-        <Button
-          title="Request withdrawal"
-          loading={mutation.isPending}
-          onPress={() => mutation.mutate()}
-        />
+        </KycActionGate>
       </View>
     </TabScreenLayout>
   );

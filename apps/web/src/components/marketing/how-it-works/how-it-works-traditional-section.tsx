@@ -1,53 +1,80 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { BadgeCheck } from "lucide-react";
 import { HOW_IT_WORKS_TRADITIONAL_PAINS } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
-import { cn } from "@/lib/utils";
+
+const VERIFIED_FLOW_HIGHLIGHTS = [
+  "Gateway-verified MoMo deposits",
+  "Live balances for every member",
+  "Instant digital receipts",
+  "Zero cash in collectors' hands",
+  "Payouts with approval trails",
+  "Audit-ready exports on demand",
+];
 
 export function HowItWorksTraditionalSection() {
   return (
-    <section className="bg-background">
-      <MarketingContainer className="py-16 sm:py-20 lg:py-24">
-        <div className="flex flex-col gap-8 sm:gap-10 lg:grid lg:grid-cols-2 lg:items-start lg:gap-16 xl:gap-20">
-          <div className="order-1 min-w-0 text-left lg:order-1">
-            <p className="text-base font-medium text-muted-foreground">
-              For traditional operators
-            </p>
-            <h2 className="mt-3 text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-[2rem]">
-              Still running susu the old way? You are not alone.
-            </h2>
-            <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
-              Market traders, savings clubs, and susu companies across Ghana
-              still rely on notebooks, cash collection, and informal receipts.
-              That model works until a payment is disputed or a collector cannot
-              prove what was collected.
-            </p>
-            <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
-              SusuFlow does not replace your collectors or your community trust.
-              It gives your company gateway verified deposits, live balances,
-              and records your auditors can export.
-            </p>
-          </div>
+    <section className="bg-[var(--ofx-paper)]">
+      <MarketingContainer className="ofx-section">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="ofx-eyebrow">Old way vs new way</p>
+          <h2 className="ofx-h2 mt-4">
+            Still running susu the old way? You&apos;re not alone.
+          </h2>
+          <p className="ofx-lead mx-auto mt-5 max-w-2xl">
+            Notebooks, cash floats, and WhatsApp receipts work — until a payment
+            is disputed and nobody can prove what was collected. SusuFlow keeps
+            the trust and removes the guesswork.
+          </p>
+        </div>
 
-          <div className="order-2 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:order-2">
-            {HOW_IT_WORKS_TRADITIONAL_PAINS.map(({ label, icon }) => {
-              return (
-                <div
+        <div className="mt-12 grid gap-6 lg:mt-14 lg:grid-cols-2">
+          <div className="rounded-[1.75rem] bg-[var(--ofx-cream-deep)] p-7 sm:p-9">
+            <p className="ofx-eyebrow">The old way</p>
+            <h3 className="ofx-h3 mt-3">Cash, paper, and crossed fingers</h3>
+            <p className="ofx-body mt-3 max-w-md">
+              Every one of these slows your company down and leaves room for
+              disputes.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-2.5">
+              {HOW_IT_WORKS_TRADITIONAL_PAINS.map(({ label, icon }) => (
+                <span
                   key={label}
-                  className={cn(
-                    "flex aspect-square flex-col items-center justify-center rounded-none bg-transparent px-3 py-5 text-center",
-                  )}
+                  className="inline-flex items-center gap-2 rounded-full bg-white/55 px-4 py-2 text-sm font-medium text-muted-foreground"
                 >
                   <FontAwesomeIcon
                     icon={icon}
-                    className="h-8 w-8 text-[#111827] dark:text-foreground sm:h-9 sm:w-9"
+                    className="h-3.5 w-3.5"
                     aria-hidden
                   />
-                  <span className="mt-4 text-xs font-semibold leading-snug text-[#111827] dark:text-foreground sm:text-base">
-                    {label}
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[1.75rem] bg-[var(--ofx-sage)] p-7 sm:p-9">
+            <p className="ofx-eyebrow">The SusuFlow way</p>
+            <h3 className="ofx-h3 mt-3">Verified, from deposit to payout</h3>
+            <p className="ofx-body mt-3 max-w-md">
+              Every cedi is confirmed by the payment gateway before it touches
+              your ledger.
+            </p>
+            <ul className="mt-7 space-y-3.5">
+              {VERIFIED_FLOW_HIGHLIGHTS.map((item) => (
+                <li key={item} className="flex items-center gap-3">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white">
+                    <BadgeCheck
+                      className="h-4 w-4 text-foreground"
+                      aria-hidden
+                    />
                   </span>
-                </div>
-              );
-            })}
+                  <span className="text-[15px] font-medium text-foreground">
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </MarketingContainer>

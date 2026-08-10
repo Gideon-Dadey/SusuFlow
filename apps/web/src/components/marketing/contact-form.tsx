@@ -120,10 +120,7 @@ function ContactFormInner() {
         />
       </div>
 
-      <Button
-        type="submit"
-        className="h-12 w-full rounded-full text-base font-medium"
-      >
+      <Button type="submit" className="h-12 w-full text-base font-medium">
         {copy.cta}
       </Button>
     </form>

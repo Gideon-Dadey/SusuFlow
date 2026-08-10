@@ -5,58 +5,70 @@
 @layer base {
  :root {
  color-scheme: light;
- /* Afrusan-inspired light palette */
- --background: #fafafa;
- --foreground: #010517;
- --heading: #010517;
+ /* OmniH-inspired light palette */
+ --background: #ffffff;
+ --foreground: #1a1a1a;
+ --heading: #1a1a1a;
  --card: #ffffff;
- --card-foreground: #010517;
+ --card-foreground: #1a1a1a;
  --popover: #ffffff;
- --popover-foreground: #010517;
- 
- /* Brand Accent Colors */
- --primary: #010517;
+ --popover-foreground: #1a1a1a;
+
+ /* Portal primary (slate-900); auth/marketing CTAs use primary-600 blue */
+ --primary: #0f172a;
  --primary-foreground: #ffffff;
- --secondary: #010517;
+ --secondary: #0f172a;
  --secondary-foreground: #ffffff;
- --accent: #c6e5df;
- --accent-foreground: #010517;
- 
+ --accent: #f5f9fd;
+ --accent-foreground: #1a1a1a;
+
  /* Muted & Borders */
- --muted: #f5f5f5;
- --muted-foreground: #828282;
- --border: #e0e0e0;
- --input: #ededed;
- --ring: #010517;
+ --muted: #f8fafc;
+ --muted-foreground: #475569;
+ --border: #e2e8f0;
+ --input: #e2e8f0;
+ --ring: #3c8fdd;
  --success: #22c55e;
  --warning: #f59e0b;
  --destructive: #ef4444;
  --destructive-foreground: #ffffff;
- 
-  --radius: 9999px;
-  --surface-elevated: #ffffff;
-  --surface-hover: #f5f5f5;
-  --surface-glow: rgba(198, 229, 223, 0.35);
-  --brand-dark: #010517;
-  --brand-mint: #c6e5df;
-  --brand-link: #0099ff;
 
-  --primary-50: #f5f5f5;
-  --primary-100: #ededed;
-  --primary-200: #e0e0e0;
-  --primary-300: #bfbfbf;
-  --primary-400: #828282;
-  --primary-500: #1e1e1f;
-  --primary-600: #010517;
-  --primary-700: #010517;
-  --primary-800: #010517;
-  --primary-900: #000000;
+ --radius: 0;
+ --radius-sm: 2px;
+ --radius-lg: 8px;
+ --radius-full: 999px;
+ --surface-elevated: #ffffff;
+ --surface-hover: #f1f5f9;
+ --surface-glow: rgba(60, 143, 221, 0.12);
+ --brand-dark: #010e25;
+ --brand-mint: #c6e5df;
+ --brand-link: #3c8fdd;
 
-  /* Typography & Responsive Design Tokens */
-  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
-  --font-hero: var(--font-geist), system-ui, sans-serif;
+ --primary-50: #f5f9fd;
+ --primary-100: #e8f2fb;
+ --primary-200: #c5ddf4;
+ --primary-300: #9ec5ec;
+ --primary-400: #77ade4;
+ --primary-500: #539ce1;
+ --primary-600: #3c8fdd;
+ --primary-700: #3175b5;
+ --primary-800: #265c8e;
+ --primary-900: #1a4266;
+
+ --sidebar-width-collapsed: 88px;
+ --sidebar-width-expanded: 260px;
+ --sidebar-width: var(--sidebar-width-expanded);
+
+ /* Typography & Responsive Design Tokens */
+ --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+ --font-display: var(--font-open-sans), var(--font-sans);
+ --font-hero: var(--font-display);
+ --page-gutter: 1rem;
+ --page-gutter-sm: 1.25rem;
+ --page-gutter-lg: 1.5rem;
+ --page-gutter-xl: 2rem;
  --sr-container-max: 80rem;
- --sr-gutter: 1rem;
+ --sr-gutter: var(--page-gutter);
  }
 
  @media (min-width: 640px) {
@@ -73,42 +85,42 @@
 
  .dark {
  color-scheme: dark;
- --background: #010517;
- --foreground: #fafafa;
+ --background: #010e25;
+ --foreground: #f1f5f9;
  --heading: #ffffff;
- --card: #1e1e1f;
- --card-foreground: #fafafa;
- --popover: #1e1e1f;
- --popover-foreground: #fafafa;
- --primary: #fafafa;
- --primary-foreground: #010517;
- --secondary: #fafafa;
- --secondary-foreground: #010517;
- --accent: #c6e5df;
- --accent-foreground: #010517;
- --muted: #1e1e1f;
- --muted-foreground: #bfbfbf;
- --border: #333333;
- --input: #333333;
- --ring: #c6e5df;
+ --card: #1e293b;
+ --card-foreground: #f1f5f9;
+ --popover: #1e293b;
+ --popover-foreground: #f1f5f9;
+ --primary: #ffffff;
+ --primary-foreground: #1a1a1a;
+ --secondary: #ffffff;
+ --secondary-foreground: #1a1a1a;
+ --accent: #1e293b;
+ --accent-foreground: #f1f5f9;
+ --muted: #1e293b;
+ --muted-foreground: #94a3b8;
+ --border: #1e293b;
+ --input: #1e293b;
+ --ring: #3c8fdd;
  --destructive: #ef4444;
  --destructive-foreground: #ffffff;
- --surface-elevated: #1e1e1f;
- --surface-hover: #333333;
- --surface-glow: rgba(198, 229, 223, 0.08);
- --brand-dark: #010517;
- --radius: 0.75rem;
+ --surface-elevated: #1e293b;
+ --surface-hover: #334155;
+ --surface-glow: rgba(60, 143, 221, 0.08);
+ --brand-dark: #010e25;
+ --radius: 0;
 
- --primary-50: #010e25;
- --primary-100: #080c18;
- --primary-200: #0c1222;
- --primary-300: #828282;
- --primary-400: #337fff;
- --primary-500: #70a8ff;
- --primary-600: #adcdff;
- --primary-700: #d6ebff;
- --primary-800: #ebf5ff;
- --primary-900: #f1f5f9;
+ --primary-50: #0a1929;
+ --primary-100: #0f2744;
+ --primary-200: #1a4266;
+ --primary-300: #265c8e;
+ --primary-400: #3175b5;
+ --primary-500: #539ce1;
+ --primary-600: #3c8fdd;
+ --primary-700: #539ce1;
+ --primary-800: #77ade4;
+ --primary-900: #9ec5ec;
  }
 
  * {
@@ -120,7 +132,7 @@
  [type='submit'],
  [type='reset'],
  .btn {
- border-radius: var(--radius);
+ border-radius: 0;
  }
 
  input,
@@ -143,19 +155,21 @@
  }
 
  @media (min-width: 1024px) {
- html:not(:has(.auth-split)):not(:has(.dashboard-shell)) {
+ html:not(:has(.auth-split)):not(:has(.auth-page-root)):not(:has(.dashboard-shell)) {
  font-size: 90%;
  zoom: 0.9;
  }
  }
 
  html:has(.auth-split),
+ html:has(.auth-page-root),
  html:has(.dashboard-shell) {
  height: 100%;
  overflow: hidden;
  }
 
  html:has(.auth-split) body,
+ html:has(.auth-page-root) body,
  html:has(.dashboard-shell) body {
  height: 100%;
  min-height: 100%;
@@ -195,16 +209,17 @@
  }
 
  html:has(.marketing-canvas) {
- scrollbar-color: rgb(255 255 255 / 0.2) transparent;
+ scrollbar-color: rgb(28 27 23 / 0.25) transparent;
  }
 
  html:has(.auth-split),
+ html:has(.auth-page-root),
  html:has(.auth-canvas) {
  scrollbar-color: rgb(148 163 184 / 0.35) transparent;
  }
 
  html:has(.marketing-canvas) *::-webkit-scrollbar-thumb {
- background-color: rgb(255 255 255 / 0.2);
+ background-color: rgb(28 27 23 / 0.25);
  }
 
  html:has(.auth-split) *::-webkit-scrollbar-thumb,
@@ -213,7 +228,7 @@
  }
 
  html:has(.marketing-canvas) *::-webkit-scrollbar-thumb:hover {
- background-color: rgb(255 255 255 / 0.32);
+ background-color: rgb(28 27 23 / 0.4);
  }
 
  html:has(.auth-split) *::-webkit-scrollbar-thumb:hover,
@@ -237,10 +252,15 @@
  background: var(--background);
  color: var(--foreground);
  font-family: var(--font-sans);
- font-size: 14px;
- line-height: 1.5;
+ font-size: 18px;
+ line-height: 30.6px;
  font-weight: 400;
  @apply antialiased;
+ }
+
+ .dark body {
+ background-color: var(--brand-dark);
+ color: #f1f5f9;
  }
 
  h1,
@@ -248,12 +268,12 @@
  h3,
  h4 {
  color: var(--heading);
- font-family: var(--font-hero), system-ui, sans-serif;
+ font-family: var(--font-display), system-ui, sans-serif;
  font-weight: 500;
  }
 
  ::selection {
- background-color: rgb(198 229 223 / 0.45);
+ background-color: rgb(60 143 221 / 0.2);
  color: var(--foreground);
  }
 
@@ -268,26 +288,14 @@
 }
 
 @layer utilities {
-
- .rounded-none,
- .rounded-sm,
- .rounded-md,
- .rounded-lg,
- .rounded-xl,
- .rounded-2xl,
- .rounded-3xl,
- .rounded {
- border-radius: 0.5rem !important;
- }
-
  .rounded-full {
- border-radius: 9999px !important;
+ border-radius: var(--radius-full) !important;
  }
 }
 
 @layer components {
  .dashboard-shell {
- --dashboard-sidebar-width: 13.5rem;
+ --dashboard-sidebar-width: var(--sidebar-width-expanded);
  @apply fixed inset-0 z-0 flex flex-col overflow-hidden bg-background;
  height: 100dvh;
  max-height: 100dvh;
@@ -321,7 +329,7 @@
  }
 
  .premium-card {
- @apply rounded-xl border border-border/60 bg-white transition-all duration-300;
+ @apply rounded border border-slate-200 bg-white transition-all duration-300;
  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.08);
  }
 
@@ -361,37 +369,23 @@
  }
 
  /* App Button Classes */
- .btn-primary {
- @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-medium hover:bg-primary/90 transition-all duration-200 shadow-sm disabled:pointer-events-none disabled:opacity-50;
- }
+ .btn-primary { @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-primary-600 text-white px-8 py-3 text-[15px] font-bold hover:bg-primary-700 transition-all duration-200 shadow-sm disabled:pointer-events-none disabled:opacity-50; }
 
- .btn-secondary {
- @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-card border border-border/80 text-foreground px-8 py-3 rounded-full text-sm font-medium hover:bg-muted/60 transition-all duration-200 shadow-sm disabled:pointer-events-none disabled:opacity-50;
- }
+ .btn-secondary { @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-card border border-slate-200 text-foreground px-8 py-3 text-[15px] font-semibold hover:bg-slate-50 transition-all duration-200 shadow-sm disabled:pointer-events-none disabled:opacity-50 dark:border-twitter-dark-border dark:hover:bg-twitter-dark-hover; }
 
- .btn-destructive {
- @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-destructive text-destructive-foreground px-8 py-3 rounded text-sm font-bold shadow-sm hover:bg-destructive/90 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50;
- }
+ .btn-destructive { @apply inline-flex items-center justify-center gap-2 whitespace-nowrap bg-destructive text-destructive-foreground px-8 py-3 text-sm font-bold shadow-sm hover:bg-destructive/90 transition-all duration-300 disabled:pointer-events-none disabled:opacity-50; }
 
- .btn-ghost {
- @apply inline-flex items-center justify-center gap-2 whitespace-nowrap px-4 py-2 rounded text-sm font-semibold hover:bg-accent hover:text-accent-foreground transition-all duration-300 disabled:pointer-events-none disabled:opacity-50;
- }
+ .btn-ghost { @apply inline-flex items-center justify-center gap-2 whitespace-nowrap px-4 py-2 text-sm font-semibold hover:bg-accent hover:text-accent-foreground transition-all duration-300 disabled:pointer-events-none disabled:opacity-50; }
 
  .btn-link {
  @apply inline-flex items-center justify-center gap-2 whitespace-nowrap text-primary underline-offset-4 hover:underline font-semibold text-sm transition-all duration-300 disabled:pointer-events-none disabled:opacity-50;
  }
 
- .btn-sm {
- @apply h-8 rounded px-3 text-xs py-1;
- }
+ .btn-sm { @apply h-8 px-3 text-xs py-1; }
 
- .btn-lg {
- @apply h-10 rounded px-8 text-base py-2.5;
- }
+ .btn-lg { @apply h-10 px-8 text-base py-2.5; }
 
- .btn-icon {
- @apply h-9 w-9 p-0 rounded inline-flex items-center justify-center;
- }
+ .btn-icon { @apply h-9 w-9 p-0 inline-flex items-center justify-center; }
 
  /* Status Badges */
  .badge-brand {
@@ -471,9 +465,22 @@
  }
 
  .dashboard-title {
- @apply text-lg md:text-xl font-medium tracking-tight leading-snug;
- font-family: var(--font-hero), system-ui, sans-serif;
- color: var(--heading);
+ font-family: var(--font-display), system-ui, sans-serif;
+ font-size: 18px;
+ font-weight: 700;
+ letter-spacing: -0.02em;
+ color: #1a1a1a;
+ line-height: 1.3;
+ }
+
+ @media (min-width: 640px) {
+ .dashboard-title {
+ font-size: 24px;
+ }
+ }
+
+ .dark .dashboard-title {
+ color: #ffffff;
  }
 
  .omnih-h2,
@@ -497,7 +504,7 @@
  }
 
  .omnih-btn-primary {
- @apply text-sm font-bold rounded-xl;
+ @apply text-sm font-bold;
  }
 
  .omnih-kpi,
@@ -681,22 +688,22 @@
     line-height: 18px !important;
   }
 
- /* Marketing & Public Page Mobile Headers (Senior Engineer Sizing Specs) */
- :not(.dashboard-shell) h2,
+ /* Marketing & Public Page Mobile Headers (OFX-style: medium weight, tight tracking) */
+ :not(.dashboard-shell) h2:not([class*="ofx-"]),
  :not(.dashboard-shell) .marketing-section-title {
  font-size: 1.75rem !important;
  /* 28px on mobile */
  line-height: 1.2 !important;
- font-weight: 800 !important;
+ font-weight: 600 !important;
  letter-spacing: -0.02em !important;
  }
 
- :not(.dashboard-shell) h3,
+ :not(.dashboard-shell) h3:not([class*="ofx-"]),
  :not(.dashboard-shell) .marketing-card-title {
  font-size: 1.35rem !important;
  /* 21.6px on mobile */
  line-height: 1.3 !important;
- font-weight: 700 !important;
+ font-weight: 600 !important;
  letter-spacing: -0.015em !important;
  }
 
@@ -846,8 +853,14 @@
 
  .dashboard-subtitle {
  font-size: 14px;
- font-weight: 500;
+ font-weight: 400;
  line-height: 1.5;
+ color: #475569;
+ margin-top: 0.25rem;
+ }
+
+ .dark .dashboard-subtitle {
+ color: #94a3b8;
  }
 
  .marketing-hero-title {
@@ -927,7 +940,7 @@
  }
 
  .afrusan-cta-pill {
- @apply inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-base font-medium text-primary-foreground transition-all hover:opacity-90;
+ @apply inline-flex items-center justify-center gap-2 bg-primary px-8 py-3.5 text-base font-medium text-primary-foreground transition-all hover:opacity-90;
  }
 
  .afrusan-card {
@@ -1249,22 +1262,92 @@
  @apply font-medium text-foreground underline-offset-4 hover:underline;
  }
 
- .auth-canvas {
- @apply min-h-screen flex items-center justify-center bg-background px-4 py-12;
+ .auth-page-root {
+ @apply min-h-screen bg-background dark:bg-twitter-dark;
+ padding: 0;
  }
 
- .auth-split {
- @apply bg-background lg:grid lg:grid-cols-2;
- height: 100dvh;
+ .auth-page-root ::selection {
+ background-color: rgb(60 143 221 / 0.2);
+ }
+
+ @media (min-width: 640px) {
+ .auth-page-root {
+ padding-left: 2rem;
+ padding-right: 2rem;
+ @apply flex items-center justify-center;
+ }
+ }
+
+ @media (min-width: 1024px) {
+ .auth-page-root {
+ padding: 0;
+ }
+ }
+
+ .auth-page-card {
+ @apply flex w-full flex-col overflow-hidden bg-white dark:bg-twitter-dark;
+ min-height: 100dvh;
  max-height: 100dvh;
  }
 
- /* iOS Safari zooms focused inputs below 16px — keep auth fields at 16px on touch devices */
+ @media (min-width: 640px) {
+ .auth-page-card {
+ min-height: 96vh;
+ max-height: 96vh;
+ @apply rounded-xl shadow-2xl;
+ }
+ }
+
+ @media (min-width: 1024px) {
+ .auth-page-card {
+ @apply flex-row rounded-none shadow-none;
+ min-height: 100dvh;
+ max-height: 100dvh;
+ height: 100dvh;
+ }
+ }
+
+ .auth-page-form-column {
+ @apply relative flex h-full flex-col overflow-y-auto bg-white dark:bg-twitter-dark;
+ flex: 1;
+ }
+
+ @media (min-width: 1024px) {
+ .auth-page-form-column {
+ width: 50%;
+ }
+ }
+
+ .auth-page-form-column--wide {
+ @media (min-width: 1024px) {
+ width: 55%;
+ }
+ }
+
+ .auth-page-form-inner {
+ @apply flex w-full flex-1 flex-col justify-center px-5 py-6 sm:px-8 lg:px-10 lg:py-8 xl:px-12;
+ }
+
+ .auth-page-visual {
+ @apply relative hidden h-full overflow-hidden bg-white lg:block;
+ width: 50%;
+ }
+
+ .auth-page-visual--narrow {
+ @media (min-width: 1024px) {
+ width: 45%;
+ }
+ }
+
+ .auth-canvas {
+ @apply min-h-screen flex items-center justify-center bg-background px-4 py-12;
+ }
  @media (max-width: 767px) {
 
- .auth-split input:not([type='checkbox']):not([type='radio']),
- .auth-split select,
- .auth-split textarea {
+ .auth-page-root input:not([type='checkbox']):not([type='radio']),
+ .auth-page-root select,
+ .auth-page-root textarea {
  font-size: 16px;
  }
  }
@@ -1438,4 +1521,299 @@
  opacity: 0;
  transform: translateY(-50%) translateX(2rem);
  pointer-events: none;
+}
+
+/* Sharp buttons — overrides Tailwind rounded-* on button elements.
+   Marketing/auth OFX-style pill buttons (.ofx-btn) are excluded. */
+button:not(.ofx-btn):not(.pill),
+[type='button']:not(.ofx-btn):not(.pill),
+[type='submit']:not(.ofx-btn):not(.pill),
+[type='reset']:not(.ofx-btn):not(.pill),
+.btn:not(.ofx-btn):not(.pill),
+.btn-primary,
+.btn-secondary,
+.btn-destructive,
+.btn-ghost,
+.afrusan-cta-pill {
+ border-radius: 0 !important;
+}
+
+/* ==========================================================================
+   OFX-INSPIRED MARKETING & AUTH DESIGN SYSTEM
+   Warm paper canvas, ink typography, pill CTAs, soft rounded cards.
+   Scoped to .marketing-canvas and .auth-ofx so portals are unaffected.
+   ========================================================================== */
+
+.marketing-canvas,
+.auth-ofx {
+ --ofx-cream: #ffffff;
+ --ofx-cream-deep: #f5f5f5;
+ --ofx-paper: #ffffff;
+ --ofx-ink: #1c1b17;
+ --ofx-ink-soft: #5b564b;
+ --ofx-flame: #e4551f;
+ --ofx-sage: #f5f5f5;
+ --ofx-sky: #f5f5f5;
+ --ofx-sand: #f5f5f5;
+ --ofx-lilac: #f5f5f5;
+ --ofx-dark: #171613;
+ --ofx-border: rgba(28, 27, 23, 0.12);
+
+ color-scheme: light;
+ --background: var(--ofx-cream);
+ --foreground: var(--ofx-ink);
+ --heading: var(--ofx-ink);
+ --card: #ffffff;
+ --card-foreground: var(--ofx-ink);
+ --popover: #ffffff;
+ --popover-foreground: var(--ofx-ink);
+ --primary: var(--ofx-ink);
+ --primary-foreground: #ffffff;
+ --secondary: var(--ofx-ink);
+ --secondary-foreground: #ffffff;
+ --accent: var(--ofx-cream-deep);
+ --accent-foreground: var(--ofx-ink);
+ --muted: var(--ofx-cream-deep);
+ --muted-foreground: var(--ofx-ink-soft);
+ --border: var(--ofx-border);
+ --input: var(--ofx-border);
+ --ring: var(--ofx-ink);
+ --surface-elevated: #ffffff;
+ --surface-hover: var(--ofx-cream-deep);
+ --brand-dark: var(--ofx-dark);
+ --radius: 0.875rem;
+ --radius-sm: 0.5rem;
+ --radius-lg: 1.25rem;
+
+ --font-sans: var(--font-grotesk), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+ --font-display: var(--font-grotesk), system-ui, sans-serif;
+ --font-hero: var(--font-grotesk), system-ui, sans-serif;
+
+ background-color: var(--ofx-cream);
+ color: var(--ofx-ink);
+ font-family: var(--font-sans);
+}
+
+.marketing-canvas ::selection,
+.auth-ofx ::selection {
+ background-color: rgba(228, 85, 31, 0.22);
+ color: var(--ofx-ink);
+}
+
+/* Dark ink band (footer CTA, contrast sections) */
+.ofx-dark-section {
+ --heading: #f5f2ea;
+ --foreground: #f5f2ea;
+ --muted-foreground: rgba(245, 242, 234, 0.68);
+ --border: rgba(245, 242, 234, 0.16);
+ --card: #24221d;
+ --card-foreground: #f5f2ea;
+ background-color: var(--ofx-dark);
+ color: #f5f2ea;
+}
+
+/* --- Typography --- */
+.ofx-display {
+ font-family: var(--font-hero), system-ui, sans-serif;
+ font-size: clamp(2.6rem, 6vw, 4.75rem);
+ font-weight: 500;
+ line-height: 1.02;
+ letter-spacing: -0.035em;
+ color: var(--heading);
+}
+
+.ofx-h2 {
+ font-family: var(--font-hero), system-ui, sans-serif;
+ font-size: clamp(1.9rem, 3.9vw, 3.1rem);
+ font-weight: 500;
+ line-height: 1.08;
+ letter-spacing: -0.03em;
+ color: var(--heading);
+}
+
+.ofx-h3 {
+ font-family: var(--font-hero), system-ui, sans-serif;
+ font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+ font-weight: 500;
+ line-height: 1.18;
+ letter-spacing: -0.02em;
+ color: var(--heading);
+}
+
+.ofx-eyebrow {
+ font-size: 0.8125rem;
+ font-weight: 600;
+ letter-spacing: 0.14em;
+ text-transform: uppercase;
+ color: var(--muted-foreground);
+}
+
+.ofx-lead {
+ font-size: clamp(1.0625rem, 1.5vw, 1.3125rem);
+ line-height: 1.55;
+ font-weight: 400;
+ color: var(--muted-foreground);
+}
+
+.ofx-body {
+ font-size: 1.0625rem;
+ line-height: 1.65;
+ color: var(--muted-foreground);
+}
+
+/* --- Pill buttons --- */
+.ofx-btn {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ gap: 0.5rem;
+ border-radius: 9999px !important;
+ font-family: var(--font-sans);
+ font-size: 1rem;
+ font-weight: 500;
+ line-height: 1.2;
+ padding: 1rem 1.75rem;
+ white-space: nowrap;
+ cursor: pointer;
+ transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+.ofx-btn:disabled {
+ pointer-events: none;
+ opacity: 0.5;
+}
+
+.ofx-btn-sm {
+ padding: 0.65rem 1.3rem;
+ font-size: 0.9375rem;
+}
+
+.ofx-btn-lg {
+ padding: 1.15rem 2.15rem;
+ font-size: 1.0625rem;
+}
+
+.ofx-btn-dark {
+ background-color: var(--ofx-ink);
+ color: #ffffff;
+ border: 1.5px solid var(--ofx-ink);
+}
+
+.ofx-btn-dark:hover {
+ background-color: #35322a;
+ border-color: #35322a;
+}
+
+.ofx-btn-light {
+ background-color: #ffffff;
+ color: var(--ofx-ink);
+ border: 1.5px solid rgba(28, 27, 23, 0.14);
+}
+
+.ofx-btn-light:hover {
+ background-color: var(--ofx-cream-deep);
+}
+
+.ofx-btn-outline {
+ background-color: transparent;
+ color: var(--ofx-ink);
+ border: 1.5px solid var(--ofx-ink);
+}
+
+.ofx-btn-outline:hover {
+ background-color: var(--ofx-ink);
+ color: #ffffff;
+}
+
+.ofx-btn-cream {
+ background-color: var(--ofx-cream);
+ color: var(--ofx-ink);
+ border: 1.5px solid var(--ofx-cream);
+}
+
+.ofx-btn-cream:hover {
+ background-color: #ffffff;
+ border-color: #ffffff;
+}
+
+.ofx-btn-flame {
+ background-color: var(--ofx-flame);
+ color: #ffffff;
+ border: 1.5px solid var(--ofx-flame);
+}
+
+.ofx-btn-flame:hover {
+ background-color: #c94413;
+ border-color: #c94413;
+}
+
+/* Escape hatch for small pill-shaped buttons that manage their own sizing */
+.pill {
+ border-radius: 9999px !important;
+}
+
+/* Text link with arrow, OFX style */
+.ofx-link {
+ display: inline-flex;
+ align-items: center;
+ gap: 0.4rem;
+ font-weight: 500;
+ color: var(--foreground);
+ text-decoration: underline;
+ text-underline-offset: 4px;
+ text-decoration-thickness: 1.5px;
+ transition: opacity 0.2s ease;
+}
+
+.ofx-link:hover {
+ opacity: 0.7;
+}
+
+/* --- Surfaces --- */
+.ofx-card {
+ background-color: var(--card);
+ border: 1px solid var(--ofx-border);
+ border-radius: 1.75rem;
+ overflow: hidden;
+}
+
+.ofx-section {
+ padding-block: clamp(3.5rem, 8vw, 6.75rem);
+}
+
+.ofx-chip {
+ display: inline-flex;
+ align-items: center;
+ gap: 0.45rem;
+ border-radius: 9999px;
+ border: 1px solid var(--ofx-border);
+ background-color: #ffffff;
+ padding: 0.45rem 1rem;
+ font-size: 0.875rem;
+ font-weight: 500;
+ color: var(--ofx-ink);
+ white-space: nowrap;
+}
+
+/* Marquee for the trust ticker band */
+@keyframes ofx-marquee {
+ from {
+ transform: translateX(0);
+ }
+
+ to {
+ transform: translateX(-50%);
+ }
+}
+
+.ofx-marquee-track {
+ display: flex;
+ width: max-content;
+ animation: ofx-marquee 30s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+ .ofx-marquee-track {
+ animation: none;
+ }
 }

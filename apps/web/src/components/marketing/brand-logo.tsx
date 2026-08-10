@@ -2,26 +2,29 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { BRAND_LOGO } from "@/lib/brand-assets";
 
-export function SusuFlowIconMark({ className }: { className?: string }) {
+/** Full SusuFlow wordmark (blob + name). Aspect ~2.64:1 */
+export function SusuFlowIconMark({
+  className,
+  priority = false,
+}: {
+  className?: string;
+  priority?: boolean;
+}) {
   return (
-    <div
-      className={cn("relative size-9 shrink-0", className)}
-      aria-hidden="true"
-    >
-      <Image
-        src={BRAND_LOGO}
-        alt="SusuFlow Logo"
-        fill
-        sizes="48px"
-        className="object-contain"
-      />
-    </div>
+    <Image
+      src={BRAND_LOGO}
+      alt="SusuFlow"
+      width={264}
+      height={100}
+      priority={priority}
+      className={cn("h-9 w-auto object-contain", className)}
+    />
   );
 }
 
 export function BrandLogo({
   className,
-  onDark = false,
+  priority = false,
   iconOnly = false,
 }: {
   className?: string;
@@ -29,45 +32,37 @@ export function BrandLogo({
   onDark?: boolean;
   iconOnly?: boolean;
 }) {
-  if (iconOnly) {
-    return <SusuFlowIconMark className={className} />;
-  }
-
   return (
-    <div className={cn("inline-flex items-center gap-2.5", className)}>
-      <SusuFlowIconMark />
-    </div>
+    <SusuFlowIconMark
+      className={cn(
+        iconOnly ? "h-9 w-auto" : "h-8 max-w-[9rem] w-auto",
+        className,
+      )}
+      priority={priority}
+    />
   );
 }
 
 export function BrandLockup({
   className,
-  onDark = false,
+  priority = false,
   wordmarkClassName,
 }: {
   className?: string;
   priority?: boolean;
   onDark?: boolean;
+  /** @deprecated Wordmark is part of the logo image */
   wordmarkClassName?: string;
 }) {
+  void wordmarkClassName;
   return (
     <span
-      className={cn(
-        "inline-flex min-w-0 items-center gap-1 select-none",
-        className,
-      )}
+      className={cn("inline-flex min-w-0 items-center select-none", className)}
     >
-      <SusuFlowIconMark className="size-[1.9rem] sm:size-9 shrink-0" />
-      <span
-        className={cn(
-          "truncate text-[1.2rem] sm:text-[1.35rem] font-medium tracking-[-0.02em] leading-none font-geist flex items-baseline",
-          wordmarkClassName,
-        )}
-      >
-        <span className={onDark ? "text-white" : "text-foreground"}>
-          SusuFlow
-        </span>
-      </span>
+      <SusuFlowIconMark
+        priority={priority}
+        className="h-[1.9rem] sm:h-9 w-auto max-w-[11rem] shrink-0"
+      />
     </span>
   );
 }

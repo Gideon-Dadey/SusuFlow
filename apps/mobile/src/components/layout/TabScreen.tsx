@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   scroll: {
     paddingHorizontal: spacing.lg,
-    gap: spacing.xl,
+    gap: 22,
   },
   header: {
     minHeight: 44,

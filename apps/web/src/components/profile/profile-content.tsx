@@ -288,7 +288,7 @@ export function ProfileContent({ title = "Profile" }: { title?: string }) {
               onClick={() =>
                 document.getElementById("profile-avatar-file-input")?.click()
               }
-              className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-900 shadow-md transition-transform group-hover:scale-110 hover:bg-gray-100"
+              className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center bg-white text-gray-900 shadow-md transition-transform group-hover:scale-110 hover:bg-gray-100"
               title="Upload avatar"
             >
               <FontAwesomeIcon

@@ -135,7 +135,7 @@ export default function CustomerDashboard() {
             </div>
           </div>
           <Link href="/kyc" className="shrink-0">
-            <button className="w-full sm:w-auto px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity">
+            <button className="w-full sm:w-auto px-4 py-2 bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity">
               Verify Identity Now →
             </button>
           </Link>

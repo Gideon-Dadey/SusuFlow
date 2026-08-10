@@ -291,6 +291,87 @@ const notificationWorker = new Worker(
       return { sent: true, event: job.name };
     }
 
+    if (job.name === "kyc-approved" || job.name === "kyc-rejected") {
+      const { tenantId, userId, rejectionReason } = job.data as {
+        tenantId: string;
+        userId: string;
+        customerId?: string;
+        documentId?: string;
+        documentType?: string;
+        rejectionReason?: string | null;
+      };
+
+      const user = await db.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          firstName: true,
+          email: true,
+          phone: true,
+        },
+      });
+      const tenant = await db.tenant.findUnique({
+        where: { id: tenantId },
+        select: { name: true },
+      });
+
+      if (!user) {
+        console.warn(`[notifications] KYC user ${userId} not found. Skipping.`);
+        return { sent: false, error: "User not found" };
+      }
+
+      const tenantName = tenant?.name || "SusuFlow";
+      const firstName = user.firstName || "there";
+      const approved = job.name === "kyc-approved";
+      const webUrl = process.env.WEB_URL || "http://localhost:3000";
+
+      const title = approved
+        ? "Identity verified"
+        : "Verification needs attention";
+      const body = approved
+        ? `Hi ${firstName}, your identity verification with ${tenantName} was approved. You can continue saving.`
+        : `Hi ${firstName}, your identity verification with ${tenantName} was not approved.${
+            rejectionReason ? ` Reason: ${rejectionReason}` : ""
+          } Please resubmit your documents.`;
+
+      await sendPushToUser(db, user.id, {
+        title,
+        body,
+        data: {
+          type: job.name,
+          screen: "kyc",
+        },
+      });
+
+      if (user.email) {
+        const html = generateSaaSEmailHtml({
+          title,
+          preheader: body,
+          greeting: `Hello ${firstName}`,
+          message: approved
+            ? "Your documents were reviewed and approved. You can deposit and save with confidence."
+            : "Your documents were reviewed and need an update. Please open the app and resubmit a clearer ID and selfie.",
+          details: [
+            { label: "Susu Company", value: tenantName },
+            { label: "Status", value: approved ? "Approved" : "Rejected" },
+            ...(rejectionReason
+              ? [{ label: "Reason", value: rejectionReason }]
+              : []),
+          ],
+          buttonText: approved ? "Open dashboard" : "Resubmit verification",
+          buttonLink: approved ? `${webUrl}/dashboard` : `${webUrl}/kyc`,
+          tenantName,
+        });
+        await sendEmail(user.email, `${title} - ${tenantName}`, html);
+      }
+
+      if (user.phone && !approved) {
+        await sendSMS(user.phone, body, tenantId);
+      }
+
+      return { sent: true, event: job.name };
+    }
+
     const { tenantId, transactionId } = job.data;
 
     const transaction = await db.transaction.findUnique({

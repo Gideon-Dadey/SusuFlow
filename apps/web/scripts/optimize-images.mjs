@@ -13,10 +13,14 @@ const publicDir = path.join(__dirname, '..', 'public');
 
 /** @type {Array<{ file: string; maxWidth: number; quality?: number }>} */
 const TARGETS = [
-  { file: 'brand/logo-transparent.png', maxWidth: 320, quality: 90 },
-  { file: 'brand/Logo.png', maxWidth: 320, quality: 90 },
+  { file: 'brand/susuflow-logo.png', maxWidth: 1200, quality: 92 },
+  { file: 'brand/logo-transparent.png', maxWidth: 800, quality: 92 },
+  { file: 'brand/Logo.png', maxWidth: 800, quality: 92 },
+  { file: 'marketing/susuflow-hero-organic.png', maxWidth: 1600, quality: 85 },
   { file: 'marketing/myhero.jpg', maxWidth: 1600, quality: 82 },
   { file: 'marketing/hero-showcase.png', maxWidth: 1400, quality: 82 },
+  { file: 'marketing/susuflow-introduction-organic.png', maxWidth: 1400, quality: 85 },
+  { file: 'marketing/susuflow-introduction-organic-transparent.png', maxWidth: 1400, quality: 90 },
   { file: 'marketing/platform-overview.png', maxWidth: 1400, quality: 82 },
   { file: 'marketing/momo-pay-showcase.png', maxWidth: 900, quality: 82 },
   { file: 'marketing/workflow-automation-bg.png', maxWidth: 1400, quality: 82 },

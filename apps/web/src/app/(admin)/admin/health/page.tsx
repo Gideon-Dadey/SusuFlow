@@ -49,7 +49,7 @@ export default function AdminHealthPage() {
           variant="outline"
           onClick={() => refetch()}
           disabled={isFetching}
-          className="rounded-none text-xs font-semibold"
+          className="text-xs font-semibold"
         >
           <FontAwesomeIcon
             icon={faRefresh}

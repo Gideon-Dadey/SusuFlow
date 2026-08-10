@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import { PricingAudienceSection } from "@/components/marketing/pricing/pricing-audience-section";
 import { PricingComparisonSection } from "@/components/marketing/pricing/pricing-comparison-section";
+import { PricingFaqSection } from "@/components/marketing/pricing/pricing-faq-section";
+import { PricingHeroSection } from "@/components/marketing/pricing/pricing-hero-section";
 import { PricingPlansSection } from "@/components/marketing/pricing/pricing-plans-section";
+import { PricingRoiSection } from "@/components/marketing/pricing/pricing-roi-section";
 import { PricingTrustStrip } from "@/components/marketing/pricing/pricing-trust-strip";
 import { APP_NAME } from "@/lib/marketing-data";
 
@@ -13,9 +17,13 @@ export const metadata: Metadata = {
 export default function PricingPage() {
   return (
     <>
+      <PricingHeroSection />
       <PricingPlansSection />
       <PricingTrustStrip />
       <PricingComparisonSection />
+      <PricingAudienceSection />
+      <PricingRoiSection />
+      <PricingFaqSection />
     </>
   );
 }

@@ -185,7 +185,7 @@ export default function VerifyAccountScreen() {
         </View>
 
         <Pressable onPress={() => router.replace("/(auth)/login")}>
-          <Text style={[styles.link, { color: colors.primary }]}>
+          <Text style={[styles.link, { color: "#000000" }]}>
             Back to sign in
           </Text>
         </Pressable>

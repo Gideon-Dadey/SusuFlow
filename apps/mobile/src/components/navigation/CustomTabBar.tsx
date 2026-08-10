@@ -14,7 +14,7 @@ import {
 } from "@/constants/tab-bar";
 import { useUiStore } from "@/stores/ui.store";
 import { useTheme } from "@/theme/ThemeProvider";
-import { typography, shadows } from "@/theme/tokens";
+import { typography } from "@/theme/tokens";
 
 interface TabRoute {
   name: string;
@@ -53,7 +53,7 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
 
   const barBg = isDark ? colors.background : colors.card;
   const inactiveColor = colors.mutedForeground;
-  const tabActiveColor = isDark ? colors.foreground : colors.primary;
+  const tabActiveColor = colors.primary;
 
   const handleTabPress = (tab: TabConfig) => {
     if (optionsOpen) {
@@ -71,6 +71,7 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
           paddingBottom: Math.max(insets.bottom, TAB_BAR_MIN_BOTTOM_INSET),
           paddingHorizontal: TAB_BAR_HORIZONTAL_INSET,
           backgroundColor: barBg,
+          borderTopColor: colors.border,
         },
         !isDark && shadows.subtle,
       ]}
@@ -126,6 +127,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     overflow: "visible",
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
   tab: {
     flex: 1,

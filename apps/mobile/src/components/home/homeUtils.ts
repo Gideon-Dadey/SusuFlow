@@ -10,6 +10,13 @@ export function getHomeGreeting(firstName: string): string {
   return `Good evening, ${name}`;
 }
 
+export function getHomeTimeGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 export function formatHomeActivityDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-GH", {
     month: "short",

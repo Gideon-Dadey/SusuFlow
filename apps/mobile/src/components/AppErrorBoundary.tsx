@@ -18,8 +18,21 @@ export class AppErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    if (__DEV__) {
-      console.error("AppErrorBoundary", error, info.componentStack);
+    try {
+      // Lazy require avoids circular imports during boot.
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { monitoring } = require("@/lib/monitoring") as {
+        monitoring: {
+          captureException: (e: unknown, ctx?: Record<string, unknown>) => void;
+        };
+      };
+      monitoring.captureException(error, {
+        componentStack: info.componentStack,
+      });
+    } catch {
+      if (__DEV__) {
+        console.error("AppErrorBoundary", error, info.componentStack);
+      }
     }
   }
 

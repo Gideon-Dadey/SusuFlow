@@ -4,6 +4,8 @@ const KEYS = {
   accessToken: "access_token",
   refreshToken: "refresh_token",
   tenantSlug: "tenant_slug",
+  /** Prefix — full key is `tenant_branding:<slug>` */
+  tenantBranding: "tenant_branding",
   colorScheme: "color_scheme",
   notificationsLastSeenAt: "notifications_last_seen_at",
   expoPushToken: "expo_push_token",

@@ -41,7 +41,7 @@ export function Header({ title, subtitle }: HeaderProps) {
           </div>
           <button
             onClick={handleLogout}
-            className="hidden md:flex items-center justify-center h-9 w-9 rounded-none text-muted-foreground hover:bg-muted"
+            className="hidden md:flex items-center justify-center h-9 w-9 text-muted-foreground hover:bg-muted"
             aria-label="Sign out"
           >
             <LogOut className="h-4 w-4" />
