@@ -23,47 +23,26 @@ export function getServiceWell(
   return getServiceWellFromLegacy(tone, isDark);
 }
 
-/** Tab “More” hub — secondary product & account services (GCB-style). */
+/**
+ * More tab — product & money services only.
+ * Account, KYC, security, and preferences live under My Profile (avatar).
+ */
 export const MORE_SERVICE_ITEMS: ServiceMenuItem[] = [
   {
     id: "history",
     label: "Transaction history",
-    subtitle: "View and search your deposits and withdrawals",
+    subtitle: "Deposits, withdrawals, and receipts",
     icon: "receipt",
-    href: "/transactions",
+    href: "/(tabs)/activity",
     tone: "slate",
   },
   {
     id: "withdraw",
     label: "Withdraw",
-    subtitle: "Request a payout to your mobile money",
+    subtitle: "Request a payout to mobile money",
     icon: "arrow-up-right",
     href: "/(tabs)/withdraw",
     tone: "rose",
-  },
-  {
-    id: "kyc",
-    label: "Identity verification",
-    subtitle: "Ghana Card, passport, and selfie",
-    icon: "shield",
-    href: "/(tabs)/profile/kyc",
-    tone: "mint",
-  },
-  {
-    id: "security",
-    label: "Security",
-    subtitle: "Password, biometrics, and app lock",
-    icon: "smartphone",
-    href: "/(tabs)/profile/security",
-    tone: "blue",
-  },
-  {
-    id: "legal",
-    label: "Legal",
-    subtitle: "View Privacy Policy and Terms of use",
-    icon: "file-text",
-    href: "/(tabs)/profile/about",
-    tone: "teal",
   },
   {
     id: "help",
@@ -74,33 +53,20 @@ export const MORE_SERVICE_ITEMS: ServiceMenuItem[] = [
     tone: "violet",
   },
   {
-    id: "appearance",
-    label: "Appearance",
-    subtitle: "Theme and display preferences",
-    icon: "moon",
-    href: "/(tabs)/profile/appearance",
-    tone: "amber",
-  },
-  {
-    id: "notifications",
-    label: "Notifications",
-    subtitle: "Push, email, and SMS alerts",
-    icon: "bell",
-    href: "/(tabs)/profile/notifications",
-    tone: "blue",
+    id: "legal",
+    label: "Legal",
+    subtitle: "Privacy Policy and Terms of use",
+    icon: "file-text",
+    href: "/(tabs)/profile/about",
+    tone: "teal",
   },
 ];
 
-/** Personal profile menu (home avatar) — SusuFlow copy, bank-style layout. */
+/**
+ * Avatar → My Profile — single account & preferences home.
+ * No overlap with More’s money services.
+ */
 export const MY_PROFILE_ITEMS: ServiceMenuItem[] = [
-  {
-    id: "settings",
-    label: "Settings",
-    subtitle: "Appearance, alerts, and account preferences",
-    icon: "settings",
-    href: "/my-profile/settings",
-    tone: "blue",
-  },
   {
     id: "personal",
     label: "Personal details",
@@ -136,9 +102,17 @@ export const MY_PROFILE_ITEMS: ServiceMenuItem[] = [
   {
     id: "notifications",
     label: "Notifications",
-    subtitle: "Choose how SusuFlow reaches you",
+    subtitle: "Push, email, and SMS alerts",
     icon: "bell",
     href: "/my-profile/notifications",
     tone: "blue",
+  },
+  {
+    id: "appearance",
+    label: "Appearance",
+    subtitle: "Theme and display preferences",
+    icon: "moon",
+    href: "/my-profile/appearance",
+    tone: "amber",
   },
 ];

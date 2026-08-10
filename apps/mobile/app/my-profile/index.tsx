@@ -1,4 +1,4 @@
-import { useRouter, type Href } from "expo-router";
+import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackArrowButton } from "@/components/navigation/BackArrowButton";
@@ -8,70 +8,11 @@ import { ProfileGeometricBackdrop } from "@/components/profile/ProfileGeometricB
 import { useProfileData } from "@/components/settings/useProfileData";
 import { formatLastLoginLabel } from "@/lib/last-login";
 import { useAuthStore } from "@/stores/auth.store";
-import { bankChrome, getWellForIcon } from "@/theme/bankChrome";
+import { bankChrome, getServiceWellFromLegacy } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { spacing, typography } from "@/theme/tokens";
+import { MY_PROFILE_ITEMS } from "@/types/more-services";
 import type { AppIconName } from "@/components/icons/AppIcon";
-
-type MenuDef = {
-  id: string;
-  label: string;
-  subtitle?: string;
-  icon: AppIconName;
-  href?: string;
-  logout?: boolean;
-};
-
-const MENU: MenuDef[] = [
-  {
-    id: "settings",
-    label: "Settings",
-    subtitle: "Appearance, alerts, and account preferences",
-    icon: "settings",
-    href: "/my-profile/settings",
-  },
-  {
-    id: "personal",
-    label: "Personal details",
-    subtitle: "Name, phone, and contact info",
-    icon: "user",
-    href: "/my-profile/personal",
-  },
-  {
-    id: "account",
-    label: "Account overview",
-    subtitle: "Membership, email, and group details",
-    icon: "wallet",
-    href: "/my-profile/account",
-  },
-  {
-    id: "kyc",
-    label: "Identity verification",
-    subtitle: "Verify your ID to unlock deposits and withdrawals",
-    icon: "shield",
-    href: "/my-profile/kyc",
-  },
-  {
-    id: "security",
-    label: "Security",
-    subtitle: "Password, biometrics, and app lock",
-    icon: "smartphone",
-    href: "/my-profile/security",
-  },
-  {
-    id: "notifications",
-    label: "Notifications",
-    subtitle: "Choose how SusuFlow reaches you",
-    icon: "bell",
-    href: "/my-profile/notifications",
-  },
-  {
-    id: "logout",
-    label: "Sign out",
-    icon: "power",
-    logout: true,
-  },
-];
 
 export default function MyProfileScreen() {
   const router = useRouter();
@@ -83,12 +24,13 @@ export default function MyProfileScreen() {
   const lastLoginLabel = formatLastLoginLabel(lastLoginAt);
 
   const pageBg = isDark ? bankChrome.pageDark : bankChrome.pageLight;
-  /** Sticky nav band only — avatar overlaps into the scroll body. */
   const stickyHeight = insets.top + 56;
+  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
+
+  const signOutWell = getServiceWellFromLegacy("rose", isDark);
 
   return (
     <View style={[styles.root, { backgroundColor: pageBg }]}>
-      {/* Sticky geometric header + back — native pin, does not scroll */}
       <View style={[styles.stickyHeader, { height: stickyHeight }]}>
         <ProfileGeometricBackdrop height={stickyHeight} isDark={isDark} />
         <View style={[styles.navRow, { paddingTop: insets.top + 4 }]}>
@@ -129,9 +71,12 @@ export default function MyProfileScreen() {
           ) : null}
         </View>
 
+        <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
+          Account
+        </Text>
         <View style={styles.menu}>
-          {MENU.map((item, index) => {
-            const well = getWellForIcon(item.icon, isDark);
+          {MY_PROFILE_ITEMS.slice(0, 3).map((item, index) => {
+            const well = getServiceWellFromLegacy(item.tone, isDark);
             return (
               <BankMenuRow
                 key={item.id}
@@ -142,14 +87,58 @@ export default function MyProfileScreen() {
                   subtitle: item.subtitle,
                   wellBg: well.bg,
                   wellFg: well.fg,
-                  onPress: item.logout
-                    ? () => void logout()
-                    : () => router.push(item.href as Href),
+                  onPress: () => router.push(item.href),
                 }}
-                showDivider={index < MENU.length - 1}
+                showDivider={index < 2}
               />
             );
           })}
+        </View>
+
+        <Text
+          style={[
+            styles.sectionLabel,
+            styles.sectionLabelSpaced,
+            { color: colors.mutedForeground },
+          ]}
+        >
+          Preferences
+        </Text>
+        <View style={styles.menu}>
+          {MY_PROFILE_ITEMS.slice(3).map((item, index, arr) => {
+            const well = getServiceWellFromLegacy(item.tone, isDark);
+            return (
+              <BankMenuRow
+                key={item.id}
+                item={{
+                  id: item.id,
+                  icon: item.icon,
+                  label: item.label,
+                  subtitle: item.subtitle,
+                  wellBg: well.bg,
+                  wellFg: well.fg,
+                  onPress: () => router.push(item.href),
+                }}
+                showDivider={index < arr.length - 1}
+              />
+            );
+          })}
+        </View>
+
+        <View style={[styles.signOutRule, { backgroundColor: divider }]} />
+
+        <View style={styles.menu}>
+          <BankMenuRow
+            item={{
+              id: "logout",
+              icon: "power" as AppIconName,
+              label: "Sign out",
+              wellBg: signOutWell.bg,
+              wellFg: signOutWell.fg,
+              onPress: () => void logout(),
+            }}
+            showDivider={false}
+          />
         </View>
       </ScrollView>
     </View>
@@ -192,7 +181,24 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     textAlign: "center",
   },
-  menu: {
+  sectionLabel: {
+    fontFamily: typography.fontFamily.medium,
+    fontSize: 12,
+    letterSpacing: 0.4,
+    textTransform: "uppercase",
+    paddingHorizontal: spacing.lg,
     marginTop: spacing.xl,
+    marginBottom: 4,
+  },
+  sectionLabelSpaced: {
+    marginTop: spacing.lg,
+  },
+  menu: {
+    marginTop: 0,
+  },
+  signOutRule: {
+    height: StyleSheet.hairlineWidth,
+    marginTop: spacing.lg,
+    marginHorizontal: spacing.lg,
   },
 });

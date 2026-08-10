@@ -17,7 +17,7 @@ export default function MoreServicesScreen() {
   return (
     <TabScreenLayout
       bankHeader
-      header={<TabScreenHeader title="More Services" onGeometry />}
+      header={<TabScreenHeader title="More" onGeometry />}
     >
       <View style={styles.menu}>
         {MORE_SERVICE_ITEMS.map((item, index) => {
