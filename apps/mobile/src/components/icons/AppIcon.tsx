@@ -1,42 +1,48 @@
 import {
-  Activity,
-  AlertCircle,
-  ArrowDownLeft,
-  ArrowUpRight,
-  Bell,
-  Building2,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  CreditCard,
-  Download,
-  BadgeCheck,
-  CircleHelp,
-  Eye,
-  EyeOff,
-  FileText,
-  Gift,
-  Home,
-  Info,
-  LifeBuoy,
-  LogOut,
-  Menu,
-  Moon,
-  Plus,
-  Receipt,
-  Search,
-  Share2,
-  ShieldCheck,
-  Smartphone,
-  Target,
-  User,
-  UserRound,
-  Users,
-  Wallet,
-  X,
-  type LucideProps,
-} from "lucide-react-native";
+  ArrowCircleUpIcon,
+  ArrowDownLeftIcon,
+  BellIcon,
+  BuildingIcon,
+  CaretDownIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
+  CheckCircleIcon,
+  ClockCounterClockwiseIcon,
+  ClockIcon,
+  CreditCardIcon,
+  DeviceMobileIcon,
+  DownloadSimpleIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  FileTextIcon,
+  FlagIcon,
+  GearSixIcon,
+  GiftIcon,
+  HouseIcon,
+  InfoIcon,
+  LifebuoyIcon,
+  ListBulletsIcon,
+  MagnifyingGlassIcon,
+  MoonIcon,
+  PlusIcon,
+  PowerIcon,
+  QuestionIcon,
+  ReceiptIcon,
+  ShareNetworkIcon,
+  ShieldCheckIcon,
+  SignOutIcon,
+  SlidersHorizontalIcon,
+  SquaresFourIcon,
+  UserCircleIcon,
+  UserIcon,
+  UsersIcon,
+  WalletIcon,
+  WarningCircleIcon,
+  XIcon,
+  type Icon,
+  type IconProps,
+  type IconWeight,
+} from "phosphor-react-native";
 import { useTheme } from "@/theme/ThemeProvider";
 
 export type AppIconName =
@@ -54,10 +60,17 @@ export type AppIconName =
   | "info"
   | "gift"
   | "logout"
+  | "power"
+  | "settings"
+  | "sliders"
   | "receipt"
   | "file-text"
   | "help"
   | "target"
+  | "goals"
+  | "more"
+  | "deposit"
+  | "withdraw"
   | "menu"
   | "chevron-right"
   | "chevron-left"
@@ -77,66 +90,87 @@ export type AppIconName =
   | "download"
   | "share";
 
-const ICON_MAP = {
-  home: Home,
-  users: Users,
-  plus: Plus,
-  activity: Activity,
-  profile: UserRound,
-  wallet: Wallet,
-  user: User,
-  shield: ShieldCheck,
-  bell: Bell,
-  moon: Moon,
-  support: LifeBuoy,
-  info: Info,
-  gift: Gift,
-  logout: LogOut,
-  receipt: Receipt,
-  "file-text": FileText,
-  help: CircleHelp,
-  target: Target,
-  menu: Menu,
-  "chevron-right": ChevronRight,
-  "chevron-left": ChevronLeft,
-  "chevron-down": ChevronDown,
-  "arrow-down-left": ArrowDownLeft,
-  "arrow-up-right": ArrowUpRight,
-  eye: Eye,
-  "eye-off": EyeOff,
-  "badge-check": BadgeCheck,
-  search: Search,
-  "alert-circle": AlertCircle,
-  smartphone: Smartphone,
-  "credit-card": CreditCard,
-  building: Building2,
-  close: X,
-  clock: Clock,
-  download: Download,
-  share: Share2,
-} as const;
+/**
+ * Phosphor icon map — one professional family for Quick Access, tabs, and chrome.
+ */
+const ICON_MAP: Record<AppIconName, Icon> = {
+  home: HouseIcon,
+  users: UsersIcon,
+  plus: PlusIcon,
+  activity: ClockCounterClockwiseIcon,
+  profile: UserCircleIcon,
+  wallet: WalletIcon,
+  deposit: WalletIcon,
+  withdraw: ArrowCircleUpIcon,
+  user: UserIcon,
+  shield: ShieldCheckIcon,
+  bell: BellIcon,
+  moon: MoonIcon,
+  support: LifebuoyIcon,
+  info: InfoIcon,
+  gift: GiftIcon,
+  logout: SignOutIcon,
+  power: PowerIcon,
+  settings: GearSixIcon,
+  sliders: SlidersHorizontalIcon,
+  receipt: ReceiptIcon,
+  "file-text": FileTextIcon,
+  help: QuestionIcon,
+  target: FlagIcon,
+  goals: FlagIcon,
+  more: SquaresFourIcon,
+  menu: ListBulletsIcon,
+  "chevron-right": CaretRightIcon,
+  "chevron-left": CaretLeftIcon,
+  "chevron-down": CaretDownIcon,
+  "arrow-down-left": ArrowDownLeftIcon,
+  "arrow-up-right": ArrowCircleUpIcon,
+  eye: EyeIcon,
+  "eye-off": EyeSlashIcon,
+  "badge-check": CheckCircleIcon,
+  search: MagnifyingGlassIcon,
+  "alert-circle": WarningCircleIcon,
+  smartphone: DeviceMobileIcon,
+  "credit-card": CreditCardIcon,
+  building: BuildingIcon,
+  close: XIcon,
+  clock: ClockIcon,
+  download: DownloadSimpleIcon,
+  share: ShareNetworkIcon,
+};
 
-export interface AppIconProps extends Omit<LucideProps, "color"> {
+export interface AppIconProps extends Omit<IconProps, "color" | "weight"> {
   name: AppIconName;
   size?: number;
   color?: string;
+  /** Phosphor weight. Prefer regular / bold / fill. */
+  weight?: IconWeight;
+  /** @deprecated Lucide strokeWidth — mapped to Phosphor weight. */
   strokeWidth?: number;
+}
+
+function weightFromStroke(strokeWidth?: number): IconWeight {
+  if (strokeWidth == null) return "regular";
+  if (strokeWidth >= 2.25) return "bold";
+  if (strokeWidth <= 1.5) return "light";
+  return "regular";
 }
 
 export function AppIcon({
   name,
   size = 20,
   color,
-  strokeWidth = 1.75,
+  weight,
+  strokeWidth,
   ...rest
 }: AppIconProps) {
   const { colors } = useTheme();
-  const Icon = ICON_MAP[name];
+  const IconComponent = ICON_MAP[name];
   return (
-    <Icon
+    <IconComponent
       size={size}
       color={color ?? colors.foreground}
-      strokeWidth={strokeWidth}
+      weight={weight ?? weightFromStroke(strokeWidth)}
       {...rest}
     />
   );

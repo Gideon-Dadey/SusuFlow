@@ -81,6 +81,13 @@ function RootShell() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="my-profile"
+            options={{
+              presentation: "card",
+              headerShown: false,
+            }}
+          />
         </Stack>
         {isAuthenticated ? <AppLockGate /> : null}
       </AuthGate>

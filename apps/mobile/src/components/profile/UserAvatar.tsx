@@ -6,7 +6,7 @@ import { getAvatarGradient } from "@/lib/avatar-palette";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, typography } from "@/theme/tokens";
 
-export type UserAvatarSize = "sm" | "md" | "lg" | "xl";
+export type UserAvatarSize = "sm" | "md" | "lg" | "xl" | "xxl";
 
 const SIZE_MAP: Record<
   UserAvatarSize,
@@ -16,6 +16,8 @@ const SIZE_MAP: Record<
   md: { dimension: 56, fontSize: 18, badge: 18 },
   lg: { dimension: 80, fontSize: 28, badge: 22 },
   xl: { dimension: 96, fontSize: 34, badge: 24 },
+  /** Profile hero — matches banking app avatar scale */
+  xxl: { dimension: 112, fontSize: 38, badge: 26 },
 };
 
 interface UserAvatarProps {
@@ -38,7 +40,7 @@ export function UserAvatar({
 }: UserAvatarProps) {
   const { colors } = useTheme();
   const [imageFailed, setImageFailed] = useState(false);
-  const spec = SIZE_MAP[size];
+  const spec = SIZE_MAP[size] ?? SIZE_MAP.md;
   const gradient = getAvatarGradient(seed ?? initials);
   const outerSize = spec.dimension;
   const showImage = !!imageUrl && !imageFailed && !loading;

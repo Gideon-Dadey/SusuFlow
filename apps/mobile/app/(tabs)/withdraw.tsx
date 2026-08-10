@@ -1,16 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import {
-  TabScreenDivider,
   TabScreenHeader,
   TabScreenLayout,
   TabScreenSection,
 } from "@/components/layout/TabScreen";
-import { ProfileRow } from "@/components/profile/ProfileSections";
-import type { AppIconName } from "@/components/icons/AppIcon";
+import {
+  MOBILE_MONEY_METHODS,
+  MobileMoneyMark,
+} from "@/components/payments/MobileMoneyMark";
 import { KycActionGate } from "@/components/security/KycActionGate";
 import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
@@ -23,21 +24,17 @@ import {
 import { queryKeys } from "@/lib/query-keys";
 import { formatGhs } from "@/lib/currency";
 import { monitoring } from "@/lib/monitoring";
+import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
 
-const METHODS: { id: string; label: string; icon: AppIconName }[] = [
-  { id: "mtn_momo", label: "MTN MoMo", icon: "smartphone" },
-  { id: "telecel_cash", label: "Telecel Cash", icon: "smartphone" },
-  { id: "airteltigo", label: "AirtelTigo Money", icon: "smartphone" },
-];
-
 export default function WithdrawScreen() {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const queryClient = useQueryClient();
   const [amount, setAmount] = useState("");
   const [phone, setPhone] = useState("");
   const [method, setMethod] = useState("mtn_momo");
+  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   const { sessionKey } = useCustomerSession();
 
@@ -84,7 +81,10 @@ export default function WithdrawScreen() {
   });
 
   return (
-    <TabScreenLayout header={<TabScreenHeader title="Withdraw" />}>
+    <TabScreenLayout
+      header={<TabScreenHeader title="Withdraw" onGeometry showBack />}
+      bankHeader
+    >
       <View style={{ gap: 12 }}>
         <OfflineBanner />
         <KycActionGate actionLabel="withdraw">
@@ -134,24 +134,57 @@ export default function WithdrawScreen() {
           </TabScreenSection>
 
           <TabScreenSection title="Disbursement method">
-            {METHODS.map((item, index) => (
-              <View key={item.id}>
-                {index > 0 ? <TabScreenDivider /> : null}
-                <ProfileRow
-                  icon={item.icon}
-                  label={item.label}
-                  onPress={() => setMethod(item.id)}
-                  right={
+            {MOBILE_MONEY_METHODS.map((item, index) => {
+              const selected = method === item.id;
+              return (
+                <View key={item.id}>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                    onPress={() => setMethod(item.id)}
+                    style={({ pressed }) => [
+                      styles.methodRow,
+                      pressed && styles.pressed,
+                      selected && {
+                        backgroundColor: isDark
+                          ? "rgba(255,255,255,0.04)"
+                          : "rgba(0,0,0,0.03)",
+                      },
+                    ]}
+                  >
+                    <MobileMoneyMark
+                      methodId={item.id}
+                      size={bankChrome.wellSize}
+                    />
+                    <View style={styles.methodCopy}>
+                      <Text
+                        style={[
+                          styles.methodTitle,
+                          { color: colors.foreground },
+                        ]}
+                      >
+                        {item.label}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.methodSubtitle,
+                          { color: colors.mutedForeground },
+                        ]}
+                      >
+                        {item.subtitle}
+                      </Text>
+                    </View>
                     <View
                       style={[
                         styles.radio,
                         {
-                          borderColor:
-                            method === item.id ? colors.primary : colors.border,
+                          borderColor: selected
+                            ? colors.primary
+                            : colors.border,
                         },
                       ]}
                     >
-                      {method === item.id ? (
+                      {selected ? (
                         <View
                           style={[
                             styles.radioFill,
@@ -160,10 +193,18 @@ export default function WithdrawScreen() {
                         />
                       ) : null}
                     </View>
-                  }
-                />
-              </View>
-            ))}
+                  </Pressable>
+                  {index < MOBILE_MONEY_METHODS.length - 1 ? (
+                    <View
+                      style={[
+                        styles.methodDivider,
+                        { backgroundColor: divider },
+                      ]}
+                    />
+                  ) : null}
+                </View>
+              );
+            })}
           </TabScreenSection>
 
           <View style={styles.ctaWrap}>
@@ -207,6 +248,36 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: radius.full,
+  },
+  methodRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: bankChrome.rowGap,
+    paddingVertical: bankChrome.rowPaddingY,
+    paddingHorizontal: spacing.xs,
+    minHeight: bankChrome.rowMinHeight,
+  },
+  pressed: {
+    opacity: 0.86,
+  },
+  methodCopy: {
+    flex: 1,
+    gap: 3,
+    minWidth: 0,
+  },
+  methodTitle: {
+    fontFamily: typography.fontFamily.semibold,
+    fontSize: bankChrome.labelSize,
+    letterSpacing: -0.2,
+  },
+  methodSubtitle: {
+    fontFamily: typography.fontFamily.regular,
+    fontSize: bankChrome.subtitleSize,
+    lineHeight: 17,
+  },
+  methodDivider: {
+    height: StyleSheet.hairlineWidth,
+    marginLeft: bankChrome.wellSize + bankChrome.rowGap + spacing.xs,
   },
   ctaWrap: {
     paddingHorizontal: spacing.xs,

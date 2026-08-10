@@ -149,6 +149,14 @@ export const spacing = {
   xxl: 24,
 } as const;
 
+/**
+ * Canonical page chrome — side inset matches Goals / TabScreenLayout.
+ * Use for screen shells only (not chips, pills, or in-card padding).
+ */
+export const layout = {
+  pageGutter: spacing.lg,
+} as const;
+
 export const typography = {
   fontFamily: {
     regular: "Geist_400Regular",

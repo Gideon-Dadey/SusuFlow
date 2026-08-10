@@ -3,6 +3,7 @@ import { HomeSparkline } from "@/components/home/HomeSparkline";
 import { formatGhs } from "@/lib/currency";
 import type { ActivityPeriodInsights } from "@/components/activity/transactionUtils";
 import { ACTIVITY_PERIOD_LABELS } from "@/components/activity/transactionUtils";
+import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { CardSurface } from "@/components/ui/CardSurface";
 import { radius, spacing, typography } from "@/theme/tokens";
@@ -22,7 +23,7 @@ function formatDelta(delta: number | null): string | null {
 export function ActivityCashFlowPanel({
   insights,
 }: ActivityCashFlowPanelProps) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const deltaLabel = formatDelta(insights.periodDeltaPct);
   const deltaPositive =
     insights.periodDeltaPct !== null && insights.periodDeltaPct >= 0;
@@ -42,7 +43,7 @@ export function ActivityCashFlowPanel({
               style={[
                 styles.delta,
                 {
-                  color: deltaPositive ? colors.success : colors.destructive,
+                  color: deltaPositive ? colors.foreground : colors.destructive,
                 },
               ]}
             >
@@ -67,13 +68,22 @@ export function ActivityCashFlowPanel({
         ) : null}
       </View>
 
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      <View
+        style={[
+          styles.divider,
+          {
+            backgroundColor: isDark
+              ? bankChrome.dividerDark
+              : bankChrome.dividerLight,
+          },
+        ]}
+      />
 
       <View style={styles.grid}>
         <Metric
           label="Money in"
           value={formatGhs(insights.moneyIn)}
-          valueColor={colors.success}
+          valueColor={colors.foreground}
         />
         <Metric
           label="Money out"

@@ -31,7 +31,7 @@ export default function TabLayout() {
             options={{ title: "Withdraw", href: null }}
           />
           <Tabs.Screen name="activity" options={{ title: "Activity" }} />
-          <Tabs.Screen name="profile" options={{ title: "Profile" }} />
+          <Tabs.Screen name="profile" options={{ title: "More" }} />
         </Tabs>
         <NotificationSync />
         <FinancialSessionSync />

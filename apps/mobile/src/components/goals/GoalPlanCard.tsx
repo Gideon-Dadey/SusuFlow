@@ -5,8 +5,8 @@ import {
   formatPlanAmountRange,
   formatPlanFrequency,
 } from "@/components/goals/goalUtils";
-import { getIconAccent } from "@/lib/icon-accents";
 import type { SavingsPlan } from "@/lib/api";
+import { bankChrome, getBankWell } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
 
@@ -18,7 +18,7 @@ interface GoalPlanCardProps {
 
 export function GoalPlanCard({ plan, enrolled, onPress }: GoalPlanCardProps) {
   const { colors, isDark } = useTheme();
-  const accent = getIconAccent("target", isDark);
+  const well = getBankWell("orange", isDark);
 
   return (
     <CardSurface
@@ -33,8 +33,8 @@ export function GoalPlanCard({ plan, enrolled, onPress }: GoalPlanCardProps) {
           pressed && !enrolled && styles.pressed,
         ]}
       >
-        <View style={[styles.iconWrap, { backgroundColor: accent.bg }]}>
-          <AppIcon name="target" size={18} color={accent.fg} />
+        <View style={[styles.iconWrap, { backgroundColor: well.bg }]}>
+          <AppIcon name="target" size={18} color={well.fg} strokeWidth={2} />
         </View>
 
         <View style={styles.copy}>
@@ -101,9 +101,9 @@ const styles = StyleSheet.create({
     opacity: 0.86,
   },
   iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
+    width: bankChrome.wellSize,
+    height: bankChrome.wellSize,
+    borderRadius: bankChrome.wellSize / 2,
     alignItems: "center",
     justifyContent: "center",
   },

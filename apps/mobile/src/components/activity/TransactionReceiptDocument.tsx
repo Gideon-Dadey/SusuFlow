@@ -6,6 +6,7 @@ import {
   type ReceiptDocumentData,
   type ReceiptSettlementTone,
 } from "@susuflow/shared/client";
+import { bankChrome, getBankWell, type BankWellTone } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
 
@@ -14,25 +15,16 @@ interface TransactionReceiptDocumentProps {
   logoUrl?: string | null;
 }
 
-const TONE: Record<
-  ReceiptSettlementTone,
-  { ink: string; wash: string; label: string }
-> = {
-  settled: {
-    ink: "#047857",
-    wash: "rgba(16, 185, 129, 0.12)",
-    label: "Settled",
-  },
-  pending: {
-    ink: "#B45309",
-    wash: "rgba(245, 158, 11, 0.14)",
-    label: "Pending",
-  },
-  failed: {
-    ink: "#BE123C",
-    wash: "rgba(244, 63, 94, 0.12)",
-    label: "Failed",
-  },
+const TONE_KEY: Record<ReceiptSettlementTone, BankWellTone> = {
+  settled: "mint",
+  pending: "amber",
+  failed: "rose",
+};
+
+const TONE_LABEL: Record<ReceiptSettlementTone, string> = {
+  settled: "Settled",
+  pending: "Pending",
+  failed: "Failed",
 };
 
 function MetaRow({
@@ -46,14 +38,15 @@ function MetaRow({
   mono?: boolean;
   last?: boolean;
 }) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
+  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
   return (
     <View
       style={[
         styles.metaRow,
         !last && {
           borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: colors.border,
+          borderBottomColor: divider,
         },
       ]}
     >
@@ -80,32 +73,30 @@ function MetaRow({
 }
 
 function DashedRule() {
-  const { colors } = useTheme();
+  const { isDark } = useTheme();
+  const bit = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
   return (
     <View style={styles.dashTrack} accessibilityElementsHidden>
       {Array.from({ length: 28 }, (_, i) => (
-        <View
-          key={i}
-          style={[styles.dashBit, { backgroundColor: colors.border }]}
-        />
+        <View key={i} style={[styles.dashBit, { backgroundColor: bit }]} />
       ))}
     </View>
   );
 }
 
 /**
- * Official electronic receipt — bank-slip hierarchy:
- * brand → amount → status → details → verification.
+ * Official electronic receipt — bank-slip hierarchy with bankChrome tokens.
  */
 export function TransactionReceiptDocument({
   document: doc,
   logoUrl,
 }: TransactionReceiptDocumentProps) {
   const { colors, isDark } = useTheme();
-  const tone = TONE[doc.settlementTone];
-  const paper = isDark ? "#141414" : "#FFFEFB";
-  const paperBorder = isDark ? "rgba(255,255,255,0.10)" : "rgba(15,23,42,0.08)";
-  const inkSoft = isDark ? "rgba(255,255,255,0.55)" : "#64748B";
+  const well = getBankWell(TONE_KEY[doc.settlementTone], isDark);
+  const shieldWell = getBankWell("olive", isDark);
+  const paper = isDark ? "#121212" : "#FFFEFB";
+  const paperBorder = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
+  const inkSoft = colors.mutedForeground;
 
   const openVerifyUrl = async () => {
     await WebBrowser.openBrowserAsync(doc.verifyUrl);
@@ -179,10 +170,10 @@ export function TransactionReceiptDocument({
         <Text style={[styles.heroAmount, { color: colors.heading }]}>
           {doc.amountFormatted}
         </Text>
-        <View style={[styles.statusPill, { backgroundColor: tone.wash }]}>
-          <View style={[styles.statusDot, { backgroundColor: tone.ink }]} />
-          <Text style={[styles.statusText, { color: tone.ink }]}>
-            {tone.label} · {doc.statusLabel}
+        <View style={[styles.statusPill, { backgroundColor: well.bg }]}>
+          <View style={[styles.statusDot, { backgroundColor: well.fg }]} />
+          <Text style={[styles.statusText, { color: well.fg }]}>
+            {TONE_LABEL[doc.settlementTone]} · {doc.statusLabel}
           </Text>
         </View>
         <Text style={[styles.serviceLine, { color: colors.mutedForeground }]}>
@@ -241,10 +232,10 @@ export function TransactionReceiptDocument({
             </Text>
           </View>
           <View style={styles.settleRow}>
-            <Text style={[styles.settleLabel, { color: tone.ink }]}>
+            <Text style={[styles.settleLabel, { color: well.fg }]}>
               {doc.settlementLabel}
             </Text>
-            <Text style={[styles.settleValueStrong, { color: tone.ink }]}>
+            <Text style={[styles.settleValueStrong, { color: well.fg }]}>
               {doc.amountFormatted}
             </Text>
           </View>
@@ -279,16 +270,14 @@ export function TransactionReceiptDocument({
         >
           <View style={styles.verifyTop}>
             <View
-              style={[
-                styles.verifyIcon,
-                {
-                  backgroundColor: isDark
-                    ? "rgba(255,255,255,0.08)"
-                    : "rgba(15,23,42,0.06)",
-                },
-              ]}
+              style={[styles.verifyIcon, { backgroundColor: shieldWell.bg }]}
             >
-              <AppIcon name="shield" size={16} color={colors.foreground} />
+              <AppIcon
+                name="shield"
+                size={16}
+                color={shieldWell.fg}
+                strokeWidth={2}
+              />
             </View>
             <View style={styles.verifyCopy}>
               <Text style={[styles.verifyTitle, { color: colors.foreground }]}>
@@ -538,9 +527,9 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   verifyIcon: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
+    width: bankChrome.wellSize,
+    height: bankChrome.wellSize,
+    borderRadius: bankChrome.wellSize / 2,
     alignItems: "center",
     justifyContent: "center",
   },

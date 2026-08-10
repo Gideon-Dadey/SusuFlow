@@ -66,22 +66,30 @@ export function HomeBalanceCard({
     <>
       <CardSurface innerStyle={styles.card}>
         <View style={styles.topRow}>
-          <View style={styles.labelRow}>
-            <Text style={[styles.label, { color: colors.mutedForeground }]}>
-              Total savings
-            </Text>
-            <Pressable
-              onPress={() => setVisible((v) => !v)}
-              hitSlop={12}
-              accessibilityLabel={visible ? "Hide balance" : "Show balance"}
-              style={({ pressed }) => pressed && styles.pressed}
+          <View style={styles.identity}>
+            <Text
+              style={[styles.accountName, { color: colors.foreground }]}
+              numberOfLines={1}
             >
-              <AppIcon
-                name={visible ? "eye" : "eye-off"}
-                size={15}
-                color={colors.mutedForeground}
-              />
-            </Pressable>
+              {groupName || "Savings"}
+            </Text>
+            <View style={styles.labelRow}>
+              <Text style={[styles.label, { color: colors.mutedForeground }]}>
+                Available balance
+              </Text>
+              <Pressable
+                onPress={() => setVisible((v) => !v)}
+                hitSlop={12}
+                accessibilityLabel={visible ? "Hide balance" : "Show balance"}
+                style={({ pressed }) => pressed && styles.pressed}
+              >
+                <AppIcon
+                  name={visible ? "eye" : "eye-off"}
+                  size={15}
+                  color={colors.mutedForeground}
+                />
+              </Pressable>
+            </View>
           </View>
 
           <Pressable
@@ -125,8 +133,8 @@ export function HomeBalanceCard({
                     {
                       backgroundColor: growthPositive
                         ? isDark
-                          ? homeChrome.mintDarkWell
-                          : homeChrome.mintSoft
+                          ? homeChrome.growthDarkWell
+                          : homeChrome.growthSoft
                         : isDark
                           ? "rgba(225, 29, 72, 0.16)"
                           : "#FFF1F2",
@@ -138,7 +146,9 @@ export function HomeBalanceCard({
                       styles.growthValue,
                       {
                         color: growthPositive
-                          ? homeChrome.mintInk
+                          ? isDark
+                            ? "#E2E8F0"
+                            : homeChrome.growthInk
                           : colors.destructive,
                       },
                     ]}
@@ -164,7 +174,7 @@ export function HomeBalanceCard({
             style={[styles.groupValue, { color: colors.mutedForeground }]}
             numberOfLines={1}
           >
-            {groupName}
+            Your susu group
           </Text>
         </View>
       </CardSurface>
@@ -213,9 +223,7 @@ export function HomeBalanceCard({
                     style={[
                       styles.menuOptionText,
                       {
-                        color: selected
-                          ? homeChrome.mintInk
-                          : colors.foreground,
+                        color: selected ? colors.foreground : colors.foreground,
                       },
                     ]}
                   >
@@ -225,7 +233,7 @@ export function HomeBalanceCard({
                     <AppIcon
                       name="badge-check"
                       size={18}
-                      color={homeChrome.mint}
+                      color={colors.primary}
                     />
                   ) : null}
                 </Pressable>
@@ -247,9 +255,19 @@ const styles = StyleSheet.create({
   },
   topRow: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     gap: spacing.sm,
+  },
+  identity: {
+    flex: 1,
+    gap: 4,
+    minWidth: 0,
+  },
+  accountName: {
+    fontFamily: typography.roles.title,
+    fontSize: typography.size.base,
+    letterSpacing: -0.2,
   },
   labelRow: {
     flexDirection: "row",
@@ -259,8 +277,7 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: typography.roles.caption,
     fontSize: typography.size.xs,
-    letterSpacing: 0.35,
-    textTransform: "uppercase",
+    letterSpacing: 0.2,
   },
   periodPill: {
     flexDirection: "row",

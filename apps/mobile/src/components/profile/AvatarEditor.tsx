@@ -9,7 +9,10 @@ import {
   Text,
   View,
 } from "react-native";
-import { UserAvatar } from "@/components/profile/UserAvatar";
+import {
+  UserAvatar,
+  type UserAvatarSize,
+} from "@/components/profile/UserAvatar";
 import {
   pickAndCompressAvatar,
   presentAvatarActions,
@@ -20,20 +23,28 @@ import { queryKeys } from "@/lib/query-keys";
 import { useAuthStore } from "@/stores/auth.store";
 import { useTheme } from "@/theme/ThemeProvider";
 import { homeChrome } from "@/components/home/homeChrome";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { spacing, typography } from "@/theme/tokens";
 
 interface AvatarEditorProps {
   initials: string;
   displayName: string;
   imageUrl?: string | null;
-  size?: "lg" | "xl";
+  size?: UserAvatarSize;
+  /** Show the text link under the avatar (default true). */
+  showActionLabel?: boolean;
+  /** Banking profile uses a yellow “+”; account screens keep camera. */
+  badgeVariant?: "camera" | "plus";
 }
+
+const PLUS_YELLOW = "#F5C518";
 
 export function AvatarEditor({
   initials,
   displayName,
   imageUrl,
   size = "xl",
+  showActionLabel = true,
+  badgeVariant = "camera",
 }: AvatarEditorProps) {
   const { colors, isDark } = useTheme();
   const queryClient = useQueryClient();
@@ -100,7 +111,9 @@ export function AvatarEditor({
     });
   };
 
+  const isPlus = badgeVariant === "plus";
   const camBg = isDark ? "rgba(255,255,255,0.14)" : colors.card;
+  const badgeSize = isPlus ? 28 : 30;
 
   return (
     <View style={styles.wrap}>
@@ -121,14 +134,24 @@ export function AvatarEditor({
         />
         <View
           style={[
-            styles.cameraBadge,
+            styles.badge,
             {
-              backgroundColor: camBg,
+              width: badgeSize,
+              height: badgeSize,
+              borderRadius: badgeSize / 2,
+              backgroundColor: isPlus ? PLUS_YELLOW : camBg,
+              borderWidth: isPlus ? 2 : 0,
+              borderColor: isDark ? "#000000" : "#FFFFFF",
             },
           ]}
         >
           {busy ? (
-            <ActivityIndicator size="small" color={homeChrome.link} />
+            <ActivityIndicator
+              size="small"
+              color={isPlus ? "#111" : homeChrome.link}
+            />
+          ) : isPlus ? (
+            <FontAwesome6 name="plus" size={12} color="#111111" solid />
           ) : (
             <FontAwesome6
               name="camera"
@@ -140,21 +163,23 @@ export function AvatarEditor({
         </View>
       </Pressable>
 
-      <Pressable
-        accessibilityRole="button"
-        onPress={openMenu}
-        disabled={busy}
-        hitSlop={8}
-      >
-        <Text
-          style={[
-            styles.action,
-            { color: isDark ? homeChrome.linkDark : homeChrome.link },
-          ]}
+      {showActionLabel ? (
+        <Pressable
+          accessibilityRole="button"
+          onPress={openMenu}
+          disabled={busy}
+          hitSlop={8}
         >
-          {imageUrl ? "Change photo" : "Add photo"}
-        </Text>
-      </Pressable>
+          <Text
+            style={[
+              styles.action,
+              { color: isDark ? homeChrome.linkDark : homeChrome.link },
+            ]}
+          >
+            {imageUrl ? "Change photo" : "Add photo"}
+          </Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -164,13 +189,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.sm,
   },
-  cameraBadge: {
+  badge: {
     position: "absolute",
     right: 2,
     bottom: 2,
-    width: 30,
-    height: 30,
-    borderRadius: radius.full,
     alignItems: "center",
     justifyContent: "center",
   },

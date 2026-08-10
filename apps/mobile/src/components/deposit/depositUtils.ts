@@ -1,4 +1,5 @@
 import type { AppIconName } from "@/components/icons/AppIcon";
+import { MOBILE_MONEY_METHODS } from "@/components/payments/MobileMoneyMark";
 import {
   GHANA_BANKS,
   findGhanaBank,
@@ -20,27 +21,13 @@ export interface DepositMethodOption {
 }
 
 export const DEPOSIT_METHODS: DepositMethodOption[] = [
-  {
-    id: "mtn_momo",
-    label: "MTN MoMo",
-    subtitle: "Approve on your MTN wallet",
-    icon: "smartphone",
-    group: "momo",
-  },
-  {
-    id: "telecel_cash",
-    label: "Telecel Cash",
-    subtitle: "Approve on Telecel Cash",
-    icon: "smartphone",
-    group: "momo",
-  },
-  {
-    id: "airteltigo",
-    label: "AirtelTigo Money",
-    subtitle: "Approve on AirtelTigo Money",
-    icon: "smartphone",
-    group: "momo",
-  },
+  ...MOBILE_MONEY_METHODS.map((item) => ({
+    id: item.id,
+    label: item.label,
+    subtitle: item.subtitle,
+    icon: "smartphone" as AppIconName,
+    group: "momo" as const,
+  })),
   {
     id: "bank_transfer",
     label: "Bank transfer",

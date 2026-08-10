@@ -1,28 +1,28 @@
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { AppIcon } from "@/components/icons/AppIcon";
 import {
   SettingRow,
   openSupportEmail,
 } from "@/components/profile/ProfileSections";
 import { SettingsPanel } from "@/components/settings/SettingsDetailLayout";
-import { SettingsDivider } from "@/components/settings/SettingsGroup";
 import {
   getSupportEmail,
   getSupportPhone,
   getSupportWhatsApp,
 } from "@/lib/config";
+import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, typography } from "@/theme/tokens";
 
 const FAQ_ITEMS = [
   {
     question: "How do I make a deposit?",
-    answer: "Tap the green Deposit button on your home screen or tab bar.",
+    answer:
+      "Use Deposit from the tab bar, Quick access on Home, or the Deposit FAB.",
   },
   {
     question: "When can I withdraw?",
-    answer:
-      "Open Withdraw from Quick Actions on home or from your profile to request a payout.",
+    answer: "Open Withdraw from Quick access on Home to request a payout.",
   },
   {
     question: "Is my money safe?",
@@ -32,10 +32,18 @@ const FAQ_ITEMS = [
 ];
 
 export function HelpSettingsContent() {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const supportEmail = getSupportEmail();
   const supportPhone = getSupportPhone();
   const supportWhatsApp = getSupportWhatsApp();
+
+  /** Light: solid black CTA. Dark: raised charcoal card so it separates from the page. */
+  const cardBg = isDark ? "#1A1A1A" : "#000000";
+  const cardBorder = isDark ? bankChrome.dividerDark : "transparent";
+  const subtitleColor = isDark
+    ? "rgba(255,255,255,0.72)"
+    : "rgba(255,255,255,0.85)";
+  const iconWell = isDark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.18)";
 
   return (
     <>
@@ -45,22 +53,26 @@ export function HelpSettingsContent() {
         style={({ pressed }) => [
           styles.supportCard,
           {
-            backgroundColor: colors.primary,
+            backgroundColor: cardBg,
+            borderColor: cardBorder,
+            borderWidth: isDark ? StyleSheet.hairlineWidth : 0,
             opacity: pressed ? 0.92 : 1,
           },
         ]}
       >
-        <View style={styles.supportIcon}>
-          <Ionicons name="chatbubbles" size={22} color="#ffffff" />
+        <View style={[styles.supportIcon, { backgroundColor: iconWell }]}>
+          <AppIcon name="support" size={22} color="#FFFFFF" weight="fill" />
         </View>
         <View style={styles.supportCopy}>
           <Text style={styles.supportTitle}>Contact support</Text>
-          <Text style={styles.supportSubtitle}>{supportEmail}</Text>
+          <Text style={[styles.supportSubtitle, { color: subtitleColor }]}>
+            {supportEmail}
+          </Text>
         </View>
-        <Ionicons
-          name="chevron-forward"
+        <AppIcon
+          name="chevron-right"
           size={18}
-          color="rgba(255,255,255,0.8)"
+          color={isDark ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.8)"}
         />
       </Pressable>
 
@@ -71,12 +83,12 @@ export function HelpSettingsContent() {
           subtitle="Mon–Fri, 8am–6pm GMT"
           onPress={() => Linking.openURL(`tel:${supportPhone}`)}
         />
-        <SettingsDivider />
         <SettingRow
           icon="logo-whatsapp"
           title="WhatsApp"
           subtitle="Chat with our team"
           onPress={() => Linking.openURL(`https://wa.me/${supportWhatsApp}`)}
+          showDivider={false}
         />
       </SettingsPanel>
 
@@ -117,7 +129,6 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: radius.lg,
-    backgroundColor: "rgba(255,255,255,0.18)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -128,12 +139,11 @@ const styles = StyleSheet.create({
   supportTitle: {
     fontFamily: typography.fontFamily.bold,
     fontSize: typography.size.sm,
-    color: "#ffffff",
+    color: "#FFFFFF",
   },
   supportSubtitle: {
     fontFamily: typography.fontFamily.regular,
     fontSize: typography.size.xs,
-    color: "rgba(255,255,255,0.85)",
   },
   faqHeading: {
     fontFamily: typography.fontFamily.semibold,

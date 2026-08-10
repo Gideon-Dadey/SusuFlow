@@ -1,58 +1,58 @@
 /**
- * Home-only chrome — soft American-fintech accents without changing global primary.
- * Cool paper background + emerald money signal + pastel action wells.
+ * Home chrome — neutral banking accents (no mint/teal “fintech green”).
+ * Aligns with bankChrome while keeping home-only promo gradients.
  */
 export const homeChrome = {
-  /** Matches global light page — pure white */
   pageLight: "#FFFFFF",
-  pageDark: "#050505",
+  pageDark: "#000000",
 
-  /** Money / growth */
-  mint: "#059669",
-  mintSoft: "#ECFDF5",
-  mintInk: "#047857",
-  mintDarkWell: "rgba(16, 185, 129, 0.16)",
+  /** Subtle growth signal — cool slate, not emerald */
+  growth: "#64748B",
+  growthSoft: "#F1F5F9",
+  growthInk: "#334155",
+  growthDarkWell: "rgba(148, 163, 184, 0.18)",
 
-  /** Primary CTA on home */
-  cta: ["#0D9488", "#059669"] as const,
-  ctaPressed: "#0F766E",
-
-  /** Soft action wells (light) */
+  /** Soft action wells */
   wells: {
-    wallet: { bg: "#ECFDF5", fg: "#047857" },
-    "arrow-up-right": { bg: "#FFF1F2", fg: "#BE123C" },
-    target: { bg: "#FFF7ED", fg: "#C2410C" },
-    activity: { bg: "#EFF6FF", fg: "#1D4ED8" },
-    "file-text": { bg: "#F0FDFA", fg: "#0F766E" },
-    receipt: { bg: "#F8FAFC", fg: "#334155" },
+    wallet: { bg: "#E2E8F0", fg: "#1E293B" },
+    deposit: { bg: "#E2E8F0", fg: "#1E293B" },
+    withdraw: { bg: "#FEE2E2", fg: "#991B1B" },
+    "arrow-up-right": { bg: "#FEE2E2", fg: "#991B1B" },
+    target: { bg: "#FFEDD5", fg: "#9A3412" },
+    goals: { bg: "#FFEDD5", fg: "#9A3412" },
+    activity: { bg: "#DBEAFE", fg: "#1E40AF" },
+    "file-text": { bg: "#E2E8F0", fg: "#334155" },
+    receipt: { bg: "#F1F5F9", fg: "#475569" },
   },
 
-  /** Soft action wells (dark) */
   wellsDark: {
-    wallet: { bg: "rgba(16, 185, 129, 0.18)", fg: "#6EE7B7" },
-    "arrow-up-right": { bg: "rgba(244, 63, 94, 0.18)", fg: "#FDA4AF" },
-    target: { bg: "rgba(249, 115, 22, 0.18)", fg: "#FDBA74" },
-    activity: { bg: "rgba(59, 130, 246, 0.18)", fg: "#93C5FD" },
-    "file-text": { bg: "rgba(20, 184, 166, 0.18)", fg: "#5EEAD4" },
-    receipt: { bg: "rgba(148, 163, 184, 0.16)", fg: "#E2E8F0" },
+    wallet: { bg: "rgba(148, 163, 184, 0.22)", fg: "#E2E8F0" },
+    deposit: { bg: "rgba(148, 163, 184, 0.22)", fg: "#E2E8F0" },
+    withdraw: { bg: "rgba(248, 113, 113, 0.2)", fg: "#FECACA" },
+    "arrow-up-right": { bg: "rgba(248, 113, 113, 0.2)", fg: "#FECACA" },
+    target: { bg: "rgba(251, 146, 60, 0.22)", fg: "#FED7AA" },
+    goals: { bg: "rgba(251, 146, 60, 0.22)", fg: "#FED7AA" },
+    activity: { bg: "rgba(96, 165, 250, 0.22)", fg: "#BFDBFE" },
+    "file-text": { bg: "rgba(148, 163, 184, 0.2)", fg: "#E2E8F0" },
+    receipt: { bg: "rgba(148, 163, 184, 0.16)", fg: "#CBD5E1" },
   },
 
-  /** Promo gradients — bright, distinct, not monochrome */
+  /** Promo washes — blue / slate / warm, not teal-green */
   promos: {
     light: {
-      deposit: ["#0F766E", "#14B8A6"] as const,
+      deposit: ["#1E293B", "#334155"] as const,
       grow: ["#1D4ED8", "#3B82F6"] as const,
-      goals: ["#C2410C", "#F59E0B"] as const,
+      goals: ["#9A3412", "#EA580C"] as const,
     },
     dark: {
-      deposit: ["#064E3B", "#0F766E"] as const,
+      deposit: ["#0F172A", "#1E293B"] as const,
       grow: ["#1E3A8A", "#2563EB"] as const,
       goals: ["#7C2D12", "#C2410C"] as const,
     },
   },
 
-  link: "#0D9488",
-  linkDark: "#2DD4BF",
+  link: "#334155",
+  linkDark: "#CBD5E1",
 } as const;
 
 export type HomeWellIcon = keyof typeof homeChrome.wells;

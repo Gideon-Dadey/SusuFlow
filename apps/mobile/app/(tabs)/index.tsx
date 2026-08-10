@@ -5,7 +5,6 @@ import { RefreshControl, StyleSheet, Text, View } from "react-native";
 import { TransactionReceiptSheet } from "@/components/activity/TransactionReceiptSheet";
 import { HomeActionGrid } from "@/components/home/HomeActionGrid";
 import { HomeBalanceCard } from "@/components/home/HomeBalanceCard";
-import { HomeDepositButton } from "@/components/home/HomeDepositButton";
 import { HomeHeader } from "@/components/home/HomeHeader";
 import { HomeKycBanner } from "@/components/home/HomeKycBanner";
 import { HomePromoCarousel } from "@/components/home/HomePromoCarousel";
@@ -195,38 +194,27 @@ export default function HomeScreen() {
           onActivity={() => router.push("/(tabs)/activity")}
         />
 
-        <HomeDepositButton onPress={() => router.push("/(tabs)/deposit")} />
-
         <HomeActionGrid
+          onViewAll={() => router.push("/(tabs)/profile")}
           actions={[
             {
               label: "Deposit",
-              icon: "wallet",
+              icon: "deposit",
               onPress: () => router.push("/(tabs)/deposit"),
             },
             {
               label: "Withdraw",
-              icon: "arrow-up-right",
+              icon: "withdraw",
               onPress: () => router.push("/(tabs)/withdraw"),
             },
             {
               label: "Goals",
-              icon: "target",
+              icon: "goals",
               onPress: () => router.push("/(tabs)/plans"),
             },
             {
               label: "Activity",
               icon: "activity",
-              onPress: () => router.push("/(tabs)/activity"),
-            },
-            {
-              label: "Statements",
-              icon: "file-text",
-              onPress: () => router.push("/transactions"),
-            },
-            {
-              label: "History",
-              icon: "receipt",
               onPress: () => router.push("/(tabs)/activity"),
             },
           ]}

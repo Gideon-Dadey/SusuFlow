@@ -1,4 +1,7 @@
-import { AppIcon } from "@/components/icons/AppIcon";
+import {
+  PaymentMethodMark,
+  hasPaymentMethodMark,
+} from "@/components/payments/MobileMoneyMark";
 import { useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import {
@@ -6,6 +9,8 @@ import {
   DEPOSIT_METHODS,
   isDepositBankTransfer,
 } from "@/components/deposit/depositUtils";
+import { AppIcon } from "@/components/icons/AppIcon";
+import { bankChrome, getWellForIcon } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
 
@@ -25,6 +30,7 @@ export function DepositMethodStep({
   const { colors, isDark } = useTheme();
   const [bankQuery, setBankQuery] = useState("");
   const showBanks = isDepositBankTransfer(method);
+  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   const filteredBanks = useMemo(() => {
     const q = bankQuery.trim().toLowerCase();
@@ -46,65 +52,74 @@ export function DepositMethodStep({
       </Text>
 
       <View style={styles.list}>
-        {DEPOSIT_METHODS.map((item) => {
+        {DEPOSIT_METHODS.map((item, index) => {
           const selected = method === item.id;
-          const iconBg = selected
-            ? isDark
-              ? "rgba(16, 185, 129, 0.14)"
-              : colors.primary50
-            : colors.muted;
+          const well = getWellForIcon(item.icon, isDark);
+          const isMarked = hasPaymentMethodMark(item.id);
 
           return (
-            <Pressable
-              key={item.id}
-              accessibilityRole="button"
-              accessibilityState={{ selected }}
-              onPress={() => onSelectMethod(item.id)}
-              style={({ pressed }) => [
-                styles.card,
-                {
-                  backgroundColor: colors.card,
-                  borderColor: selected ? colors.primary : colors.border,
-                },
-                selected && styles.cardSelected,
-                pressed && styles.pressed,
-              ]}
-            >
-              <View style={[styles.iconWrap, { backgroundColor: iconBg }]}>
-                <AppIcon
-                  name={item.icon}
-                  size={18}
-                  color={selected ? colors.primary : colors.mutedForeground}
-                />
-              </View>
-              <View style={styles.copy}>
-                <Text style={[styles.title, { color: colors.foreground }]}>
-                  {item.label}
-                </Text>
-                <Text
-                  style={[styles.subtitle, { color: colors.mutedForeground }]}
-                >
-                  {item.subtitle}
-                </Text>
-              </View>
-              <View
-                style={[
-                  styles.radio,
-                  {
-                    borderColor: selected ? colors.primary : colors.border,
+            <View key={item.id}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                onPress={() => onSelectMethod(item.id)}
+                style={({ pressed }) => [
+                  styles.row,
+                  pressed && styles.pressed,
+                  selected && {
+                    backgroundColor: isDark
+                      ? "rgba(255,255,255,0.04)"
+                      : "rgba(0,0,0,0.03)",
                   },
                 ]}
               >
-                {selected ? (
-                  <View
-                    style={[
-                      styles.radioFill,
-                      { backgroundColor: colors.primary },
-                    ]}
+                {isMarked ? (
+                  <PaymentMethodMark
+                    methodId={item.id}
+                    size={bankChrome.wellSize}
                   />
-                ) : null}
-              </View>
-            </Pressable>
+                ) : (
+                  <View style={[styles.iconWrap, { backgroundColor: well.bg }]}>
+                    <AppIcon
+                      name={item.icon}
+                      size={17}
+                      color={well.fg}
+                      strokeWidth={2}
+                    />
+                  </View>
+                )}
+                <View style={styles.copy}>
+                  <Text style={[styles.title, { color: colors.foreground }]}>
+                    {item.label}
+                  </Text>
+                  <Text
+                    style={[styles.subtitle, { color: colors.mutedForeground }]}
+                  >
+                    {item.subtitle}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    styles.radio,
+                    {
+                      borderColor: selected ? colors.primary : divider,
+                    },
+                  ]}
+                >
+                  {selected ? (
+                    <View
+                      style={[
+                        styles.radioFill,
+                        { backgroundColor: colors.primary },
+                      ]}
+                    />
+                  ) : null}
+                </View>
+              </Pressable>
+              {index < DEPOSIT_METHODS.length - 1 ? (
+                <View style={[styles.divider, { backgroundColor: divider }]} />
+              ) : null}
+            </View>
           );
         })}
       </View>
@@ -124,7 +139,7 @@ export function DepositMethodStep({
               styles.searchWrap,
               {
                 backgroundColor: colors.card,
-                borderColor: colors.border,
+                borderColor: divider,
               },
             ]}
           >
@@ -140,64 +155,53 @@ export function DepositMethodStep({
             />
           </View>
 
-          <View style={styles.bankList}>
-            {filteredBanks.map((bank) => {
+          <View>
+            {filteredBanks.map((bank, index) => {
               const selected = bankCode === bank.code;
+              const well = getWellForIcon("building", isDark);
               return (
-                <Pressable
-                  key={bank.code}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected }}
-                  onPress={() => onSelectBank(bank.code)}
-                  style={({ pressed }) => [
-                    styles.bankRow,
-                    {
-                      backgroundColor: colors.card,
-                      borderColor: selected ? colors.primary : colors.border,
-                    },
-                    selected && styles.cardSelected,
-                    pressed && styles.pressed,
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.bankBadge,
-                      {
-                        backgroundColor: selected
-                          ? isDark
-                            ? "rgba(16, 185, 129, 0.14)"
-                            : colors.primary50
-                          : colors.muted,
+                <View key={bank.code}>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                    onPress={() => onSelectBank(bank.code)}
+                    style={({ pressed }) => [
+                      styles.row,
+                      pressed && styles.pressed,
+                      selected && {
+                        backgroundColor: isDark
+                          ? "rgba(255,255,255,0.04)"
+                          : "rgba(0,0,0,0.03)",
                       },
                     ]}
                   >
-                    <Text
-                      style={[
-                        styles.bankBadgeText,
-                        {
-                          color: selected
-                            ? colors.primary
-                            : colors.mutedForeground,
-                        },
-                      ]}
+                    <View
+                      style={[styles.iconWrap, { backgroundColor: well.bg }]}
                     >
-                      {bank.code.slice(0, 3)}
+                      <Text style={[styles.bankBadgeText, { color: well.fg }]}>
+                        {bank.code.slice(0, 3)}
+                      </Text>
+                    </View>
+                    <Text
+                      style={[styles.bankName, { color: colors.foreground }]}
+                      numberOfLines={1}
+                    >
+                      {bank.name}
                     </Text>
-                  </View>
-                  <Text
-                    style={[styles.bankName, { color: colors.foreground }]}
-                    numberOfLines={1}
-                  >
-                    {bank.name}
-                  </Text>
-                  {selected ? (
-                    <AppIcon
-                      name="badge-check"
-                      size={16}
-                      color={colors.primary}
+                    {selected ? (
+                      <AppIcon
+                        name="badge-check"
+                        size={16}
+                        color={colors.primary}
+                      />
+                    ) : null}
+                  </Pressable>
+                  {index < filteredBanks.length - 1 ? (
+                    <View
+                      style={[styles.divider, { backgroundColor: divider }]}
                     />
                   ) : null}
-                </Pressable>
+                </View>
               );
             })}
             {filteredBanks.length === 0 ? (
@@ -229,44 +233,40 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   list: {
-    gap: spacing.sm,
     marginTop: spacing.xs,
   },
-  card: {
+  row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.md,
-    borderRadius: radius.lg,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: spacing.md,
-    minHeight: 72,
-  },
-  cardSelected: {
-    borderWidth: 1.5,
+    gap: bankChrome.rowGap,
+    paddingVertical: bankChrome.rowPaddingY,
+    paddingHorizontal: spacing.xs,
+    minHeight: bankChrome.rowMinHeight,
   },
   pressed: {
     opacity: 0.86,
   },
   iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
+    width: bankChrome.wellSize,
+    height: bankChrome.wellSize,
+    borderRadius: bankChrome.wellSize / 2,
     alignItems: "center",
     justifyContent: "center",
   },
   copy: {
     flex: 1,
-    gap: 2,
+    gap: 3,
     minWidth: 0,
   },
   title: {
     fontFamily: typography.fontFamily.semibold,
-    fontSize: typography.size.sm,
+    fontSize: bankChrome.labelSize,
+    letterSpacing: -0.2,
   },
   subtitle: {
-    fontFamily: typography.roles.caption,
-    fontSize: typography.size.xs,
-    lineHeight: 16,
+    fontFamily: typography.fontFamily.regular,
+    fontSize: bankChrome.subtitleSize,
+    lineHeight: 17,
   },
   radio: {
     width: 20,
@@ -280,6 +280,10 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: radius.full,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    marginLeft: bankChrome.wellSize + bankChrome.rowGap + spacing.xs,
   },
   bankSection: {
     gap: spacing.sm,
@@ -304,34 +308,15 @@ const styles = StyleSheet.create({
     fontSize: typography.size.sm,
     paddingVertical: spacing.sm,
   },
-  bankList: {
-    gap: 8,
-  },
-  bankRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    borderRadius: radius.lg,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 12,
-  },
-  bankBadge: {
-    width: 40,
-    height: 28,
-    borderRadius: radius.sm,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   bankBadgeText: {
     fontFamily: typography.roles.title,
-    fontSize: 10,
-    letterSpacing: 0.4,
+    fontSize: 11,
+    letterSpacing: 0.3,
   },
   bankName: {
     flex: 1,
     fontFamily: typography.fontFamily.semibold,
-    fontSize: typography.size.sm,
+    fontSize: bankChrome.labelSize,
   },
   emptyBanks: {
     fontFamily: typography.roles.caption,

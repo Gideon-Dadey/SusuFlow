@@ -8,10 +8,20 @@ import { radius, spacing, typography } from "@/theme/tokens";
 
 interface DepositStepIndicatorProps {
   step: DepositStep;
+  /** Light chrome when sitting on the geometric bank header. */
+  onGeometry?: boolean;
 }
 
-export function DepositStepIndicator({ step }: DepositStepIndicatorProps) {
+export function DepositStepIndicator({
+  step,
+  onGeometry = false,
+}: DepositStepIndicatorProps) {
   const { colors } = useTheme();
+  const idle = onGeometry ? "rgba(255,255,255,0.35)" : colors.border;
+  const mute = onGeometry ? "rgba(255,255,255,0.7)" : colors.mutedForeground;
+  const activeLabel = onGeometry ? "#FFFFFF" : colors.foreground;
+  const activeDot = onGeometry ? "#FFFFFF" : colors.primary;
+  const activeDotFg = onGeometry ? "#0B1220" : colors.primaryForeground;
 
   return (
     <View style={styles.root}>
@@ -27,9 +37,12 @@ export function DepositStepIndicator({ step }: DepositStepIndicatorProps) {
                   styles.dot,
                   {
                     backgroundColor:
-                      complete || active ? colors.primary : colors.muted,
-                    borderColor:
-                      complete || active ? colors.primary : colors.border,
+                      complete || active
+                        ? activeDot
+                        : onGeometry
+                          ? "rgba(255,255,255,0.12)"
+                          : colors.muted,
+                    borderColor: complete || active ? activeDot : idle,
                   },
                 ]}
               >
@@ -37,10 +50,7 @@ export function DepositStepIndicator({ step }: DepositStepIndicatorProps) {
                   style={[
                     styles.dotLabel,
                     {
-                      color:
-                        complete || active
-                          ? colors.primaryForeground
-                          : colors.mutedForeground,
+                      color: complete || active ? activeDotFg : mute,
                     },
                   ]}
                 >
@@ -52,9 +62,7 @@ export function DepositStepIndicator({ step }: DepositStepIndicatorProps) {
                   style={[
                     styles.line,
                     {
-                      backgroundColor: complete
-                        ? colors.primary
-                        : colors.border,
+                      backgroundColor: complete ? activeDot : idle,
                     },
                   ]}
                 />
@@ -64,7 +72,7 @@ export function DepositStepIndicator({ step }: DepositStepIndicatorProps) {
               style={[
                 styles.label,
                 {
-                  color: active ? colors.foreground : colors.mutedForeground,
+                  color: active ? activeLabel : mute,
                   fontFamily: active
                     ? typography.fontFamily.semibold
                     : typography.fontFamily.medium,

@@ -13,6 +13,7 @@ import {
   TAB_BAR_PADDING_TOP,
 } from "@/constants/tab-bar";
 import { useUiStore } from "@/stores/ui.store";
+import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { typography } from "@/theme/tokens";
 
@@ -35,14 +36,17 @@ interface TabConfig {
   routeName: string;
   label: string;
   icon: TabBarIconName;
+  elevated?: boolean;
 }
+
+const FAB_SIZE = 56;
 
 const VISIBLE_TABS: TabConfig[] = [
   { routeName: "index", label: "Home", icon: "home" },
   { routeName: "plans", label: "Goals", icon: "goals" },
-  { routeName: "deposit", label: "Deposit", icon: "deposit" },
+  { routeName: "deposit", label: "Deposit", icon: "deposit", elevated: true },
   { routeName: "activity", label: "Activity", icon: "activity" },
-  { routeName: "profile", label: "Profile", icon: "profile" },
+  { routeName: "profile", label: "More", icon: "more" },
 ];
 
 export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
@@ -51,9 +55,10 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
   const optionsOpen = useUiStore((s) => s.optionsOpen);
   const closeOptions = useUiStore((s) => s.closeOptions);
 
-  const barBg = isDark ? colors.background : colors.card;
+  const barBg = isDark ? bankChrome.pageDark : bankChrome.pageLight;
   const inactiveColor = colors.mutedForeground;
   const tabActiveColor = colors.primary;
+  const borderTop = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   const handleTabPress = (tab: TabConfig) => {
     if (optionsOpen) {
@@ -71,7 +76,7 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
           paddingBottom: Math.max(insets.bottom, TAB_BAR_MIN_BOTTOM_INSET),
           paddingHorizontal: TAB_BAR_HORIZONTAL_INSET,
           backgroundColor: barBg,
-          borderTopColor: colors.border,
+          borderTopColor: borderTop,
         },
         !isDark && shadows.subtle,
       ]}
@@ -84,6 +89,54 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
 
         const focused = state.index === routeIndex;
         const activeColor = focused ? tabActiveColor : inactiveColor;
+
+        if (tab.elevated) {
+          const fabBg = isDark ? "#F8FAFC" : colors.primary;
+          const fabFg = isDark ? "#0F172A" : colors.primaryForeground;
+          return (
+            <Pressable
+              key={tab.routeName}
+              accessibilityRole="button"
+              accessibilityState={{ selected: focused }}
+              accessibilityLabel={tab.label}
+              onPress={() => handleTabPress(tab)}
+              style={({ pressed }) => [
+                styles.tab,
+                styles.elevatedTab,
+                pressed && styles.pressed,
+              ]}
+            >
+              <View
+                style={[
+                  styles.fab,
+                  {
+                    backgroundColor: fabBg,
+                    borderColor: isDark
+                      ? "rgba(255,255,255,0.12)"
+                      : "rgba(0,0,0,0.08)",
+                  },
+                  shadows.elevated,
+                  focused && styles.fabFocused,
+                ]}
+              >
+                <TabBarIcon name={tab.icon} size={24} color={fabFg} focused />
+              </View>
+              <Text
+                style={[
+                  styles.label,
+                  {
+                    color: activeColor,
+                    fontFamily: focused
+                      ? typography.roles.label
+                      : typography.roles.caption,
+                  },
+                ]}
+              >
+                {tab.label}
+              </Text>
+            </Pressable>
+          );
+        }
 
         return (
           <Pressable
@@ -124,7 +177,7 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
 const styles = StyleSheet.create({
   bar: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     justifyContent: "space-around",
     overflow: "visible",
     borderTopWidth: StyleSheet.hairlineWidth,
@@ -137,12 +190,27 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     overflow: "visible",
   },
+  elevatedTab: {
+    marginTop: -18,
+  },
   iconSlot: {
     width: TAB_BAR_ICON_SLOT,
     height: TAB_BAR_ICON_SLOT,
     alignItems: "center",
     justifyContent: "center",
     overflow: "visible",
+  },
+  fab: {
+    width: FAB_SIZE,
+    height: FAB_SIZE,
+    borderRadius: FAB_SIZE / 2,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: StyleSheet.hairlineWidth,
+    marginBottom: 2,
+  },
+  fabFocused: {
+    transform: [{ scale: 1.04 }],
   },
   pressed: {
     opacity: 0.85,

@@ -31,7 +31,9 @@ export function HomeRecentActivity({
 }: HomeRecentActivityProps) {
   const { colors, isDark } = useTheme();
   const preview = transactions.slice(0, PREVIEW_LIMIT);
-  const linkColor = isDark ? homeChrome.linkDark : homeChrome.link;
+  const linkColor = isDark ? homeChrome.linkDark : colors.primary;
+  const emptyWell = isDark ? homeChrome.growthDarkWell : homeChrome.growthSoft;
+  const emptyMark = isDark ? "#E2E8F0" : homeChrome.growthInk;
 
   return (
     <View style={styles.section}>
@@ -55,13 +57,11 @@ export function HomeRecentActivity({
               style={[
                 styles.emptyIcon,
                 {
-                  backgroundColor: isDark
-                    ? homeChrome.mintDarkWell
-                    : homeChrome.mintSoft,
+                  backgroundColor: emptyWell,
                 },
               ]}
             >
-              <Text style={[styles.emptyIconMark, { color: homeChrome.mint }]}>
+              <Text style={[styles.emptyIconMark, { color: emptyMark }]}>
                 ₵
               </Text>
             </View>
@@ -115,7 +115,7 @@ export function HomeRecentActivity({
                   style={[
                     styles.amount,
                     {
-                      color: isDeposit ? homeChrome.mintInk : colors.foreground,
+                      color: colors.foreground,
                     },
                   ]}
                 >

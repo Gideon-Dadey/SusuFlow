@@ -7,6 +7,7 @@ import {
   TabScreenDivider,
   TabScreenSection,
 } from "@/components/layout/TabScreen";
+import { BankMenuRow } from "@/components/profile/BankProfileMenuRow";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
 
@@ -34,8 +35,10 @@ interface ProfileRowProps {
   right?: ReactNode;
   destructive?: boolean;
   showChevron?: boolean;
+  showDivider?: boolean;
 }
 
+/** Bank-chrome list row — same token as profile / More menus. */
 export function ProfileRow({
   icon,
   label,
@@ -44,53 +47,21 @@ export function ProfileRow({
   right,
   destructive = false,
   showChevron = true,
+  showDivider = false,
 }: ProfileRowProps) {
-  const { colors } = useTheme();
-  const labelColor = destructive ? colors.destructive : colors.foreground;
-  const iconColor = destructive ? colors.destructive : colors.primary;
-
-  const content = (
-    <>
-      <View style={styles.iconSlot}>
-        <AppIcon name={icon} size={22} color={iconColor} />
-      </View>
-      <View style={styles.copy}>
-        <Text style={[styles.label, { color: labelColor }]} numberOfLines={1}>
-          {label}
-        </Text>
-        {subtitle ? (
-          <Text
-            style={[styles.subtitle, { color: colors.mutedForeground }]}
-            numberOfLines={1}
-          >
-            {subtitle}
-          </Text>
-        ) : null}
-      </View>
-      {right !== undefined ? (
-        right
-      ) : showChevron && onPress ? (
-        <AppIcon
-          name="chevron-right"
-          size={18}
-          color={colors.mutedForeground}
-        />
-      ) : null}
-    </>
-  );
-
-  if (!onPress) {
-    return <View style={styles.row}>{content}</View>;
-  }
-
   return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={onPress}
-      style={({ pressed }) => [styles.row, pressed && styles.pressed]}
-    >
-      {content}
-    </Pressable>
+    <BankMenuRow
+      item={{
+        icon,
+        label,
+        subtitle,
+        onPress,
+        right,
+        destructive,
+        showChevron,
+      }}
+      showDivider={showDivider}
+    />
   );
 }
 

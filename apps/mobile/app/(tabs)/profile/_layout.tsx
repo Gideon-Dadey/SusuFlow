@@ -21,6 +21,10 @@ export default function ProfileLayout() {
       <Stack.Screen name="terms" />
       <Stack.Screen name="privacy" />
       <Stack.Screen name="settings" />
+      <Stack.Screen name="beneficiaries" />
+      <Stack.Screen name="limits" />
+      <Stack.Screen name="session" />
+      <Stack.Screen name="referral" />
     </Stack>
   );
 }

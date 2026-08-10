@@ -84,6 +84,7 @@ export function useNotificationFeed(customerId: string | undefined) {
     items,
     unreadCount,
     hasPending,
+    lastSeenAt,
     isLoading,
     isError: depositsQuery.isError || withdrawalsQuery.isError,
     refetch: async () => {
