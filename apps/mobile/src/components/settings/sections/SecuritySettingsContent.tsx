@@ -5,7 +5,6 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { SettingRow } from "@/components/profile/ProfileSections";
 import { SettingsPanel } from "@/components/settings/SettingsDetailLayout";
-import { SettingsDivider } from "@/components/settings/SettingsGroup";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { APP_LOCK_PIN_MAX, APP_LOCK_PIN_MIN } from "@/lib/app-lock";
 import { userApi } from "@/lib/api";
@@ -143,7 +142,6 @@ export function SecuritySettingsContent() {
           title="Password"
           subtitle="Update your sign-in password"
         />
-        <SettingsDivider />
         <SettingRow
           icon="shield-checkmark-outline"
           title="App lock"
@@ -152,6 +150,7 @@ export function SecuritySettingsContent() {
               ? "PIN required when returning to SusuFlow"
               : "Protect balances when you leave the app"
           }
+          showDivider={false}
         />
       </SettingsPanel>
 

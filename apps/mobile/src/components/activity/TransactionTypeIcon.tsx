@@ -1,9 +1,8 @@
 import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import { StyleSheet, View } from "react-native";
-import { getIconAccent } from "@/lib/icon-accents";
 import type { Transaction } from "@/lib/api";
+import { getBankWell } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
-import { radius } from "@/theme/tokens";
 
 export type TransactionKind = "deposit" | "withdrawal";
 
@@ -25,12 +24,12 @@ interface TransactionTypeIconProps {
 
 export function TransactionTypeIcon({
   kind,
-  size = 40,
+  size = 42,
   iconSize = 17,
 }: TransactionTypeIconProps) {
   const { isDark } = useTheme();
   const icon = getTransactionKindIcon(kind);
-  const accent = getIconAccent(icon, isDark);
+  const well = getBankWell(kind === "deposit" ? "mint" : "rose", isDark);
 
   return (
     <View
@@ -39,12 +38,12 @@ export function TransactionTypeIcon({
         {
           width: size,
           height: size,
-          borderRadius: radius.lg,
-          backgroundColor: accent.bg,
+          borderRadius: size / 2,
+          backgroundColor: well.bg,
         },
       ]}
     >
-      <AppIcon name={icon} size={iconSize} color={accent.fg} />
+      <AppIcon name={icon} size={iconSize} color={well.fg} strokeWidth={2} />
     </View>
   );
 }

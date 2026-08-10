@@ -1,26 +1,18 @@
-import { FontAwesome6 } from "@expo/vector-icons";
+import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import { TAB_BAR_ICON_SIZE } from "@/constants/tab-bar";
 
-export type TabBarIconName =
-  | "home"
-  | "goals"
-  | "deposit"
-  | "activity"
-  | "profile";
-
-type Fa6Name = keyof typeof FontAwesome6.glyphMap;
+export type TabBarIconName = "home" | "goals" | "deposit" | "activity" | "more";
 
 /**
- * Tab marks aligned with common US consumer-finance patterns:
- * house · flag (goals) · circle-plus (add funds) · list (activity) · user
- * Solid when focused, outline when idle.
+ * Tab marks share the same Phosphor glyphs as Quick Access:
+ * house · flag · wallet · clock-history · grid
  */
-const TAB_ICONS: Record<TabBarIconName, Fa6Name> = {
-  home: "house",
-  goals: "flag",
-  deposit: "circle-plus",
-  activity: "rectangle-list",
-  profile: "circle-user",
+const TAB_ICONS: Record<TabBarIconName, AppIconName> = {
+  home: "home",
+  goals: "goals",
+  deposit: "deposit",
+  activity: "activity",
+  more: "more",
 };
 
 interface TabBarIconProps {
@@ -37,11 +29,11 @@ export function TabBarIcon({
   focused = false,
 }: TabBarIconProps) {
   return (
-    <FontAwesome6
+    <AppIcon
       name={TAB_ICONS[name]}
       size={size}
       color={color}
-      solid={focused}
+      weight={focused ? "fill" : "regular"}
     />
   );
 }

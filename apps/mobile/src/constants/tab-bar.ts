@@ -10,12 +10,17 @@ export const TAB_BAR_MIN_BOTTOM_INSET = 4;
 export const TAB_BAR_HORIZONTAL_INSET = 4;
 /** Icon row + label + internal gap (excludes outer padding and safe area). */
 export const TAB_BAR_CONTENT_HEIGHT = 40;
+/** Center Deposit FAB rises above the tab bar top edge. */
+export const TAB_BAR_FAB_OVERHANG = 18;
 
-/** Scroll padding so content clears the custom tab bar without a large dead zone. */
+/**
+ * Scroll padding so content clears the custom tab bar + elevated FAB
+ * without leaving a large empty dead zone under the last section.
+ */
 export function tabBarScrollPadding(bottomInset: number) {
   const tabBarHeight =
     TAB_BAR_PADDING_TOP +
     TAB_BAR_CONTENT_HEIGHT +
     Math.max(bottomInset, TAB_BAR_MIN_BOTTOM_INSET);
-  return tabBarHeight + spacing.sm;
+  return tabBarHeight + TAB_BAR_FAB_OVERHANG + spacing.sm;
 }

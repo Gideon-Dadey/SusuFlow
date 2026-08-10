@@ -10,9 +10,11 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackArrowButton } from "@/components/navigation/BackArrowButton";
-import { HeaderArcDecoration } from "@/components/ui/HeaderArcDecoration";
+import { ProfileGeometricBackdrop } from "@/components/profile/ProfileGeometricBackdrop";
+import { tabBarScrollPadding } from "@/constants/tab-bar";
+import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { layout, spacing, typography } from "@/theme/tokens";
 
 interface SettingsDetailLayoutProps {
   title: string;
@@ -29,25 +31,21 @@ export function SettingsDetailLayout({
 }: SettingsDetailLayoutProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
+  const pageBg = isDark ? bankChrome.pageDark : bankChrome.pageLight;
+  const geometryHeight = insets.top + 88;
 
   const body = (
     <View style={styles.flex}>
-      <HeaderArcDecoration />
-      <View
-        style={[
-          styles.stickyHeader,
-          {
-            paddingTop: insets.top + spacing.sm,
-          },
-        ]}
-      >
-        <View style={styles.navBar}>
+      {/* Sticky bank header — does not scroll with content */}
+      <View style={{ height: geometryHeight }}>
+        <ProfileGeometricBackdrop height={geometryHeight} isDark={isDark} />
+        <View style={[styles.navBar, { paddingTop: insets.top + 4 }]}>
           <View style={styles.navSide}>
-            <BackArrowButton onPress={() => router.back()} />
+            <BackArrowButton onPress={() => router.back()} color="#FFFFFF" />
           </View>
           <Text
-            style={[styles.navTitle, { color: colors.foreground }]}
+            style={[styles.navTitle, { color: "#FFFFFF" }]}
             numberOfLines={1}
           >
             {title}
@@ -58,27 +56,41 @@ export function SettingsDetailLayout({
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scroll,
-          {
-            paddingBottom: insets.bottom + 110,
-          },
-        ]}
+        contentContainerStyle={{
+          paddingBottom: tabBarScrollPadding(insets.bottom),
+        }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
         {subtitle ? (
-          <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>
+          <Text
+            style={[
+              styles.subtitle,
+              {
+                color: colors.mutedForeground,
+                paddingHorizontal: layout.pageGutter,
+                paddingTop: spacing.md,
+              },
+            ]}
+          >
             {subtitle}
           </Text>
         ) : null}
-        <View style={styles.content}>{children}</View>
+
+        <View
+          style={[
+            styles.content,
+            { paddingTop: subtitle ? spacing.sm : spacing.md },
+          ]}
+        >
+          {children}
+        </View>
       </ScrollView>
     </View>
   );
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: pageBg }]}>
       {keyboardAvoid ? (
         <KeyboardAvoidingView
           style={styles.flex}
@@ -93,18 +105,9 @@ export function SettingsDetailLayout({
   );
 }
 
+/** Flat bank panel — no card border (matches profile / More). */
 export function SettingsPanel({ children }: { children: ReactNode }) {
-  const { colors } = useTheme();
-  return (
-    <View
-      style={[
-        styles.panel,
-        { backgroundColor: colors.card, borderColor: colors.border },
-      ]}
-    >
-      {children}
-    </View>
-  );
+  return <View style={styles.panel}>{children}</View>;
 }
 
 const styles = StyleSheet.create({
@@ -115,15 +118,12 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
-  stickyHeader: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.sm,
-    zIndex: 2,
-  },
   navBar: {
     flexDirection: "row",
     alignItems: "center",
     minHeight: 44,
+    paddingHorizontal: layout.pageGutter,
+    zIndex: 2,
   },
   navSide: {
     width: 44,
@@ -141,12 +141,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    zIndex: 1,
-  },
-  scroll: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    gap: spacing.md,
   },
   subtitle: {
     fontFamily: typography.fontFamily.regular,
@@ -155,10 +149,9 @@ const styles = StyleSheet.create({
   },
   content: {
     gap: spacing.md,
+    paddingHorizontal: layout.pageGutter,
   },
   panel: {
-    borderRadius: radius.lg,
-    borderWidth: 1,
     overflow: "hidden",
   },
 });

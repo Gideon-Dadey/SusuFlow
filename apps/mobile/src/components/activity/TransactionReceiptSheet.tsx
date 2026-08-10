@@ -1,6 +1,6 @@
 import { AppIcon } from "@/components/icons/AppIcon";
-import { TenantBrandMark } from "@/components/branding/TenantBrandMark";
 import { TransactionReceiptDocument } from "@/components/activity/TransactionReceiptDocument";
+import { TransactionTypeIcon } from "@/components/activity/TransactionTypeIcon";
 import { ScreenHeader } from "@/components/layout/ScreenHeader";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
@@ -35,8 +35,9 @@ import {
   tenantBrandingQueryOptions,
 } from "@/lib/tenant-branding";
 import { useAuthStore } from "@/stores/auth.store";
+import { bankChrome, getBankWell } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { spacing, typography } from "@/theme/tokens";
 
 interface TransactionReceiptSheetProps {
   transaction: Transaction | null;
@@ -59,14 +60,15 @@ function SummaryRow({
   uppercase?: boolean;
   last?: boolean;
 }) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
+  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
   return (
     <View
       style={[
         styles.summaryRow,
         !last && {
           borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: colors.border,
+          borderBottomColor: divider,
         },
       ]}
     >
@@ -102,6 +104,8 @@ export function TransactionReceiptSheet({
   const tenantSlug = useAuthStore((s) => s.tenantSlug);
   const [view, setView] = useState<ReceiptView>("summary");
   const [busy, setBusy] = useState<"download" | "share" | null>(null);
+  const pageBg = isDark ? bankChrome.pageDark : bankChrome.pageLight;
+  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   useEffect(() => {
     if (!visible) {
@@ -138,6 +142,7 @@ export function TransactionReceiptSheet({
   if (!transaction || !receiptDocument) return null;
 
   const isDeposit = transaction.type === "deposit";
+  const amountWell = getBankWell(isDeposit ? "mint" : "rose", isDark);
   const amount = Number(transaction.amount);
   const methodLabel = getPaymentMethodLabel(transaction);
   const phoneLabel = getPhoneLabel(transaction);
@@ -194,7 +199,7 @@ export function TransactionReceiptSheet({
     { label: "Currency", value: "GHS" },
   ];
 
-  const stageBg = isDark ? "#0A0A0A" : "#F3F4F6";
+  const stageBg = isDark ? bankChrome.pageDark : "#F3F4F6";
 
   return (
     <Modal
@@ -207,12 +212,13 @@ export function TransactionReceiptSheet({
         style={[
           styles.root,
           {
-            backgroundColor: view === "document" ? stageBg : colors.background,
+            backgroundColor: view === "document" ? stageBg : pageBg,
           },
         ]}
       >
         <ScreenHeader
           title={headerTitle}
+          style={{ backgroundColor: pageBg }}
           leading={
             view === "document" ? (
               <Pressable
@@ -225,7 +231,9 @@ export function TransactionReceiptSheet({
                 <AppIcon
                   name="chevron-left"
                   size={22}
-                  color={colors.mutedForeground}
+                  color={
+                    isDark ? bankChrome.chevronDark : colors.mutedForeground
+                  }
                 />
               </Pressable>
             ) : undefined
@@ -238,7 +246,11 @@ export function TransactionReceiptSheet({
               hitSlop={12}
               style={({ pressed }) => pressed && styles.headerPressed}
             >
-              <AppIcon name="close" size={22} color={colors.mutedForeground} />
+              <AppIcon
+                name="close"
+                size={22}
+                color={isDark ? bankChrome.chevronDark : colors.mutedForeground}
+              />
             </Pressable>
           }
         />
@@ -259,7 +271,11 @@ export function TransactionReceiptSheet({
           {view === "summary" ? (
             <>
               <View style={styles.companyBlock}>
-                <TenantBrandMark logoUrl={logoUrl} size={48} />
+                <TransactionTypeIcon
+                  kind={isDeposit ? "deposit" : "withdrawal"}
+                  size={52}
+                  iconSize={22}
+                />
                 <Text style={[styles.companyName, { color: colors.heading }]}>
                   {companyName}
                 </Text>
@@ -277,20 +293,35 @@ export function TransactionReceiptSheet({
                 style={[
                   styles.amountCard,
                   {
-                    backgroundColor: colors.card,
-                    borderColor: colors.border,
+                    backgroundColor: isDark ? "#121212" : colors.card,
+                    borderColor: divider,
                   },
                 ]}
               >
                 <View style={styles.amountCardHeader}>
-                  <Text
-                    style={[
-                      styles.amountLabel,
-                      { color: colors.mutedForeground },
-                    ]}
-                  >
-                    {isDeposit ? "Amount saved" : "Amount withdrawn"}
-                  </Text>
+                  <View style={styles.amountLabelRow}>
+                    <View
+                      style={[
+                        styles.amountWell,
+                        { backgroundColor: amountWell.bg },
+                      ]}
+                    >
+                      <AppIcon
+                        name={isDeposit ? "arrow-down-left" : "arrow-up-right"}
+                        size={14}
+                        color={amountWell.fg}
+                        strokeWidth={2}
+                      />
+                    </View>
+                    <Text
+                      style={[
+                        styles.amountLabel,
+                        { color: colors.mutedForeground },
+                      ]}
+                    >
+                      {isDeposit ? "Amount saved" : "Amount withdrawn"}
+                    </Text>
+                  </View>
                   <StatusBadge status={transaction.status} />
                 </View>
                 <Text style={[styles.amountValue, { color: colors.heading }]}>
@@ -298,15 +329,7 @@ export function TransactionReceiptSheet({
                 </Text>
               </View>
 
-              <View
-                style={[
-                  styles.detailsCard,
-                  {
-                    backgroundColor: colors.card,
-                    borderColor: colors.border,
-                  },
-                ]}
-              >
+              <View style={styles.detailsBlock}>
                 {detailRows.map((row, index) => (
                   <SummaryRow
                     key={row.label}
@@ -342,9 +365,9 @@ export function TransactionReceiptSheet({
               {
                 paddingBottom: Math.max(insets.bottom, 14),
                 backgroundColor: isDark
-                  ? "rgba(10,10,10,0.94)"
+                  ? "rgba(0,0,0,0.94)"
                   : "rgba(255,255,255,0.96)",
-                borderTopColor: colors.border,
+                borderTopColor: divider,
               },
             ]}
           >
@@ -360,7 +383,7 @@ export function TransactionReceiptSheet({
                   backgroundColor: isDark
                     ? "rgba(255,255,255,0.08)"
                     : "#F1F5F9",
-                  borderColor: colors.border,
+                  borderColor: divider,
                   opacity: pressed || busy ? 0.72 : 1,
                 },
               ]}
@@ -439,7 +462,7 @@ const styles = StyleSheet.create({
   },
   companyBlock: {
     alignItems: "center",
-    gap: 8,
+    gap: 10,
     paddingBottom: spacing.sm,
   },
   companyName: {
@@ -453,7 +476,7 @@ const styles = StyleSheet.create({
     fontSize: typography.size.xs,
   },
   amountCard: {
-    borderRadius: radius.lg,
+    borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.md,
@@ -464,6 +487,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     gap: spacing.sm,
+  },
+  amountLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    flex: 1,
+    minWidth: 0,
+  },
+  amountWell: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
   },
   amountLabel: {
     fontFamily: typography.fontFamily.semibold,
@@ -476,26 +513,25 @@ const styles = StyleSheet.create({
     fontSize: 36,
     letterSpacing: -0.5,
   },
-  detailsCard: {
-    borderRadius: radius.lg,
-    borderWidth: StyleSheet.hairlineWidth,
-    overflow: "hidden",
+  detailsBlock: {
+    marginHorizontal: -spacing.lg,
   },
   summaryRow: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
     gap: spacing.md,
-    paddingVertical: 12,
-    paddingHorizontal: spacing.md,
+    paddingVertical: 14,
+    paddingHorizontal: spacing.lg,
+    minHeight: 52,
   },
   summaryLabel: {
     fontFamily: typography.fontFamily.regular,
-    fontSize: typography.size.sm,
+    fontSize: bankChrome.subtitleSize + 1,
     flex: 1,
   },
   summaryValue: {
-    fontSize: typography.size.sm,
+    fontSize: bankChrome.subtitleSize + 1,
     textAlign: "right",
     flex: 1,
   },

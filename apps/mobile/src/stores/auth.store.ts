@@ -12,6 +12,7 @@ import { clearBiometricCredentials } from "@/lib/biometric";
 import { unregisterDevicePushToken } from "@/lib/push-notifications";
 import { prefetchAuthenticatedSession } from "@/lib/session-prefetch";
 import { resetUserSessionCache } from "@/lib/session-cache";
+import { recordLastLoginAt, readLastLoginAt } from "@/lib/last-login";
 import { storage } from "@/lib/storage";
 import { resolveLoginTenantSlug } from "@/lib/tenant";
 import { useAppLockStore } from "@/stores/app-lock.store";
@@ -31,6 +32,8 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   tenantSlug: string;
+  /** ISO timestamp of the latest successful login on this device */
+  lastLoginAt: string | null;
   isAuthenticated: boolean;
   isHydrated: boolean;
   isLoading: boolean;
@@ -94,17 +97,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: null,
   refreshToken: null,
   tenantSlug: "",
+  lastLoginAt: null,
   isAuthenticated: false,
   isHydrated: false,
   isLoading: false,
   error: null,
 
   hydrateFromStorage: async () => {
-    const [accessToken, refreshToken, tenantSlug] = await Promise.all([
-      storage.getItem(storage.keys.accessToken),
-      storage.getItem(storage.keys.refreshToken),
-      storage.getItem(storage.keys.tenantSlug),
-    ]);
+    const [accessToken, refreshToken, tenantSlug, lastLoginAt] =
+      await Promise.all([
+        storage.getItem(storage.keys.accessToken),
+        storage.getItem(storage.keys.refreshToken),
+        storage.getItem(storage.keys.tenantSlug),
+        readLastLoginAt(),
+      ]);
 
     const slug = tenantSlug || "";
 
@@ -112,6 +118,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       accessToken,
       refreshToken,
       tenantSlug: slug,
+      lastLoginAt,
       isAuthenticated: !!accessToken,
       isHydrated: true,
     });
@@ -163,11 +170,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const userTenant = data.user?.tenantSlug || slug || "";
       resetUserSessionCache();
       await persistSession(data, userTenant);
+      const lastLoginAt = await recordLastLoginAt();
       set({
         user: data.user,
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
         tenantSlug: userTenant,
+        lastLoginAt,
         isAuthenticated: true,
       });
       void prefetchAuthenticatedSession(data.user.id, userTenant).catch(

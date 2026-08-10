@@ -16,3 +16,11 @@ export const HOME_PROMO_IMAGES = {
   grow: require("../../assets/images/home-promo-stay-consistent.jpg"),
   goals: require("../../assets/images/home-promo-save-together.jpg"),
 } as const;
+
+/** Mobile-money provider marks used on deposit / withdraw. */
+export const MOBILE_MONEY_MARKS = {
+  mtn: require("../../assets/images/payments/mtn.png"),
+  telecel: require("../../assets/images/payments/telecel.png"),
+  airteltigo: require("../../assets/images/payments/airteltigo.png"),
+  bank: require("../../assets/images/payments/bank.png"),
+} as const;

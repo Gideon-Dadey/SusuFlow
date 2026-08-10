@@ -1,96 +1,101 @@
 import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import { homeChrome, type HomeWellIcon } from "@/components/home/homeChrome";
 import { HomeSectionTitle } from "@/components/home/HomeSectionTitle";
+import { bankChrome } from "@/theme/bankChrome";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "@/theme/ThemeProvider";
-import { spacing, surfaceRadius, typography } from "@/theme/tokens";
+import { spacing, typography } from "@/theme/tokens";
 
 export interface HomeAction {
   label: string;
   icon: AppIconName;
   onPress: () => void;
-  /** @deprecated Kept for call-site compatibility; unused in the grid. */
   subtitle?: string;
 }
 
-const COLS = 3;
-const GAP = 10;
-
-function getWell(icon: AppIconName, isDark: boolean) {
-  const map = isDark ? homeChrome.wellsDark : homeChrome.wells;
-  if (icon in map) {
-    return map[icon as HomeWellIcon];
-  }
-  return isDark
-    ? { bg: "rgba(255,255,255,0.1)", fg: "#FFFFFF" }
-    : { bg: "#F1F5F9", fg: "#0F172A" };
+function wellForAction(
+  icon: AppIconName,
+  isDark: boolean,
+): { bg: string; fg: string } {
+  const key = (icon in homeChrome.wells ? icon : "receipt") as HomeWellIcon;
+  return isDark ? homeChrome.wellsDark[key] : homeChrome.wells[key];
 }
 
-function ActionTile({
-  action,
-  colors,
-  isDark,
-  shadows,
+/** Circular quick-access row — bank-inspired, SusuFlow labels. */
+export function HomeActionGrid({
+  actions,
+  onViewAll,
 }: {
-  action: HomeAction;
-  colors: ReturnType<typeof useTheme>["colors"];
-  isDark: boolean;
-  shadows: ReturnType<typeof useTheme>["shadows"];
+  actions: HomeAction[];
+  onViewAll?: () => void;
 }) {
-  const well = getWell(action.icon, isDark);
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={action.label}
-      onPress={action.onPress}
-      style={({ pressed }) => [
-        styles.tileOuter,
-        !isDark && shadows.card,
-        pressed && styles.pressed,
-      ]}
-    >
-      <View
-        style={[
-          styles.tile,
-          {
-            backgroundColor: colors.card,
-            borderColor: colors.border,
-            borderWidth: StyleSheet.hairlineWidth,
-          },
-        ]}
-      >
-        <View style={[styles.iconWell, { backgroundColor: well.bg }]}>
-          <AppIcon name={action.icon} size={18} color={well.fg} />
-        </View>
-        <Text
-          style={[styles.label, { color: colors.foreground }]}
-          numberOfLines={2}
-        >
-          {action.label}
-        </Text>
-      </View>
-    </Pressable>
-  );
-}
-
-export function HomeActionGrid({ actions }: { actions: HomeAction[] }) {
-  const { colors, isDark, shadows } = useTheme();
+  const { colors, isDark } = useTheme();
 
   return (
     <View style={styles.section}>
-      <HomeSectionTitle title="Quick Actions" />
-      <View style={styles.grid}>
-        {actions.map((action) => (
-          <View key={action.label} style={styles.cell}>
-            <ActionTile
-              action={action}
-              colors={colors}
-              isDark={isDark}
-              shadows={shadows}
-            />
-          </View>
-        ))}
+      <HomeSectionTitle
+        title="Quick access"
+        right={
+          onViewAll ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="View all services"
+              onPress={onViewAll}
+              hitSlop={8}
+              style={({ pressed }) => pressed && styles.pressed}
+            >
+              <Text
+                style={[
+                  styles.viewAll,
+                  {
+                    color: isDark ? homeChrome.linkDark : colors.primary,
+                  },
+                ]}
+              >
+                View all
+              </Text>
+            </Pressable>
+          ) : null
+        }
+      />
+      <View style={styles.row}>
+        {actions.map((action) => {
+          const well = wellForAction(action.icon, isDark);
+          return (
+            <Pressable
+              key={action.label}
+              accessibilityRole="button"
+              accessibilityLabel={action.label}
+              onPress={action.onPress}
+              style={({ pressed }) => [styles.item, pressed && styles.pressed]}
+            >
+              <View
+                style={[
+                  styles.well,
+                  {
+                    backgroundColor: isDark ? "#141414" : colors.card,
+                    borderColor: isDark
+                      ? bankChrome.dividerDark
+                      : bankChrome.dividerLight,
+                  },
+                ]}
+              >
+                <AppIcon
+                  name={action.icon}
+                  size={24}
+                  color={well.fg}
+                  weight="regular"
+                />
+              </View>
+              <Text
+                style={[styles.label, { color: colors.foreground }]}
+                numberOfLines={2}
+              >
+                {action.label}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );
@@ -100,44 +105,39 @@ const styles = StyleSheet.create({
   section: {
     gap: spacing.sm,
   },
-  grid: {
+  row: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    marginHorizontal: -GAP / 2,
-    rowGap: GAP,
+    justifyContent: "space-between",
+    gap: spacing.xs,
   },
-  cell: {
-    width: `${100 / COLS}%`,
-    paddingHorizontal: GAP / 2,
+  item: {
+    flex: 1,
+    alignItems: "center",
+    gap: 8,
+    maxWidth: "25%",
   },
-  tileOuter: {
-    borderRadius: surfaceRadius.card,
-  },
-  tile: {
+  well: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
-    gap: 10,
-    paddingVertical: 16,
-    paddingHorizontal: 8,
-    minHeight: 108,
-    borderRadius: surfaceRadius.card,
-  },
-  iconWell: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    alignItems: "center",
-    justifyContent: "center",
+    borderWidth: StyleSheet.hairlineWidth,
   },
   label: {
     fontFamily: typography.roles.title,
-    fontSize: 12,
+    fontSize: 11,
     letterSpacing: -0.1,
     textAlign: "center",
-    lineHeight: 16,
+    lineHeight: 14,
+  },
+  viewAll: {
+    fontFamily: typography.roles.label,
+    fontSize: 13,
+    letterSpacing: -0.1,
+    textDecorationLine: "underline",
   },
   pressed: {
-    opacity: 0.9,
-    transform: [{ scale: 0.98 }],
+    opacity: 0.82,
   },
 });

@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { TransactionReceiptSheet } from "@/components/activity/TransactionReceiptSheet";
 import { NotificationSheet } from "@/components/notifications/NotificationSheet";
 import { NotificationBellIcon } from "@/components/notifications/NotificationBellIcon";
 import { useNotificationFeed } from "@/hooks/useNotificationFeed";
 import { useScopedCustomerId } from "@/hooks/useScopedCustomerId";
+import type { AppNotification } from "@/types/notification";
+import type { Transaction } from "@/lib/api";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, typography } from "@/theme/tokens";
+
+const RECEIPT_OPEN_DELAY_MS = 280;
 
 export function HomeNotificationBell({
   variant = "count",
@@ -17,15 +22,64 @@ export function HomeNotificationBell({
   controlSize?: number;
 }) {
   const { colors } = useTheme();
-  const [open, setOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [readCutoff, setReadCutoff] = useState<string | null>(null);
+  const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
+  const [receiptOpen, setReceiptOpen] = useState(false);
+  const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const customerId = useScopedCustomerId();
-  const { items, unreadCount, isLoading, isError, refetch, markAllRead } =
-    useNotificationFeed(customerId);
+  const {
+    items,
+    unreadCount,
+    isLoading,
+    isError,
+    refetch,
+    markAllRead,
+    lastSeenAt,
+  } = useNotificationFeed(customerId);
+
+  useEffect(() => {
+    return () => {
+      if (openTimerRef.current) clearTimeout(openTimerRef.current);
+    };
+  }, []);
+
+  const clearOpenTimer = () => {
+    if (openTimerRef.current) {
+      clearTimeout(openTimerRef.current);
+      openTimerRef.current = null;
+    }
+  };
 
   const openSheet = () => {
-    setOpen(true);
+    setReadCutoff(lastSeenAt);
+    setSheetOpen(true);
     void markAllRead();
+  };
+
+  const closeSheet = () => {
+    setSheetOpen(false);
+  };
+
+  const openReceipt = useCallback((transaction: Transaction) => {
+    clearOpenTimer();
+    // Close notifications Modal first — nested Modals fail silently on device.
+    setSheetOpen(false);
+    openTimerRef.current = setTimeout(() => {
+      setSelectedTxn(transaction);
+      setReceiptOpen(true);
+      openTimerRef.current = null;
+    }, RECEIPT_OPEN_DELAY_MS);
+  }, []);
+
+  const handleSelect = (item: AppNotification) => {
+    openReceipt(item.transaction);
+  };
+
+  const closeReceipt = () => {
+    setReceiptOpen(false);
+    setSelectedTxn(null);
   };
 
   const badgeLabel =
@@ -73,12 +127,20 @@ export function HomeNotificationBell({
       </Pressable>
 
       <NotificationSheet
-        visible={open}
+        visible={sheetOpen}
         items={items}
         loading={isLoading}
         error={isError}
-        onClose={() => setOpen(false)}
+        readCutoff={readCutoff}
+        onClose={closeSheet}
         onRetry={() => void refetch()}
+        onSelect={handleSelect}
+      />
+
+      <TransactionReceiptSheet
+        transaction={selectedTxn}
+        visible={receiptOpen}
+        onClose={closeReceipt}
       />
     </>
   );

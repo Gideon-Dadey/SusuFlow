@@ -284,9 +284,12 @@ export function KycSettingsContent() {
         ]}
       >
         <View
-          style={[styles.statusIcon, { backgroundColor: homeChrome.mintSoft }]}
+          style={[
+            styles.statusIcon,
+            { backgroundColor: homeChrome.growthSoft },
+          ]}
         >
-          <AppIcon name="badge-check" size={28} color={homeChrome.mintInk} />
+          <AppIcon name="badge-check" size={28} color={homeChrome.growthInk} />
         </View>
         <Text style={[styles.statusTitle, { color: colors.foreground }]}>
           You’re verified

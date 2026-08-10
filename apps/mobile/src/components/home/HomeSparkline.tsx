@@ -53,8 +53,8 @@ export function HomeSparkline({
   height = 56,
   values,
 }: HomeSparklineProps) {
-  const { colors } = useTheme();
-  const stroke = colors.success;
+  const { colors, isDark } = useTheme();
+  const stroke = isDark ? "#E2E8F0" : "#334155";
 
   const { fillPath, strokePath } = useMemo(() => {
     const points = toPoints(values, width, height);

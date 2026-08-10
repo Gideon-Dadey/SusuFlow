@@ -1,5 +1,4 @@
 import { FontAwesome6 } from "@expo/vector-icons";
-import { useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -12,13 +11,12 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { formatGhs } from "@/lib/currency";
 import { StatusBadge } from "@/components/activity/StatusBadge";
-import { TransactionReceiptSheet } from "@/components/activity/TransactionReceiptSheet";
 import { TransactionTypeIcon } from "@/components/activity/TransactionTypeIcon";
 import { NotificationBellIcon } from "@/components/notifications/NotificationBellIcon";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { Button } from "@/components/Button";
 import type { AppNotification } from "@/hooks/useNotificationFeed";
 import { formatNotificationTime } from "@/lib/notification-utils";
-import type { Transaction } from "@/lib/api";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
 
@@ -27,34 +25,67 @@ interface NotificationSheetProps {
   items: AppNotification[];
   loading: boolean;
   error: boolean;
+  /** ISO cutoff used to render unread dots for this session. */
+  readCutoff: string | null;
   onClose: () => void;
   onRetry: () => void;
+  onSelect: (item: AppNotification) => void;
+}
+
+function isUnread(item: AppNotification, readCutoff: string | null) {
+  if (!readCutoff) return false;
+  return new Date(item.createdAt).getTime() > new Date(readCutoff).getTime();
 }
 
 function NotificationRow({
   item,
+  unread,
   onPress,
 }: {
   item: AppNotification;
+  unread: boolean;
   onPress: () => void;
 }) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
 
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityLabel={`${item.title}. ${item.body}. ${unread ? "Unread. " : ""}Open details`}
       onPress={onPress}
       style={({ pressed }) => [
         styles.row,
-        { borderBottomColor: colors.border },
+        {
+          borderBottomColor: colors.border,
+          backgroundColor: unread
+            ? isDark
+              ? "rgba(255,255,255,0.04)"
+              : "rgba(15,23,42,0.03)"
+            : "transparent",
+        },
         pressed && { opacity: 0.85 },
       ]}
     >
-      <TransactionTypeIcon kind={item.kind} />
+      <View style={styles.leading}>
+        <TransactionTypeIcon kind={item.kind} />
+        {unread ? (
+          <View
+            style={[styles.unreadDot, { backgroundColor: colors.primary }]}
+          />
+        ) : null}
+      </View>
       <View style={styles.rowBody}>
         <View style={styles.rowTop}>
           <Text
-            style={[styles.rowTitle, { color: colors.foreground }]}
+            style={[
+              styles.rowTitle,
+              {
+                color: colors.foreground,
+                fontFamily: unread
+                  ? typography.fontFamily.bold
+                  : typography.fontFamily.semibold,
+              },
+            ]}
             numberOfLines={1}
           >
             {item.title}
@@ -74,8 +105,12 @@ function NotificationRow({
           <Text style={[styles.rowTime, { color: colors.mutedForeground }]}>
             {formatNotificationTime(item.createdAt)}
           </Text>
+          <Text style={[styles.rowAction, { color: colors.primary }]}>
+            View
+          </Text>
         </View>
       </View>
+      <AppIcon name="chevron-right" size={16} color={colors.mutedForeground} />
     </Pressable>
   );
 }
@@ -85,128 +120,112 @@ export function NotificationSheet({
   items,
   loading,
   error,
+  readCutoff,
   onClose,
   onRetry,
+  onSelect,
 }: NotificationSheetProps) {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
-  const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
-  const [receiptOpen, setReceiptOpen] = useState(false);
-
-  const openReceipt = (item: AppNotification) => {
-    setSelectedTxn(item.transaction);
-    setReceiptOpen(true);
-  };
-
-  const closeReceipt = () => {
-    setReceiptOpen(false);
-    setSelectedTxn(null);
-  };
 
   return (
-    <>
-      <Modal
-        visible={visible}
-        transparent
-        animationType="slide"
-        onRequestClose={onClose}
-        statusBarTranslucent
-      >
-        <View style={styles.overlay}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Close notifications"
-            style={[StyleSheet.absoluteFill, styles.backdrop]}
-            onPress={onClose}
-          />
-          <View
-            style={[
-              styles.sheet,
-              {
-                backgroundColor: colors.card,
-                borderColor: colors.border,
-                paddingBottom: insets.bottom + spacing.md,
-              },
-            ]}
-          >
-            <View style={[styles.handle, { backgroundColor: colors.border }]} />
-            <View style={styles.header}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onClose}
+      statusBarTranslucent
+    >
+      <View style={styles.overlay}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Close notifications"
+          style={[StyleSheet.absoluteFill, styles.backdrop]}
+          onPress={onClose}
+        />
+        <View
+          style={[
+            styles.sheet,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              paddingBottom: insets.bottom + spacing.md,
+            },
+          ]}
+        >
+          <View style={[styles.handle, { backgroundColor: colors.border }]} />
+          <View style={styles.header}>
+            <View style={styles.headerCopy}>
               <Text style={[styles.title, { color: colors.heading }]}>
                 Notifications
               </Text>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Close"
-                onPress={onClose}
-                hitSlop={12}
+              <Text
+                style={[styles.subtitle, { color: colors.mutedForeground }]}
               >
-                <FontAwesome6
-                  name="xmark"
-                  size={20}
-                  color={colors.mutedForeground}
-                  solid
-                />
-              </Pressable>
+                Tap any item to open the official receipt
+              </Text>
             </View>
-
-            {loading && items.length === 0 ? (
-              <View style={styles.centered}>
-                <ActivityIndicator color={colors.primary} />
-                <Text style={[styles.hint, { color: colors.mutedForeground }]}>
-                  Loading activity…
-                </Text>
-              </View>
-            ) : error ? (
-              <View style={styles.centered}>
-                <NotificationBellIcon
-                  size={32}
-                  color={colors.mutedForeground}
-                />
-                <Text style={[styles.errorTitle, { color: colors.foreground }]}>
-                  Could not load notifications
-                </Text>
-                <Text style={[styles.hint, { color: colors.mutedForeground }]}>
-                  Check your connection and try again.
-                </Text>
-                <Button title="Retry" onPress={onRetry} variant="outline" />
-              </View>
-            ) : items.length === 0 ? (
-              <View style={styles.centered}>
-                <NotificationBellIcon
-                  size={32}
-                  color={colors.mutedForeground}
-                />
-                <Text style={[styles.emptyTitle, { color: colors.foreground }]}>
-                  No activity yet
-                </Text>
-                <Text style={[styles.hint, { color: colors.mutedForeground }]}>
-                  Deposits and withdrawals will appear here as they happen.
-                </Text>
-              </View>
-            ) : (
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.list}
-              >
-                {items.map((item) => (
-                  <NotificationRow
-                    key={item.id}
-                    item={item}
-                    onPress={() => openReceipt(item)}
-                  />
-                ))}
-              </ScrollView>
-            )}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Close"
+              onPress={onClose}
+              hitSlop={12}
+            >
+              <FontAwesome6
+                name="xmark"
+                size={20}
+                color={colors.mutedForeground}
+                solid
+              />
+            </Pressable>
           </View>
-        </View>
-      </Modal>
 
-      <TransactionReceiptSheet
-        transaction={selectedTxn}
-        visible={receiptOpen}
-        onClose={closeReceipt}
-      />
-    </>
+          {loading && items.length === 0 ? (
+            <View style={styles.centered}>
+              <ActivityIndicator color={colors.primary} />
+              <Text style={[styles.hint, { color: colors.mutedForeground }]}>
+                Loading activity…
+              </Text>
+            </View>
+          ) : error ? (
+            <View style={styles.centered}>
+              <NotificationBellIcon size={32} color={colors.mutedForeground} />
+              <Text style={[styles.errorTitle, { color: colors.foreground }]}>
+                Could not load notifications
+              </Text>
+              <Text style={[styles.hint, { color: colors.mutedForeground }]}>
+                Check your connection and try again.
+              </Text>
+              <Button title="Retry" onPress={onRetry} variant="outline" />
+            </View>
+          ) : items.length === 0 ? (
+            <View style={styles.centered}>
+              <NotificationBellIcon size={32} color={colors.mutedForeground} />
+              <Text style={[styles.emptyTitle, { color: colors.foreground }]}>
+                You&apos;re all caught up
+              </Text>
+              <Text style={[styles.hint, { color: colors.mutedForeground }]}>
+                Deposits and withdrawals will show up here the moment they move.
+              </Text>
+            </View>
+          ) : (
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.list}
+            >
+              {items.map((item) => (
+                <NotificationRow
+                  key={item.id}
+                  item={item}
+                  unread={isUnread(item, readCutoff)}
+                  onPress={() => onSelect(item)}
+                />
+              ))}
+            </ScrollView>
+          )}
+        </View>
+      </View>
+    </Modal>
   );
 }
 
@@ -236,28 +255,53 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.md,
+    gap: spacing.md,
+  },
+  headerCopy: {
+    flex: 1,
+    gap: 2,
   },
   title: {
     fontFamily: typography.fontFamily.bold,
     fontSize: typography.size.lg,
+    letterSpacing: -0.2,
+  },
+  subtitle: {
+    fontFamily: typography.fontFamily.regular,
+    fontSize: typography.size.xs,
   },
   list: {
     paddingBottom: spacing.lg,
   },
   row: {
     flexDirection: "row",
+    alignItems: "center",
     gap: spacing.md,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
+  leading: {
+    position: "relative",
+  },
+  unreadDot: {
+    position: "absolute",
+    top: -2,
+    right: -2,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    borderWidth: 1.5,
+    borderColor: "#ffffff",
+  },
   rowBody: {
     flex: 1,
     gap: 4,
+    minWidth: 0,
   },
   rowTop: {
     flexDirection: "row",
@@ -267,7 +311,6 @@ const styles = StyleSheet.create({
   },
   rowTitle: {
     flex: 1,
-    fontFamily: typography.fontFamily.semibold,
     fontSize: typography.size.sm,
   },
   rowAmount: {
@@ -287,6 +330,11 @@ const styles = StyleSheet.create({
   },
   rowTime: {
     fontFamily: typography.fontFamily.regular,
+    fontSize: 11,
+    flex: 1,
+  },
+  rowAction: {
+    fontFamily: typography.fontFamily.semibold,
     fontSize: 11,
   },
   centered: {

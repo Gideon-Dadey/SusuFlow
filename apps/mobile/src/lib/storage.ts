@@ -9,6 +9,7 @@ const KEYS = {
   colorScheme: "color_scheme",
   notificationsLastSeenAt: "notifications_last_seen_at",
   expoPushToken: "expo_push_token",
+  lastLoginAt: "last_login_at",
 } as const;
 
 export const storage = {

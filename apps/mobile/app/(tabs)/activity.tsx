@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshControl, StyleSheet, View } from "react-native";
 import { ActivityAttentionQueue } from "@/components/activity/ActivityAttentionQueue";
 import { ActivityCashFlowPanel } from "@/components/activity/ActivityCashFlowPanel";
@@ -32,9 +32,9 @@ import {
   invalidateCustomerFinancials,
 } from "@/lib/financial-queries";
 import { queryKeys } from "@/lib/query-keys";
+import { useDeepLinkStore } from "@/stores/deep-link.store";
 import { spacing } from "@/theme/tokens";
 import { useTheme } from "@/theme/ThemeProvider";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function ActivityScreen() {
   const queryClient = useQueryClient();
@@ -44,6 +44,10 @@ export default function ActivityScreen() {
   const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const consumePendingReceipt = useDeepLinkStore(
+    (s) => s.consumePendingReceipt,
+  );
+  const pendingReceipt = useDeepLinkStore((s) => s.pendingReceipt);
 
   const { sessionKey } = useCustomerSession();
 
@@ -113,15 +117,21 @@ export default function ActivityScreen() {
     (depositsQuery.isError && deposits === undefined) ||
     (withdrawalsQuery.isError && withdrawals === undefined);
 
-  const openReceipt = (transaction: Transaction) => {
+  const openReceipt = useCallback((transaction: Transaction) => {
     setSelectedTxn(transaction);
     setReceiptOpen(true);
-  };
+  }, []);
 
   const closeReceipt = () => {
     setReceiptOpen(false);
     setSelectedTxn(null);
   };
+
+  useEffect(() => {
+    if (!pendingReceipt) return;
+    const pending = consumePendingReceipt();
+    if (pending) openReceipt(pending);
+  }, [pendingReceipt, consumePendingReceipt, openReceipt]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -140,7 +150,8 @@ export default function ActivityScreen() {
   return (
     <>
       <TabScreenLayout
-        header={<TabScreenHeader title="Activity" />}
+        bankHeader
+        header={<TabScreenHeader title="Activity" onGeometry />}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

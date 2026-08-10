@@ -100,7 +100,8 @@ export default function GoalsScreen() {
   return (
     <>
       <TabScreenLayout
-        header={<TabScreenHeader title="Goals" />}
+        bankHeader
+        header={<TabScreenHeader title="Goals" onGeometry />}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

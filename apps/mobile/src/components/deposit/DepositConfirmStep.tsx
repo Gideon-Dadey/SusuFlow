@@ -1,4 +1,7 @@
-import { AppIcon } from "@/components/icons/AppIcon";
+import {
+  PaymentMethodMark,
+  hasPaymentMethodMark,
+} from "@/components/payments/MobileMoneyMark";
 import { StyleSheet, Text, View } from "react-native";
 import { Input } from "@/components/Input";
 import {
@@ -7,6 +10,7 @@ import {
   isDepositBankTransfer,
   isDepositMobileMoney,
 } from "@/components/deposit/depositUtils";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { formatGhs } from "@/lib/currency";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
@@ -62,10 +66,21 @@ export function DepositConfirmStep({
           {formatGhs(amount)}
         </Text>
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
-        <SummaryRow
-          label="Payment method"
-          value={getDepositMethodLabel(method)}
-        />
+        <View style={styles.methodSummary}>
+          {hasPaymentMethodMark(method) ? (
+            <PaymentMethodMark methodId={method} size={28} />
+          ) : null}
+          <View style={styles.methodSummaryCopy}>
+            <Text
+              style={[styles.summaryLabel, { color: colors.mutedForeground }]}
+            >
+              Payment method
+            </Text>
+            <Text style={[styles.summaryValue, { color: colors.foreground }]}>
+              {getDepositMethodLabel(method)}
+            </Text>
+          </View>
+        </View>
         {isBank ? (
           <SummaryRow label="Bank" value={getDepositBankLabel(bankCode)} />
         ) : null}
@@ -156,6 +171,16 @@ const styles = StyleSheet.create({
     fontSize: typography.size.sm,
     textAlign: "right",
     flexShrink: 1,
+  },
+  methodSummary: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    paddingVertical: 4,
+  },
+  methodSummaryCopy: {
+    flex: 1,
+    gap: 2,
   },
   phoneCard: {
     borderRadius: radius.lg,

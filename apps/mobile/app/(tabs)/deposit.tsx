@@ -185,10 +185,11 @@ export default function DepositScreen() {
 
   return (
     <TabScreenLayout
+      bankHeader
       header={
         <View style={styles.header}>
-          <TabScreenHeader title="Deposit" />
-          {!pending ? <DepositStepIndicator step={step} /> : null}
+          <TabScreenHeader title="Deposit" onGeometry />
+          {!pending ? <DepositStepIndicator step={step} onGeometry /> : null}
         </View>
       }
       refreshControl={
