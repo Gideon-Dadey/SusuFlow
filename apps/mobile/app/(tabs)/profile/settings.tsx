@@ -3,7 +3,7 @@ import { Text, StyleSheet, View } from "react-native";
 import { BankMenuRow } from "@/components/profile/BankProfileMenuRow";
 import { SettingsDetailLayout } from "@/components/settings/SettingsDetailLayout";
 import { useThemeStore } from "@/stores/theme.store";
-import { bankChrome } from "@/theme/bankChrome";
+import { getWellForIcon } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { spacing, typography } from "@/theme/tokens";
 
@@ -16,48 +16,17 @@ function SectionLabel({ children }: { children: string }) {
   );
 }
 
+/** Preferences hub — kept for deep links; primary entry is My Profile. */
 export default function ProfileSettingsScreen() {
   const router = useRouter();
   const colorScheme = useThemeStore((s) => s.colorScheme);
   const { isDark } = useTheme();
-  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   return (
     <SettingsDetailLayout
       title="Settings"
-      subtitle="Manage how SusuFlow looks and keeps you secure"
+      subtitle="Display, alerts, and account security"
     >
-      <SectionLabel>Profile</SectionLabel>
-      <View>
-        <BankMenuRow
-          item={{
-            icon: "user",
-            label: "Personal details",
-            subtitle: "Name, phone, and contact info",
-            onPress: () => router.push("/my-profile/personal"),
-          }}
-        />
-        <BankMenuRow
-          item={{
-            icon: "wallet",
-            label: "Account overview",
-            subtitle: "Membership and linked information",
-            onPress: () => router.push("/my-profile/account"),
-          }}
-        />
-        <BankMenuRow
-          item={{
-            icon: "shield",
-            label: "Identity verification",
-            subtitle: "Ghana Card, passport, and selfie",
-            onPress: () => router.push("/my-profile/kyc"),
-          }}
-          showDivider={false}
-        />
-      </View>
-
-      <View style={[styles.sectionRule, { backgroundColor: divider }]} />
-
       <SectionLabel>Preferences</SectionLabel>
       <View>
         <BankMenuRow
@@ -65,7 +34,9 @@ export default function ProfileSettingsScreen() {
             icon: "moon",
             label: "Appearance",
             subtitle: colorScheme === "dark" ? "Dark theme" : "Light theme",
-            onPress: () => router.push("/(tabs)/profile/appearance"),
+            wellBg: getWellForIcon("moon", isDark).bg,
+            wellFg: getWellForIcon("moon", isDark).fg,
+            onPress: () => router.push("/my-profile/appearance"),
           }}
         />
         <BankMenuRow
@@ -73,6 +44,8 @@ export default function ProfileSettingsScreen() {
             icon: "bell",
             label: "Notifications",
             subtitle: "Push, email, and SMS alerts",
+            wellBg: getWellForIcon("bell", isDark).bg,
+            wellFg: getWellForIcon("bell", isDark).fg,
             onPress: () => router.push("/my-profile/notifications"),
           }}
         />
@@ -81,6 +54,8 @@ export default function ProfileSettingsScreen() {
             icon: "smartphone",
             label: "Security",
             subtitle: "Password, biometrics, and app lock",
+            wellBg: getWellForIcon("smartphone", isDark).bg,
+            wellFg: getWellForIcon("smartphone", isDark).fg,
             onPress: () => router.push("/my-profile/security"),
           }}
           showDivider={false}
@@ -98,10 +73,5 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     paddingHorizontal: spacing.lg,
     marginBottom: 4,
-  },
-  sectionRule: {
-    height: StyleSheet.hairlineWidth,
-    marginVertical: spacing.sm,
-    marginHorizontal: spacing.lg,
   },
 });

@@ -1,19 +1,28 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Alert, StyleSheet, View } from "react-native";
 import { Button } from "@/components/Button";
-import { Input } from "@/components/Input";
+import { HomeKycBanner } from "@/components/home/HomeKycBanner";
 import {
   TabScreenHeader,
   TabScreenLayout,
-  TabScreenSection,
 } from "@/components/layout/TabScreen";
-import {
-  MOBILE_MONEY_METHODS,
-  MobileMoneyMark,
-} from "@/components/payments/MobileMoneyMark";
 import { KycActionGate } from "@/components/security/KycActionGate";
 import { OfflineBanner } from "@/components/ui/OfflineBanner";
+import { useProfileData } from "@/components/settings/useProfileData";
+import { WithdrawAmountStep } from "@/components/withdraw/WithdrawAmountStep";
+import { WithdrawConfirmStep } from "@/components/withdraw/WithdrawConfirmStep";
+import { WithdrawMethodStep } from "@/components/withdraw/WithdrawMethodStep";
+import {
+  WithdrawSubmittedPanel,
+  type SubmittedWithdrawal,
+} from "@/components/withdraw/WithdrawSubmittedPanel";
+import { WithdrawStepIndicator } from "@/components/withdraw/WithdrawStepIndicator";
+import {
+  getWithdrawMethodLabel,
+  parseWithdrawAmount,
+  type WithdrawStep,
+} from "@/components/withdraw/withdrawUtils";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
 import { withdrawalApi } from "@/lib/api";
 import { fetchCustomerWallet } from "@/lib/customer-wallet";
@@ -21,21 +30,19 @@ import {
   financialQueryOptions,
   invalidateCustomerFinancials,
 } from "@/lib/financial-queries";
-import { queryKeys } from "@/lib/query-keys";
-import { formatGhs } from "@/lib/currency";
 import { monitoring } from "@/lib/monitoring";
-import { bankChrome } from "@/theme/bankChrome";
-import { useTheme } from "@/theme/ThemeProvider";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { queryKeys } from "@/lib/query-keys";
+import { spacing } from "@/theme/tokens";
 
 export default function WithdrawScreen() {
-  const { colors, isDark } = useTheme();
   const queryClient = useQueryClient();
+  const [step, setStep] = useState<WithdrawStep>(0);
   const [amount, setAmount] = useState("");
   const [phone, setPhone] = useState("");
   const [method, setMethod] = useState("mtn_momo");
-  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
+  const [submitted, setSubmitted] = useState<SubmittedWithdrawal | null>(null);
 
+  const { phone: profilePhone } = useProfileData();
   const { sessionKey } = useCustomerSession();
 
   const { data: wallet, isPending: walletPending } = useQuery({
@@ -47,19 +54,32 @@ export default function WithdrawScreen() {
     ...financialQueryOptions,
   });
 
+  useEffect(() => {
+    if (profilePhone && !phone) {
+      setPhone(profilePhone);
+    }
+  }, [profilePhone, phone]);
+
+  const parsedAmount = useMemo(() => parseWithdrawAmount(amount), [amount]);
+
+  const resetFlow = () => {
+    setSubmitted(null);
+    setStep(0);
+    setAmount("");
+  };
+
   const mutation = useMutation({
     mutationFn: async () => {
-      const parsed = parseFloat(amount);
-      if (!parsed || parsed <= 0) throw new Error("Enter a valid amount");
+      if (!parsedAmount) throw new Error("Enter a valid amount");
       if (!phone.trim()) throw new Error("Enter your MoMo number");
-      if (wallet && parsed > wallet.balance) {
+      if (wallet && parsedAmount > wallet.balance) {
         throw new Error("Amount exceeds your available balance");
       }
 
       return withdrawalApi.requestWithdrawal({
-        amount: parsed,
+        amount: parsedAmount,
         disbursementMethod: method,
-        disbursementPhone: phone,
+        disbursementPhone: phone.trim(),
       });
     },
     onSuccess: (data) => {
@@ -68,11 +88,12 @@ export default function WithdrawScreen() {
       }
       const reference =
         (data as { reference?: string })?.reference || "submitted";
-      Alert.alert(
-        "Withdrawal requested",
-        `Your request is pending staff approval.\n\nReference: ${reference}\n\nYou'll be notified when it's paid out.`,
-      );
-      setAmount("");
+      setSubmitted({
+        reference,
+        amount: parsedAmount!,
+        methodLabel: getWithdrawMethodLabel(method),
+        phone: phone.trim(),
+      });
     },
     onError: (err: Error) => {
       monitoring.captureException(err, { scope: "withdrawal.request" });
@@ -80,140 +101,112 @@ export default function WithdrawScreen() {
     },
   });
 
+  const goNext = () => {
+    if (step === 0) {
+      if (!parsedAmount) {
+        Alert.alert("Enter an amount", "Choose how much you want to withdraw.");
+        return;
+      }
+      if (wallet && parsedAmount > wallet.balance) {
+        Alert.alert(
+          "Amount too high",
+          "You can’t withdraw more than your available balance.",
+        );
+        return;
+      }
+      setStep(1);
+      return;
+    }
+
+    if (step === 1) {
+      if (!phone.trim()) {
+        Alert.alert(
+          "Enter a MoMo number",
+          "We need the wallet number for your payout.",
+        );
+        return;
+      }
+      setStep(2);
+      return;
+    }
+
+    mutation.mutate();
+  };
+
+  const goBack = () => {
+    if (step === 0) return;
+    setStep((current) => (current - 1) as WithdrawStep);
+  };
+
+  const primaryLabel = step === 2 ? "Confirm & request" : "Continue";
+
   return (
     <TabScreenLayout
-      header={<TabScreenHeader title="Withdraw" onGeometry showBack />}
       bankHeader
+      header={
+        <View style={styles.header}>
+          <TabScreenHeader title="Withdraw" onGeometry showBack />
+          {!submitted ? <WithdrawStepIndicator step={step} onGeometry /> : null}
+        </View>
+      }
     >
-      <View style={{ gap: 12 }}>
+      <View style={styles.content}>
         <OfflineBanner />
         <KycActionGate actionLabel="withdraw">
-          <TabScreenSection title="Available balance">
-            <View style={styles.balanceWrap}>
-              {walletPending && wallet === undefined ? (
-                <Text
-                  style={[
-                    styles.balanceLabel,
-                    { color: colors.mutedForeground },
-                  ]}
-                >
-                  Loading balance…
-                </Text>
-              ) : (
-                <Text
-                  style={[styles.balanceValue, { color: colors.foreground }]}
-                >
-                  {formatGhs(wallet?.balance ?? 0)}
-                </Text>
-              )}
-            </View>
-          </TabScreenSection>
-
-          <TabScreenSection title="Amount">
-            <View style={styles.fieldWrap}>
-              <Input
-                label="Amount (₵)"
-                value={amount}
-                onChangeText={setAmount}
-                keyboardType="decimal-pad"
-                placeholder="0.00"
-              />
-            </View>
-          </TabScreenSection>
-
-          <TabScreenSection title="MoMo number">
-            <View style={styles.fieldWrap}>
-              <Input
-                label="Mobile money number"
-                value={phone}
-                onChangeText={setPhone}
-                keyboardType="phone-pad"
-                placeholder="+233..."
-              />
-            </View>
-          </TabScreenSection>
-
-          <TabScreenSection title="Disbursement method">
-            {MOBILE_MONEY_METHODS.map((item, index) => {
-              const selected = method === item.id;
-              return (
-                <View key={item.id}>
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityState={{ selected }}
-                    onPress={() => setMethod(item.id)}
-                    style={({ pressed }) => [
-                      styles.methodRow,
-                      pressed && styles.pressed,
-                      selected && {
-                        backgroundColor: isDark
-                          ? "rgba(255,255,255,0.04)"
-                          : "rgba(0,0,0,0.03)",
-                      },
-                    ]}
-                  >
-                    <MobileMoneyMark
-                      methodId={item.id}
-                      size={bankChrome.wellSize}
-                    />
-                    <View style={styles.methodCopy}>
-                      <Text
-                        style={[
-                          styles.methodTitle,
-                          { color: colors.foreground },
-                        ]}
-                      >
-                        {item.label}
-                      </Text>
-                      <Text
-                        style={[
-                          styles.methodSubtitle,
-                          { color: colors.mutedForeground },
-                        ]}
-                      >
-                        {item.subtitle}
-                      </Text>
-                    </View>
-                    <View
-                      style={[
-                        styles.radio,
-                        {
-                          borderColor: selected
-                            ? colors.primary
-                            : colors.border,
-                        },
-                      ]}
-                    >
-                      {selected ? (
-                        <View
-                          style={[
-                            styles.radioFill,
-                            { backgroundColor: colors.primary },
-                          ]}
-                        />
-                      ) : null}
-                    </View>
-                  </Pressable>
-                  {index < MOBILE_MONEY_METHODS.length - 1 ? (
-                    <View
-                      style={[
-                        styles.methodDivider,
-                        { backgroundColor: divider },
-                      ]}
-                    />
-                  ) : null}
-                </View>
-              );
-            })}
-          </TabScreenSection>
-
-          <View style={styles.ctaWrap}>
-            <Button
-              title="Request withdrawal"
-              loading={mutation.isPending}
-              onPress={() => mutation.mutate()}
+          {submitted ? (
+            <WithdrawSubmittedPanel
+              submission={submitted}
+              onDone={resetFlow}
+              onStartNew={resetFlow}
             />
-          </View>
+          ) : (
+            <>
+              {step === 0 ? <HomeKycBanner /> : null}
+
+              {step === 0 ? (
+                <WithdrawAmountStep
+                  amount={amount}
+                  onChangeAmount={setAmount}
+                  balance={wallet?.balance}
+                  balanceLoading={walletPending && wallet === undefined}
+                />
+              ) : null}
+
+              {step === 1 ? (
+                <WithdrawMethodStep
+                  method={method}
+                  phone={phone}
+                  onSelectMethod={setMethod}
+                  onChangePhone={setPhone}
+                />
+              ) : null}
+
+              {step === 2 && parsedAmount ? (
+                <WithdrawConfirmStep
+                  amount={parsedAmount}
+                  method={method}
+                  phone={phone}
+                />
+              ) : null}
+
+              <View style={styles.footer}>
+                {step > 0 ? (
+                  <Button
+                    title="Back"
+                    variant="secondary"
+                    onPress={goBack}
+                    style={styles.back}
+                  />
+                ) : null}
+                <Button
+                  title={primaryLabel}
+                  loading={mutation.isPending}
+                  onPress={goNext}
+                  style={styles.primary}
+                />
+              </View>
+            </>
+          )}
         </KycActionGate>
       </View>
     </TabScreenLayout>
@@ -221,65 +214,22 @@ export default function WithdrawScreen() {
 }
 
 const styles = StyleSheet.create({
-  balanceWrap: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+  header: {
+    gap: spacing.xs,
   },
-  balanceLabel: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: typography.size.sm,
+  content: {
+    gap: spacing.lg,
+    paddingBottom: spacing.xl,
   },
-  balanceValue: {
-    fontFamily: typography.fontFamily.bold,
-    fontSize: typography.size.xl,
-  },
-  fieldWrap: {
-    padding: spacing.md,
-  },
-  radio: {
-    width: 20,
-    height: 20,
-    borderRadius: radius.full,
-    borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  radioFill: {
-    width: 10,
-    height: 10,
-    borderRadius: radius.full,
-  },
-  methodRow: {
+  footer: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: bankChrome.rowGap,
-    paddingVertical: bankChrome.rowPaddingY,
-    paddingHorizontal: spacing.xs,
-    minHeight: bankChrome.rowMinHeight,
+    gap: spacing.sm,
+    marginTop: spacing.sm,
   },
-  pressed: {
-    opacity: 0.86,
+  back: {
+    flex: 0.4,
   },
-  methodCopy: {
+  primary: {
     flex: 1,
-    gap: 3,
-    minWidth: 0,
-  },
-  methodTitle: {
-    fontFamily: typography.fontFamily.semibold,
-    fontSize: bankChrome.labelSize,
-    letterSpacing: -0.2,
-  },
-  methodSubtitle: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: bankChrome.subtitleSize,
-    lineHeight: 17,
-  },
-  methodDivider: {
-    height: StyleSheet.hairlineWidth,
-    marginLeft: bankChrome.wellSize + bankChrome.rowGap + spacing.xs,
-  },
-  ctaWrap: {
-    paddingHorizontal: spacing.xs,
   },
 });

@@ -13,12 +13,13 @@ export default function MyProfileLayout() {
       }}
     >
       <Stack.Screen name="index" />
-      <Stack.Screen name="settings" />
       <Stack.Screen name="personal" />
       <Stack.Screen name="account" />
       <Stack.Screen name="kyc" />
       <Stack.Screen name="security" />
       <Stack.Screen name="notifications" />
+      <Stack.Screen name="appearance" />
+      <Stack.Screen name="settings" />
     </Stack>
   );
 }
