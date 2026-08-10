@@ -63,7 +63,7 @@ export class CreateTenantDto {
   })
   @IsOptional()
   @IsString()
-  @MinLength(10)
+  @MinLength(8)
   adminPassword?: string;
 }
 

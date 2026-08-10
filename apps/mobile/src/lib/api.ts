@@ -106,6 +106,11 @@ async function request<T>(
     ...(customHeaders as Record<string, string>),
   };
 
+  // localtunnel interstitial bypass for physical-device API access
+  if (getApiBaseUrl().includes("loca.lt")) {
+    headers["Bypass-Tunnel-Reminder"] = "true";
+  }
+
   if (!skipAuth) {
     const token = await getAccessToken();
     if (token) headers.Authorization = `Bearer ${token}`;
@@ -146,8 +151,27 @@ async function request<T>(
       (nested?.message as string) ||
       error.detail ||
       (typeof error.message === "string" ? error.message : null) ||
+      (Array.isArray(error.message)
+        ? error.message
+            .map((item: unknown) =>
+              typeof item === "string"
+                ? item
+                : typeof item === "object" &&
+                    item &&
+                    "message" in item &&
+                    typeof (item as { message: unknown }).message === "string"
+                  ? (item as { message: string }).message
+                  : null,
+            )
+            .filter(Boolean)
+            .join(". ")
+        : null) ||
       error.title ||
-      "Request failed";
+      (response.status === 0
+        ? "Unable to connect. Check your internet connection and try again."
+        : response.status >= 500
+          ? "Server is temporarily unavailable. Please try again."
+          : "Request failed");
     const code = (nested?.code as string) || (error.code as string);
     throw new ApiError(detail, response.status, code, nested ?? undefined);
   }
@@ -214,6 +238,7 @@ export interface User {
   lastName: string;
   status: string;
   phone?: string | null;
+  avatarUrl?: string | null;
   customer?: Customer;
 }
 
@@ -221,6 +246,39 @@ export interface Customer {
   id: string;
   customerNumber: string;
   status: string;
+  kycLevel?: number;
+  kycStatus?: "pending" | "verified" | "rejected";
+  ghanaCardNumber?: string | null;
+  dateOfBirth?: string | null;
+  address?: string | null;
+}
+
+export type KycDocumentType =
+  | "ghana_card"
+  | "passport"
+  | "voter_id"
+  | "nhis"
+  | "utility_bill"
+  | "selfie";
+
+export interface KycDocument {
+  id: string;
+  documentType: KycDocumentType;
+  fileUrl: string;
+  status: "pending" | "approved" | "rejected";
+  rejectionReason?: string | null;
+  reviewedAt?: string | null;
+  createdAt: string;
+}
+
+export interface KycStatusResponse {
+  customerId: string;
+  kycLevel: number;
+  kycStatus: "pending" | "verified" | "rejected";
+  ghanaCardNumber?: string | null;
+  dateOfBirth?: string | null;
+  address?: string | null;
+  documents: KycDocument[];
 }
 
 export interface Transaction {
@@ -256,8 +314,12 @@ export interface Transaction {
 }
 
 export interface TenantInfo {
+  id: string;
   name: string;
   slug: string;
+  primaryColor?: string;
+  logoUrl?: string | null;
+  status?: string;
 }
 
 export interface SavingsPlan {
@@ -292,6 +354,8 @@ export const authApi = {
       email: string;
       phone: string;
       password: string;
+      dateOfBirth?: string;
+      gender?: "female" | "male" | "other" | "prefer_not_to_say";
     },
     tenantSlug = "",
   ) =>
@@ -353,6 +417,7 @@ export const userApi = {
     lastName?: string;
     phone?: string;
     email?: string;
+    avatarUrl?: string | null;
   }) => api.put<User>("/users/me", data),
   updatePassword: (data: { currentPassword: string; newPassword: string }) =>
     api.put<{ message: string }>("/users/me/password", data),
@@ -362,6 +427,28 @@ export const userApi = {
     api.put<{ registered: boolean }>("/users/me/push-token", data),
   removePushToken: (data: { token: string }) =>
     api.delete<{ removed: boolean }>("/users/me/push-token", data),
+};
+
+export const kycApi = {
+  getMyStatus: () => api.get<KycStatusResponse>("/kyc/my-status"),
+  submit: (data: {
+    documentType: KycDocumentType;
+    idNumber: string;
+    dateOfBirth?: string;
+    address?: string;
+    fileUrl: string;
+  }) => api.post<KycDocument>("/kyc/submit", data),
+  submitBatch: (data: {
+    idNumber: string;
+    dateOfBirth?: string;
+    address?: string;
+    documents: Array<{ documentType: KycDocumentType; fileUrl: string }>;
+  }) =>
+    api.post<{
+      customerId: string;
+      kycStatus: "pending";
+      documents: KycDocument[];
+    }>("/kyc/submit-batch", data),
 };
 
 export const customerApi = {
@@ -376,15 +463,57 @@ export const depositApi = {
     amount: number;
     paymentMethod: string;
     customerId: string;
-    payerPhone: string;
+    payerPhone?: string;
+    bankCode?: string;
+    idempotencyKey?: string;
   }) =>
     api.post<{
       transactionId: string;
       reference: string;
-      payment: { paymentUrl?: string };
+      status: string;
+      payment: {
+        id: string;
+        gateway: string;
+        paymentUrl?: string;
+        expiresAt?: string;
+        bankTransfer?: {
+          bankCode: string;
+          bankName: string;
+          accountName?: string;
+          accountNumber?: string;
+          narration: string;
+          instructions: string;
+        } | null;
+      };
     }>("/deposits", data),
-  list: (params?: { customer_id?: string; limit?: number }) =>
-    api.get<{ items: Transaction[] }>(`/deposits${toQueryString(params)}`),
+  get: (id: string) => api.get<DepositDetail>(`/deposits/${id}`),
+  list: (params?: {
+    customer_id?: string;
+    limit?: number;
+    cursor?: string;
+    status?: string;
+  }) =>
+    api.get<{
+      items: Transaction[];
+      cursor?: string;
+      hasMore?: boolean;
+    }>(`/deposits${toQueryString(params)}`),
+};
+
+export type DepositDetail = {
+  id: string;
+  reference: string;
+  status: string;
+  amount: string | number;
+  createdAt: string;
+  completedAt?: string | null;
+  payment?: {
+    status: string;
+    paymentMethod?: string;
+    payerPhone?: string | null;
+    gatewayReference?: string | null;
+    expiresAt?: string | null;
+  } | null;
 };
 
 export const withdrawalApi = {

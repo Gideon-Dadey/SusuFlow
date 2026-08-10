@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { ProductHero } from "@/components/marketing/product/product-hero";
-import { ProductFeatureSection } from "@/components/marketing/product/product-feature-section";
-import { MarketingTextBlock } from "@/components/marketing/marketing-text-block";
-import { ApprovalWorkflowsCtaSection } from "@/components/marketing/approval-workflows-cta-section";
+import { Send, Shield, Zap } from "lucide-react";
+import { WhyPageTemplate } from "@/components/marketing/ofx/why-page-template";
 import { APP_NAME } from "@/lib/marketing-data";
-import { BRAND_MOMO_PAY_SHOWCASE } from "@/lib/brand-assets";
 
 export const metadata: Metadata = {
   title: `Cashless Market Collections | ${APP_NAME}`,
@@ -12,104 +9,104 @@ export const metadata: Metadata = {
 };
 
 export default function CashlessMarketCollectionsPage() {
-  const features = [
-    {
-      id: "direct-prompt",
-      title: "The Direct Prompt Push",
-      description: (
-        <>
-          <p>
-            Remove cash from the equation entirely. Our collector app integrates
-            deeply with telco APIs to allow "push" prompts directly to a
-            trader's mobile money wallet.
-          </p>
-          <p>
-            The collector enters the deposit amount in the app, and the saver's
-            phone immediately lights up requesting their secret PIN to authorize
-            the transfer. It is fast, seamless, and completely cashless.
-          </p>
-        </>
-      ),
-      imageSrc: "/marketing/why-susuflow/cashless.png",
-      imageAlt: "Mobile money prompt on a smartphone in a market",
-      isMockup: false,
-    },
-    {
-      id: "security",
-      title: "Unmatched Physical Security",
-      description: (
-        <>
-          <p>
-            Carrying thousands of cedis through crowded markets makes collectors
-            prime targets for theft. Cashless collections ensure that your
-            agents are never holding large sums of physical cash.
-          </p>
-          <p>
-            This not only protects your capital, but crucially protects the
-            physical safety of your hardworking field teams.
-          </p>
-        </>
-      ),
-      imageSrc: "/marketing/why-susuflow/solutions.png",
-      imageAlt: "Managers discussing improved security protocols",
-      isMockup: false,
-    },
-    {
-      id: "instant-settlement",
-      title: "Instant Liquidity Settlement",
-      description: (
-        <>
-          <p>
-            When a trader enters their PIN, the funds are instantly transferred
-            from their wallet into your MFI's corporate merchant account.
-          </p>
-          <p>
-            Your business gains immediate access to the collected liquidity,
-            allowing you to re-deploy capital into micro-loans much faster than
-            waiting for end-of-day bank branch deposits.
-          </p>
-        </>
-      ),
-      imageSrc: BRAND_MOMO_PAY_SHOWCASE,
-      imageAlt: "Instant mobile money settlement UI",
-      isMockup: true,
-    },
-  ];
-
   return (
-    <>
-      <ProductHero
-        title="Cashless Market Collections"
-        description="Direct Mobile Money wallet prompts right at the trader stall. A collector simply initiates the deposit via their app, and the saver securely enters their PIN on their own device to confirm. The transaction is instantly recorded in your ledger."
-        imageSrc="/marketing/why-susuflow/cashless.png"
-        imageAlt="Mobile money prompt appearing on a smartphone in a market"
-        isMockup={false}
-      />
-      <MarketingTextBlock title="The Future of the African Market is Digital">
-        <p>
-          The informal sector drives the Ghanaian economy, but its reliance on
-          physical cash creates massive inefficiencies. For field collectors,
-          walking through crowded markets with bags of cash is inherently
-          dangerous. For the MFI, waiting until the end of the day for that cash
-          to be deposited at a bank branch means losing out on hours of vital
-          liquidity.
-        </p>
-        <p>
-          SusuFlow leverages the explosive growth of Mobile Money in West Africa
-          to eliminate physical cash from the collection cycle entirely. By
-          turning every transaction into a direct digital exchange between a
-          saver's mobile wallet and your corporate account, we bypass the
-          physical vulnerabilities of traditional Susu.
-        </p>
-        <p>
-          This shift doesn't just improve security—it fundamentally accelerates
-          the velocity of your capital. When funds settle instantly, you can
-          disburse loans faster, earn interest sooner, and serve your clients
-          with unprecedented speed.
-        </p>
-      </MarketingTextBlock>
-      <ProductFeatureSection features={features} />
-      <ApprovalWorkflowsCtaSection />
-    </>
+    <WhyPageTemplate
+      accent="sand"
+      hero={{
+        title: "Collections without cash. Right at the stall.",
+        lead: "Direct Mobile Money prompts at the trader's stall. The collector initiates the deposit in the app, the saver enters their PIN on their own phone, and the transaction lands in your ledger instantly.",
+        tile: {
+          label: "MoMo prompt · Ama A.",
+          value: "GHS 30.00",
+          caption: "Fully cashless, settled in seconds",
+          badge: "Cashless",
+          rows: [
+            {
+              label: "Prompt pushed to wallet",
+              value: "10:12",
+              status: "Sent",
+            },
+            { label: "Saver enters PIN", value: "10:12", status: "Confirmed" },
+            {
+              label: "Settled to merchant account",
+              value: "10:12",
+              status: "Instant",
+            },
+          ],
+        },
+      }}
+      highlightsHeading={{
+        eyebrow: "Cashless by design",
+        title: "No cash. No risk. No waiting.",
+      }}
+      highlights={[
+        {
+          icon: Send,
+          title: "The direct prompt push",
+          body: "Deep telco API integration pushes prompts straight to a trader's mobile money wallet. The collector enters the amount; the saver's phone lights up asking for their PIN. Fast, seamless, cashless.",
+        },
+        {
+          icon: Shield,
+          title: "Unmatched physical security",
+          body: "Carrying thousands of cedis through crowded markets makes collectors prime targets. Cashless collections protect your capital — and, crucially, the physical safety of your field teams.",
+        },
+        {
+          icon: Zap,
+          title: "Instant liquidity settlement",
+          body: "The moment a trader enters their PIN, funds move to your corporate merchant account. Re-deploy capital into micro-loans immediately instead of waiting for end-of-day bank deposits.",
+        },
+      ]}
+      sections={[
+        {
+          eyebrow: "The shift",
+          title: "The future of the African market is digital",
+          paragraphs: [
+            "The informal sector drives the Ghanaian economy, but its reliance on physical cash creates real danger for collectors and hours of lost liquidity for the MFI waiting on end-of-day branch deposits.",
+            "SusuFlow leverages the explosive growth of Mobile Money in West Africa to remove cash from the collection cycle entirely — every transaction is a direct digital exchange between the saver's wallet and your corporate account.",
+            "The shift doesn't just improve security. It accelerates the velocity of your capital: funds settle instantly, so you disburse loans faster, earn interest sooner and serve clients with unprecedented speed.",
+          ],
+          tile: {
+            heading: "Old day vs. cashless day",
+            rows: [
+              {
+                label: "Cash carried by agents",
+                value: "GHS 0.00",
+                status: "Was GHS 9,400",
+              },
+              {
+                label: "Funds available for loans",
+                value: "Immediately",
+                status: "Was next day",
+              },
+              { label: "Transit risk", value: "None", status: "Eliminated" },
+            ],
+          },
+        },
+      ]}
+      quote={{
+        variant: "dark",
+        text: "When funds settle instantly, you disburse loans faster, earn interest sooner, and serve clients with unprecedented speed.",
+      }}
+      related={[
+        {
+          title: "100% gateway verification",
+          description:
+            "Every deposit hits the bank before it touches a client balance.",
+          href: "/why-susuflow/gateway-verification",
+        },
+        {
+          title: "Field collectors",
+          description:
+            "Mobile collection tools and live target tracking for market agents.",
+          href: "/why-susuflow/field-collectors",
+        },
+        {
+          title: "Susu companies & MFIs",
+          description:
+            "Purpose-built software for Ghanaian operators to scale safely.",
+          href: "/why-susuflow/susu-companies-and-mfis",
+        },
+      ]}
+    />
   );
 }

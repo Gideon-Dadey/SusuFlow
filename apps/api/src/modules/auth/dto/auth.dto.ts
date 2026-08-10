@@ -7,6 +7,7 @@ import {
   IsIn,
   IsUUID,
   Length,
+  IsDateString,
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { MIN_PASSWORD_LENGTH } from "@susuflow/shared";
@@ -34,6 +35,18 @@ export class RegisterDto {
   @IsString()
   @MinLength(MIN_PASSWORD_LENGTH)
   password!: string;
+
+  @ApiPropertyOptional({ example: "1998-04-12" })
+  @IsOptional()
+  @IsDateString()
+  dateOfBirth?: string;
+
+  @ApiPropertyOptional({
+    enum: ["female", "male", "other", "prefer_not_to_say"],
+  })
+  @IsOptional()
+  @IsIn(["female", "male", "other", "prefer_not_to_say"])
+  gender?: "female" | "male" | "other" | "prefer_not_to_say";
 
   @ApiPropertyOptional()
   @IsOptional()

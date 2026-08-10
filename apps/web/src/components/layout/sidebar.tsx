@@ -109,7 +109,7 @@ export function Sidebar({
     >
       <div className="flex h-16 items-center gap-2 border-b border-border px-4">
         {variant === "admin" ? (
-          <SusuFlowIconMark className="h-8 w-8 shrink-0" />
+          <SusuFlowIconMark className="h-7 w-auto max-w-[7.5rem] shrink-0" />
         ) : tenantBranding?.logoUrl ? (
           <img
             src={tenantBranding.logoUrl}
@@ -117,7 +117,7 @@ export function Sidebar({
             className="h-8 w-8 rounded-md object-contain bg-transparent shrink-0"
           />
         ) : (
-          <SusuFlowIconMark className="h-8 w-8 shrink-0" />
+          <SusuFlowIconMark className="h-7 w-auto max-w-[7.5rem] shrink-0" />
         )}
         <span className="truncate text-sm font-semibold text-foreground">
           {brandLabel}

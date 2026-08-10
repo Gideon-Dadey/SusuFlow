@@ -1,9 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Inter } from "next/font/google";
+import { Familjen_Grotesk, Geist, Open_Sans } from "next/font/google";
 import "./globals.css";
 import "@/lib/fontawesome";
 import { Providers } from "@/components/providers";
 import { PwaAutoUpdater } from "@/components/pwa-auto-updater";
+
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  variable: "--font-open-sans",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 const geist = Geist({
   subsets: ["latin"],
@@ -12,9 +19,9 @@ const geist = Geist({
   display: "swap",
 });
 
-const inter = Inter({
+const grotesk = Familjen_Grotesk({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-grotesk",
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
@@ -25,6 +32,16 @@ export const metadata: Metadata = {
     "Eliminate fraud in susu collection with gateway-confirmed digital deposits",
   applicationName: "SusuFlow",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", type: "image/png", sizes: "48x48" },
+      { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icons/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+    shortcut: "/favicon.ico",
+  },
   appleWebApp: {
     capable: true,
     title: "SusuFlow",
@@ -36,7 +53,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#010517",
+  themeColor: "#010e25",
 };
 
 export default function RootLayout({
@@ -47,7 +64,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geist.variable} ${inter.variable} --font-jakarta:${geist.variable} --font-open-sans:${geist.variable} h-full`}
+      className={`${geist.variable} ${openSans.variable} ${grotesk.variable} h-full`}
       suppressHydrationWarning
     >
       <head>
@@ -58,7 +75,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-background font-sans text-foreground antialiased selection:bg-primary/20 selection:text-primary">
+      <body className="min-h-full flex flex-col bg-background font-sans text-foreground antialiased selection:bg-primary-600/20">
         <Providers>
           <PwaAutoUpdater />
           {children}

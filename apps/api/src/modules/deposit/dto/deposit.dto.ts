@@ -1,6 +1,15 @@
-import { IsNumber, IsString, IsUUID, IsEnum, IsOptional, Min } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { PaymentMethod } from '@susuflow/database';
+import {
+  IsNumber,
+  IsString,
+  IsUUID,
+  IsEnum,
+  IsOptional,
+  Min,
+  MaxLength,
+  Matches,
+} from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { PaymentMethod } from "@susuflow/database";
 
 export class CreateDepositDto {
   @ApiProperty({ example: 100.0 })
@@ -16,9 +25,27 @@ export class CreateDepositDto {
   @IsUUID()
   customerId!: string;
 
-  @ApiProperty({ example: '+233241234567' })
+  @ApiPropertyOptional({
+    example: "+233241234567",
+    description:
+      "Required for mobile money. Optional contact phone for bank transfer receipts.",
+  })
+  @IsOptional()
   @IsString()
-  payerPhone!: string;
+  @MaxLength(20)
+  payerPhone?: string;
+
+  @ApiPropertyOptional({
+    example: "GCB",
+    description: "Required when paymentMethod is bank_transfer.",
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(16)
+  @Matches(/^[A-Za-z0-9_-]+$/, {
+    message: "bankCode must be alphanumeric",
+  })
+  bankCode?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -28,5 +55,6 @@ export class CreateDepositDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   idempotencyKey?: string;
 }

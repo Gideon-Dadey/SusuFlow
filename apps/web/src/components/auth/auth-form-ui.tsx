@@ -1,7 +1,76 @@
 import Link from "next/link";
+import { InputHTMLAttributes, ReactNode } from "react";
+import { cn } from "@/lib/utils";
+
+export const authHeadingClassName = "ofx-h2 mb-2";
+
+export const authSubtextClassName =
+  "text-[14px] md:text-base text-foreground/70 leading-relaxed";
+
+export const authLabelClassName =
+  "block text-[11px] font-semibold uppercase tracking-wider text-foreground/60";
+
+export const authLinkClassName =
+  "font-medium text-foreground underline underline-offset-4 decoration-[1.5px] transition-opacity hover:opacity-70";
 
 export const authInputClassName =
-  "auth-input flex h-12 min-h-[48px] w-full rounded-xl border border-border bg-background px-4 py-2.5 text-base font-normal text-foreground placeholder:text-muted-foreground/60 transition-all duration-200 focus:border-primary focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-50";
+  "block w-full px-4 py-3 rounded-xl border text-[13.5px] font-medium transition-all duration-200 outline-none border-border bg-white text-foreground placeholder:text-muted-foreground/60 hover:border-foreground/30 focus:border-foreground focus:ring-1 focus:ring-foreground/15";
+
+export const authSubmitClassName =
+  "ofx-btn ofx-btn-dark w-full disabled:cursor-not-allowed active:scale-[0.98]";
+
+export const authErrorAlertClassName =
+  "bg-red-50 border border-red-200 text-red-700 p-3 rounded-xl text-sm mb-6 flex items-start gap-2";
+
+type ModernInputProps = InputHTMLAttributes<HTMLInputElement> & {
+  id: string;
+  label: string;
+  error?: string;
+  rightElement?: ReactNode;
+};
+
+export function ModernInput({
+  id,
+  label,
+  type = "text",
+  error,
+  required,
+  rightElement,
+  className,
+  ...props
+}: ModernInputProps) {
+  return (
+    <div className="space-y-1.5 w-full">
+      <label htmlFor={id} className={authLabelClassName}>
+        {label} {required ? <span className="text-red-500">*</span> : null}
+      </label>
+      <div className="relative">
+        <input
+          id={id}
+          type={type}
+          className={cn(
+            authInputClassName,
+            error &&
+              "border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200",
+            rightElement && "pr-12",
+            className,
+          )}
+          {...props}
+        />
+        {rightElement ? (
+          <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
+            {rightElement}
+          </div>
+        ) : null}
+      </div>
+      {error ? (
+        <p className="text-[11px] text-red-600 font-medium tracking-tight mt-1">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
 
 export function GoogleIcon() {
   return (
@@ -36,14 +105,12 @@ export function AppleIcon() {
 
 export function AuthDivider() {
   return (
-    <div className="relative py-1">
+    <div className="relative py-2">
       <div className="absolute inset-0 flex items-center" aria-hidden>
         <div className="w-full border-t border-border" />
       </div>
-      <div className="relative flex justify-center text-xs uppercase tracking-wider">
-        <span className="bg-background px-3 font-medium text-muted-foreground">
-          or
-        </span>
+      <div className="relative flex justify-center text-sm">
+        <span className="px-4 bg-white text-muted-foreground">or</span>
       </div>
     </div>
   );
@@ -59,7 +126,7 @@ export function SocialButton({
   return (
     <button
       type="button"
-      className="flex h-12 min-h-[48px] w-full items-center justify-center gap-2.5 rounded-full border border-border bg-card text-sm font-medium text-foreground transition-all duration-200 hover:bg-muted/60 hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/15 active:scale-[0.98]"
+      className="ofx-btn ofx-btn-light w-full active:scale-[0.99]"
     >
       {icon}
       {label}
@@ -77,14 +144,14 @@ export function AuthLegalNotice({
       By {action}, you agree to SusuFlow&apos;s{" "}
       <Link
         href="/terms"
-        className="font-medium text-foreground hover:underline"
+        className="font-medium text-foreground underline underline-offset-2 hover:opacity-70"
       >
         Terms of Service
       </Link>
       ,{" "}
       <Link
         href="/privacy"
-        className="font-medium text-foreground hover:underline"
+        className="font-medium text-foreground underline underline-offset-2 hover:opacity-70"
       >
         Privacy Policy
       </Link>
@@ -126,14 +193,3 @@ export function AuthFooterExtras({
     </div>
   );
 }
-
-export const authHeadingClassName =
-  "font-geist text-3xl sm:text-4xl font-medium tracking-tight text-foreground";
-
-export const authSubtextClassName =
-  "mt-2 text-sm sm:text-base text-muted-foreground";
-
-export const authLabelClassName = "block text-sm font-medium text-foreground";
-
-export const authLinkClassName =
-  "font-medium text-foreground underline-offset-4 hover:underline";

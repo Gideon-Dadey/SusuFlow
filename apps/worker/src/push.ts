@@ -58,6 +58,18 @@ export function buildTransactionPushContent(
         body: `Your GHS ${formattedAmount} withdrawal was declined. Funds returned to your wallet.`,
         data,
       };
+    case "kyc-approved":
+      return {
+        title: "Identity verified",
+        body: `Hi ${firstName}, your identity verification with ${tenantName} was approved.`,
+        data,
+      };
+    case "kyc-rejected":
+      return {
+        title: "Verification needs attention",
+        body: `Hi ${firstName}, your identity verification with ${tenantName} was not approved. Please resubmit.`,
+        data,
+      };
     default:
       return null;
   }

@@ -596,11 +596,7 @@ export default function StaffSettingsPage() {
                     key={tab.id}
                     type="button"
                     onClick={() => handleTabChange(tab.id as any)}
-                    className={`w-full text-left p-3 rounded-none transition-colors border ${
-                      isActive
-                        ? "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-800 text-sky-900 dark:text-sky-100"
-                        : "bg-transparent border-transparent hover:bg-muted/30 text-foreground"
-                    }`}
+                    className={`w-full text-left p-3 transition-colors border ${isActive ? "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-800 text-sky-900 dark:text-sky-100" : "bg-transparent border-transparent hover:bg-muted/30 text-foreground"}`}
                   >
                     <p
                       className={`text-xs font-bold ${
@@ -708,7 +704,7 @@ export default function StaffSettingsPage() {
                         <Button
                           type="button"
                           size="sm"
-                          className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-sky-600 hover:bg-sky-700 text-white gap-2 pointer-events-none"
+                          className="text-xs font-semibold min-h-[36px] px-4 bg-sky-600 hover:bg-sky-700 text-white gap-2 pointer-events-none"
                         >
                           <FontAwesomeIcon
                             icon={faUpload}
@@ -724,7 +720,7 @@ export default function StaffSettingsPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => setAvatarUrl("")}
-                          className="text-xs font-semibold rounded-none min-h-[36px] px-4 border-red-200 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:border-red-900 dark:text-red-400 gap-2"
+                          className="text-xs font-semibold min-h-[36px] px-4 border-red-200 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:border-red-900 dark:text-red-400 gap-2"
                         >
                           <FontAwesomeIcon icon={faTrash} className="h-3 w-3" />
                           Remove
@@ -797,7 +793,7 @@ export default function StaffSettingsPage() {
                   <Button
                     type="submit"
                     disabled={updateProfileMutation.isPending}
-                    className="text-xs font-semibold rounded-none min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
+                    className="text-xs font-semibold min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
                   >
                     {updateProfileMutation.isPending && (
                       <FontAwesomeIcon
@@ -953,7 +949,7 @@ export default function StaffSettingsPage() {
                       (confirmPassword.length > 0 &&
                         newPassword !== confirmPassword)
                     }
-                    className="text-xs font-semibold rounded-none min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
+                    className="text-xs font-semibold min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
                   >
                     {updatePasswordMutation.isPending && (
                       <FontAwesomeIcon
@@ -999,7 +995,7 @@ export default function StaffSettingsPage() {
                         size="sm"
                         disabled={isMfaLoading}
                         onClick={handleStartMfaDisable}
-                        className="text-xs font-semibold rounded-none min-h-[36px] px-4 border-red-200 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:border-red-900 dark:text-red-400"
+                        className="text-xs font-semibold min-h-[36px] px-4 border-red-200 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:border-red-900 dark:text-red-400"
                       >
                         {isMfaLoading ? "Sending Code..." : "Disable MFA"}
                       </Button>
@@ -1009,7 +1005,7 @@ export default function StaffSettingsPage() {
                         size="sm"
                         disabled={isMfaLoading}
                         onClick={handleStartMfaSetup}
-                        className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-emerald-600 hover:bg-emerald-700 text-white border-none"
+                        className="text-xs font-semibold min-h-[36px] px-4 bg-emerald-600 hover:bg-emerald-700 text-white border-none"
                       >
                         {isMfaLoading ? "Sending Code..." : "Enable MFA"}
                       </Button>
@@ -1059,7 +1055,7 @@ export default function StaffSettingsPage() {
                           <Button
                             type="submit"
                             disabled={isMfaLoading}
-                            className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-emerald-600 hover:bg-emerald-700 text-white"
+                            className="text-xs font-semibold min-h-[36px] px-4 bg-emerald-600 hover:bg-emerald-700 text-white"
                           >
                             {isMfaLoading
                               ? "Verifying..."
@@ -1069,7 +1065,7 @@ export default function StaffSettingsPage() {
                             type="button"
                             variant="outline"
                             onClick={() => setShowMfaBox(false)}
-                            className="text-xs font-semibold rounded-none min-h-[36px] px-4"
+                            className="text-xs font-semibold min-h-[36px] px-4"
                           >
                             Cancel
                           </Button>
@@ -1115,7 +1111,7 @@ export default function StaffSettingsPage() {
                           <Button
                             type="submit"
                             disabled={isMfaLoading}
-                            className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-red-600 hover:bg-red-700 text-white"
+                            className="text-xs font-semibold min-h-[36px] px-4 bg-red-600 hover:bg-red-700 text-white"
                           >
                             {isMfaLoading
                               ? "Verifying..."
@@ -1125,7 +1121,7 @@ export default function StaffSettingsPage() {
                             type="button"
                             variant="outline"
                             onClick={() => setShowMfaBox(false)}
-                            className="text-xs font-semibold rounded-none min-h-[36px] px-4"
+                            className="text-xs font-semibold min-h-[36px] px-4"
                           >
                             Cancel
                           </Button>
@@ -1226,7 +1222,7 @@ export default function StaffSettingsPage() {
                           <Button
                             type="button"
                             size="sm"
-                            className="text-xs font-semibold rounded-none min-h-[36px] px-4 bg-sky-600 hover:bg-sky-700 text-white gap-2 pointer-events-none"
+                            className="text-xs font-semibold min-h-[36px] px-4 bg-sky-600 hover:bg-sky-700 text-white gap-2 pointer-events-none"
                           >
                             <FontAwesomeIcon
                               icon={faUpload}
@@ -1241,7 +1237,7 @@ export default function StaffSettingsPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => setLogoUrl("")}
-                            className="text-xs font-semibold rounded-none min-h-[36px] px-4 border-red-200 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:border-red-900 dark:text-red-400 gap-2"
+                            className="text-xs font-semibold min-h-[36px] px-4 border-red-200 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:border-red-900 dark:text-red-400 gap-2"
                           >
                             <FontAwesomeIcon
                               icon={faTrash}
@@ -1262,7 +1258,7 @@ export default function StaffSettingsPage() {
                   <Button
                     type="submit"
                     disabled={updateTenantMutation.isPending}
-                    className="text-xs font-semibold rounded-none min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
+                    className="text-xs font-semibold min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
                   >
                     {updateTenantMutation.isPending && (
                       <FontAwesomeIcon
@@ -1384,7 +1380,7 @@ export default function StaffSettingsPage() {
                   <Button
                     type="submit"
                     disabled={updateTenantMutation.isPending}
-                    className="text-xs font-semibold rounded-none min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
+                    className="text-xs font-semibold min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
                   >
                     {updateTenantMutation.isPending && (
                       <FontAwesomeIcon
@@ -1453,7 +1449,7 @@ export default function StaffSettingsPage() {
                   <Button
                     type="submit"
                     disabled={updateTenantMutation.isPending}
-                    className="text-xs font-semibold rounded-none min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
+                    className="text-xs font-semibold min-h-[38px] px-6 bg-primary text-primary-foreground hover:bg-primary/95 gap-2"
                   >
                     {updateTenantMutation.isPending && (
                       <FontAwesomeIcon

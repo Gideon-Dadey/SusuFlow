@@ -148,14 +148,14 @@ export default function AdminKycPage() {
   // Review mutation (Super Admin Override / Validation Power)
   const reviewMutation = useMutation({
     mutationFn: ({
-      id,
+      customerId,
       status,
       reason,
     }: {
-      id: string;
+      customerId: string;
       status: "approved" | "rejected";
       reason?: string;
-    }) => kycApi.review(id, status, reason),
+    }) => kycApi.reviewBundle(customerId, status, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-global-kyc"] });
       queryClient.invalidateQueries({ queryKey: ["kyc-documents"] });
@@ -188,9 +188,10 @@ export default function AdminKycPage() {
   const handleApproveBundle = async (submission: GroupedCustomerKyc) => {
     setActiveReviewId(submission.customerId);
     try {
-      for (const doc of submission.documents) {
-        await reviewMutation.mutateAsync({ id: doc.id, status: "approved" });
-      }
+      await reviewMutation.mutateAsync({
+        customerId: submission.customerId,
+        status: "approved",
+      });
       setInspectSubmission(null);
       setActiveReviewId(null);
       resetChecks();
@@ -208,13 +209,11 @@ export default function AdminKycPage() {
     }
     setActiveReviewId(submission.customerId);
     try {
-      for (const doc of submission.documents) {
-        await reviewMutation.mutateAsync({
-          id: doc.id,
-          status: "rejected",
-          reason: rejectionReason,
-        });
-      }
+      await reviewMutation.mutateAsync({
+        customerId: submission.customerId,
+        status: "rejected",
+        reason: rejectionReason,
+      });
       setInspectSubmission(null);
       setActiveReviewId(null);
       setRejectionReason("");
@@ -331,7 +330,7 @@ export default function AdminKycPage() {
               type="button"
               onClick={() => setSelectedStatus(tab.value)}
               className={cn(
-                "px-3 py-1.5 text-xs font-semibold transition-colors rounded-none border-b-2",
+                "px-3 py-1.5 text-xs font-semibold transition-colors border-b-2",
                 selectedStatus === tab.value
                   ? "border-primary text-primary font-bold"
                   : "border-transparent text-muted-foreground hover:text-foreground",
@@ -349,7 +348,7 @@ export default function AdminKycPage() {
               type="button"
               onClick={() => setViewMode("grid")}
               className={cn(
-                "p-1.5 text-xs font-semibold rounded-none transition-colors",
+                "p-1.5 text-xs font-semibold transition-colors",
                 viewMode === "grid"
                   ? "bg-card text-foreground"
                   : "text-muted-foreground",
@@ -362,7 +361,7 @@ export default function AdminKycPage() {
               type="button"
               onClick={() => setViewMode("table")}
               className={cn(
-                "p-1.5 text-xs font-semibold rounded-none transition-colors",
+                "p-1.5 text-xs font-semibold transition-colors",
                 viewMode === "table"
                   ? "bg-card text-foreground"
                   : "text-muted-foreground",
@@ -665,7 +664,7 @@ export default function AdminKycPage() {
               </div>
               <button
                 onClick={() => setInspectSubmission(null)}
-                className="size-8 rounded text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
+                className="size-8 text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -683,7 +682,7 @@ export default function AdminKycPage() {
                       type="button"
                       onClick={() => setSelectedDocIndex(idx)}
                       className={cn(
-                        "px-3 py-1 rounded text-xs font-semibold transition-colors flex items-center gap-1.5",
+                        "px-3 py-1 text-xs font-semibold transition-colors flex items-center gap-1.5",
                         selectedDocIndex === idx
                           ? "bg-primary text-white"
                           : "bg-muted text-muted-foreground hover:text-foreground",

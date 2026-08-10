@@ -19,7 +19,12 @@ import { RolesGuard } from "../../common/guards/roles.guard";
 import { Roles, CurrentUser, Tenant } from "../../common/decorators";
 import { ROLES, TenantContext, AuthenticatedUser } from "@susuflow/shared";
 import { DocumentStatus } from "@susuflow/database";
-import { ReviewKycDto, SubmitKycDto } from "./dto/kyc.dto";
+import {
+  ReviewKycBundleDto,
+  ReviewKycDto,
+  SubmitKycBatchDto,
+  SubmitKycDto,
+} from "./dto/kyc.dto";
 
 @ApiTags("kyc")
 @ApiBearerAuth()
@@ -48,6 +53,18 @@ export class KycController {
     return this.kycService.submitKyc(tenant.id, user.id, dto);
   }
 
+  @Post("submit-batch")
+  @ApiOperation({
+    summary: "Submit all KYC documents in one request for review",
+  })
+  submitBatch(
+    @Tenant() tenant: TenantContext,
+    @Body() dto: SubmitKycBatchDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.kycService.submitKycBatch(tenant.id, user.id, dto);
+  }
+
   @Roles(ROLES.COMPANY_ADMIN, ROLES.ACCOUNT_OFFICER, ROLES.AUDITOR)
   @Get()
   @ApiOperation({ summary: "List KYC documents" })
@@ -56,6 +73,25 @@ export class KycController {
     @Query("status") status?: DocumentStatus,
   ) {
     return this.kycService.findAll(tenant.id, status);
+  }
+
+  @Roles(ROLES.COMPANY_ADMIN, ROLES.ACCOUNT_OFFICER)
+  @Post("review-bundle")
+  @ApiOperation({
+    summary: "Approve or reject all pending KYC docs for a customer",
+  })
+  reviewBundle(
+    @Tenant() tenant: TenantContext,
+    @Body() dto: ReviewKycBundleDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.kycService.reviewCustomerBundle(
+      tenant.id,
+      dto.customerId,
+      dto.status as DocumentStatus,
+      user.id,
+      dto.rejectionReason,
+    );
   }
 
   @Roles(ROLES.COMPANY_ADMIN, ROLES.ACCOUNT_OFFICER)

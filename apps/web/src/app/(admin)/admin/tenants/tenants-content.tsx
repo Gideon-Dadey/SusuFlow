@@ -252,16 +252,13 @@ export default function AdminTenantsPage() {
             variant="outline"
             size="sm"
             onClick={() => refetch()}
-            className="rounded-none text-xs font-semibold"
+            className="text-xs font-semibold"
           >
             <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
             Refresh
           </Button>
           <Link href="/admin/tenants/new">
-            <Button
-              size="sm"
-              className="rounded-none font-semibold text-xs gap-1.5"
-            >
+            <Button size="sm" className="font-semibold text-xs gap-1.5">
               <Plus className="h-4 w-4" />
               Provision Organization
             </Button>
@@ -347,7 +344,7 @@ export default function AdminTenantsPage() {
               type="button"
               onClick={() => setStatusFilter(tab.value)}
               className={cn(
-                "px-3 py-1.5 text-xs font-semibold transition-colors rounded-none border-b-2",
+                "px-3 py-1.5 text-xs font-semibold transition-colors border-b-2",
                 statusFilter === tab.value
                   ? "border-primary text-primary font-bold"
                   : "border-transparent text-muted-foreground hover:text-foreground",
@@ -365,7 +362,7 @@ export default function AdminTenantsPage() {
               type="button"
               onClick={() => setViewMode("grid")}
               className={cn(
-                "p-1.5 text-xs font-semibold rounded-none transition-colors",
+                "p-1.5 text-xs font-semibold transition-colors",
                 viewMode === "grid"
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground",
@@ -378,7 +375,7 @@ export default function AdminTenantsPage() {
               type="button"
               onClick={() => setViewMode("table")}
               className={cn(
-                "p-1.5 text-xs font-semibold rounded-none transition-colors",
+                "p-1.5 text-xs font-semibold transition-colors",
                 viewMode === "table"
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground",
@@ -418,11 +415,7 @@ export default function AdminTenantsPage() {
             No organizations matching filter criteria.
           </p>
           <Link href="/admin/tenants/new" className="mt-4 inline-block">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-none text-xs"
-            >
+            <Button variant="outline" size="sm" className="text-xs">
               Provision First Organization
             </Button>
           </Link>
@@ -507,7 +500,7 @@ export default function AdminTenantsPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="rounded-none text-xs font-semibold h-7 px-2"
+                          className="text-xs font-semibold h-7 px-2"
                           onClick={() => setSelectedTenant(tenant)}
                         >
                           <Eye className="h-3.5 w-3.5 mr-1" /> Details
@@ -516,7 +509,7 @@ export default function AdminTenantsPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="rounded-none text-xs font-semibold h-7 px-2"
+                            className="text-xs font-semibold h-7 px-2"
                             disabled={
                               activateMutation.isPending ||
                               suspendMutation.isPending
@@ -529,7 +522,7 @@ export default function AdminTenantsPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="rounded-none text-xs font-semibold h-7 px-2 border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
+                            className="text-xs font-semibold h-7 px-2 border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
                             disabled={
                               activateMutation.isPending ||
                               suspendMutation.isPending
@@ -582,7 +575,7 @@ export default function AdminTenantsPage() {
               </div>
               <button
                 onClick={() => setSelectedTenant(null)}
-                className="size-8 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 flex items-center justify-center transition-colors border border-border/60"
+                className="size-8 text-muted-foreground hover:text-foreground hover:bg-muted/60 flex items-center justify-center transition-colors border border-border/60"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -830,7 +823,7 @@ export default function AdminTenantsPage() {
                 {selectedTenant.status !== "active" ? (
                   <Button
                     size="sm"
-                    className="rounded-none text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
                     disabled={
                       activateMutation.isPending || suspendMutation.isPending
                     }
@@ -843,7 +836,7 @@ export default function AdminTenantsPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="rounded-none text-xs font-semibold border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
+                    className="text-xs font-semibold border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
                     disabled={
                       activateMutation.isPending || suspendMutation.isPending
                     }
@@ -858,7 +851,7 @@ export default function AdminTenantsPage() {
                   selectedTenant.status !== "active" && (
                     <Button
                       size="sm"
-                      className="rounded-none text-xs font-semibold"
+                      className="text-xs font-semibold"
                       disabled={checkoutMutation.isPending}
                       onClick={() => checkoutMutation.mutate(selectedTenant.id)}
                     >
@@ -940,7 +933,7 @@ function TenantDeepCard({
           <Button
             size="sm"
             variant="outline"
-            className="rounded-none text-xs font-semibold h-8"
+            className="text-xs font-semibold h-8"
             onClick={onInspect}
           >
             <Eye className="h-3.5 w-3.5 mr-1" /> Full Details & Individuals
@@ -950,7 +943,7 @@ function TenantDeepCard({
             <Button
               size="sm"
               variant="outline"
-              className="rounded-none text-xs font-semibold h-8"
+              className="text-xs font-semibold h-8"
               disabled={busy}
               onClick={onActivate}
             >
@@ -962,7 +955,7 @@ function TenantDeepCard({
             <Button
               size="sm"
               variant="outline"
-              className="rounded-none text-xs font-semibold h-8 border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
+              className="text-xs font-semibold h-8 border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
               disabled={busy}
               onClick={onSuspend}
             >
@@ -974,7 +967,7 @@ function TenantDeepCard({
           tenant.status !== "active" ? (
             <Button
               size="sm"
-              className="rounded-none text-xs font-semibold h-8"
+              className="text-xs font-semibold h-8"
               disabled={busy}
               onClick={onCheckout}
             >

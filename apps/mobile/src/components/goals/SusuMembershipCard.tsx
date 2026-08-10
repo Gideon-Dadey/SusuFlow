@@ -1,32 +1,27 @@
-import { AppIcon } from "@/components/icons/AppIcon";
+import { TenantBrandMark } from "@/components/branding/TenantBrandMark";
 import { CardSurface } from "@/components/ui/CardSurface";
 import { StyleSheet, Text, View } from "react-native";
 import { useTheme } from "@/theme/ThemeProvider";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { spacing, typography } from "@/theme/tokens";
 
 interface SusuMembershipCardProps {
   groupName: string;
+  logoUrl?: string | null;
   memberId?: string;
   isLoading?: boolean;
 }
 
 export function SusuMembershipCard({
   groupName,
+  logoUrl,
   memberId,
   isLoading,
 }: SusuMembershipCardProps) {
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
 
   return (
-    <CardSurface
-      innerStyle={[
-        styles.card,
-        { backgroundColor: isDark ? colors.card : colors.primary50 },
-      ]}
-    >
-      <View style={[styles.iconWrap, { backgroundColor: colors.surfaceGlow }]}>
-        <AppIcon name="users" size={18} color={colors.primary} />
-      </View>
+    <CardSurface innerStyle={styles.card}>
+      <TenantBrandMark logoUrl={logoUrl} size={48} />
       <View style={styles.copy}>
         <Text style={[styles.eyebrow, { color: colors.mutedForeground }]}>
           Your susu
@@ -53,13 +48,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.md,
     padding: spacing.md,
-  },
-  iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.md,
-    alignItems: "center",
-    justifyContent: "center",
   },
   copy: {
     flex: 1,

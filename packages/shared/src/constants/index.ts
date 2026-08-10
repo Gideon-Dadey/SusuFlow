@@ -9,6 +9,8 @@ export const ROLES = {
 
 export type RoleName = (typeof ROLES)[keyof typeof ROLES];
 
+export * from "./ghana-banks";
+
 export const ACCOUNT_CODES = {
   PLATFORM_CASH: "1000",
   CUSTOMER_WALLETS: "1100",

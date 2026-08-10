@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     fontSize: typography.size.xs,
   },
   logo: {
-    width: 22,
+    width: 58,
     height: 22,
   },
 });

@@ -308,7 +308,7 @@ export default function AdminDashboardPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="h-8 text-xs min-h-[32px] px-2.5 rounded-none"
+                              className="h-8 text-xs min-h-[32px] px-2.5"
                               disabled={
                                 activateMutation.isPending ||
                                 suspendMutation.isPending
@@ -321,7 +321,7 @@ export default function AdminDashboardPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="h-8 text-xs min-h-[32px] px-2.5 rounded-none border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
+                              className="h-8 text-xs min-h-[32px] px-2.5 border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400"
                               disabled={
                                 activateMutation.isPending ||
                                 suspendMutation.isPending

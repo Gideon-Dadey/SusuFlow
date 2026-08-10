@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { APP_NAME } from "@/lib/marketing-data";
-import { BRAND_PLATFORM_OVERVIEW } from "@/lib/brand-assets";
+import { BRAND_PLATFORM_INTRO_IMAGE } from "@/lib/brand-assets";
 import { MarketingContainer } from "./marketing-container";
 import { SectionEyebrow } from "./section-eyebrow";
 
@@ -34,12 +34,12 @@ export function PlatformOverviewSection() {
 
           <div className="relative">
             <p className="mb-4 text-sm font-medium text-muted-foreground">
-              Our Technology
+              Verified in the field
             </p>
             <div className="relative aspect-[4/3] w-full sm:aspect-[16/11] lg:aspect-[5/4]">
               <Image
-                src={BRAND_PLATFORM_OVERVIEW}
-                alt="SusuFlow admin dashboard, mobile saver app, and verified MoMo deposit flow"
+                src={BRAND_PLATFORM_INTRO_IMAGE}
+                alt="SusuFlow field collector confirming a gateway-verified Mobile Money deposit with a market trader in Ghana"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-contain object-center"

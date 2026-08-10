@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { TenantBrandMark } from "@/components/branding/TenantBrandMark";
 import { useProfileData } from "@/components/settings/useProfileData";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
@@ -17,7 +18,7 @@ interface SettingsHeroProps {
 
 export function SettingsHero({ onOpenMenu }: SettingsHeroProps) {
   const { colors } = useTheme();
-  const { displayName, initials, email, phone, groupName, isLoading } =
+  const { displayName, initials, email, phone, groupName, logoUrl, isLoading } =
     useProfileData();
 
   const gradientColors = [colors.primary800, colors.primary700] as const;
@@ -75,7 +76,7 @@ export function SettingsHero({ onOpenMenu }: SettingsHeroProps) {
           { backgroundColor: "rgba(255,255,255,0.14)" },
         ]}
       >
-        <Ionicons name="people-outline" size={14} color="#dcfce7" />
+        <TenantBrandMark logoUrl={logoUrl} size={22} />
         <Text style={styles.groupLabel} numberOfLines={1}>
           {groupName}
         </Text>

@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
-import { ProductHero } from "@/components/marketing/product/product-hero";
-import { ProductFeatureSection } from "@/components/marketing/product/product-feature-section";
-import { MarketingTextBlock } from "@/components/marketing/marketing-text-block";
-import { ApprovalWorkflowsCtaSection } from "@/components/marketing/approval-workflows-cta-section";
+import { Building2, ShieldCheck, TrendingUp } from "lucide-react";
+import { WhyPageTemplate } from "@/components/marketing/ofx/why-page-template";
 import { APP_NAME } from "@/lib/marketing-data";
-import {
-  BRAND_PLATFORM_OVERVIEW,
-  BRAND_WORKFLOW_AUTOMATION,
-} from "@/lib/brand-assets";
 
 export const metadata: Metadata = {
   title: `Susu Companies & MFIs | ${APP_NAME}`,
@@ -16,105 +10,115 @@ export const metadata: Metadata = {
 };
 
 export default function SusuCompaniesPage() {
-  const features = [
-    {
-      id: "multi-branch",
-      title: "Centralize Multi-Branch Operations",
-      description: (
-        <>
-          <p>
-            Managing multiple market branches no longer requires endless phone
-            calls and disjointed spreadsheets. SusuFlow brings your entire
-            microfinance operation into a single, unified command center.
-          </p>
-          <p>
-            Monitor live collections, track agent performance across different
-            regions, and instantly spot liquidity trends from any device,
-            anywhere in the world.
-          </p>
-        </>
-      ),
-      imageSrc: BRAND_PLATFORM_OVERVIEW,
-      imageAlt: "Centralized dashboard for MFI operations",
-      isMockup: true,
-    },
-    {
-      id: "risk-mitigation",
-      title: "Eliminate Operational Risk",
-      description: (
-        <>
-          <p>
-            Traditional Susu models expose MFIs to massive transit and fraud
-            risks. We replace paper notebooks with a cryptographically secure,
-            double-entry digital ledger.
-          </p>
-          <p>
-            Every transaction is instantly verified against telco gateways,
-            meaning client balances are only updated when the cash is
-            definitively secured in your corporate accounts.
-          </p>
-        </>
-      ),
-      imageSrc: BRAND_WORKFLOW_AUTOMATION,
-      imageAlt: "Automated risk mitigation workflows",
-      isMockup: true,
-    },
-    {
-      id: "growth",
-      title: "Scale Without Overhead",
-      description: (
-        <>
-          <p>
-            Adding 50 new field collectors used to mean hiring more data entry
-            clerks to reconcile their books. With SusuFlow, scaling your
-            workforce costs zero additional administrative overhead.
-          </p>
-          <p>
-            Our automated reconciliation engine handles 10 transactions or
-            10,000 transactions with the exact same flawless accuracy, freeing
-            your capital to be deployed into actual growth.
-          </p>
-        </>
-      ),
-      imageSrc: "/marketing/why-susuflow/solutions.png",
-      imageAlt: "MFI directors discussing scalable growth",
-      isMockup: false,
-    },
-  ];
-
   return (
-    <>
-      <ProductHero
-        title="Susu Companies & MFIs"
-        description="Purpose-built software for Ghanaian microfinance operators to scale safely. By digitizing operations, we remove the friction of manual bookkeeping and replace it with a highly secure, automated platform."
-        imageSrc="/marketing/why-susuflow/solutions.png"
-        imageAlt="Ghanaian microfinance managers discussing software"
-        isMockup={false}
-      />
-      <MarketingTextBlock title="The Foundation of Modern Microfinance">
-        <p>
-          For decades, the Ghanaian microfinance sector has relied on physical
-          ledgers, trust-based relationships, and manual reconciliation. While
-          these methods built the foundation of community banking, they simply
-          cannot scale safely in today's fast-paced, digital-first economy.
-        </p>
-        <p>
-          SusuFlow was engineered from the ground up specifically for Susu
-          operators and Microfinance Institutions (MFIs). We understood that
-          generic accounting software couldn't handle the unique daily
-          collection cycles, rapid micro-loan disbursements, and field-heavy
-          nature of the business.
-        </p>
-        <p>
-          By digitizing the entire lifecycle—from the moment a cedi leaves a
-          trader's hand to the moment it hits your corporate bank
-          account—SusuFlow transforms microfinance operators into robust,
-          institutional-grade financial powerhouses capable of unlimited,
-          risk-free growth.
-        </p>
-      </MarketingTextBlock>
-      <ProductFeatureSection features={features} />
-      <ApprovalWorkflowsCtaSection />
-    </>
+    <WhyPageTemplate
+      accent="sky"
+      hero={{
+        title: "Built for susu companies and MFIs. Nothing else.",
+        lead: "Purpose-built software for Ghanaian microfinance operators to scale safely. Manual bookkeeping goes out; a secure, automated platform takes its place.",
+        tile: {
+          label: "All branches · Live",
+          value: "GHS 402,118.50",
+          caption: "1,860 active savers across 3 regions",
+          badge: "Unified",
+          rows: [
+            { label: "Kumasi Central", value: "GHS 8,940.00", status: "Live" },
+            { label: "Accra Makola", value: "GHS 12,300.00", status: "Live" },
+            { label: "Takoradi Market", value: "GHS 5,120.00", status: "Live" },
+          ],
+        },
+      }}
+      highlightsHeading={{
+        eyebrow: "Why operators switch",
+        title: "One platform. Every branch. Every cedi.",
+      }}
+      highlights={[
+        {
+          icon: Building2,
+          title: "Centralize multi-branch operations",
+          body: "No more endless phone calls and disjointed spreadsheets. Monitor live collections, track agent performance across regions, and spot liquidity trends from any device, anywhere.",
+        },
+        {
+          icon: ShieldCheck,
+          title: "Eliminate operational risk",
+          body: "Paper notebooks give way to a secure double-entry digital ledger. Client balances only update once telco gateways confirm the cash is definitively in your corporate accounts.",
+        },
+        {
+          icon: TrendingUp,
+          title: "Scale without overhead",
+          body: "Adding 50 collectors used to mean hiring more clerks. Our reconciliation engine handles 10 transactions or 10,000 with the same flawless accuracy — add agents, not admin.",
+        },
+      ]}
+      sections={[
+        {
+          eyebrow: "Made for this market",
+          title: "The foundation of modern microfinance",
+          paragraphs: [
+            "For decades, Ghanaian microfinance ran on physical ledgers, trust-based relationships and manual reconciliation. Those methods built community banking — but they can't scale safely in a digital-first economy.",
+            "Generic accounting software can't handle daily collection cycles, rapid micro-loan disbursements, or field-heavy operations. SusuFlow was engineered from the ground up specifically for susu operators and MFIs.",
+          ],
+          tile: {
+            heading: "Operations snapshot",
+            rows: [
+              {
+                label: "MoMo deposits today",
+                value: "142 verified",
+                status: "Synced",
+              },
+              {
+                label: "Pending payouts",
+                value: "GHS 12,300.00",
+                status: "4 awaiting",
+              },
+              {
+                label: "Agent performance",
+                value: "38 collectors",
+                status: "On target",
+              },
+            ],
+          },
+        },
+        {
+          eyebrow: "End to end",
+          title: "From the trader's hand to your bank account",
+          paragraphs: [
+            "SusuFlow digitizes the entire lifecycle — from the moment a cedi leaves a trader's hand to the moment it settles in your corporate account.",
+            "The result: microfinance operators transformed into robust, institutional-grade financial powerhouses, capable of unlimited, risk-free growth.",
+          ],
+          tile: {
+            heading: "Deposit lifecycle",
+            rows: [
+              { label: "Trader confirms MoMo prompt", status: "Confirmed" },
+              { label: "Gateway locks the funds", status: "Verified" },
+              { label: "Ledger updates instantly", status: "Balanced" },
+              { label: "Settles to corporate account", status: "Secured" },
+            ],
+          },
+        },
+      ]}
+      quote={{
+        text: "Generic accounting software was never built for daily collection cycles. SusuFlow was built for nothing else.",
+      }}
+      related={[
+        {
+          title: "Zero notebook fraud",
+          description:
+            "How partner MFIs eliminated ledger disputes in 30 days.",
+          href: "/why-susuflow/zero-notebook-fraud",
+        },
+        {
+          title: "Bank-grade accounting",
+          description:
+            "Complete transparency for auditors, partners and regulators.",
+          href: "/why-susuflow/bank-grade-accounting",
+        },
+        {
+          title: "Market scale story",
+          description:
+            "Scaling from 5 to 50+ collectors across Kumasi and Accra.",
+          href: "/why-susuflow/market-scale-story",
+        },
+      ]}
+    />
   );
 }

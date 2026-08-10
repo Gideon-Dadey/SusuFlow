@@ -7,6 +7,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { useTheme } from "@/theme/ThemeProvider";
+import { surfaceRadius } from "@/theme/tokens";
 
 interface ButtonProps extends PressableProps {
   title: string;
@@ -23,7 +24,7 @@ export function Button({
   style,
   ...props
 }: ButtonProps) {
-  const { colors, radius, typography } = useTheme();
+  const { colors, typography, isDark } = useTheme();
   const isPrimary = variant === "primary";
   const isOutline = variant === "outline";
 
@@ -33,13 +34,19 @@ export function Button({
       disabled={disabled || loading}
       style={({ pressed }) => [
         styles.base,
-        { borderRadius: radius.lg },
-        isPrimary && { backgroundColor: pressed ? "#0043aa" : "#0056d2" },
+        { borderRadius: surfaceRadius.control },
+        isPrimary && {
+          backgroundColor: pressed
+            ? isDark
+              ? "#e4e4e7"
+              : "#1a1a1a"
+            : colors.primary,
+        },
         variant === "secondary" && { backgroundColor: colors.muted },
         isOutline && {
           backgroundColor: colors.card,
-          borderWidth: 1,
-          borderColor: colors.border,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.primary,
         },
         (disabled || loading) && styles.disabled,
         pressed && !disabled && !loading && !isPrimary && styles.pressed,

@@ -52,7 +52,7 @@ export function TransactionRow({
         <Text
           style={[
             styles.amount,
-            { color: isCredit ? colors.primary : colors.destructive },
+            { color: isCredit ? colors.success : colors.destructive },
           ]}
         >
           {isCredit ? "+" : "-"}

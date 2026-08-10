@@ -73,7 +73,7 @@ export default function StaffCollectorsMapPage() {
             refetchCustomers();
             refetchDeposits();
           }}
-          className="text-xs font-semibold rounded-none min-h-[36px] gap-1.5"
+          className="text-xs font-semibold min-h-[36px] gap-1.5"
         >
           <FontAwesomeIcon icon={faRotateRight} className="h-3.5 w-3.5" />
           Re-Sync Live GPS Feed

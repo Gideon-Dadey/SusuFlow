@@ -305,7 +305,7 @@ export default function StaffCalculatorPage() {
             type="button"
             onClick={() => setActiveTab(tab.id as CalcTab)}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-none border-b-2 transition-colors whitespace-nowrap",
+              "flex items-center gap-2 px-4 py-2 text-xs font-semibold border-b-2 transition-colors whitespace-nowrap",
               activeTab === tab.id
                 ? "border-primary text-primary font-bold bg-primary/5"
                 : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/20",

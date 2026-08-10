@@ -125,7 +125,7 @@ export default function StaffNotificationsPage() {
             refetchCustomers();
             refetchDeposits();
           }}
-          className="text-xs font-semibold rounded-none min-h-[36px] gap-1.5"
+          className="text-xs font-semibold min-h-[36px] gap-1.5"
         >
           <FontAwesomeIcon icon={faRotateRight} className="h-3.5 w-3.5" />
           Refresh Dispatch Logs
@@ -221,11 +221,7 @@ export default function StaffNotificationsPage() {
                         key={ch.id}
                         type="button"
                         onClick={() => setChannel(ch.id as any)}
-                        className={`py-2 rounded-none font-semibold text-xs border transition-colors ${
-                          channel === ch.id
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-card text-muted-foreground border-border/60 hover:bg-muted/20"
-                        }`}
+                        className={`py-2 font-semibold text-xs border transition-colors ${channel === ch.id ? "bg-primary text-primary-foreground border-primary" : "bg-card text-muted-foreground border-border/60 hover:bg-muted/20"}`}
                       >
                         {ch.label}
                       </button>
@@ -255,7 +251,7 @@ export default function StaffNotificationsPage() {
                 <Button
                   type="submit"
                   disabled={isSending}
-                  className="w-full font-semibold text-xs min-h-[40px] rounded-none gap-2 bg-primary text-primary-foreground hover:bg-primary/95"
+                  className="w-full font-semibold text-xs min-h-[40px] gap-2 bg-primary text-primary-foreground hover:bg-primary/95"
                 >
                   <FontAwesomeIcon
                     icon={faPaperPlane}

@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { ProductHero } from "@/components/marketing/product/product-hero";
-import { ProductFeatureSection } from "@/components/marketing/product/product-feature-section";
-import { MarketingTextBlock } from "@/components/marketing/marketing-text-block";
-import { ApprovalWorkflowsCtaSection } from "@/components/marketing/approval-workflows-cta-section";
+import { BadgeCheck, Smartphone, Target } from "lucide-react";
+import { WhyPageTemplate } from "@/components/marketing/ofx/why-page-template";
 import { APP_NAME } from "@/lib/marketing-data";
-import { BRAND_HERO_SHOWCASE } from "@/lib/brand-assets";
 
 export const metadata: Metadata = {
   title: `Field Collectors | ${APP_NAME}`,
@@ -13,106 +10,104 @@ export const metadata: Metadata = {
 };
 
 export default function FieldCollectorsPage() {
-  const features = [
-    {
-      id: "mobile-pos",
-      title: "A Bank in Your Pocket",
-      description: (
-        <>
-          <p>
-            Equip your field agents with a powerful, intuitive mobile
-            application that turns any smartphone into a fully-fledged Point of
-            Sale terminal for microfinance.
-          </p>
-          <p>
-            Agents can securely pull up client profiles, review savings goals,
-            and initiate Mobile Money prompts without ever touching physical
-            cash or paper receipts.
-          </p>
-        </>
-      ),
-      imageSrc: "/marketing/product/susu-field-collector.png",
-      imageAlt: "Field collector holding mobile POS app",
-      isMockup: false,
-    },
-    {
-      id: "live-targets",
-      title: "Real-Time Target Tracking",
-      description: (
-        <>
-          <p>
-            Keep your agents motivated and informed. The SusuFlow app provides
-            collectors with a live dashboard showing their daily, weekly, and
-            monthly collection targets.
-          </p>
-          <p>
-            Instant visual feedback on their performance helps drive higher
-            collection rates and fosters a healthy, competitive environment
-            among your field teams.
-          </p>
-        </>
-      ),
-      imageSrc: BRAND_HERO_SHOWCASE,
-      imageAlt: "Dashboard showing agent collection targets",
-      isMockup: true,
-    },
-    {
-      id: "trust",
-      title: "Build Unshakeable Client Trust",
-      description: (
-        <>
-          <p>
-            In the market, trust is currency. When a collector uses SusuFlow,
-            the saver receives an instant, un-spoofable SMS confirmation the
-            second the deposit clears.
-          </p>
-          <p>
-            This absolute transparency eliminates "he-said, she-said" disputes
-            over missing notebook entries, establishing your agents as the most
-            professional and trustworthy collectors in the market.
-          </p>
-        </>
-      ),
-      imageSrc: "/marketing/why-susuflow/cashless.png",
-      imageAlt: "Market trader viewing instant SMS receipt",
-      isMockup: false,
-    },
-  ];
-
   return (
-    <>
-      <ProductHero
-        title="Field Collectors"
-        description="Empower market agents with mobile collection tools & live tracking. Collectors can instantly view client profiles, process MoMo deposits, and track their daily targets without relying on easily-lost notebooks."
-        imageSrc="/marketing/product/susu-field-collector.png"
-        imageAlt="Field collector managing deposits in a market"
-        isMockup={false}
-      />
-      <MarketingTextBlock title="Empowering the Frontlines">
-        <p>
-          Field collectors are the lifeblood of any Susu operation. They
-          navigate crowded markets, build deep personal relationships with
-          traders, and drive the daily liquidity that keeps the business
-          running. Yet, for too long, they have been burdened with archaic
-          tools—heavy, weather-prone paper notebooks and the massive security
-          risk of carrying bulk cash.
-        </p>
-        <p>
-          SusuFlow completely reimagines the collector experience. We believe
-          that by giving field agents enterprise-grade technology in the palm of
-          their hands, we empower them to work faster, safer, and with far
-          greater confidence.
-        </p>
-        <p>
-          With our mobile collection tools, an agent can serve twice as many
-          clients in the same amount of time. They no longer worry about getting
-          robbed, making math errors, or facing angry savers at the end of the
-          month. Instead, they become highly respected, digitized financial
-          representatives for their communities.
-        </p>
-      </MarketingTextBlock>
-      <ProductFeatureSection features={features} />
-      <ApprovalWorkflowsCtaSection />
-    </>
+    <WhyPageTemplate
+      accent="sky"
+      hero={{
+        title: "Give every collector a bank in their pocket.",
+        lead: "Empower market agents with mobile collection tools and live tracking. Collectors pull up client profiles, process MoMo deposits and track daily targets — no easily-lost notebooks required.",
+        tile: {
+          label: "My target · Today",
+          value: "GHS 1,850 / 2,000",
+          caption: "92% collected · 3 stops remaining",
+          badge: "On track",
+          rows: [
+            {
+              label: "Abena Osei",
+              value: "Daily susu · GHS 50.00",
+              status: "Verified",
+            },
+            {
+              label: "Kwame Mensah",
+              value: "Market group · GHS 120.00",
+              status: "Verified",
+            },
+            {
+              label: "Ama Agyei",
+              value: "Weekly susu · GHS 30.00",
+              status: "Prompt sent",
+              statusTone: "muted",
+            },
+          ],
+        },
+      }}
+      highlightsHeading={{
+        eyebrow: "For the frontlines",
+        title: "Faster rounds. Safer agents. Happier savers.",
+      }}
+      highlights={[
+        {
+          icon: Smartphone,
+          title: "A bank in your pocket",
+          body: "Any smartphone becomes a fully-fledged point-of-sale terminal for microfinance. Agents pull up profiles, review savings goals and fire off MoMo prompts — no cash, no paper receipts.",
+        },
+        {
+          icon: Target,
+          title: "Real-time target tracking",
+          body: "A live dashboard shows every collector their daily, weekly and monthly targets. Instant visual feedback drives higher collection rates and healthy competition across teams.",
+        },
+        {
+          icon: BadgeCheck,
+          title: "Unshakeable client trust",
+          body: "Savers get an instant, un-spoofable SMS the second a deposit clears. No more 'he-said, she-said' over notebook entries — your agents become the most trusted collectors in the market.",
+        },
+      ]}
+      sections={[
+        {
+          eyebrow: "The upgrade",
+          title: "Empowering the frontlines",
+          paragraphs: [
+            "Field collectors are the lifeblood of any susu operation — yet they've been burdened for too long with weather-prone paper notebooks and the security risk of carrying bulk cash through crowded markets.",
+            "With enterprise-grade technology in the palm of their hands, an agent serves twice as many clients in the same time. No robbery worries, no math errors, no angry savers at month-end — just respected, digitized financial representatives for their communities.",
+          ],
+          tile: {
+            heading: "A collector's day",
+            rows: [
+              {
+                label: "Clients served",
+                value: "46 of 48",
+                status: "2x faster",
+              },
+              { label: "Cash carried", value: "GHS 0.00", status: "Cashless" },
+              { label: "Receipts issued", value: "46 SMS", status: "Instant" },
+              { label: "Month-end disputes", value: "0", status: "Resolved" },
+            ],
+          },
+        },
+      ]}
+      quote={{
+        text: "Give field agents enterprise-grade technology and they work faster, safer, and with far greater confidence.",
+      }}
+      related={[
+        {
+          title: "Cashless market collections",
+          description:
+            "Direct Mobile Money prompts right at the trader's stall.",
+          href: "/why-susuflow/cashless-market-collections",
+        },
+        {
+          title: "Market scale story",
+          description:
+            "Scaling from 5 to 50+ collectors across Kumasi and Accra.",
+          href: "/why-susuflow/market-scale-story",
+        },
+        {
+          title: "Zero notebook fraud",
+          description:
+            "How partner MFIs eliminated ledger disputes in 30 days.",
+          href: "/why-susuflow/zero-notebook-fraud",
+        },
+      ]}
+    />
   );
 }

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { cn } from '@/lib/utils';
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
 const SHOW_AFTER_SCROLL = 420;
 
@@ -29,22 +29,22 @@ export function ThemeToggleRail({
     };
 
     onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, [showAfter]);
 
   if (!mounted) {
     return null;
   }
 
-  const isDark = resolvedTheme === 'dark';
+  const isDark = resolvedTheme === "dark";
 
   return createPortal(
     <aside
       aria-label="Theme"
       className={cn(
-        'theme-toggle-rail fixed z-[175]',
-        visible ? 'theme-toggle-rail--visible' : 'theme-toggle-rail--hidden',
+        "theme-toggle-rail fixed z-[175]",
+        visible ? "theme-toggle-rail--visible" : "theme-toggle-rail--hidden",
         className,
       )}
     >
@@ -52,13 +52,13 @@ export function ThemeToggleRail({
         <ThemeRailOption
           label="Dark theme"
           active={isDark}
-          onClick={() => setTheme('dark')}
+          onClick={() => setTheme("dark")}
           icon={<Moon className="h-3 w-3 sm:h-2.5 sm:w-2.5" strokeWidth={2} />}
         />
         <ThemeRailOption
           label="Light theme"
           active={!isDark}
-          onClick={() => setTheme('light')}
+          onClick={() => setTheme("light")}
           icon={<Sun className="h-3 w-3 sm:h-2.5 sm:w-2.5" strokeWidth={2} />}
         />
       </div>
@@ -85,10 +85,10 @@ function ThemeRailOption({
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        'flex size-8 items-center justify-center rounded-full transition-colors sm:size-7',
+        "flex size-8 items-center justify-center transition-colors sm:size-7",
         active
-          ? 'bg-primary text-primary-foreground shadow-sm'
-          : 'text-muted-foreground hover:bg-muted/80 hover:text-foreground',
+          ? "bg-primary text-primary-foreground shadow-sm"
+          : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
       )}
     >
       {icon}

@@ -100,7 +100,7 @@ export default function AdminDevOpsPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-none border-red-500/30 text-red-600 hover:bg-red-500/10 dark:text-red-400 text-xs font-semibold"
+                className="border-red-500/30 text-red-600 hover:bg-red-500/10 dark:text-red-400 text-xs font-semibold"
                 loading={clearCacheMutation.isPending}
                 onClick={() => clearCacheMutation.mutate()}
               >
@@ -134,7 +134,7 @@ export default function AdminDevOpsPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-none text-xs font-semibold"
+                className="text-xs font-semibold"
                 onClick={handleDiagnoseDb}
               >
                 <FontAwesomeIcon
@@ -167,7 +167,7 @@ export default function AdminDevOpsPage() {
               <Button
                 variant="primary"
                 size="sm"
-                className="rounded-none text-xs font-semibold"
+                className="text-xs font-semibold"
                 loading={seedDemoMutation.isPending}
                 onClick={() => seedDemoMutation.mutate()}
               >

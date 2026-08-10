@@ -773,7 +773,13 @@ export interface KycStatusResponse {
 export const kycApi = {
   getMyStatus: () => api.get<KycStatusResponse>("/kyc/my-status"),
   submit: (data: {
-    documentType: "ghana_card" | "passport" | "utility_bill" | "selfie";
+    documentType:
+      | "ghana_card"
+      | "passport"
+      | "voter_id"
+      | "nhis"
+      | "utility_bill"
+      | "selfie";
     idNumber: string;
     dateOfBirth?: string;
     address?: string;
@@ -786,6 +792,17 @@ export const kycApi = {
     status: "approved" | "rejected",
     rejectionReason?: string,
   ) => api.post<KycDocument>(`/kyc/${id}/review`, { status, rejectionReason }),
+  reviewBundle: (
+    customerId: string,
+    status: "approved" | "rejected",
+    rejectionReason?: string,
+  ) =>
+    api.post<{
+      customerId: string;
+      kycStatus: string;
+      reviewed: number;
+      documents: Array<{ id: string; status: string; documentType: string }>;
+    }>("/kyc/review-bundle", { customerId, status, rejectionReason }),
 };
 
 export const fraudApi = {

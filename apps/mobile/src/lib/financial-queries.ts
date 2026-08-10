@@ -10,7 +10,7 @@ export const FINANCIAL_STALE_MS = 2 * 60_000;
 /** Keep financial cache warm while navigating tabs. */
 export const FINANCIAL_GC_MS = 30 * 60_000;
 
-export const TRANSACTION_LIST_LIMIT = 100;
+export const TRANSACTION_LIST_LIMIT = 50;
 
 export const financialQueryOptions = {
   staleTime: FINANCIAL_STALE_MS,

@@ -8,7 +8,6 @@ import {
   IdDocumentIllustration,
 } from "@/components/auth/OnboardingIllustrations";
 import { OnboardingStepLayout } from "@/components/auth/OnboardingStepLayout";
-import { useTheme } from "@/theme/ThemeProvider";
 
 const STEPS = [
   {
@@ -39,7 +38,6 @@ const STEPS = [
 
 export default function RegisterIntroScreen() {
   const router = useRouter();
-  const { isDark } = useTheme();
   const [step, setStep] = useState(0);
   const current = STEPS[step];
   const isLast = step === STEPS.length - 1;
@@ -62,7 +60,7 @@ export default function RegisterIntroScreen() {
 
   return (
     <>
-      <StatusBar style={isDark ? "light" : "dark"} />
+      <StatusBar style="light" />
       <OnboardingStepLayout
         title={current.title}
         description={current.description}

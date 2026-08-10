@@ -79,7 +79,7 @@ export function DashboardUserMenu() {
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          className="flex size-9 items-center justify-center overflow-hidden rounded-full border border-border/80 bg-card ring-2 ring-background transition-shadow hover:shadow-md"
+          className="flex size-9 items-center justify-center overflow-hidden border border-border/80 bg-card ring-2 ring-background transition-shadow hover:shadow-md"
           aria-label="Account menu"
           aria-haspopup="menu"
           aria-expanded={open}
@@ -121,7 +121,7 @@ export function DashboardUserMenu() {
               <Link
                 href={profilePath}
                 onClick={() => setOpen(false)}
-                className="flex w-full items-center gap-3 rounded-none px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
+                className="flex w-full items-center gap-3 px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
               >
                 <FontAwesomeIcon
                   icon={faUser}
@@ -135,7 +135,7 @@ export function DashboardUserMenu() {
                   setOpen(false);
                   handleLogout();
                 }}
-                className="flex w-full items-center gap-3 rounded-none px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+                className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
               >
                 <FontAwesomeIcon
                   icon={faRightFromBracket}

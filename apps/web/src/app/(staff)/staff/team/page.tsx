@@ -114,7 +114,7 @@ export default function TeamManagementPage() {
           <Button
             size="sm"
             onClick={() => setShowForm(true)}
-            className="text-xs font-semibold px-4 min-h-[36px] rounded-none bg-primary text-primary-foreground hover:bg-primary/95 shrink-0 gap-1.5"
+            className="text-xs font-semibold px-4 min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95 shrink-0 gap-1.5"
           >
             <Plus className="h-3.5 w-3.5" />
             Add Team Member
@@ -147,7 +147,7 @@ export default function TeamManagementPage() {
             <Button
               variant="outline"
               size="sm"
-              className="mt-3 text-xs font-semibold rounded-none min-h-[32px]"
+              className="mt-3 text-xs font-semibold min-h-[32px]"
               onClick={() => setCredentials(null)}
             >
               Dismiss
@@ -166,7 +166,7 @@ export default function TeamManagementPage() {
               variant="ghost"
               size="sm"
               onClick={() => setShowForm(false)}
-              className="rounded-none h-8 w-8 p-0"
+              className="h-8 w-8 p-0"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -254,7 +254,7 @@ export default function TeamManagementPage() {
                 <Button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="gap-2 rounded-none min-h-[36px] text-xs font-semibold bg-primary text-primary-foreground"
+                  className="gap-2 min-h-[36px] text-xs font-semibold bg-primary text-primary-foreground"
                 >
                   <Check className="h-4 w-4" />
                   {createMutation.isPending ? "Creating…" : "Create Account"}
@@ -263,7 +263,7 @@ export default function TeamManagementPage() {
                   type="button"
                   variant="outline"
                   onClick={() => setShowForm(false)}
-                  className="rounded-none min-h-[36px] text-xs font-semibold"
+                  className="min-h-[36px] text-xs font-semibold"
                 >
                   Cancel
                 </Button>
@@ -385,7 +385,7 @@ export default function TeamManagementPage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="h-7 text-xs font-semibold rounded-none gap-1"
+                              className="h-7 text-xs font-semibold gap-1"
                               disabled={statusMutation.isPending}
                               onClick={() =>
                                 statusMutation.mutate({

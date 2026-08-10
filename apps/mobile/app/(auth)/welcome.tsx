@@ -1,160 +1,238 @@
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   Easing,
+  Extrapolation,
+  FadeInDown,
+  interpolate,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
   withTiming,
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
+import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { BrandSplashBackground } from "@/components/launch/SplashBackground";
-import { BRAND_LOGO } from "@/lib/brand-assets";
-import { useTheme } from "@/theme/ThemeProvider";
-import { radius, typography } from "@/theme/tokens";
+import {
+  CinematicWelcomeReel,
+  WELCOME_SLIDE_MS,
+} from "@/components/auth/CinematicWelcomeReel";
+import { BRAND_LOGO, WELCOME_SLIDES } from "@/lib/brand-assets";
+import { authChrome } from "@/theme/auth-chrome";
+import { typography } from "@/theme/tokens";
+
+const FRAMES = [
+  {
+    headline: "Save.",
+    subcopy: "Verified deposits into your susu — every day, on your phone.",
+  },
+  {
+    headline: "Grow.",
+    subcopy: "Watch your balance build with clear plans and real receipts.",
+  },
+  {
+    headline: "Live.",
+    subcopy: "Withdraw with confidence when the moment calls for it.",
+  },
+] as const;
+
+function FrameCopy({ index }: { index: number }) {
+  const frame = FRAMES[index % FRAMES.length];
+  const rise = useSharedValue(0);
+
+  useEffect(() => {
+    rise.value = 0;
+    rise.value = withTiming(1, {
+      duration: 780,
+      easing: Easing.bezier(0.22, 1, 0.36, 1),
+    });
+  }, [index, rise]);
+
+  const style = useAnimatedStyle(() => ({
+    opacity: rise.value,
+    transform: [
+      {
+        translateY: interpolate(
+          rise.value,
+          [0, 1],
+          [18, 0],
+          Extrapolation.CLAMP,
+        ),
+      },
+    ],
+  }));
+
+  return (
+    <Animated.View style={[styles.copyBlock, style]} accessibilityRole="header">
+      <Text style={styles.headline}>{frame.headline}</Text>
+      <Text style={styles.subcopy}>{frame.subcopy}</Text>
+    </Animated.View>
+  );
+}
 
 export default function WelcomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { colors } = useTheme();
-
-  const contentOpacity = useSharedValue(0);
-  const contentTranslateY = useSharedValue(12);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    contentOpacity.value = withDelay(
-      80,
-      withTiming(1, { duration: 520, easing: Easing.out(Easing.cubic) }),
-    );
-    contentTranslateY.value = withDelay(
-      80,
-      withTiming(0, { duration: 520, easing: Easing.out(Easing.cubic) }),
-    );
-  }, [contentOpacity, contentTranslateY]);
-
-  const contentStyle = useAnimatedStyle(() => ({
-    opacity: contentOpacity.value,
-    transform: [{ translateY: contentTranslateY.value }],
-  }));
+    const id = setInterval(() => {
+      setIndex((current) => (current + 1) % WELCOME_SLIDES.length);
+    }, WELCOME_SLIDE_MS);
+    return () => clearInterval(id);
+  }, []);
 
   return (
-    <BrandSplashBackground>
+    <View style={styles.root}>
       <StatusBar style="light" />
-      <Animated.View style={[styles.fill, contentStyle]}>
-        <View style={[styles.body, { paddingTop: insets.top + 48 }]}>
-          <View style={styles.brandBlock}>
-            <Image
-              source={BRAND_LOGO}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <Text style={styles.wordmark}>SusuFlow</Text>
-          </View>
-        </View>
 
-        <View style={[styles.footer, { paddingBottom: insets.bottom + 28 }]}>
-          <Text style={styles.tagline}>SAVE WITH CONFIDENCE</Text>
-          <Text style={styles.tagline}>BEGIN TODAY</Text>
+      <CinematicWelcomeReel sources={WELCOME_SLIDES} activeIndex={index} />
 
-          <View style={styles.actions}>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => router.push("/(auth)/register-intro")}
-              style={({ pressed }) => [
-                styles.action,
-                styles.actionPrimary,
-                { backgroundColor: colors.primary },
-                pressed && styles.pressed,
-              ]}
-            >
-              <Text style={styles.actionPrimaryLabel}>REGISTER</Text>
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => router.push("/(auth)/login")}
-              style={({ pressed }) => [
-                styles.action,
-                styles.actionSecondary,
-                pressed && styles.pressed,
-              ]}
-            >
-              <Text style={styles.actionSecondaryLabel}>LOGIN</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Animated.View>
-    </BrandSplashBackground>
+      <LinearGradient
+        colors={[
+          "rgba(0,0,0,0.5)",
+          "rgba(0,0,0,0.12)",
+          "rgba(0,0,0,0.42)",
+          "rgba(0,0,0,0.94)",
+        ]}
+        locations={[0, 0.32, 0.58, 1]}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
+
+      <View
+        style={[
+          styles.chrome,
+          {
+            paddingTop: insets.top + 12,
+            paddingBottom: Math.max(insets.bottom, 20),
+          },
+        ]}
+      >
+        <Animated.View
+          entering={FadeInDown.duration(700).easing(Easing.out(Easing.cubic))}
+          style={styles.brandRow}
+        >
+          <Image
+            source={BRAND_LOGO}
+            style={styles.logo}
+            resizeMode="contain"
+            accessibilityLabel="SusuFlow"
+          />
+        </Animated.View>
+
+        <View style={styles.spacer} />
+
+        <FrameCopy index={index} />
+
+        <Animated.View
+          entering={FadeInDown.delay(180)
+            .duration(650)
+            .easing(Easing.out(Easing.cubic))}
+          style={styles.actions}
+        >
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Create account"
+            onPress={() => router.push("/(auth)/register-intro")}
+            style={({ pressed }) => [
+              styles.btn,
+              styles.btnPrimary,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Text style={styles.btnPrimaryLabel}>Create account</Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Sign in"
+            onPress={() => router.push("/(auth)/login")}
+            style={({ pressed }) => [
+              styles.btn,
+              styles.btnSecondary,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Text style={styles.btnSecondaryLabel}>Sign in</Text>
+          </Pressable>
+        </Animated.View>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  fill: {
+  root: {
     flex: 1,
+    backgroundColor: "#000000",
   },
-  body: {
+  chrome: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 32,
+    paddingHorizontal: 22,
   },
-  brandBlock: {
+  brandRow: {
     alignItems: "center",
-    gap: 16,
   },
   logo: {
-    width: 112,
-    height: 112,
+    width: 168,
+    height: 64,
   },
-  wordmark: {
+  spacer: {
+    flex: 1,
+    minHeight: 24,
+  },
+  copyBlock: {
+    marginBottom: 22,
+    minHeight: 132,
+    justifyContent: "flex-end",
+  },
+  headline: {
     fontFamily: typography.fontFamily.bold,
-    fontSize: 36,
-    letterSpacing: -0.5,
+    fontSize: 56,
+    lineHeight: 60,
+    letterSpacing: -1.6,
     color: "#ffffff",
   },
-  footer: {
-    paddingHorizontal: 24,
-    gap: 4,
-  },
-  tagline: {
-    fontFamily: typography.fontFamily.semibold,
-    fontSize: typography.size.sm,
-    letterSpacing: 1.4,
-    textAlign: "center",
-    color: "rgba(255,255,255,0.75)",
+  subcopy: {
+    marginTop: 14,
+    fontFamily: typography.fontFamily.regular,
+    fontSize: 15,
+    lineHeight: 22,
+    color: "rgba(255,255,255,0.72)",
+    maxWidth: 300,
   },
   actions: {
     flexDirection: "row",
-    gap: 12,
-    marginTop: 28,
+    gap: 10,
   },
-  action: {
+  btn: {
     flex: 1,
-    minHeight: 52,
-    borderRadius: radius.lg,
+    minHeight: authChrome.controlHeight,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: authChrome.controlRadius,
   },
-  actionPrimary: {},
-  actionSecondary: {
-    backgroundColor: "transparent",
-    borderWidth: 1.5,
-    borderColor: "rgba(255,255,255,0.85)",
+  btnPrimary: {
+    backgroundColor: authChrome.onBlackFill,
   },
-  actionPrimaryLabel: {
-    fontFamily: typography.fontFamily.bold,
-    fontSize: typography.size.sm,
-    color: "#ffffff",
-    letterSpacing: 1.1,
+  btnSecondary: {
+    backgroundColor: "rgba(255,255,255,0.14)",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "rgba(255,255,255,0.35)",
   },
-  actionSecondaryLabel: {
-    fontFamily: typography.fontFamily.bold,
-    fontSize: typography.size.sm,
-    color: "#ffffff",
-    letterSpacing: 1.1,
+  btnPrimaryLabel: {
+    fontFamily: typography.fontFamily.semibold,
+    fontSize: 16,
+    color: authChrome.onBlackLabel,
+    letterSpacing: -0.2,
+  },
+  btnSecondaryLabel: {
+    fontFamily: typography.fontFamily.semibold,
+    fontSize: 16,
+    color: authChrome.ink,
+    letterSpacing: -0.2,
   },
   pressed: {
-    opacity: 0.88,
+    opacity: 0.86,
   },
 });

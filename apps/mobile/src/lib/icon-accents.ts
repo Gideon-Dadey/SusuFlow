@@ -20,6 +20,6 @@ export function getIconAccent(icon: AppIconName, isDark: boolean) {
     return palette[icon];
   }
   return isDark
-    ? { bg: "rgba(0, 86, 210, 0.18)", fg: "#38BDF8" }
-    : { bg: "#EBF5FF", fg: "#0056D2" };
+    ? { bg: "rgba(255, 255, 255, 0.12)", fg: "#FFFFFF" }
+    : { bg: "#18181b", fg: "#FFFFFF" };
 }

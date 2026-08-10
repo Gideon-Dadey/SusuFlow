@@ -1,10 +1,10 @@
 import {
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
+  Geist_400Regular,
+  Geist_500Medium,
+  Geist_600SemiBold,
+  Geist_700Bold,
   useFonts,
-} from "@expo-google-fonts/inter";
+} from "@expo-google-fonts/geist";
 import { QueryClientProvider, focusManager } from "@tanstack/react-query";
 import { Stack, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -12,21 +12,27 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { AppState, Platform, View } from "react-native";
 import { useAuthStore } from "@/stores/auth.store";
+import { useAppLockStore } from "@/stores/app-lock.store";
 import { useThemeStore } from "@/stores/theme.store";
 import { ThemeProvider, useTheme } from "@/theme/ThemeProvider";
-import { BiometricSetupPrompt } from "@/components/auth/BiometricSetupPrompt";
+import { AppLockGate } from "@/components/security/AppLockGate";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
 import { queryClient } from "@/lib/query-client";
+import { monitoring } from "@/lib/monitoring";
 import { lightColors } from "@/theme/tokens";
 
 SplashScreen.preventAutoHideAsync();
+monitoring.init();
 
 function useReactNativeFocusManager() {
   useEffect(() => {
     if (Platform.OS === "web") return;
 
+    const onAppState = useAppLockStore.getState().onAppStateChange;
+
     const subscription = AppState.addEventListener("change", (status) => {
       focusManager.setFocused(status === "active");
+      onAppState(status);
     });
 
     return () => subscription.remove();
@@ -58,6 +64,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
 function RootShell() {
   const { isDark } = useTheme();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   return (
     <>
@@ -75,7 +82,7 @@ function RootShell() {
             }}
           />
         </Stack>
-        <BiometricSetupPrompt />
+        {isAuthenticated ? <AppLockGate /> : null}
       </AuthGate>
     </>
   );
@@ -85,14 +92,15 @@ export default function RootLayout() {
   useReactNativeFocusManager();
 
   const [fontsLoaded, fontError] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
+    Geist_400Regular,
+    Geist_500Medium,
+    Geist_600SemiBold,
+    Geist_700Bold,
   });
 
   const hydrateAuth = useAuthStore((s) => s.hydrateFromStorage);
   const hydrateTheme = useThemeStore((s) => s.hydrateFromStorage);
+  const hydrateLock = useAppLockStore((s) => s.hydrate);
 
   useEffect(() => {
     if (fontError) throw fontError;
@@ -101,10 +109,10 @@ export default function RootLayout() {
   useEffect(() => {
     if (!fontsLoaded) return;
 
-    Promise.all([hydrateAuth(), hydrateTheme()]).finally(() => {
+    Promise.all([hydrateAuth(), hydrateTheme(), hydrateLock()]).finally(() => {
       void SplashScreen.hideAsync();
     });
-  }, [fontsLoaded, hydrateAuth, hydrateTheme]);
+  }, [fontsLoaded, hydrateAuth, hydrateTheme, hydrateLock]);
 
   if (!fontsLoaded) {
     return (

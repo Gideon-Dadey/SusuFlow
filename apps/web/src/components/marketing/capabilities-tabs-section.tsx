@@ -34,7 +34,7 @@ export function CapabilitiesTabsSection() {
                     type="button"
                     onClick={() => setActiveId(tab.id)}
                     className={cn(
-                      "rounded-xl px-4 py-3 text-left text-base font-medium transition-colors",
+                      "px-4 py-3 text-left text-base font-medium transition-colors",
                       isActive
                         ? "bg-card text-foreground shadow-sm"
                         : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",

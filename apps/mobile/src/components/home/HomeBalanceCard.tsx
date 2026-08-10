@@ -1,4 +1,5 @@
 import { AppIcon } from "@/components/icons/AppIcon";
+import { TenantBrandMark } from "@/components/branding/TenantBrandMark";
 import {
   BALANCE_PERIOD_GROWTH_HINT,
   BALANCE_PERIOD_LABELS,
@@ -7,6 +8,7 @@ import {
   hasSavingsSparklineData,
   type BalancePeriod,
 } from "@/components/home/homeUtils";
+import { homeChrome } from "@/components/home/homeChrome";
 import { HomeSparkline } from "@/components/home/HomeSparkline";
 import type { Transaction } from "@/lib/api";
 import { useMemo, useState } from "react";
@@ -21,12 +23,14 @@ const PERIOD_OPTIONS: BalancePeriod[] = ["this_month", "last_month"];
 interface HomeBalanceCardProps {
   balance: number;
   groupName: string;
+  logoUrl?: string | null;
   transactions?: Transaction[];
 }
 
 export function HomeBalanceCard({
   balance,
   groupName,
+  logoUrl,
   transactions = [],
 }: HomeBalanceCardProps) {
   const { colors, isDark } = useTheme();
@@ -86,6 +90,11 @@ export function HomeBalanceCard({
             onPress={() => setPeriodMenuOpen(true)}
             style={({ pressed }) => [
               styles.periodPill,
+              {
+                backgroundColor: isDark
+                  ? "rgba(255,255,255,0.08)"
+                  : "rgba(15, 23, 42, 0.04)",
+              },
               pressed && styles.pressed,
             ]}
           >
@@ -110,18 +119,33 @@ export function HomeBalanceCard({
 
             {growthLabel ? (
               <View style={styles.growthRow}>
-                <Text
+                <View
                   style={[
-                    styles.growthValue,
+                    styles.growthChip,
                     {
-                      color: growthPositive
-                        ? colors.primary
-                        : colors.destructive,
+                      backgroundColor: growthPositive
+                        ? isDark
+                          ? homeChrome.mintDarkWell
+                          : homeChrome.mintSoft
+                        : isDark
+                          ? "rgba(225, 29, 72, 0.16)"
+                          : "#FFF1F2",
                     },
                   ]}
                 >
-                  {growthLabel}
-                </Text>
+                  <Text
+                    style={[
+                      styles.growthValue,
+                      {
+                        color: growthPositive
+                          ? homeChrome.mintInk
+                          : colors.destructive,
+                      },
+                    ]}
+                  >
+                    {growthLabel}
+                  </Text>
+                </View>
                 <Text
                   style={[styles.growthHint, { color: colors.mutedForeground }]}
                 >
@@ -135,7 +159,7 @@ export function HomeBalanceCard({
         </View>
 
         <View style={[styles.groupFooter, { borderTopColor: colors.border }]}>
-          <AppIcon name="users" size={16} color={colors.mutedForeground} />
+          <TenantBrandMark logoUrl={logoUrl} size={28} />
           <Text
             style={[styles.groupValue, { color: colors.mutedForeground }]}
             numberOfLines={1}
@@ -189,7 +213,9 @@ export function HomeBalanceCard({
                     style={[
                       styles.menuOptionText,
                       {
-                        color: selected ? colors.primary : colors.foreground,
+                        color: selected
+                          ? homeChrome.mintInk
+                          : colors.foreground,
                       },
                     ]}
                   >
@@ -199,7 +225,7 @@ export function HomeBalanceCard({
                     <AppIcon
                       name="badge-check"
                       size={18}
-                      color={colors.primary}
+                      color={homeChrome.mint}
                     />
                   ) : null}
                 </Pressable>
@@ -233,15 +259,16 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: typography.roles.caption,
     fontSize: typography.size.xs,
-    letterSpacing: 0.2,
+    letterSpacing: 0.35,
     textTransform: "uppercase",
   },
   periodPill: {
     flexDirection: "row",
     alignItems: "center",
     gap: 3,
-    paddingVertical: 4,
-    paddingHorizontal: 2,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: radius.full,
   },
   periodText: {
     fontFamily: typography.roles.caption,
@@ -256,19 +283,24 @@ const styles = StyleSheet.create({
   },
   balanceBlock: {
     flex: 1,
-    gap: 8,
+    gap: 10,
   },
   amount: {
     fontFamily: typography.roles.display,
-    fontSize: 30,
-    letterSpacing: -0.8,
-    lineHeight: 36,
+    fontSize: 32,
+    letterSpacing: -1,
+    lineHeight: 38,
   },
   growthRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 8,
     flexWrap: "wrap",
+  },
+  growthChip: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radius.full,
   },
   growthValue: {
     fontFamily: typography.roles.label,
@@ -282,7 +314,7 @@ const styles = StyleSheet.create({
   groupFooter: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
     borderTopWidth: StyleSheet.hairlineWidth,
     paddingVertical: spacing.md,
     marginTop: spacing.xs,
@@ -298,7 +330,7 @@ const styles = StyleSheet.create({
   menuBackdrop: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    backgroundColor: "rgba(15, 23, 42, 0.45)",
     padding: spacing.lg,
     paddingBottom: spacing.xxl,
   },

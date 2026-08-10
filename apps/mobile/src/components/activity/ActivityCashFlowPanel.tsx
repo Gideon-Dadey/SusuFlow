@@ -42,7 +42,7 @@ export function ActivityCashFlowPanel({
               style={[
                 styles.delta,
                 {
-                  color: deltaPositive ? colors.primary : colors.destructive,
+                  color: deltaPositive ? colors.success : colors.destructive,
                 },
               ]}
             >
@@ -73,7 +73,7 @@ export function ActivityCashFlowPanel({
         <Metric
           label="Money in"
           value={formatGhs(insights.moneyIn)}
-          valueColor={colors.primary}
+          valueColor={colors.success}
         />
         <Metric
           label="Money out"

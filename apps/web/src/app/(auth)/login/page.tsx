@@ -11,10 +11,11 @@ import {
   authInputClassName,
   authLabelClassName,
   authLinkClassName,
+  authSubmitClassName,
   authSubtextClassName,
+  ModernInput,
 } from "@/components/auth/auth-form-ui";
 import { useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth.store";
 import { cn } from "@/lib/utils";
 
@@ -47,7 +48,6 @@ function LoginContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-  // MFA Challenge State
   const [mfaChallenge, setMfaChallenge] = useState<{
     mfaToken: string;
     userId: string;
@@ -140,8 +140,9 @@ function LoginContent() {
 
   if (mfaChallenge) {
     return (
-      <AuthShell>
+      <AuthShell visualTone="sage">
         <div>
+          <p className="ofx-eyebrow mb-3">Welcome back</p>
           <h1 className={authHeadingClassName}>Two-Factor Verification</h1>
           <p className={authSubtextClassName}>
             Enter the 6-digit verification code sent to{" "}
@@ -151,61 +152,53 @@ function LoginContent() {
         </div>
 
         <form onSubmit={handleMfaSubmit} className="mt-8 space-y-5">
-          <div className="space-y-1.5">
-            <label className={authLabelClassName}>
-              6-Digit MFA Security Code{" "}
-              <span className="text-destructive">*</span>
-            </label>
-            <input
-              type="text"
-              maxLength={8}
-              placeholder="123456"
-              className={cn(
-                authInputClassName,
-                "font-mono font-bold tracking-widest text-center text-lg h-12",
-              )}
-              value={mfaCode}
-              onChange={(e) => setMfaCode(e.target.value)}
-              required
-              autoFocus
-            />
-          </div>
+          <ModernInput
+            id="mfa-code"
+            label="6-Digit MFA Security Code"
+            type="text"
+            maxLength={8}
+            placeholder="123456"
+            required
+            autoFocus
+            value={mfaCode}
+            onChange={(e) => setMfaCode(e.target.value)}
+            className="font-mono font-bold tracking-widest text-center text-lg"
+          />
 
           {successMessage ? (
-            <p className="flex items-center gap-2 rounded-none bg-emerald-50 px-3 py-2 text-xs text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 font-semibold">
+            <p className="flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-xs text-emerald-700 font-medium">
               <CheckCircle className="h-4 w-4 shrink-0" aria-hidden />
               <span>{successMessage}</span>
             </p>
           ) : null}
 
           {error ? (
-            <p className="rounded-none bg-destructive/10 px-3 py-2 text-xs text-destructive font-semibold">
+            <p className="rounded-xl bg-red-50 px-3 py-2 text-xs text-red-700 font-medium border border-red-200">
               {error}
             </p>
           ) : null}
 
           <div className="space-y-2">
-            <Button
+            <button
               type="submit"
-              variant="primary"
-              size="lg"
-              className="h-12 min-h-[48px] w-full rounded-full font-medium"
-              loading={isSubmitting}
-              loadingText="Verifying code..."
+              className={authSubmitClassName}
+              disabled={isSubmitting}
             >
+              {isSubmitting ? (
+                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : null}
               Verify & Complete Sign In
-            </Button>
-            <Button
+            </button>
+            <button
               type="button"
-              variant="outline"
               onClick={() => {
                 setMfaChallenge(null);
                 clearError();
               }}
-              className="w-full rounded-full font-medium h-10"
+              className="ofx-btn ofx-btn-outline w-full"
             >
               Back to Login
-            </Button>
+            </button>
           </div>
         </form>
 
@@ -215,9 +208,10 @@ function LoginContent() {
   }
 
   return (
-    <AuthShell>
+    <AuthShell visualTone="sage">
       <div>
-        <h1 className={authHeadingClassName}>Welcome back</h1>
+        <p className="ofx-eyebrow mb-3">Welcome back</p>
+        <h1 className={authHeadingClassName}>Sign in to your account</h1>
         <p className={authSubtextClassName}>
           or{" "}
           <Link href="/register" className={authLinkClassName}>
@@ -227,29 +221,24 @@ function LoginContent() {
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-        <div className="space-y-1.5">
-          <label htmlFor="email" className={authLabelClassName}>
-            Email address <span className="text-destructive">*</span>
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="name@company.com"
-            className={authInputClassName}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="email"
-          />
-        </div>
+        <ModernInput
+          id="email"
+          label="Email address"
+          name="email"
+          type="email"
+          placeholder="name@company.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+        />
 
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 w-full">
           <div className="flex items-center justify-between gap-2">
             <label htmlFor="password" className={authLabelClassName}>
-              Password <span className="text-destructive">*</span>
+              Password <span className="text-red-500">*</span>
             </label>
-            <Link href="/contact" className={authLinkClassName}>
+            <Link href="/contact" className={cn(authLinkClassName, "text-sm")}>
               Forgot password?
             </Link>
           </div>
@@ -259,7 +248,7 @@ function LoginContent() {
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              className={cn(authInputClassName, "pr-10")}
+              className={cn(authInputClassName, "pr-12")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -267,7 +256,7 @@ function LoginContent() {
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
@@ -280,42 +269,41 @@ function LoginContent() {
           </div>
         </div>
 
-        <label className="flex cursor-pointer items-center gap-2.5 select-none">
+        <label className="flex cursor-pointer items-center gap-2 select-none">
           <input
             type="checkbox"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
-            className="size-4 rounded border-border/70 text-secondary focus:ring-primary/20"
+            className="h-4 w-4 rounded border-border accent-[var(--ofx-ink)] cursor-pointer"
           />
-          <span className="text-xs sm:text-sm font-medium text-foreground">
+          <span className="text-sm font-medium text-foreground/80">
             Remember me on this device
           </span>
         </label>
 
         {successMessage ? (
-          <p className="flex items-center gap-2 rounded-xl bg-emerald-50 px-3.5 py-2.5 text-xs sm:text-sm text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 font-semibold border border-emerald-500/20">
+          <p className="flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-xs text-emerald-700 font-medium border border-emerald-500/20">
             <CheckCircle className="h-4 w-4 shrink-0" aria-hidden />
             <span>{successMessage}</span>
           </p>
         ) : null}
 
         {error ? (
-          <p className="rounded-xl bg-destructive/10 px-3.5 py-2.5 text-xs sm:text-sm text-destructive font-semibold border border-destructive/20">
+          <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700 font-medium border border-red-200">
             {error}
           </p>
         ) : null}
 
-        <Button
+        <button
           type="submit"
-          variant="primary"
-          size="lg"
-          className="w-full rounded-full font-medium"
-          loading={isSubmitting}
-          loadingText="Logging in..."
-          disabled={!!successMessage}
+          className={cn(authSubmitClassName, successMessage && "opacity-50")}
+          disabled={isSubmitting || !!successMessage}
         >
+          {isSubmitting ? (
+            <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : null}
           Sign In
-        </Button>
+        </button>
       </form>
 
       <AuthFooterExtras action="signing in" mode="login" />

@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useCallback, useMemo, useState } from "react";
+import { RefreshControl, StyleSheet, Text, View } from "react-native";
 import { GoalEnrollSheet } from "@/components/goals/GoalEnrollSheet";
 import { GoalPlanCard } from "@/components/goals/GoalPlanCard";
 import { GoalProgressCard } from "@/components/goals/GoalProgressCard";
@@ -11,6 +11,8 @@ import {
   TabScreenLayout,
 } from "@/components/layout/TabScreen";
 import { useProfileData } from "@/components/settings/useProfileData";
+import { OfflineBanner } from "@/components/ui/OfflineBanner";
+import { QueryErrorState } from "@/components/ui/QueryErrorState";
 import { PlanEnrollmentSkeleton } from "@/components/ui/Skeleton";
 import type { SavingsPlan } from "@/lib/api";
 import { planApi } from "@/lib/api";
@@ -23,23 +25,35 @@ import { spacing, typography } from "@/theme/tokens";
 export default function GoalsScreen() {
   const queryClient = useQueryClient();
   const { colors } = useTheme();
-  const { groupName, profile, isLoading: profileLoading } = useProfileData();
+  const {
+    groupName,
+    logoUrl,
+    profile,
+    isLoading: profileLoading,
+    refetch: refetchProfile,
+  } = useProfileData();
   const authUserId = useAuthStore((s) => s.user?.id);
   const [selectedPlan, setSelectedPlan] = useState<SavingsPlan | null>(null);
   const [enrollOpen, setEnrollOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const { data: plans, isPending: plansPending } = useQuery({
+  const plansQuery = useQuery({
     queryKey: queryKeys.plans,
     queryFn: () => planApi.listPlans(),
     ...plansQueryOptions,
   });
 
-  const { data: enrollments, isPending: enrollPending } = useQuery({
+  const enrollmentsQuery = useQuery({
     queryKey: queryKeys.enrollments(authUserId ?? ""),
     queryFn: () => planApi.listEnrollments(),
     enabled: !!authUserId,
     ...plansQueryOptions,
   });
+
+  const plans = plansQuery.data;
+  const enrollments = enrollmentsQuery.data;
+  const plansPending = plansQuery.isPending;
+  const enrollPending = enrollmentsQuery.isPending;
 
   const enrolledPlanIds = useMemo(
     () => new Set((enrollments ?? []).map((item) => item.plan.id)),
@@ -62,20 +76,55 @@ export default function GoalsScreen() {
     queryClient.invalidateQueries({ queryKey: queryKeys.plans });
   };
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        plansQuery.refetch(),
+        enrollmentsQuery.refetch(),
+        refetchProfile(),
+      ]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [enrollmentsQuery, plansQuery, refetchProfile]);
+
   const showGoalsSkeleton =
     (plansPending && plans === undefined) ||
     (enrollPending && enrollments === undefined);
 
+  const showError =
+    (plansQuery.isError && plans === undefined) ||
+    (enrollmentsQuery.isError && enrollments === undefined);
+
   return (
     <>
-      <TabScreenLayout header={<TabScreenHeader title="Goals" />}>
+      <TabScreenLayout
+        header={<TabScreenHeader title="Goals" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh()}
+            tintColor={colors.primary}
+          />
+        }
+      >
         <View style={styles.content}>
+          <OfflineBanner />
           <SusuMembershipCard
             groupName={groupName}
+            logoUrl={logoUrl}
             memberId={memberId}
             isLoading={profileLoading}
           />
 
+          {showError ? (
+            <QueryErrorState
+              title="Couldn’t load goals"
+              message="Check your connection and try again."
+              onRetry={() => void onRefresh()}
+            />
+          ) : null}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
               Your active goals

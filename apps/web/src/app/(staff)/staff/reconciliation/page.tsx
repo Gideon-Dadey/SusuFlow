@@ -105,7 +105,7 @@ export default function StaffReconciliationPage() {
             refetchDeposits();
             refetchWithdrawals();
           }}
-          className="text-xs font-semibold rounded-none min-h-[36px] gap-1.5"
+          className="text-xs font-semibold min-h-[36px] gap-1.5"
         >
           <FontAwesomeIcon icon={faRotateRight} className="h-3.5 w-3.5" />
           Re-Sync Records

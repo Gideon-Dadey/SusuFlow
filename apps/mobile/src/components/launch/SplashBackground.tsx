@@ -1,10 +1,9 @@
-import { LinearGradient } from "expo-linear-gradient";
 import type { ReactNode } from "react";
-import { StyleSheet, View } from "react-native";
-import { lightColors } from "@/theme/tokens";
+import { ImageBackground, StyleSheet, View } from "react-native";
+import { SPLASH_BACKGROUND } from "@/lib/brand-assets";
 
-/** Shared launch + welcome backdrop — matches native splash (`app.json`). */
-export const BRAND_SPLASH_GRADIENT = ["#1a365d", "#152a4a", "#0f2038"] as const;
+/** Launch + welcome canvas — black base + atmospheric photo. */
+export const BRAND_SPLASH_BACKGROUND = "#000000";
 
 export const LAUNCH_SPLASH_DURATION_MS = 5000;
 
@@ -17,13 +16,16 @@ export function BrandSplashBackground({
 }: BrandSplashBackgroundProps) {
   return (
     <View style={styles.root}>
-      <LinearGradient
-        colors={BRAND_SPLASH_GRADIENT}
+      <ImageBackground
+        source={SPLASH_BACKGROUND}
         style={StyleSheet.absoluteFill}
-      />
-      <View style={[styles.glow, styles.glowLeft]} />
-      <View style={[styles.glow, styles.glowRight]} />
-      {children}
+        resizeMode="cover"
+        accessibilityIgnoresInvertColors
+      >
+        {/* Soft scrim keeps logo / CTAs crisp on every device. */}
+        <View style={styles.scrim} pointerEvents="none" />
+      </ImageBackground>
+      <View style={styles.content}>{children}</View>
     </View>
   );
 }
@@ -31,22 +33,13 @@ export function BrandSplashBackground({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: lightColors.splashBackground,
+    backgroundColor: BRAND_SPLASH_BACKGROUND,
   },
-  glow: {
-    position: "absolute",
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: "rgba(16, 185, 129, 0.12)",
+  scrim: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.28)",
   },
-  glowLeft: {
-    top: "20%",
-    left: -64,
-  },
-  glowRight: {
-    bottom: "24%",
-    right: -72,
-    backgroundColor: "rgba(5, 150, 105, 0.1)",
+  content: {
+    flex: 1,
   },
 });

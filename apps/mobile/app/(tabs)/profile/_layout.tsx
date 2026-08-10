@@ -12,6 +12,7 @@ export default function ProfileLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="account" />
       <Stack.Screen name="personal" />
+      <Stack.Screen name="kyc" />
       <Stack.Screen name="security" />
       <Stack.Screen name="notifications" />
       <Stack.Screen name="appearance" />

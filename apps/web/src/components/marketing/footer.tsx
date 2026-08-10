@@ -1,142 +1,152 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import {
-  APP_NAME,
-  CONTACT_OFFICE,
-  FOOTER_LINKS,
-  NAV_LINKS,
-  SUPPORT_EMAIL,
-} from "@/lib/marketing-data";
+import { APP_NAME, CONTACT_OFFICE, SUPPORT_EMAIL } from "@/lib/marketing-data";
 import { BrandLockup } from "@/components/marketing/brand-logo";
 import { MarketingContainer } from "./marketing-container";
 
-function GhanaClock() {
-  const [time, setTime] = useState("");
-
-  useEffect(() => {
-    const format = () => {
-      setTime(
-        new Intl.DateTimeFormat("en-GB", {
-          timeZone: "Africa/Accra",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: false,
-        }).format(new Date()),
-      );
-    };
-    format();
-    const interval = window.setInterval(format, 1000);
-    return () => window.clearInterval(interval);
-  }, []);
-
-  return <span className="tabular-nums">{time || "—"}</span>;
-}
+const FOOTER_COLUMNS = [
+  {
+    heading: "Product",
+    links: [
+      { label: "MoMo Deposits", href: "/product/accounts-and-payments" },
+      { label: "Payouts & Transfers", href: "/product/accounts-and-payments" },
+      { label: "Collector App", href: "/product/accounts-and-payments" },
+      { label: "Control Hub", href: "/product/manage-and-control" },
+      { label: "Ledger & Reports", href: "/product/platform-capabilities" },
+      { label: "Pricing", href: "/pricing" },
+    ],
+  },
+  {
+    heading: "Why SusuFlow",
+    links: [
+      {
+        label: "Susu Companies & MFIs",
+        href: "/why-susuflow/susu-companies-and-mfis",
+      },
+      { label: "Field Collectors", href: "/why-susuflow/field-collectors" },
+      {
+        label: "Zero Notebook Fraud",
+        href: "/why-susuflow/zero-notebook-fraud",
+      },
+      {
+        label: "Gateway Verification",
+        href: "/why-susuflow/gateway-verification",
+      },
+      {
+        label: "Bank-Grade Accounting",
+        href: "/why-susuflow/bank-grade-accounting",
+      },
+    ],
+  },
+  {
+    heading: "Resources",
+    links: [
+      { label: "Blog", href: "/resources" },
+      { label: "How It Works", href: "/how-it-works" },
+      { label: "Pricing FAQ", href: "/pricing#faq" },
+      { label: "Book a Demo", href: "/contact?intent=demo" },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { label: "About Us", href: "/about" },
+      { label: "Contact", href: "/contact" },
+      { label: "Support", href: `mailto:${SUPPORT_EMAIL}` },
+      { label: "Terms of Service", href: "/terms" },
+      { label: "Privacy Policy", href: "/privacy" },
+    ],
+  },
+] as const;
 
 export function MarketingFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border/60 bg-background text-foreground">
+    <footer className="border-t border-border/70 bg-[var(--ofx-cream)] text-foreground">
       <MarketingContainer className="py-14 sm:py-16">
-        <div className="grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-4 space-y-5">
-            <Link href="/" className="inline-flex items-center">
-              <BrandLockup wordmarkClassName="text-xl" />
+        <div className="flex flex-col gap-6 border-b border-border/70 pb-10 sm:flex-row sm:items-center sm:justify-between">
+          <Link href="/" className="inline-flex items-center">
+            <BrandLockup wordmarkClassName="text-xl" />
+          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href="/login" className="ofx-btn ofx-btn-light ofx-btn-sm">
+              Login
             </Link>
-            <p className="max-w-sm text-base leading-relaxed text-muted-foreground">
-              Contact us to explore our platform and pricing plans for your susu
-              company.
-            </p>
+            <Link href="/contact" className="ofx-btn ofx-btn-light ofx-btn-sm">
+              Help &amp; Contact
+            </Link>
             <Link
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-full border border-foreground px-6 py-2.5 text-sm font-medium transition-colors hover:bg-foreground hover:text-background"
+              href="/contact?intent=demo"
+              className="ofx-btn ofx-btn-dark ofx-btn-sm"
             >
-              Let&apos;s chat
+              Book a demo
             </Link>
-          </div>
-
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-8">
-            <div>
-              <h3 className="text-sm font-medium text-foreground">Navigate</h3>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                <li>
-                  <Link
-                    href="/"
-                    className="transition-colors hover:text-foreground"
-                  >
-                    Home
-                  </Link>
-                </li>
-                {NAV_LINKS.map(({ href, label }) => (
-                  <li key={href}>
-                    <Link
-                      href={href}
-                      className="transition-colors hover:text-foreground"
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-medium text-foreground">Product</h3>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                {FOOTER_LINKS.product.map(({ href, label }) => (
-                  <li key={href}>
-                    <Link
-                      href={href}
-                      className="transition-colors hover:text-foreground"
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="col-span-2 sm:col-span-1">
-              <h3 className="text-sm font-medium text-foreground">Contact</h3>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                <li>
-                  <p className="text-foreground">Address</p>
-                  <p>{CONTACT_OFFICE.addressLines.join(", ")}</p>
-                </li>
-                <li>
-                  <a
-                    href={`mailto:${SUPPORT_EMAIL}`}
-                    className="transition-colors hover:text-foreground"
-                  >
-                    {SUPPORT_EMAIL}
-                  </a>
-                </li>
-                <li>
-                  <p className="text-foreground">Ghana</p>
-                  <GhanaClock />
-                </li>
-              </ul>
-            </div>
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-border/60 pt-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {year} {APP_NAME}. All rights reserved.
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 pt-10 sm:grid-cols-4 lg:grid-cols-5">
+          {FOOTER_COLUMNS.map((column) => (
+            <div key={column.heading}>
+              <h3 className="text-sm font-semibold text-foreground">
+                {column.heading}
+              </h3>
+              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+                {column.links.map(({ href, label }) => (
+                  <li key={`${href}-${label}`}>
+                    <Link
+                      href={href}
+                      className="transition-colors hover:text-foreground"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+          <div className="col-span-2 sm:col-span-4 lg:col-span-1">
+            <h3 className="text-sm font-semibold text-foreground">Contact</h3>
+            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+              <li>{CONTACT_OFFICE.addressLines.join(", ")}</li>
+              <li>
+                <a
+                  href={`mailto:${SUPPORT_EMAIL}`}
+                  className="transition-colors hover:text-foreground"
+                >
+                  {SUPPORT_EMAIL}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-12 border-t border-border/70 pt-8">
+          <p className="max-w-4xl text-[13px] leading-relaxed text-muted-foreground">
+            © {year} {APP_NAME}. {APP_NAME} is a multi-tenant digital savings
+            platform for susu companies and microfinance institutions in Ghana.
+            Member deposits are processed through licensed payment gateways and
+            credited to the ledger only after gateway confirmation. Mobile Money
+            is operated by the respective network providers; standard network
+            fees may apply. {APP_NAME} is a technology provider and does not
+            hold customer funds.
           </p>
-          <div className="flex gap-5">
-            {FOOTER_LINKS.legal.map(({ href, label }) => (
+          <div className="mt-6 flex flex-col gap-3 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <p>All rights reserved.</p>
+            <div className="flex gap-5">
               <Link
-                key={href}
-                href={href}
+                href="/terms"
                 className="transition-colors hover:text-foreground"
               >
-                {label}
+                Terms of Service
               </Link>
-            ))}
+              <Link
+                href="/privacy"
+                className="transition-colors hover:text-foreground"
+              >
+                Privacy Policy
+              </Link>
+            </div>
           </div>
         </div>
       </MarketingContainer>

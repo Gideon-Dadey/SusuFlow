@@ -1,37 +1,40 @@
-import { Check } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
 import { ABOUT_COMPLIANCE_POINTS } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
 
 export function AboutComplianceSection() {
   return (
-    <section className="bg-background">
-      <MarketingContainer className="py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-3xl text-left lg:text-center">
-          <h2 className="text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
-            Secure, auditable, and built for verified collections
-          </h2>
-          <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground lg:mx-auto">
-            SusuFlow is designed around gateway confirmed Mobile Money deposits
-            and transparent ledger records. Your team sees the same numbers your
-            savers expect.
-          </p>
+    <section className="bg-[var(--ofx-cream)]">
+      <MarketingContainer className="ofx-section">
+        <div className="ofx-dark-section rounded-[2rem] p-8 sm:p-12 lg:p-14">
+          <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
+            <div>
+              <p className="ofx-eyebrow">Trust &amp; compliance</p>
+              <h2 className="ofx-h2 mt-4">Secure, auditable, verified.</h2>
+              <p className="ofx-lead mt-5 max-w-md">
+                SusuFlow is designed around gateway-confirmed Mobile Money
+                deposits and transparent ledger records. Your team sees the same
+                numbers your savers expect.
+              </p>
+            </div>
+            <ul className="space-y-4 lg:pt-2">
+              {ABOUT_COMPLIANCE_POINTS.map((point) => (
+                <li
+                  key={point}
+                  className="flex items-start gap-4 rounded-2xl bg-white/[0.06] p-5"
+                >
+                  <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--ofx-sage)]">
+                    <BadgeCheck
+                      className="h-4 w-4 text-[var(--ofx-ink)]"
+                      aria-hidden
+                    />
+                  </span>
+                  <span className="text-base leading-relaxed">{point}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-
-        <ul className="mx-auto mt-10 grid max-w-3xl gap-4 sm:mt-12 sm:grid-cols-2">
-          {ABOUT_COMPLIANCE_POINTS.map((point) => (
-            <li
-              key={point}
-              className="flex items-start gap-3 rounded-none border border-border/80 bg-card p-5"
-            >
-              <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-[#22c55e] text-white">
-                <Check className="size-4" strokeWidth={2.5} aria-hidden />
-              </span>
-              <span className="text-base leading-relaxed text-foreground sm:text-base">
-                {point}
-              </span>
-            </li>
-          ))}
-        </ul>
       </MarketingContainer>
     </section>
   );

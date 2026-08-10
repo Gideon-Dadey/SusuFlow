@@ -64,7 +64,7 @@ export default function FraudAlertsPage() {
               size="sm"
               variant={selectedStatus === status ? "primary" : "outline"}
               onClick={() => setSelectedStatus(status)}
-              className="text-xs font-semibold px-3 min-h-[36px] rounded-none"
+              className="text-xs font-semibold px-3 min-h-[36px]"
             >
               {status === "" ? "ALL" : status.toUpperCase()}
             </Button>
@@ -166,7 +166,7 @@ export default function FraudAlertsPage() {
                           onClick={() =>
                             handleResolve(alert.id, "false_positive")
                           }
-                          className="text-xs font-semibold px-4 rounded-none min-h-[38px]"
+                          className="text-xs font-semibold px-4 min-h-[38px]"
                         >
                           False Positive
                         </Button>
@@ -178,7 +178,7 @@ export default function FraudAlertsPage() {
                             resolveMutation.isPending
                           }
                           onClick={() => handleResolve(alert.id, "resolved")}
-                          className="text-xs font-semibold px-4 rounded-none min-h-[38px] bg-emerald-600 hover:bg-emerald-700 text-white border-none"
+                          className="text-xs font-semibold px-4 min-h-[38px] bg-emerald-600 hover:bg-emerald-700 text-white border-none"
                         >
                           Resolve Alert
                         </Button>

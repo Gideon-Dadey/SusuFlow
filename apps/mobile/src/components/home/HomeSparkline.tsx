@@ -54,6 +54,7 @@ export function HomeSparkline({
   values,
 }: HomeSparklineProps) {
   const { colors } = useTheme();
+  const stroke = colors.success;
 
   const { fillPath, strokePath } = useMemo(() => {
     const points = toPoints(values, width, height);
@@ -67,15 +68,15 @@ export function HomeSparkline({
     <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
       <Defs>
         <LinearGradient id="homeSparkFill" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0%" stopColor={colors.primary} stopOpacity={0.18} />
-          <Stop offset="100%" stopColor={colors.primary} stopOpacity={0} />
+          <Stop offset="0%" stopColor={stroke} stopOpacity={0.18} />
+          <Stop offset="100%" stopColor={stroke} stopOpacity={0} />
         </LinearGradient>
       </Defs>
       <Path d={fillPath} fill="url(#homeSparkFill)" />
       <Path
         d={strokePath}
         fill="none"
-        stroke={colors.primary}
+        stroke={stroke}
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"

@@ -94,7 +94,7 @@ export default function AdminWithdrawalsPage() {
           variant="outline"
           onClick={handleExportCsv}
           disabled={!withdrawals.length}
-          className="rounded-none text-xs font-semibold"
+          className="text-xs font-semibold"
         >
           <FontAwesomeIcon
             icon={faFileCsv}

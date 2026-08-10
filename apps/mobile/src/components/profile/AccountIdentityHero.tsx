@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import { AvatarEditor } from "@/components/profile/AvatarEditor";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
@@ -9,6 +10,9 @@ interface AccountIdentityHeroProps {
   email?: string;
   clientId?: string;
   seed?: string;
+  imageUrl?: string | null;
+  /** When true, show camera controls to change/remove photo */
+  editableAvatar?: boolean;
   loading?: boolean;
 }
 
@@ -18,6 +22,8 @@ export function AccountIdentityHero({
   email,
   clientId,
   seed,
+  imageUrl,
+  editableAvatar = false,
   loading = false,
 }: AccountIdentityHeroProps) {
   const { colors } = useTheme();
@@ -32,15 +38,22 @@ export function AccountIdentityHero({
         },
       ]}
     >
-      <View style={[styles.glow, { backgroundColor: colors.surfaceGlow }]} />
-
-      <UserAvatar
-        initials={initials}
-        seed={seed}
-        size="xl"
-        loading={loading}
-        showVerified
-      />
+      {editableAvatar ? (
+        <AvatarEditor
+          initials={initials}
+          displayName={displayName}
+          imageUrl={imageUrl}
+        />
+      ) : (
+        <UserAvatar
+          initials={initials}
+          seed={seed ?? displayName}
+          imageUrl={imageUrl}
+          size="xl"
+          loading={loading}
+          showVerified
+        />
+      )}
 
       <View style={styles.copy}>
         <Text
@@ -83,14 +96,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xl,
     gap: spacing.md,
     overflow: "hidden",
-  },
-  glow: {
-    position: "absolute",
-    top: -48,
-    width: 220,
-    height: 220,
-    borderRadius: radius.full,
-    opacity: 0.9,
   },
   copy: {
     alignItems: "center",

@@ -93,7 +93,7 @@ export default function AdminDepositsPage() {
           variant="outline"
           onClick={handleExportCsv}
           disabled={!deposits.length}
-          className="rounded-none text-xs font-semibold"
+          className="text-xs font-semibold"
         >
           <FontAwesomeIcon
             icon={faFileCsv}

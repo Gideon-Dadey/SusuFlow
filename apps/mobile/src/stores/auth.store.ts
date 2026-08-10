@@ -14,6 +14,7 @@ import { prefetchAuthenticatedSession } from "@/lib/session-prefetch";
 import { resetUserSessionCache } from "@/lib/session-cache";
 import { storage } from "@/lib/storage";
 import { resolveLoginTenantSlug } from "@/lib/tenant";
+import { useAppLockStore } from "@/stores/app-lock.store";
 
 interface User {
   id: string;
@@ -22,6 +23,7 @@ interface User {
   lastName: string;
   roles: string[];
   tenantSlug?: string;
+  avatarUrl?: string | null;
 }
 
 interface AuthState {
@@ -39,11 +41,6 @@ interface AuthState {
     password: string,
     tenantSlug?: string,
   ) => Promise<LoginResponse>;
-  loginWithRefreshToken: (
-    refreshToken: string,
-    tenantSlug: string,
-    email: string,
-  ) => Promise<void>;
   register: (
     data: {
       firstName: string;
@@ -51,6 +48,8 @@ interface AuthState {
       email: string;
       phone: string;
       password: string;
+      dateOfBirth?: string;
+      gender?: "female" | "male" | "other" | "prefer_not_to_say";
     },
     tenantSlug?: string,
   ) => Promise<{
@@ -85,6 +84,7 @@ async function loadProfile(tenantSlug: string) {
       lastName: profile.lastName,
       roles: ["customer"],
       tenantSlug: tenantSlug || undefined,
+      avatarUrl: profile.avatarUrl ?? null,
     },
   };
 }
@@ -122,6 +122,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (accessToken) {
         const { user } = await loadProfile(slug);
         set({ user, isAuthenticated: true });
+        void prefetchAuthenticatedSession(user.id, slug).catch(() => undefined);
         return;
       }
     } catch (err) {
@@ -146,6 +147,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           refreshToken,
           isAuthenticated: true,
         });
+        void prefetchAuthenticatedSession(user.id, slug).catch(() => undefined);
       } catch {
         await get().handleSessionExpired();
       }
@@ -168,10 +170,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         tenantSlug: userTenant,
         isAuthenticated: true,
       });
-      // Non-blocking prefetch in background so UI navigation is instant
-      void prefetchAuthenticatedSession(data.user.id).catch((prefetchErr) => {
-        console.warn("Session prefetch warning:", prefetchErr);
-      });
+      void prefetchAuthenticatedSession(data.user.id, userTenant).catch(
+        (prefetchErr) => {
+          console.warn("Session prefetch warning:", prefetchErr);
+        },
+      );
       return data;
     } catch (err) {
       if (err instanceof ApiError) {
@@ -179,36 +182,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         throw err;
       }
       const message = err instanceof Error ? err.message : "Login failed";
-      set({ error: message });
-      throw err;
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-
-  loginWithRefreshToken: async (refreshToken, tenantSlug, email) => {
-    set({ isLoading: true, error: null });
-    try {
-      await storage.setItem(storage.keys.refreshToken, refreshToken);
-      if (tenantSlug) {
-        await storage.setItem(storage.keys.tenantSlug, tenantSlug);
-      }
-      const refreshed = await authApi.refresh(refreshToken);
-      resetUserSessionCache();
-      await storage.setItem(storage.keys.accessToken, refreshed.accessToken);
-      const { user } = await loadProfile(tenantSlug);
-      set({
-        user: { ...user, email },
-        accessToken: refreshed.accessToken,
-        refreshToken,
-        tenantSlug,
-        isAuthenticated: true,
-      });
-      await prefetchAuthenticatedSession(user.id);
-    } catch (err) {
-      await clearBiometricCredentials();
-      const message =
-        err instanceof Error ? err.message : "Biometric sign in failed";
       set({ error: message });
       throw err;
     } finally {
@@ -244,6 +217,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       refreshToken: null,
       isAuthenticated: false,
     });
+    useAppLockStore.setState({ locked: false, obscured: false });
     resetUserSessionCache();
     await unregisterDevicePushToken();
     if (refreshToken) {

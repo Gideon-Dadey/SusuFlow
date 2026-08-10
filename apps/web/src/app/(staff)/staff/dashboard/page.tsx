@@ -273,7 +273,7 @@ export default function StaffDashboard() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-7 text-[11px] px-2.5 rounded-none"
+                        className="h-7 text-[11px] px-2.5"
                       >
                         Review
                       </Button>

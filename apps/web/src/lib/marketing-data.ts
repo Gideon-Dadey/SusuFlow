@@ -10,6 +10,296 @@ export const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ] as const;
 
+/* --- OFX-style mega navigation --- */
+
+export interface MegaNavLink {
+  title: string;
+  description: string;
+  href: string;
+}
+
+export interface MegaNavColumn {
+  heading: string;
+  links: MegaNavLink[];
+}
+
+export interface MegaNavPromo {
+  title: string;
+  body: string;
+  cta: string;
+  href: string;
+}
+
+export interface MegaNavItem {
+  label: string;
+  href?: string;
+  columns?: MegaNavColumn[];
+  promo?: MegaNavPromo;
+}
+
+export const MEGA_NAV: MegaNavItem[] = [
+  {
+    label: "Product",
+    columns: [
+      {
+        heading: "Collections & Payments",
+        links: [
+          {
+            title: "MoMo Deposits",
+            description: "Gateway-verified Mobile Money collections",
+            href: "/product/accounts-and-payments",
+          },
+          {
+            title: "Payouts & Transfers",
+            description: "Approved payouts straight to member wallets",
+            href: "/product/accounts-and-payments",
+          },
+          {
+            title: "Collector App",
+            description: "Cashless field collections with instant receipts",
+            href: "/product/accounts-and-payments",
+          },
+        ],
+      },
+      {
+        heading: "Manage & Control",
+        links: [
+          {
+            title: "Control Hub",
+            description: "Approvals, roles, workflows and access rights",
+            href: "/product/manage-and-control",
+          },
+          {
+            title: "Payout Approvals",
+            description: "Role-based sign-offs before funds move",
+            href: "/product/manage-and-control",
+          },
+          {
+            title: "Commission Tracking",
+            description: "Automatic collector commissions, zero disputes",
+            href: "/product/manage-and-control",
+          },
+        ],
+      },
+      {
+        heading: "Platform Capabilities",
+        links: [
+          {
+            title: "Ledger & Reports",
+            description: "Double-entry books with exportable reports",
+            href: "/product/platform-capabilities",
+          },
+          {
+            title: "Audit Trail",
+            description: "Every cedi traceable from deposit to payout",
+            href: "/product/platform-capabilities",
+          },
+          {
+            title: "Integrations & API",
+            description: "Hubtel gateway today, more on the roadmap",
+            href: "/product/platform-capabilities",
+          },
+        ],
+      },
+    ],
+    promo: {
+      title: "Run collections without cash.",
+      body: "100% verified deposits, zero notebook disputes. Get started for free.",
+      cta: "Get started for free",
+      href: "/register",
+    },
+  },
+  {
+    label: "Why SusuFlow",
+    columns: [
+      {
+        heading: "Solutions For",
+        links: [
+          {
+            title: "Susu Companies & MFIs",
+            description: "All your branches. One platform. One login",
+            href: "/why-susuflow/susu-companies-and-mfis",
+          },
+          {
+            title: "Field Collectors",
+            description: "Cashless agents with a mobile-first workflow",
+            href: "/why-susuflow/field-collectors",
+          },
+          {
+            title: "Accountants & Management",
+            description: "Live balances and auditor-ready exports",
+            href: "/why-susuflow/accountants-and-management",
+          },
+        ],
+      },
+      {
+        heading: "Use Cases",
+        links: [
+          {
+            title: "Zero Notebook Fraud",
+            description: "Replace paper ledgers with verified records",
+            href: "/why-susuflow/zero-notebook-fraud",
+          },
+          {
+            title: "Cashless Market Collections",
+            description: "MoMo prompts at the stall, not cash in a bag",
+            href: "/why-susuflow/cashless-market-collections",
+          },
+          {
+            title: "Role-Based Approvals",
+            description: "Segregate duties across staff and branches",
+            href: "/why-susuflow/role-based-approvals",
+          },
+        ],
+      },
+      {
+        heading: "Trust & Security",
+        links: [
+          {
+            title: "Gateway Verification",
+            description: "Deposits credit only after gateway confirmation",
+            href: "/why-susuflow/gateway-verification",
+          },
+          {
+            title: "Bank-Grade Accounting",
+            description: "Double-entry ledger behind every balance",
+            href: "/why-susuflow/bank-grade-accounting",
+          },
+          {
+            title: "About SusuFlow",
+            description: "Digitizing susu without breaking its trust",
+            href: "/about",
+          },
+        ],
+      },
+    ],
+    promo: {
+      title: "There's a story behind every deposit.",
+      body: "See how susu companies across Ghana are going cashless with SusuFlow.",
+      cta: "Read the market story",
+      href: "/why-susuflow/market-scale-story",
+    },
+  },
+  { label: "Pricing", href: "/pricing" },
+  {
+    label: "Resources",
+    columns: [
+      {
+        heading: "Resources",
+        links: [
+          {
+            title: "Blog",
+            description: "Insights, SusuFlow news and operator stories",
+            href: "/resources",
+          },
+          {
+            title: "How It Works",
+            description: "From setup to first verified collection cycle",
+            href: "/how-it-works",
+          },
+          {
+            title: "Pricing FAQ",
+            description: "Plans, fees and everything in between",
+            href: "/pricing#faq",
+          },
+        ],
+      },
+      {
+        heading: "Company",
+        links: [
+          {
+            title: "About SusuFlow",
+            description: "Moving and managing member savings, properly",
+            href: "/about",
+          },
+          {
+            title: "Contact & Support",
+            description: "Real people. Real help. On hand for you",
+            href: "/contact",
+          },
+          {
+            title: "Book a Demo",
+            description: "A personalised walkthrough with our team",
+            href: "/contact?intent=demo",
+          },
+        ],
+      },
+    ],
+    promo: {
+      title: "New to digital susu?",
+      body: "Start with our guide to running your first cashless collection cycle.",
+      cta: "See how it works",
+      href: "/how-it-works",
+    },
+  },
+];
+
+export interface ResourceArticle {
+  slug: string;
+  category: string;
+  date: string;
+  readTime: string;
+  title: string;
+  excerpt: string;
+}
+
+export const RESOURCE_ARTICLES: ResourceArticle[] = [
+  {
+    slug: "operators-guide-cashless-collections",
+    category: "Operations",
+    date: "3 August 2026",
+    readTime: "4 minute read",
+    title: "The operator's guide to cashless susu collections",
+    excerpt:
+      "Accuracy, trust and detail define great susu companies. But for too long, they've come at the cost of notebooks, cash floats and end-of-month headaches…",
+  },
+  {
+    slug: "how-growing-susu-companies-save-time",
+    category: "Growth",
+    date: "3 August 2026",
+    readTime: "14 minute read",
+    title: "How fast-growing susu companies are saving time with verified MoMo",
+    excerpt:
+      "From one collector team to multi-branch operations: what changes when every deposit is gateway-confirmed before it hits the ledger.",
+  },
+  {
+    slug: "collect-smarter-with-collector-app",
+    category: "Product",
+    date: "3 August 2026",
+    readTime: "8 minute read",
+    title: "Collect smarter with the SusuFlow Collector App",
+    excerpt:
+      "Send MoMo prompts at the market stall, onboard members in minutes, and never carry cash again. Here's how field teams work in SusuFlow.",
+  },
+  {
+    slug: "ending-notebook-fraud",
+    category: "Trust & Security",
+    date: "27 July 2026",
+    readTime: "6 minute read",
+    title: "Ending notebook fraud: why verified deposits change everything",
+    excerpt:
+      "Disputed entries and missing cash have haunted susu for decades. Gateway verification removes the argument before it starts.",
+  },
+  {
+    slug: "double-entry-for-susu",
+    category: "Accounting",
+    date: "20 July 2026",
+    readTime: "9 minute read",
+    title: "Bank-grade books: double-entry accounting for susu companies",
+    excerpt:
+      "What auditors, MFI boards and regulators expect from your records — and how a proper ledger gets you there without hiring a back office.",
+  },
+  {
+    slug: "payout-approvals-that-scale",
+    category: "Operations",
+    date: "12 July 2026",
+    readTime: "5 minute read",
+    title: "Payout approvals that scale with your team",
+    excerpt:
+      "Segregation of duties isn't just for banks. Set clear approval rules so every payout moves with accountability, at any branch.",
+  },
+];
+
 export const FOOTER_LINKS = {
   product: [
     { href: "/how-it-works", label: "How it works" },

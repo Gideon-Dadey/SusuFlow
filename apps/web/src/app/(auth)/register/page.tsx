@@ -11,9 +11,10 @@ import {
   authInputClassName,
   authLabelClassName,
   authLinkClassName,
+  authSubmitClassName,
   authSubtextClassName,
+  ModernInput,
 } from "@/components/auth/auth-form-ui";
-import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth.store";
 import { cn } from "@/lib/utils";
 
@@ -84,8 +85,13 @@ function RegisterContent() {
   };
 
   return (
-    <AuthShell>
+    <AuthShell
+      wideForm
+      visualTone="sand"
+      visualTagline="Set up your susu company in minutes, not months."
+    >
       <div>
+        <p className="ofx-eyebrow mb-3">Get started</p>
         <h1 className={authHeadingClassName}>Create an account</h1>
         <p className={authSubtextClassName}>
           or{" "}
@@ -96,95 +102,70 @@ function RegisterContent() {
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-        <div className="space-y-1.5">
-          <label htmlFor="tenant" className={authLabelClassName}>
-            Susu company <span className="text-destructive">*</span>
-          </label>
-          <input
-            id="tenant"
-            name="tenant"
-            type="text"
-            placeholder="Company slug (e.g. premier-susu)"
-            className={authInputClassName}
-            value={form.tenant}
-            onChange={(e) => update("tenant", e.target.value)}
-            required
-            autoComplete="organization"
-          />
-        </div>
+        <ModernInput
+          id="tenant"
+          label="Susu company"
+          name="tenant"
+          type="text"
+          placeholder="Company slug (e.g. premier-susu)"
+          value={form.tenant}
+          onChange={(e) => update("tenant", e.target.value)}
+          required
+          autoComplete="organization"
+        />
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <label htmlFor="firstName" className={authLabelClassName}>
-              First name <span className="text-destructive">*</span>
-            </label>
-            <input
-              id="firstName"
-              name="firstName"
-              type="text"
-              placeholder="First name"
-              className={authInputClassName}
-              value={form.firstName}
-              onChange={(e) => update("firstName", e.target.value)}
-              required
-              autoComplete="given-name"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label htmlFor="lastName" className={authLabelClassName}>
-              Last name <span className="text-destructive">*</span>
-            </label>
-            <input
-              id="lastName"
-              name="lastName"
-              type="text"
-              placeholder="Last name"
-              className={authInputClassName}
-              value={form.lastName}
-              onChange={(e) => update("lastName", e.target.value)}
-              required
-              autoComplete="family-name"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <label htmlFor="email" className={authLabelClassName}>
-            Email address <span className="text-destructive">*</span>
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="name@company.com"
-            className={authInputClassName}
-            value={form.email}
-            onChange={(e) => update("email", e.target.value)}
+          <ModernInput
+            id="firstName"
+            label="First name"
+            name="firstName"
+            type="text"
+            placeholder="First name"
+            value={form.firstName}
+            onChange={(e) => update("firstName", e.target.value)}
             required
-            autoComplete="email"
+            autoComplete="given-name"
+          />
+          <ModernInput
+            id="lastName"
+            label="Last name"
+            name="lastName"
+            type="text"
+            placeholder="Last name"
+            value={form.lastName}
+            onChange={(e) => update("lastName", e.target.value)}
+            required
+            autoComplete="family-name"
           />
         </div>
 
-        <div className="space-y-1.5">
-          <label htmlFor="phone" className={authLabelClassName}>
-            Phone number <span className="text-destructive">*</span>
-          </label>
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            placeholder="024XXXXXXX"
-            className={authInputClassName}
-            value={form.phone}
-            onChange={(e) => update("phone", e.target.value)}
-            required
-            autoComplete="tel"
-          />
-        </div>
+        <ModernInput
+          id="email"
+          label="Email address"
+          name="email"
+          type="email"
+          placeholder="name@company.com"
+          value={form.email}
+          onChange={(e) => update("email", e.target.value)}
+          required
+          autoComplete="email"
+        />
 
-        <div className="space-y-1.5">
+        <ModernInput
+          id="phone"
+          label="Phone number"
+          name="phone"
+          type="tel"
+          placeholder="024XXXXXXX"
+          value={form.phone}
+          onChange={(e) => update("phone", e.target.value)}
+          required
+          autoComplete="tel"
+        />
+
+        <div className="space-y-1.5 w-full">
           <label htmlFor="password" className={authLabelClassName}>
-            Password <span className="text-destructive">*</span>
+            Password <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <input
@@ -192,7 +173,7 @@ function RegisterContent() {
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="At least 8 characters"
-              className={cn(authInputClassName, "pr-10")}
+              className={cn(authInputClassName, "pr-12")}
               value={form.password}
               onChange={(e) => update("password", e.target.value)}
               required
@@ -200,7 +181,7 @@ function RegisterContent() {
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
@@ -214,21 +195,21 @@ function RegisterContent() {
         </div>
 
         {error ? (
-          <p className="rounded-xl bg-destructive/10 px-3.5 py-2.5 text-xs sm:text-sm text-destructive font-semibold border border-destructive/20">
+          <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700 font-medium border border-red-200">
             {error}
           </p>
         ) : null}
 
-        <Button
+        <button
           type="submit"
-          variant="primary"
-          size="lg"
-          className="w-full rounded-full font-medium"
-          loading={isLoading}
-          loadingText="Creating account..."
+          className={authSubmitClassName}
+          disabled={isLoading}
         >
+          {isLoading ? (
+            <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : null}
           Create Account
-        </Button>
+        </button>
       </form>
 
       <AuthFooterExtras action="creating an account" mode="register" />

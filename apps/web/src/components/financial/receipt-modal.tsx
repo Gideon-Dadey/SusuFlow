@@ -84,7 +84,7 @@ export function ReceiptModal({
           </div>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-muted text-muted-foreground transition-colors"
+            className="flex h-8 w-8 items-center justify-center hover:bg-muted text-muted-foreground transition-colors"
           >
             <X className="h-4 w-4" />
           </button>

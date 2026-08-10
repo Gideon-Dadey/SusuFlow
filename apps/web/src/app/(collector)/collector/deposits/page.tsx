@@ -29,11 +29,7 @@ export default function CollectorDepositsPage() {
             key={s || "all"}
             type="button"
             onClick={() => setStatusFilter(s)}
-            className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
-              statusFilter === s
-                ? "bg-primary text-primary-foreground border-primary"
-                : "border-border text-muted-foreground hover:border-primary/40"
-            }`}
+            className={`px-3 py-1 text-xs font-medium border transition-colors ${statusFilter === s ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}
           >
             {s === "" ? "All" : s.charAt(0).toUpperCase() + s.slice(1)}
           </button>

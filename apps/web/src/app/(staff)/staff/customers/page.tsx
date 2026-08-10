@@ -93,13 +93,13 @@ export default function StaffCustomersPage() {
             size="sm"
             variant="outline"
             onClick={handleExportCsv}
-            className="text-xs font-semibold rounded-none min-h-[36px]"
+            className="text-xs font-semibold min-h-[36px]"
             disabled={!data?.items?.length}
           >
             Download CSV
           </Button>
           <Link href="/staff/customers/new">
-            <Button className="flex items-center gap-1.5 font-semibold text-xs rounded-none min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95">
+            <Button className="flex items-center gap-1.5 font-semibold text-xs min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95">
               <Plus className="h-3.5 w-3.5" />
               Onboard Customer
             </Button>
@@ -120,7 +120,7 @@ export default function StaffCustomersPage() {
             type="button"
             onClick={() => handleStatusChange(tab.value)}
             className={cn(
-              "px-3 py-1.5 text-xs font-semibold rounded-none border-b-2 transition-colors",
+              "px-3 py-1.5 text-xs font-semibold border-b-2 transition-colors",
               status === tab.value
                 ? "border-primary text-primary font-bold"
                 : "border-transparent text-muted-foreground hover:text-foreground",
@@ -176,7 +176,7 @@ export default function StaffCustomersPage() {
                     setSearch("");
                     handleStatusChange("");
                   }}
-                  className="text-xs font-semibold rounded-none min-h-[36px]"
+                  className="text-xs font-semibold min-h-[36px]"
                 >
                   Show All Customers
                 </Button>

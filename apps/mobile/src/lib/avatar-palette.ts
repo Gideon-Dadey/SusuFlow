@@ -1,11 +1,11 @@
-/** Deterministic avatar gradients — emerald / teal / navy only (on-brand fintech). */
+/** Deterministic avatar gradients — black / charcoal only. */
 const AVATAR_GRADIENTS: readonly [string, string][] = [
-  ["#0056d2", "#0043aa"],
-  ["#0066cc", "#003585"],
-  ["#0043aa", "#002359"],
-  ["#3385ff", "#0056d2"],
-  ["#0056d2", "#002359"],
-  ["#003585", "#0056d2"],
+  ["#18181b", "#09090b"],
+  ["#27272a", "#18181b"],
+  ["#3f3f46", "#18181b"],
+  ["#52525b", "#27272a"],
+  ["#09090b", "#27272a"],
+  ["#18181b", "#3f3f46"],
 ] as const;
 
 function hashSeed(seed: string): number {

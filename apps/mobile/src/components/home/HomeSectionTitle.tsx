@@ -25,10 +25,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     minHeight: 28,
+    paddingHorizontal: 2,
   },
   title: {
-    fontFamily: typography.roles.title,
+    fontFamily: typography.roles.headline,
     fontSize: typography.size.sm,
-    letterSpacing: -0.1,
+    letterSpacing: -0.2,
   },
 });
