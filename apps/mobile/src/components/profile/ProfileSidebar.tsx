@@ -1,6 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, typography } from "@/theme/tokens";
 import type { ProfileSectionId } from "@/types/profile";
@@ -11,53 +11,17 @@ export { PROFILE_MENU_ITEMS } from "@/types/profile";
 interface MenuItem {
   id: ProfileSectionId;
   label: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  iconActive: keyof typeof Ionicons.glyphMap;
+  icon: AppIconName;
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  {
-    id: "account",
-    label: "Account",
-    icon: "person-circle-outline",
-    iconActive: "person-circle",
-  },
-  {
-    id: "personal",
-    label: "Profile",
-    icon: "id-card-outline",
-    iconActive: "id-card",
-  },
-  {
-    id: "security",
-    label: "Security",
-    icon: "shield-checkmark-outline",
-    iconActive: "shield-checkmark",
-  },
-  {
-    id: "notifications",
-    label: "Alerts",
-    icon: "notifications-outline",
-    iconActive: "notifications",
-  },
-  {
-    id: "appearance",
-    label: "Theme",
-    icon: "color-palette-outline",
-    iconActive: "color-palette",
-  },
-  {
-    id: "help",
-    label: "Help",
-    icon: "help-circle-outline",
-    iconActive: "help-circle",
-  },
-  {
-    id: "about",
-    label: "About",
-    icon: "information-circle-outline",
-    iconActive: "information-circle",
-  },
+  { id: "account", label: "Account", icon: "profile" },
+  { id: "personal", label: "Profile", icon: "id-card" },
+  { id: "security", label: "Security", icon: "shield" },
+  { id: "notifications", label: "Alerts", icon: "bell" },
+  { id: "appearance", label: "Theme", icon: "palette" },
+  { id: "help", label: "Help", icon: "help" },
+  { id: "about", label: "About", icon: "info" },
 ];
 
 interface ProfileSidebarProps {
@@ -105,10 +69,11 @@ export function ProfileSidebar({
                 pressed && styles.itemPressed,
               ]}
             >
-              <Ionicons
-                name={active ? item.iconActive : item.icon}
+              <AppIcon
+                name={item.icon}
                 size={22}
                 color={active ? colors.primary : colors.mutedForeground}
+                weight={active ? "fill" : "regular"}
               />
               <Text
                 style={[
@@ -134,7 +99,7 @@ export function ProfileSidebar({
           pressed && styles.itemPressed,
         ]}
       >
-        <Ionicons name="log-out-outline" size={22} color={colors.destructive} />
+        <AppIcon name="logout" size={22} color={colors.destructive} />
         <Text style={[styles.signOutLabel, { color: colors.destructive }]}>
           Sign out
         </Text>

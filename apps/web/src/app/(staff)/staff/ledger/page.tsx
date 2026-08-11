@@ -56,7 +56,7 @@ export default function TrialBalancePage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Debits
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {formatGhs(totalDebits)}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -68,7 +68,7 @@ export default function TrialBalancePage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Credits
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {formatGhs(totalCredits)}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">

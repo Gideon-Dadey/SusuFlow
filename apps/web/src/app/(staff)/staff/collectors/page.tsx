@@ -32,7 +32,7 @@ export default function CollectorsPerformancePage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Collectors
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {collectors.length}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -44,7 +44,7 @@ export default function CollectorsPerformancePage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Assigned Customers
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {totalCustomers}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -56,7 +56,7 @@ export default function CollectorsPerformancePage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Collected
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {formatGhs(totalVolume)}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -68,7 +68,7 @@ export default function CollectorsPerformancePage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Commission Payable
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {formatGhs(totalCommission)}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">

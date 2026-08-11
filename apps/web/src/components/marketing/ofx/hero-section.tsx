@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Smartphone } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Smartphone,
+} from "@/components/icons/phosphor";
 import { MarketingContainer } from "../marketing-container";
 
 /** Stylized product mock: balance card + verified deposits + MoMo prompt. */

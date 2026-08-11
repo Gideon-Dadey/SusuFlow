@@ -18,6 +18,55 @@ interface RequestOptions extends RequestInit {
   tenantSlug?: string;
 }
 
+function isLocalBrowser() {
+  return (
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1")
+  );
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Next.js rewrite fails with an empty 5xx while Nest is restarting. */
+function isTransientProxyFailure(response: Response, body: unknown) {
+  if (
+    response.status === 502 ||
+    response.status === 503 ||
+    response.status === 504
+  ) {
+    return true;
+  }
+  if (response.status < 500) return false;
+  if (!body || typeof body !== "object") return true;
+  const record = body as Record<string, unknown>;
+  return !record.detail && !record.title && !record.message;
+}
+
+async function fetchWithApiRetry(
+  url: string,
+  init: RequestInit,
+): Promise<Response> {
+  try {
+    const first = await fetch(url, init);
+    if (!isTransientProxyFailure(first, null) || first.status < 500) {
+      return first;
+    }
+    const peek = await first
+      .clone()
+      .json()
+      .catch(() => null);
+    if (!isTransientProxyFailure(first, peek)) return first;
+    await sleep(600);
+    return fetch(url, init);
+  } catch {
+    await sleep(600);
+    return fetch(url, init);
+  }
+}
+
 async function request<T>(
   endpoint: string,
   options: RequestOptions = {},
@@ -40,10 +89,13 @@ async function request<T>(
 
   let response: Response;
   try {
-    response = await fetch(`${API_BASE}${endpoint}`, { ...init, headers });
+    response = await fetchWithApiRetry(`${API_BASE}${endpoint}`, {
+      ...init,
+      headers,
+    });
   } catch {
     throw new ApiError(
-      "Unable to reach the server. Start the API with: pnpm dev:api",
+      "Unable to reach the server. Keep `pnpm run dev` running, wait a moment, and try again.",
       0,
     );
   }
@@ -105,15 +157,15 @@ async function request<T>(
     }
 
     const error = await response.json().catch(() => ({}));
-    const detail = error.detail || error.title;
+    const detail =
+      (typeof error.detail === "string" && error.detail) ||
+      (typeof error.message === "string" && error.message) ||
+      (typeof error.title === "string" && error.title) ||
+      "";
     if (response.status >= 500 && !detail) {
-      const isLocal =
-        typeof window !== "undefined" &&
-        (window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1");
       throw new ApiError(
-        isLocal
-          ? "Server error. Make sure the API is running on port 4000 (pnpm dev:api)."
+        isLocalBrowser()
+          ? "The API was restarting. Wait a second and create the customer again."
           : "Server error. The API may be down or API_URL is not set on Render.",
         response.status,
         error.errors,
@@ -568,6 +620,8 @@ export const customerApi = {
     email?: string;
     phone?: string;
     ghanaCardNumber?: string;
+    dateOfBirth?: string;
+    address?: string;
   }) => api.post<Customer>("/customers", data),
 
   getWallet: (id: string) =>
@@ -735,6 +789,26 @@ export interface LedgerAccount {
   balance: number;
 }
 
+export interface AuditLogActor {
+  id: string;
+  name: string;
+  email: string;
+  role?: string;
+  roleLabel: string;
+}
+
+export interface AuditLogSubject {
+  id?: string | null;
+  name: string;
+  secondary?: string;
+}
+
+export interface AuditLogMoney {
+  amount: number | null;
+  reference?: string;
+  currency: string;
+}
+
 export interface AuditLogEntry {
   id: string;
   action: string;
@@ -742,9 +816,25 @@ export interface AuditLogEntry {
   resourceId?: string;
   ipAddress?: string;
   userAgent?: string;
+  deviceId?: string;
+  beforeState?: unknown;
+  afterState?: unknown;
   createdAt: string;
-  user?: { firstName: string; lastName: string; email: string };
+  category?: "money" | "customers" | "identity" | "access" | "risk";
+  user?: { firstName: string; lastName: string; email: string } | null;
+  actor?: AuditLogActor | null;
+  subject?: AuditLogSubject | null;
+  money?: AuditLogMoney | null;
   tenant?: { name: string; slug: string } | null;
+}
+
+export interface AuditLogSummary {
+  all: number;
+  money: number;
+  customers: number;
+  identity: number;
+  access: number;
+  risk: number;
 }
 
 export interface OperationsReport {
@@ -831,6 +921,8 @@ export const auditApi = {
     userId?: string;
     action?: string;
     resourceType?: string;
+    category?: string;
+    q?: string;
     cursor?: string;
     limit?: number;
   }) => {
@@ -838,6 +930,7 @@ export const auditApi = {
       items: AuditLogEntry[];
       hasMore: boolean;
       cursor?: string;
+      summary?: AuditLogSummary;
     }>(`/audit${toQueryString(params)}`);
   },
 };

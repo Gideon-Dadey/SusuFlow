@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "@/components/icons/phosphor";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
@@ -53,13 +53,13 @@ export function ThemeToggleRail({
           label="Dark theme"
           active={isDark}
           onClick={() => setTheme("dark")}
-          icon={<Moon className="h-3 w-3 sm:h-2.5 sm:w-2.5" strokeWidth={2} />}
+          icon={<Moon className="h-3 w-3 sm:h-2.5 sm:w-2.5" weight="bold" />}
         />
         <ThemeRailOption
           label="Light theme"
           active={!isDark}
           onClick={() => setTheme("light")}
-          icon={<Sun className="h-3 w-3 sm:h-2.5 sm:w-2.5" strokeWidth={2} />}
+          icon={<Sun className="h-3 w-3 sm:h-2.5 sm:w-2.5" weight="bold" />}
         />
       </div>
     </aside>,

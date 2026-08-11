@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Users, Wallet } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Users,
+  Wallet,
+} from "@/components/icons/phosphor";
 import { MarketingContainer } from "../marketing-container";
 
 /** Framed dashboard mock inside a large rounded panel. */

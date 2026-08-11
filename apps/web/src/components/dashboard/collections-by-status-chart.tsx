@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatGhs } from "@/lib/utils";
-import { PieChart as PieIcon } from "lucide-react";
+import { PieChart as PieIcon } from "@/components/icons/phosphor";
 
 interface CollectionsByStatusChartProps {
   transactions: Array<{

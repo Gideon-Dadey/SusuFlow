@@ -9,7 +9,7 @@ export function AppearanceSettingsContent() {
   return (
     <SettingsPanel>
       <SettingToggle
-        icon="moon-outline"
+        icon="moon"
         title="Dark theme"
         subtitle={
           colorScheme === "dark"

@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   ActivityIndicator,
@@ -32,7 +32,7 @@ export function SettingsHero({ onOpenMenu }: SettingsHeroProps) {
     >
       <View style={styles.topRow}>
         <View style={styles.badge}>
-          <Ionicons name="checkmark-circle" size={14} color="#bbf7d0" />
+          <AppIcon name="badge-check" size={14} color="#bbf7d0" weight="fill" />
           <Text style={styles.badgeText}>Verified member</Text>
         </View>
         {onOpenMenu ? (
@@ -42,7 +42,7 @@ export function SettingsHero({ onOpenMenu }: SettingsHeroProps) {
             onPress={onOpenMenu}
             style={styles.menuBtn}
           >
-            <Ionicons name="menu" size={20} color="#ffffff" />
+            <AppIcon name="menu" size={20} color="#ffffff" weight="bold" />
           </Pressable>
         ) : null}
       </View>

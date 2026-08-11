@@ -1,10 +1,10 @@
-import { Feather } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import { colors, radius, shadows, typography } from "@/theme/tokens";
 
 interface QuickActionProps {
   label: string;
-  icon: keyof typeof Feather.glyphMap;
+  icon: AppIconName;
   tint: string;
   bg: string;
   onPress: () => void;
@@ -24,7 +24,7 @@ export function QuickActionGrid({ actions }: { actions: QuickActionProps[] }) {
           ]}
         >
           <View style={[styles.iconWrap, { backgroundColor: action.bg }]}>
-            <Feather name={action.icon} size={20} color={action.tint} />
+            <AppIcon name={action.icon} size={20} color={action.tint} />
           </View>
           <Text style={styles.label}>{action.label}</Text>
         </Pressable>

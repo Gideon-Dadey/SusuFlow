@@ -11,6 +11,7 @@ import type { CustomerSessionScope } from "@/lib/query-keys";
 export type NotificationRoute =
   | { kind: "receipt"; transaction: Transaction }
   | { kind: "kyc" }
+  | { kind: "security" }
   | { kind: "plans" }
   | { kind: "activity" }
   | { kind: "home" };
@@ -20,6 +21,8 @@ export type PushNotificationData = {
   transactionId?: string;
   reference?: string;
   screen?: string;
+  deepLink?: string;
+  inboxId?: string;
 };
 
 /** Normalize Expo / FCM data bags (values are often strings). */
@@ -36,6 +39,8 @@ export function parsePushNotificationData(
     transactionId: read("transactionId") || read("transaction_id"),
     reference: read("reference"),
     screen: read("screen"),
+    deepLink: read("deepLink") || read("deep_link"),
+    inboxId: read("inboxId") || read("inbox_id"),
   };
 }
 
@@ -138,6 +143,13 @@ export function resolveNotificationRouteFromPush(
   const screen = (data.screen || "").toLowerCase();
 
   if (screen === "kyc" || type.includes("kyc")) return { kind: "kyc" };
+  if (
+    screen === "security" ||
+    type.includes("security") ||
+    type.includes("password")
+  ) {
+    return { kind: "security" };
+  }
   if (screen === "plans" || screen === "goals" || type.includes("goal")) {
     return { kind: "plans" };
   }
@@ -149,4 +161,21 @@ export function resolveNotificationRouteFromPush(
     return { kind: "activity" };
   }
   return { kind: "home" };
+}
+
+export function hrefForNotificationRoute(
+  kind: Exclude<NotificationRoute, { kind: "receipt" }>["kind"],
+) {
+  switch (kind) {
+    case "kyc":
+      return "/(tabs)/profile/kyc" as const;
+    case "security":
+      return "/(tabs)/profile/security" as const;
+    case "plans":
+      return "/(tabs)/plans" as const;
+    case "activity":
+      return "/(tabs)/activity" as const;
+    default:
+      return "/(tabs)" as const;
+  }
 }

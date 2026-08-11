@@ -1,5 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
+import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import { ReactNode, useEffect, useState } from "react";
 import {
   Modal,
@@ -32,10 +32,8 @@ const ANIM_CONFIG = {
   easing: Easing.out(Easing.cubic),
 };
 
-type IoniconName = keyof typeof Ionicons.glyphMap;
-
 interface OptionRowProps {
-  icon: IoniconName;
+  icon: AppIconName;
   label: string;
   subtitle?: string;
   onPress?: () => void;
@@ -56,7 +54,7 @@ function OptionRow({
   const body = (
     <>
       <View style={[styles.iconWrap, { backgroundColor: "transparent" }]}>
-        <Ionicons name={icon} size={18} color={colors.mutedForeground} />
+        <AppIcon name={icon} size={18} color={colors.mutedForeground} />
       </View>
       <View style={styles.rowCopy}>
         <Text
@@ -75,8 +73,8 @@ function OptionRow({
         ) : null}
       </View>
       {right ?? (
-        <Ionicons
-          name="chevron-forward"
+        <AppIcon
+          name="chevron-right"
           size={16}
           color={colors.mutedForeground}
         />
@@ -222,7 +220,7 @@ export function ProfileOptionsPanel() {
               hitSlop={12}
               style={({ pressed }) => pressed && styles.closePressed}
             >
-              <Ionicons name="close" size={22} color={colors.mutedForeground} />
+              <AppIcon name="close" size={22} color={colors.mutedForeground} />
             </Pressable>
           </View>
 
@@ -236,14 +234,14 @@ export function ProfileOptionsPanel() {
           >
             <OptionSection title="Support">
               <OptionRow
-                icon="mail-outline"
+                icon="mail"
                 label="Contact us"
                 subtitle={SUPPORT_EMAIL}
                 onPress={openContact}
                 showDivider
               />
               <OptionRow
-                icon="chatbubble-ellipses-outline"
+                icon="chat"
                 label="Chat"
                 subtitle="WhatsApp · Mon–Fri, 8am–6pm"
                 onPress={openChat}

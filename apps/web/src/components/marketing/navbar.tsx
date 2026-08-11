@@ -4,7 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowRight, ChevronDown, LayoutDashboard, LogOut } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronDown,
+  LayoutDashboard,
+  LogOut,
+} from "@/components/icons/phosphor";
 import { BrandLockup } from "@/components/marketing/brand-logo";
 import { MEGA_NAV, type MegaNavItem } from "@/lib/marketing-data";
 import { cn, getDashboardPath, getInitials } from "@/lib/utils";

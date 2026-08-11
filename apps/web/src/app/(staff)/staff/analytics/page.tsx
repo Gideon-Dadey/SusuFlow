@@ -109,7 +109,7 @@ export default function StaffAiAnalyticsPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Average Portfolio Score
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {avgScore}{" "}
             <span className="text-xs font-normal text-muted-foreground">
               / 850
@@ -124,7 +124,7 @@ export default function StaffAiAnalyticsPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Prime Tier (AAA) Savers
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {evaluatedCustomers.filter((c) => c.tier === "AAA").length}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -136,7 +136,7 @@ export default function StaffAiAnalyticsPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Max Micro-Loan Capacity
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {formatGhs(totalLoanCapacity)}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">

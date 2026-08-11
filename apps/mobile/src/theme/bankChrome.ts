@@ -64,7 +64,7 @@ export function getBankWell(
   return isDark ? DARK_WELLS[tone] : LIGHT_WELLS[tone];
 }
 
-/** Default well tone per Lucide/AppIcon used in menus. */
+/** Default well tone per Phosphor AppIcon used in menus. */
 const ICON_TONES: Partial<Record<AppIconName, BankWellTone>> = {
   settings: "sky",
   user: "slate",

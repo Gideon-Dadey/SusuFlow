@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check } from "@/components/icons/phosphor";
 import { PRICING_PLANS } from "@/lib/marketing-data";
 import { cn } from "@/lib/utils";
 import { MarketingContainer } from "../marketing-container";

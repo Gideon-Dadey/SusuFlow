@@ -38,7 +38,7 @@ export function AccountSettingsContent() {
       <AccountInfoField
         label="Unique Client Code"
         value={clientDisplay}
-        trailingIcon={clientVisible ? "eye-off-outline" : "eye-outline"}
+        trailingIcon={clientVisible ? "eye-off" : "eye"}
         onTrailingPress={() => setClientVisible((v) => !v)}
       />
 
@@ -52,7 +52,7 @@ export function AccountSettingsContent() {
       <AccountInfoField
         label="Change Password"
         onPress={() => router.push("/(tabs)/profile/security")}
-        trailingIcon="pencil-outline"
+        trailingIcon="pencil"
       />
 
       <Text style={[styles.hint, { color: colors.mutedForeground }]}>

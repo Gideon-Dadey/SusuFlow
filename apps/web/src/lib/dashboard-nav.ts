@@ -1,4 +1,28 @@
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import type { LucideIcon } from "@/components/icons/phosphor";
+import {
+  Bell,
+  BookOpen,
+  Brain,
+  Calculator,
+  ClipboardList,
+  Coins,
+  FileSpreadsheet,
+  Landmark,
+  LayoutDashboard,
+  Map,
+  PieChart,
+  PiggyBank,
+  Route,
+  ScrollText,
+  Settings,
+  ShieldAlert,
+  UserCheck,
+  UserCog,
+  Users,
+  Wallet,
+  ArrowUpRight,
+} from "@/components/icons/phosphor";
 import {
   faBuilding,
   faChartLine,
@@ -19,107 +43,75 @@ import {
   faServer,
   faTerminal,
   faCreditCard,
-  faClipboardList,
-  faUserTie,
-  faRoute,
-  faListCheck,
-  faCalculator,
-  faFileExcel,
-  faBrain,
-  faPaperPlane,
-  faBuildingColumns,
-  faMapLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 
 export type NavItem = { href: string; label: string; icon: IconDefinition };
-
 export type NavGroup = { groupLabel: string; items: NavItem[] };
 
-export const staffNavGroups: NavGroup[] = [
+export type StaffNavItem = { href: string; label: string; icon: LucideIcon };
+export type StaffNavGroup = { groupLabel: string; items: StaffNavItem[] };
+
+export const staffNavGroups: StaffNavGroup[] = [
   {
-    groupLabel: "PLATFORM",
+    groupLabel: "GENERAL",
     items: [
-      { href: "/staff/dashboard", label: "Overview", icon: faGaugeHigh },
-      { href: "/staff/queue", label: "Action Queue", icon: faClipboardList },
+      { href: "/staff/dashboard", label: "Overview", icon: LayoutDashboard },
+      { href: "/staff/queue", label: "Approvals", icon: ClipboardList },
     ],
   },
   {
-    groupLabel: "FINANCE",
+    groupLabel: "COLLECTIONS",
     items: [
-      { href: "/staff/deposits", label: "Deposits", icon: faWallet },
-      { href: "/staff/withdrawals", label: "Withdrawals", icon: faHistory },
-      { href: "/staff/commissions", label: "Commissions", icon: faCoins },
-      { href: "/staff/ledger", label: "Ledger", icon: faBook },
+      { href: "/staff/deposits", label: "Deposits", icon: Wallet },
+      { href: "/staff/withdrawals", label: "Withdrawals", icon: ArrowUpRight },
+      { href: "/staff/commissions", label: "Commissions", icon: Coins },
+    ],
+  },
+  {
+    groupLabel: "BOOKS",
+    items: [
+      { href: "/staff/plans", label: "Plans", icon: PiggyBank },
+      { href: "/staff/ledger", label: "Ledger", icon: BookOpen },
       {
         href: "/staff/reconciliation",
         label: "Reconciliation",
-        icon: faBuildingColumns,
+        icon: Landmark,
       },
-    ],
-  },
-  {
-    groupLabel: "AUTOMATION",
-    items: [
-      {
-        href: "/staff/analytics",
-        label: "Analytics",
-        icon: faBrain,
-      },
-      {
-        href: "/staff/notifications",
-        label: "Notifications",
-        icon: faPaperPlane,
-      },
-      {
-        href: "/staff/collectors/map",
-        label: "Collectors Map",
-        icon: faMapLocationDot,
-      },
-    ],
-  },
-  {
-    groupLabel: "OPERATIONS",
-    items: [
-      { href: "/staff/plans", label: "Plans", icon: faPiggyBank },
-      { href: "/staff/reports", label: "Reports", icon: faChartPie },
-      { href: "/staff/audit", label: "Audit Logs", icon: faListUl },
+      { href: "/staff/reports", label: "Reports", icon: PieChart },
     ],
   },
   {
     groupLabel: "PEOPLE",
     items: [
-      { href: "/staff/customers", label: "Customers", icon: faUsers },
-      { href: "/staff/kyc", label: "KYC", icon: faUserCheck },
-      { href: "/staff/team", label: "Team", icon: faUserTie },
-      { href: "/staff/collectors", label: "Collectors", icon: faRoute },
+      { href: "/staff/customers", label: "Customers", icon: Users },
+      { href: "/staff/kyc", label: "KYC", icon: UserCheck },
+      { href: "/staff/team", label: "Team", icon: UserCog },
+      { href: "/staff/collectors", label: "Collectors", icon: Route },
     ],
   },
   {
-    groupLabel: "TOOLS & UTILITIES",
+    groupLabel: "CONTROL",
     items: [
-      {
-        href: "/staff/calculator",
-        label: "Calculator",
-        icon: faCalculator,
-      },
-      { href: "/staff/excel", label: "Excel", icon: faFileExcel },
+      { href: "/staff/fraud", label: "Fraud", icon: ShieldAlert },
+      { href: "/staff/audit", label: "Audit", icon: ScrollText },
+      { href: "/staff/settings", label: "Settings", icon: Settings },
     ],
   },
   {
-    groupLabel: "SECURITY",
+    groupLabel: "TOOLS",
     items: [
-      {
-        href: "/staff/fraud",
-        label: "Fraud",
-        icon: faTriangleExclamation,
-      },
-      { href: "/staff/settings", label: "Settings", icon: faGear },
+      { href: "/staff/analytics", label: "Analytics", icon: Brain },
+      { href: "/staff/notifications", label: "Notifications", icon: Bell },
+      { href: "/staff/collectors/map", label: "Collectors map", icon: Map },
+      { href: "/staff/calculator", label: "Calculator", icon: Calculator },
+      { href: "/staff/excel", label: "Excel", icon: FileSpreadsheet },
     ],
   },
 ];
 
-/* flat list kept for backward compat (bottom-nav, etc.) */
-export const staffLinks: NavItem[] = staffNavGroups.flatMap((g) => g.items);
+export const staffLinks: StaffNavItem[] = staffNavGroups.flatMap(
+  (g) => g.items,
+);
 
 export const adminNavGroups: NavGroup[] = [
   {
@@ -194,7 +186,7 @@ export const collectorLinks: NavItem[] = [
   { href: "/collector/customers", label: "Customers", icon: faUsers },
   { href: "/collector/deposits", label: "History", icon: faHistory },
   { href: "/collector/earnings", label: "Earnings", icon: faCoins },
-  { href: "/collector/activity", label: "Activity", icon: faListCheck },
+  { href: "/collector/activity", label: "Activity", icon: faListUl },
   { href: "/collector/profile", label: "Profile", icon: faUser },
 ];
 

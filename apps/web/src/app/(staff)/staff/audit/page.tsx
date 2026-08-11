@@ -1,12 +1,99 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useMemo, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { auditApi } from "@/lib/api";
-import { formatDate } from "@/lib/utils";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { ChevronDown } from "@/components/icons/phosphor";
+import { auditApi, type AuditLogEntry } from "@/lib/api";
+import { cn, formatDate, formatGhs } from "@/lib/utils";
+import { CompanyPageHeader } from "@/components/company-admin/company-page-header";
+import { CompanyPanel } from "@/components/company-admin/company-panel";
+import { CompanyFilterTabs } from "@/components/company-admin/company-filter-tabs";
+import { CompanySearchField } from "@/components/company-admin/company-search-field";
+import { CompanyAvatar } from "@/components/company-admin/company-avatar";
+
+const EVENT_COPY: Record<string, { title: string; verb: string }> = {
+  "deposit:initiate": {
+    title: "Recorded a deposit",
+    verb: "started collecting from",
+  },
+  "deposit:complete": {
+    title: "Confirmed a deposit",
+    verb: "collected from",
+  },
+  "withdrawal:record": {
+    title: "Recorded a payout",
+    verb: "paid out to",
+  },
+  "withdrawal:request": {
+    title: "Requested a payout",
+    verb: "asked to pay",
+  },
+  "withdrawal:approve": {
+    title: "Approved a payout",
+    verb: "authorized payout to",
+  },
+  "withdrawal:reject": {
+    title: "Declined a payout",
+    verb: "blocked payout to",
+  },
+  "customer:create": {
+    title: "Added a customer",
+    verb: "onboarded",
+  },
+  "kyc:submit": {
+    title: "Submitted identity documents",
+    verb: "sent documents for",
+  },
+  "kyc:review": {
+    title: "Reviewed identity documents",
+    verb: "reviewed",
+  },
+  "kyc:review-bundle": {
+    title: "Completed an identity review",
+    verb: "reviewed",
+  },
+  "ledger:commission_payout": {
+    title: "Paid a collector commission",
+    verb: "paid commission to",
+  },
+  "user:login": {
+    title: "Signed in",
+    verb: "accessed the workspace",
+  },
+  "fraud:resolve": {
+    title: "Resolved a risk alert",
+    verb: "cleared an alert for",
+  },
+};
+
+function eventTitle(log: AuditLogEntry) {
+  if (log.action === "kyc:review-bundle") {
+    const status = (log.afterState as { status?: string } | null)?.status;
+    if (status === "approved") return "Approved identity documents";
+    if (status === "rejected") return "Declined identity documents";
+  }
+  return EVENT_COPY[log.action]?.title || log.action.replace(/[:_]/g, " ");
+}
+
+function eventVerb(log: AuditLogEntry) {
+  return EVENT_COPY[log.action]?.verb || "acted on";
+}
+
+function actorParts(log: AuditLogEntry) {
+  if (log.actor?.name) {
+    const [firstName = "", ...rest] = log.actor.name.split(" ");
+    return { firstName, lastName: rest.join(" "), name: log.actor.name };
+  }
+  if (log.user) {
+    return {
+      firstName: log.user.firstName,
+      lastName: log.user.lastName,
+      name: `${log.user.firstName} ${log.user.lastName}`.trim(),
+    };
+  }
+  return { firstName: "System", lastName: "", name: "System" };
+}
 
 export default function AuditLogsPage() {
   return (
@@ -20,162 +107,267 @@ export default function AuditLogsPage() {
 
 function AuditLogsContent() {
   const searchParams = useSearchParams();
-  const [actionFilter, setActionFilter] = useState<string>("");
-  const [resourceTypeFilter, setResourceTypeFilter] = useState<string>("");
   const userIdFilter = searchParams.get("userId") || "";
+  const [category, setCategory] = useState("");
+  const [query, setQuery] = useState("");
+  const [openId, setOpenId] = useState<string | null>(null);
 
-  const { data, isLoading } = useQuery({
-    queryKey: [
-      "staff-audit-logs",
-      actionFilter,
-      resourceTypeFilter,
-      userIdFilter,
-    ],
-    queryFn: () =>
-      auditApi.list({
-        action: actionFilter || undefined,
-        resourceType: resourceTypeFilter || undefined,
-        userId: userIdFilter || undefined,
-        limit: 50,
-      }),
-  });
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["staff-audit-logs", category, query, userIdFilter],
+      initialPageParam: undefined as string | undefined,
+      queryFn: ({ pageParam }) =>
+        auditApi.list({
+          category: category || undefined,
+          q: query || undefined,
+          userId: userIdFilter || undefined,
+          cursor: pageParam,
+          limit: 40,
+        }),
+      getNextPageParam: (last) => (last.hasMore ? last.cursor : undefined),
+    });
 
-  const logs = data?.items || [];
+  const logs = useMemo(
+    () => data?.pages.flatMap((page) => page.items) ?? [],
+    [data],
+  );
+  const summary = data?.pages[0]?.summary;
+
+  const handleExport = () => {
+    const headers = [
+      "When",
+      "Actor",
+      "Role",
+      "Email",
+      "Event",
+      "Customer",
+      "Amount",
+      "Reference",
+      "IP",
+      "Action code",
+    ];
+    const rows = logs.map((log) => {
+      const actor = actorParts(log);
+      return [
+        new Date(log.createdAt).toISOString(),
+        `"${actor.name}"`,
+        log.actor?.roleLabel || "",
+        log.actor?.email || log.user?.email || "",
+        `"${eventTitle(log)}"`,
+        `"${log.subject?.name || ""}"`,
+        log.money?.amount ?? "",
+        log.money?.reference || "",
+        log.ipAddress || "",
+        log.action,
+      ];
+    });
+    const csv =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+    const link = document.createElement("a");
+    link.href = encodeURI(csv);
+    link.download = `audit_trail_${Date.now()}.csv`;
+    link.click();
+  };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="dashboard-title">Security & Operations Audit Logs</h1>
-        {userIdFilter && (
-          <p className="text-xs text-muted-foreground mt-1">
-            Filtered to collector / user ID:{" "}
-            <span className="font-mono text-xs font-semibold">
-              {userIdFilter}
-            </span>
+    <div className="space-y-5">
+      <CompanyPageHeader
+        actions={
+          <button
+            type="button"
+            onClick={handleExport}
+            disabled={!logs.length}
+            className="company-cta-secondary disabled:opacity-50"
+          >
+            Export
+          </button>
+        }
+      />
+
+      <CompanyFilterTabs
+        value={category}
+        onChange={setCategory}
+        tabs={[
+          { label: "All activity", value: "", count: summary?.all },
+          { label: "Money", value: "money", count: summary?.money },
+          { label: "Customers", value: "customers", count: summary?.customers },
+          { label: "Identity", value: "identity", count: summary?.identity },
+          { label: "Access", value: "access", count: summary?.access },
+          { label: "Risk", value: "risk", count: summary?.risk },
+        ]}
+      />
+
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <CompanySearchField
+          value={query}
+          onChange={setQuery}
+          placeholder="Search by staff name, customer, or event"
+          className="sm:max-w-sm"
+        />
+        {userIdFilter ? (
+          <p className="text-xs text-muted-foreground">
+            Showing one staff member’s trail
           </p>
-        )}
+        ) : null}
       </div>
 
-      {/* Filters */}
-      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-muted-foreground">
-              Filter by Action
-            </label>
-            <Input
-              type="text"
-              placeholder="e.g. user:login or customer:create"
-              value={actionFilter}
-              onChange={(e) => setActionFilter(e.target.value)}
-              className="rounded-none border border-border/60 text-xs min-h-[38px]"
-            />
+      <CompanyPanel>
+        {isLoading ? (
+          <p className="py-10 text-center text-xs text-muted-foreground">
+            Loading activity…
+          </p>
+        ) : logs.length === 0 ? (
+          <p className="py-10 text-center text-xs text-muted-foreground">
+            No activity matches these filters.
+          </p>
+        ) : (
+          <div className="company-trail">
+            <div className="company-trail-head">
+              <span>Actor</span>
+              <span>Event</span>
+              <span>Customer</span>
+              <span>Amount</span>
+              <span>When</span>
+            </div>
+            {logs.map((log) => (
+              <AuditRow
+                key={log.id}
+                log={log}
+                open={openId === log.id}
+                onToggle={() =>
+                  setOpenId((current) => (current === log.id ? null : log.id))
+                }
+              />
+            ))}
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-muted-foreground">
-              Filter by Resource Type
-            </label>
-            <Input
-              type="text"
-              placeholder="e.g. customer or transaction"
-              value={resourceTypeFilter}
-              onChange={(e) => setResourceTypeFilter(e.target.value)}
-              className="rounded-none border border-border/60 text-xs min-h-[38px]"
-            />
+        )}
+        {hasNextPage ? (
+          <div className="company-trail-more">
+            <button
+              type="button"
+              className="company-cta-secondary"
+              disabled={isFetchingNextPage}
+              onClick={() => fetchNextPage()}
+            >
+              {isFetchingNextPage ? "Loading…" : "Load earlier activity"}
+            </button>
+          </div>
+        ) : null}
+      </CompanyPanel>
+    </div>
+  );
+}
+
+function AuditRow({
+  log,
+  open,
+  onToggle,
+}: {
+  log: AuditLogEntry;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  const actor = actorParts(log);
+  const after = (log.afterState ?? {}) as Record<string, unknown>;
+
+  return (
+    <div className={cn("company-trail-item", open && "is-open")}>
+      <button type="button" className="company-trail-row" onClick={onToggle}>
+        <div className="company-trail-actor">
+          <CompanyAvatar
+            firstName={actor.firstName}
+            lastName={actor.lastName}
+            seed={log.actor?.id || actor.name}
+            className="size-8 text-[11px]"
+          />
+          <div className="min-w-0">
+            <p className="company-trail-name">{actor.name}</p>
+            <p className="company-trail-meta">
+              {log.actor?.roleLabel || "Staff"}
+            </p>
           </div>
         </div>
-      </Card>
 
-      {/* Logs Table */}
-      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
-        <CardHeader className="px-6 py-4 border-b border-border/60">
-          <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
-            Activity Ledger Log
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
-                  <th className="py-3.5 px-4">Timestamp</th>
-                  <th className="py-3.5 px-4">User</th>
-                  <th className="py-3.5 px-4">Action</th>
-                  <th className="py-3.5 px-4">Resource</th>
-                  <th className="py-3.5 px-4">IP Address</th>
-                  <th className="py-3.5 px-4">User Agent</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {isLoading ? (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="py-8 text-center text-xs text-muted-foreground"
-                    >
-                      Loading audit logs...
-                    </td>
-                  </tr>
-                ) : logs.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="py-8 text-center text-xs text-muted-foreground"
-                    >
-                      No matching audit records found
-                    </td>
-                  </tr>
-                ) : (
-                  logs.map((log) => {
-                    const userName = log.user
-                      ? `${log.user.firstName} ${log.user.lastName}`
-                      : "System / Guest";
-                    const userEmail = log.user?.email
-                      ? ` (${log.user.email})`
-                      : "";
+        <div className="min-w-0">
+          <p className="company-trail-event">{eventTitle(log)}</p>
+          <p className="company-trail-meta">
+            {eventVerb(log)}
+            {log.subject?.name ? ` ${log.subject.name}` : ""}
+          </p>
+        </div>
 
-                    return (
-                      <tr
-                        key={log.id}
-                        className="hover:bg-muted/20 transition-colors"
-                      >
-                        <td className="py-3.5 px-4 text-xs font-mono text-muted-foreground whitespace-nowrap">
-                          {formatDate(log.createdAt)}
-                        </td>
-                        <td className="py-3.5 px-4 text-xs font-semibold text-foreground">
-                          {userName}
-                          <span className="block text-[10px] text-muted-foreground font-normal">
-                            {userEmail}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-xs font-mono font-semibold text-foreground">
-                          {log.action}
-                        </td>
-                        <td className="py-3.5 px-4 text-xs text-muted-foreground">
-                          <span className="font-semibold text-foreground">
-                            {log.resourceType}
-                          </span>
-                          {log.resourceId && (
-                            <span className="block text-[10px] font-mono text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap max-w-[150px]">
-                              {log.resourceId}
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-3.5 px-4 text-xs font-mono text-muted-foreground">
-                          {log.ipAddress || "Unknown"}
-                        </td>
-                        <td className="py-3.5 px-4 text-xs text-muted-foreground max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap font-mono">
-                          {log.userAgent || "N/A"}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+        <div className="min-w-0">
+          {log.subject ? (
+            <>
+              <p className="company-trail-name">{log.subject.name}</p>
+              {log.subject.secondary ? (
+                <p className="company-trail-meta font-mono">
+                  {log.subject.secondary}
+                </p>
+              ) : null}
+            </>
+          ) : (
+            <p className="company-trail-meta">—</p>
+          )}
+        </div>
+
+        <div className="company-trail-money">
+          {log.money?.amount != null ? (
+            <>
+              <p>{formatGhs(log.money.amount)}</p>
+              {log.money.reference ? <span>{log.money.reference}</span> : null}
+            </>
+          ) : (
+            <p className="company-trail-meta">—</p>
+          )}
+        </div>
+
+        <div className="company-trail-when">
+          <p>{formatDate(log.createdAt)}</p>
+          <ChevronDown
+            className={cn("company-trail-chevron", open && "is-open")}
+          />
+        </div>
+      </button>
+
+      {open ? (
+        <dl className="company-trail-detail">
+          <div>
+            <dt>Actor</dt>
+            <dd>
+              {actor.name}
+              {log.actor?.email ? ` · ${log.actor.email}` : ""}
+            </dd>
           </div>
-        </CardContent>
-      </Card>
+          <div>
+            <dt>Event code</dt>
+            <dd>{log.action}</dd>
+          </div>
+          {log.money?.reference ? (
+            <div>
+              <dt>Reference</dt>
+              <dd>{log.money.reference}</dd>
+            </div>
+          ) : null}
+          <div>
+            <dt>Source IP</dt>
+            <dd>{log.ipAddress || "Not captured"}</dd>
+          </div>
+          <div>
+            <dt>Device</dt>
+            <dd className="truncate">
+              {log.userAgent || log.deviceId || "Not captured"}
+            </dd>
+          </div>
+          {typeof after.rejectionReason === "string" ? (
+            <div>
+              <dt>Reason</dt>
+              <dd>{after.rejectionReason}</dd>
+            </div>
+          ) : null}
+        </dl>
+      ) : null}
     </div>
   );
 }

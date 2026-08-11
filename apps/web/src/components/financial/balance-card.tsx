@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { MoneyDisplay } from "./money-display";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, PlusCircle } from "lucide-react";
+import { TrendingUp, PlusCircle } from "@/components/icons/phosphor";
 import Link from "next/link";
 
 interface BalanceCardProps {

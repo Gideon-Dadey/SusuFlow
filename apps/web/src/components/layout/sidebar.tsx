@@ -12,7 +12,7 @@ import {
   staffLinks,
   staffNavGroups,
   type NavItem,
-  type NavGroup,
+  type StaffNavItem,
 } from "@/lib/dashboard-nav";
 
 import { useQuery } from "@tanstack/react-query";
@@ -29,7 +29,7 @@ interface SidebarProps {
   onClose?: () => void;
 }
 
-function NavLink({
+function AdminNavLink({
   href,
   label,
   icon,
@@ -41,22 +41,49 @@ function NavLink({
       href={href}
       prefetch={true}
       onClick={onClose}
-      className={cn(
-        "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.8125rem] font-medium transition-colors",
-        active
-          ? "bg-muted text-foreground font-semibold"
-          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
-      )}
+      className={cn("company-nav-link", active && "is-active")}
     >
-      <FontAwesomeIcon icon={icon} className="h-4 w-4 shrink-0 opacity-80" />
-      {label}
+      <FontAwesomeIcon icon={icon} className="company-nav-icon" />
+      <span>{label}</span>
     </Link>
   );
 }
 
-function SectionLabel({ label }: { label: string }) {
+function StaffNavLink({
+  href,
+  label,
+  icon: Icon,
+  active,
+  onClose,
+}: StaffNavItem & { active: boolean; onClose?: () => void }) {
   return (
-    <span className="mt-4 mb-1 block px-2.5 text-[0.6875rem] font-semibold tracking-wider text-muted-foreground/60 uppercase first:mt-0">
+    <Link
+      href={href}
+      prefetch={true}
+      onClick={onClose}
+      className={cn("company-nav-link", active && "is-active")}
+    >
+      <Icon className="company-nav-icon" weight="regular" />
+      <span>{label}</span>
+    </Link>
+  );
+}
+
+function SectionLabel({
+  label,
+  company,
+}: {
+  label: string;
+  company?: boolean;
+}) {
+  return (
+    <span
+      className={
+        company
+          ? "company-nav-section"
+          : "mt-4 mb-1 block px-2.5 text-[0.6875rem] font-semibold tracking-wider text-muted-foreground/60 uppercase first:mt-0"
+      }
+    >
       {label}
     </span>
   );
@@ -73,6 +100,10 @@ export function Sidebar({
   const { user } = useAuthStore();
 
   const isAdmin = variant === "admin" || user?.roles?.includes("super_admin");
+  const isCompany =
+    (variant === "staff" || variant === "admin") &&
+    !customerMode &&
+    !collectorMode;
   const tenantSlug = isAdmin ? "" : user?.tenantSlug || getTenantSlug();
   const { data: tenantBranding } = useQuery({
     queryKey: ["tenant-branding", tenantSlug],
@@ -90,7 +121,6 @@ export function Sidebar({
     (variant === "staff" || variant === "admin") &&
     !customerMode &&
     !collectorMode;
-  const navGroups = variant === "admin" ? adminNavGroups : staffNavGroups;
 
   const flatLinks = collectorMode
     ? collectorLinks
@@ -103,54 +133,108 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        "dashboard-sidebar fixed inset-y-0 left-0 z-50 flex w-[var(--dashboard-sidebar-width)] flex-col border-r border-border bg-background transition-transform duration-200 lg:translate-x-0",
+        "dashboard-sidebar fixed inset-y-0 left-0 z-50 flex w-[var(--dashboard-sidebar-width)] flex-col border-r transition-transform duration-200 lg:translate-x-0",
+        isCompany ? "company-sidebar" : "border-border bg-background",
         open ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
       )}
     >
-      <div className="flex h-16 items-center gap-2 border-b border-border px-4">
-        {variant === "admin" ? (
-          <SusuFlowIconMark className="h-7 w-auto max-w-[7.5rem] shrink-0" />
-        ) : tenantBranding?.logoUrl ? (
-          <img
-            src={tenantBranding.logoUrl}
-            alt={brandLabel}
-            className="h-8 w-8 rounded-md object-contain bg-transparent shrink-0"
-          />
-        ) : (
-          <SusuFlowIconMark className="h-7 w-auto max-w-[7.5rem] shrink-0" />
-        )}
-        <span className="truncate text-sm font-semibold text-foreground">
-          {brandLabel}
-        </span>
-      </div>
+      {isCompany ? (
+        <div className="company-sidebar-brand">
+          <div className="company-org-chip">
+            <span className="company-org-avatar">
+              {variant === "admin" ? (
+                <SusuFlowIconMark className="h-5 w-5" />
+              ) : tenantBranding?.logoUrl ? (
+                <img src={tenantBranding.logoUrl} alt="" />
+              ) : (
+                brandLabel.slice(0, 1).toUpperCase()
+              )}
+            </span>
+            <span className="company-org-name">{brandLabel}</span>
+          </div>
+        </div>
+      ) : (
+        <div className="flex h-16 items-center gap-2 border-b border-border px-4">
+          {variant === "admin" ? (
+            <SusuFlowIconMark className="h-7 w-auto max-w-[7.5rem] shrink-0" />
+          ) : tenantBranding?.logoUrl ? (
+            <img
+              src={tenantBranding.logoUrl}
+              alt={brandLabel}
+              className="h-8 w-8 rounded-md object-contain bg-transparent shrink-0"
+            />
+          ) : (
+            <SusuFlowIconMark className="h-7 w-auto max-w-[7.5rem] shrink-0" />
+          )}
+          <span className="truncate text-sm font-semibold text-foreground">
+            {brandLabel}
+          </span>
+        </div>
+      )}
 
-      <nav className="flex-1 overflow-y-auto p-2.5">
+      <nav
+        className={cn(
+          "flex-1 overflow-y-auto",
+          isCompany ? "company-sidebar-nav" : "p-2.5",
+        )}
+      >
         {isGrouped
-          ? navGroups.map((group) => (
-              <div key={group.groupLabel}>
-                <SectionLabel label={group.groupLabel} />
-                {group.items.map((item) => {
-                  const active =
-                    pathname === item.href ||
-                    pathname.startsWith(`${item.href}/`);
-                  return (
-                    <NavLink
-                      key={item.href}
-                      {...item}
-                      active={active}
-                      onClose={onClose}
-                    />
-                  );
-                })}
-              </div>
-            ))
+          ? variant === "admin"
+            ? adminNavGroups.map((group) => (
+                <div key={group.groupLabel}>
+                  <SectionLabel label={group.groupLabel} company />
+                  {group.items.map((item) => {
+                    const active =
+                      pathname === item.href ||
+                      pathname.startsWith(`${item.href}/`);
+                    return (
+                      <AdminNavLink
+                        key={item.href}
+                        {...item}
+                        active={active}
+                        onClose={onClose}
+                      />
+                    );
+                  })}
+                </div>
+              ))
+            : staffNavGroups.map((group) => (
+                <div key={group.groupLabel}>
+                  <SectionLabel label={group.groupLabel} company />
+                  {group.items.map((item) => {
+                    const active =
+                      pathname === item.href ||
+                      pathname.startsWith(`${item.href}/`);
+                    return (
+                      <StaffNavLink
+                        key={item.href}
+                        {...item}
+                        active={active}
+                        onClose={onClose}
+                      />
+                    );
+                  })}
+                </div>
+              ))
           : flatLinks?.map((item) => {
               const active =
                 pathname === item.href || pathname.startsWith(`${item.href}/`);
+              if (variant === "staff" && !customerMode && !collectorMode) {
+                const staffItem = item as StaffNavItem;
+                return (
+                  <StaffNavLink
+                    key={staffItem.href}
+                    {...staffItem}
+                    active={active}
+                    onClose={onClose}
+                  />
+                );
+              }
+              const adminItem = item as NavItem;
               return (
-                <NavLink
-                  key={item.href}
-                  {...item}
+                <AdminNavLink
+                  key={adminItem.href}
+                  {...adminItem}
                   active={active}
                   onClose={onClose}
                 />

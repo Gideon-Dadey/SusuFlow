@@ -2,11 +2,13 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { getQueueToken } from "@nestjs/bullmq";
 import * as bcrypt from "bcrypt";
 import { AuthService } from "./auth.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { TenantService } from "../tenant/tenant.service";
 import { OtpService } from "./otp.service";
+import { CacheService } from "../../cache/cache.service";
 import { MAX_FAILED_LOGINS } from "@susuflow/shared";
 
 jest.mock("bcrypt");
@@ -75,6 +77,14 @@ describe("AuthService", () => {
         {
           provide: OtpService,
           useValue: { send: jest.fn(), verify: jest.fn() },
+        },
+        {
+          provide: CacheService,
+          useValue: { set: jest.fn(), get: jest.fn(), del: jest.fn() },
+        },
+        {
+          provide: getQueueToken("notifications"),
+          useValue: { add: jest.fn().mockResolvedValue({}) },
         },
       ],
     }).compile();

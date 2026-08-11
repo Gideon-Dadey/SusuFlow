@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BadgeCheck, X } from "lucide-react";
+import { BadgeCheck, X } from "@/components/icons/phosphor";
 import { BrandLockup } from "@/components/marketing/brand-logo";
 import { APP_NAME } from "@/lib/marketing-data";
 

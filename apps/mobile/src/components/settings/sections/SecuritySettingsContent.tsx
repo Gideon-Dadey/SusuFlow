@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Switch, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { MIN_PASSWORD_LENGTH } from "@susuflow/shared/client";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
-import { SettingRow } from "@/components/profile/ProfileSections";
+import {
+  SettingRow,
+  SettingsSwitch,
+} from "@/components/profile/ProfileSections";
 import { SettingsPanel } from "@/components/settings/SettingsDetailLayout";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { APP_LOCK_PIN_MAX, APP_LOCK_PIN_MIN } from "@/lib/app-lock";
@@ -138,12 +141,12 @@ export function SecuritySettingsContent() {
     <>
       <SettingsPanel>
         <SettingRow
-          icon="lock-closed-outline"
+          icon="lock"
           title="Password"
           subtitle="Update your sign-in password"
         />
         <SettingRow
-          icon="shield-checkmark-outline"
+          icon="shield"
           title="App lock"
           subtitle={
             lockEnabled
@@ -183,16 +186,13 @@ export function SecuritySettingsContent() {
       ) : (
         <View style={styles.stack}>
           <SettingRow
-            icon="finger-print-outline"
+            icon="fingerprint"
             title="Unlock with biometrics"
             subtitle={`Use ${biometricLabel} instead of typing your PIN`}
             right={
-              <Switch
+              <SettingsSwitch
                 value={biometricUnlock}
                 onValueChange={(next) => void setBiometricUnlock(next)}
-                trackColor={{ false: colors.border, true: colors.primary }}
-                thumbColor="#ffffff"
-                ios_backgroundColor={colors.border}
               />
             }
           />

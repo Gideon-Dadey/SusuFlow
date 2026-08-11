@@ -19,9 +19,13 @@ export default function Index() {
     );
   }
 
+  if (isAuthenticated) {
+    return <Redirect href="/(tabs)" />;
+  }
+
   if (!launchComplete) {
     return <LaunchSplash onFinish={finishLaunch} />;
   }
 
-  return <Redirect href={isAuthenticated ? "/(tabs)" : "/(auth)/welcome"} />;
+  return <Redirect href="/(auth)/welcome" />;
 }

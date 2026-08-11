@@ -5,7 +5,7 @@ import { Worker } from "bullmq";
 import * as Sentry from "@sentry/node";
 import { getRedisConnectionOptions } from "@susuflow/shared";
 import { db } from "@susuflow/database";
-import { buildTransactionPushContent, sendPushToUser } from "./push";
+import { dispatchPushToUser } from "./push";
 
 config({ path: resolve(__dirname, "../../../.env") });
 
@@ -22,7 +22,7 @@ if (process.env.SENTRY_DSN) {
 
 const connection = getRedisConnectionOptions();
 
-console.log("SusuFlow worker starting...");
+console.log("SusuFlow worker starting (push production)...");
 
 async function sendSMS(to: string, message: string, tenantId: string) {
   const provider = process.env.SMS_PROVIDER || "hubtel";
@@ -291,7 +291,16 @@ const notificationWorker = new Worker(
       return { sent: true, event: job.name };
     }
 
-    if (job.name === "kyc-approved" || job.name === "kyc-rejected") {
+    const userOnlyEvents = new Set([
+      "kyc-approved",
+      "kyc-rejected",
+      "security-new-login",
+      "security-account-locked",
+      "password-changed",
+      "push-test",
+    ]);
+
+    if (userOnlyEvents.has(job.name)) {
       const { tenantId, userId, rejectionReason } = job.data as {
         tenantId: string;
         userId: string;
@@ -299,6 +308,7 @@ const notificationWorker = new Worker(
         documentId?: string;
         documentType?: string;
         rejectionReason?: string | null;
+        firstName?: string;
       };
 
       const user = await db.user.findUnique({
@@ -321,9 +331,28 @@ const notificationWorker = new Worker(
       }
 
       const tenantName = tenant?.name || "SusuFlow";
-      const firstName = user.firstName || "there";
+      const firstName = user.firstName || job.data.firstName || "there";
       const approved = job.name === "kyc-approved";
       const webUrl = process.env.WEB_URL || "http://localhost:3000";
+
+      await dispatchPushToUser(db, {
+        event: job.name,
+        userId: user.id,
+        tenantId,
+        firstName,
+        tenantName,
+        rejectionReason,
+        status:
+          job.name === "kyc-approved"
+            ? "verified"
+            : job.name === "kyc-rejected"
+              ? "rejected"
+              : "sent",
+      });
+
+      if (job.name !== "kyc-approved" && job.name !== "kyc-rejected") {
+        return { sent: true, event: job.name };
+      }
 
       const title = approved
         ? "Identity verified"
@@ -333,15 +362,6 @@ const notificationWorker = new Worker(
         : `Hi ${firstName}, your identity verification with ${tenantName} was not approved.${
             rejectionReason ? ` Reason: ${rejectionReason}` : ""
           } Please resubmit your documents.`;
-
-      await sendPushToUser(db, user.id, {
-        title,
-        body,
-        data: {
-          type: job.name,
-          screen: "kyc",
-        },
-      });
 
       if (user.email) {
         const html = generateSaaSEmailHtml({
@@ -675,22 +695,29 @@ const notificationWorker = new Worker(
       }
     }
 
-    const pushContent = buildTransactionPushContent(
-      job.name,
-      customerUser.firstName,
+    await dispatchPushToUser(db, {
+      event: job.name,
+      userId: customerUser.id,
+      tenantId: transaction.tenantId,
+      firstName: customerUser.firstName,
       tenantName,
       formattedAmount,
-      reference,
       formattedBalance,
+      reference,
+      rejectionReason: job.data.rejectionReason,
       transactionId,
-    );
-    if (pushContent) {
-      await sendPushToUser(db, customerUser.id, pushContent);
-    }
+      amount,
+      status:
+        job.name === "deposit-confirmed" || job.name === "withdrawal-completed"
+          ? "completed"
+          : job.name === "deposit-failed" || job.name === "withdrawal-rejected"
+            ? "failed"
+            : "pending",
+    });
 
     return { sent: true, event: job.name };
   },
-  { connection },
+  { connection, concurrency: 8 },
 );
 
 const receiptWorker = new Worker(

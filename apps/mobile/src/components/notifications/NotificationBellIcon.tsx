@@ -1,4 +1,4 @@
-import { FontAwesome6 } from "@expo/vector-icons";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { useTheme } from "@/theme/ThemeProvider";
 
 interface NotificationBellIconProps {
@@ -13,11 +13,11 @@ export function NotificationBellIcon({
   const { colors } = useTheme();
 
   return (
-    <FontAwesome6
+    <AppIcon
       name="bell"
       size={size}
       color={color ?? colors.foreground}
-      solid
+      weight="fill"
     />
   );
 }

@@ -1,3 +1,5 @@
+import { formatTransactionReference } from "./reference";
+
 export interface ReceiptTransaction {
   id: string;
   reference: string;
@@ -191,7 +193,7 @@ export function buildReceiptDocument(
     customerName: getReceiptCustomerName(transaction),
     reference: transaction.reference,
     receiptCode: transaction.id.slice(0, 8).toUpperCase(),
-    paymentRef: transaction.reference.slice(-8).toUpperCase(),
+    paymentRef: formatTransactionReference(transaction.reference),
     customerId: transaction.customer?.customerNumber || "N/A",
     transactionType: transaction.type.toUpperCase(),
     paymentMethod: methodLabel,
@@ -229,7 +231,7 @@ export function buildReceiptShareText(
   const paymentTime = formatReceiptDate(transaction.createdAt);
   const customerName = getReceiptCustomerName(transaction);
   const receiptCode = transaction.id.slice(0, 8).toUpperCase();
-  const paymentRef = transaction.reference.slice(-8).toUpperCase();
+  const paymentRef = formatTransactionReference(transaction.reference);
   const statusLabel = getReceiptStatusLabel(transaction.status);
   const serviceLine = isDeposit
     ? "Susu Gateway-Confirmed Deposit Contribution"

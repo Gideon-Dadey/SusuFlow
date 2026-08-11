@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { MoneyDisplay } from "./money-display";
 import { StatusBadge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
-import { Printer, X, Receipt } from "lucide-react";
+import { Printer, X } from "@/components/icons/phosphor";
 import { Transaction, tenantApi } from "@/lib/api";
 import {
+  formatTransactionReference,
   getReceiptArtifactHash,
   getReceiptPaymentMethod,
   getReceiptPhoneLabel,
@@ -78,8 +79,7 @@ export function ReceiptModal({
       <div className="relative z-10 w-full sm:max-w-md rounded-none sm:rounded-xl border-x-0 sm:border-x border-t sm:border border-border/60 bg-card p-4 sm:p-5 shadow-elevated animate-scale-in print:border-0 print:shadow-none print:p-0 print:static print:block print:max-w-none">
         {/* Header (Hidden on Print) */}
         <div className="flex items-center justify-between pb-3.5 border-b border-border print:hidden">
-          <div className="flex items-center gap-2 text-foreground font-semibold">
-            <Receipt className="h-5 w-5 text-primary" />
+          <div className="text-foreground font-semibold">
             Transaction Receipt
           </div>
           <button
@@ -275,7 +275,7 @@ export function ReceiptModal({
                     Payment Ref:
                   </span>
                   <span className="font-mono font-medium text-gray-900">
-                    {transaction.reference.slice(-8).toUpperCase()}
+                    {formatTransactionReference(transaction.reference)}
                   </span>
                 </div>
               </div>

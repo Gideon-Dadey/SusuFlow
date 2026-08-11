@@ -6,7 +6,7 @@ import {
   ShieldCheck,
   Smartphone,
   Wallet,
-} from "lucide-react";
+} from "@/components/icons/phosphor";
 import {
   ProductCrossLinks,
   ProductFeatureSplit,

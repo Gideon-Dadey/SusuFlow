@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { RefreshControl, StyleSheet, Text, View } from "react-native";
@@ -20,7 +20,6 @@ import {
   fetchCustomerDeposits,
   fetchCustomerWithdrawals,
   financialQueryOptions,
-  invalidateCustomerFinancials,
 } from "@/lib/financial-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { useTheme } from "@/theme/ThemeProvider";
@@ -29,7 +28,6 @@ import { Button } from "@/components/Button";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const { colors } = useTheme();
   const { groupName, logoUrl, refetch: refetchBranding } = useProfileData();
   const { sessionKey, isProfileReady, profileQuery } = useCustomerSession();
@@ -96,9 +94,6 @@ export default function HomeScreen() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      if (sessionKey) {
-        invalidateCustomerFinancials(queryClient, sessionKey);
-      }
       await Promise.all([
         profileQuery.refetch(),
         refetchWallet(),
@@ -111,12 +106,10 @@ export default function HomeScreen() {
     }
   }, [
     profileQuery,
-    queryClient,
     refetchBranding,
     refetchDeposits,
     refetchWallet,
     refetchWithdrawals,
-    sessionKey,
   ]);
 
   return (

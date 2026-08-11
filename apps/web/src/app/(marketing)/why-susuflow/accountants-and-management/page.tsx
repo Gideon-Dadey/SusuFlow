@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { BookOpenCheck, FileSearch, RefreshCw } from "lucide-react";
+import {
+  BookOpenCheck,
+  FileSearch,
+  RefreshCw,
+} from "@/components/icons/phosphor";
 import { WhyPageTemplate } from "@/components/marketing/ofx/why-page-template";
 import { APP_NAME } from "@/lib/marketing-data";
 

@@ -1,4 +1,5 @@
 import { getApiBaseUrl } from "./config";
+import { rememberedAccessToken, rememberedTenantSlug } from "./session-memory";
 import { storage } from "./storage";
 
 function getApiRoot(): string {
@@ -43,10 +44,14 @@ export async function refreshSessionFromStorage(): Promise<boolean> {
 }
 
 async function getAccessToken(): Promise<string | null> {
-  return storage.getItem(storage.keys.accessToken);
+  return (
+    rememberedAccessToken() ?? (await storage.getItem(storage.keys.accessToken))
+  );
 }
 
 async function getTenantSlug(): Promise<string> {
+  const remembered = rememberedTenantSlug();
+  if (remembered) return remembered;
   return (await storage.getItem(storage.keys.tenantSlug)) || "";
 }
 
@@ -193,6 +198,12 @@ export const api = {
     request<T>(endpoint, {
       ...options,
       method: "PUT",
+      body: body ? JSON.stringify(body) : undefined,
+    }),
+  patch: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
+    request<T>(endpoint, {
+      ...options,
+      method: "PATCH",
       body: body ? JSON.stringify(body) : undefined,
     }),
   delete: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
@@ -423,10 +434,65 @@ export const userApi = {
     api.put<{ message: string }>("/users/me/password", data),
   deleteAccount: (data: { currentPassword: string }) =>
     api.delete<{ message: string }>("/users/me", data),
-  registerPushToken: (data: { token: string; platform?: string }) =>
-    api.put<{ registered: boolean }>("/users/me/push-token", data),
+  registerPushToken: (data: {
+    token: string;
+    platform?: string;
+    deviceName?: string;
+    appVersion?: string;
+  }) => api.put<{ registered: boolean }>("/users/me/push-token", data),
   removePushToken: (data: { token: string }) =>
     api.delete<{ removed: boolean }>("/users/me/push-token", data),
+};
+
+export interface InboxNotification {
+  id: string;
+  type: string;
+  category: string;
+  title: string;
+  body: string;
+  status: string;
+  screen: string;
+  transactionId?: string;
+  reference?: string;
+  amount?: number;
+  readAt: string | null;
+  createdAt: string;
+}
+
+export interface NotificationPreferences {
+  pushEnabled: boolean;
+  transactions: boolean;
+  identity: boolean;
+  security: true;
+  account: boolean;
+}
+
+export const notificationApi = {
+  listInbox: (params?: { cursor?: string; limit?: number }) =>
+    api.get<{
+      items: InboxNotification[];
+      unreadCount: number;
+      nextCursor: string | null;
+    }>(`/notifications${toQueryString(params)}`),
+  unreadCount: () =>
+    api.get<{ unreadCount: number }>("/notifications/unread-count"),
+  markRead: (id: string) =>
+    api.patch<{ read: boolean; unreadCount: number }>(
+      `/notifications/${id}/read`,
+    ),
+  markAllRead: () =>
+    api.post<{ read: boolean; unreadCount: number }>("/notifications/read-all"),
+  getPreferences: () =>
+    api.get<NotificationPreferences>("/notifications/preferences"),
+  updatePreferences: (
+    data: Partial<
+      Pick<
+        NotificationPreferences,
+        "pushEnabled" | "transactions" | "identity" | "account"
+      >
+    >,
+  ) => api.put<NotificationPreferences>("/notifications/preferences", data),
+  sendTest: () => api.post<{ queued: true }>("/notifications/test"),
 };
 
 export const kycApi = {

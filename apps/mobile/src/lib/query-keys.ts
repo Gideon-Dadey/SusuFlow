@@ -13,6 +13,10 @@ export const queryKeys = {
     ["withdrawals", userId, customerId] as const,
   notificationFeed: (userId: string, customerId: string) =>
     ["notification-feed", userId, customerId] as const,
+  notificationInbox: (userId: string) =>
+    ["notification-inbox", userId] as const,
+  notificationPreferences: (userId: string) =>
+    ["notification-preferences", userId] as const,
   enrollments: (userId: string) => ["my-enrollments", userId] as const,
   plans: ["plans"] as const,
   kycStatus: (userId: string) => ["kyc-status", userId] as const,

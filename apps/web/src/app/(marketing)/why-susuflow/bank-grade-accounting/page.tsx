@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FileCheck, Landmark, Scale } from "lucide-react";
+import { FileCheck, Landmark, Scale } from "@/components/icons/phosphor";
 import { WhyPageTemplate } from "@/components/marketing/ofx/why-page-template";
 import { APP_NAME } from "@/lib/marketing-data";
 

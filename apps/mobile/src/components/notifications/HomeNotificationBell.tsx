@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { TransactionReceiptSheet } from "@/components/activity/TransactionReceiptSheet";
@@ -7,6 +8,7 @@ import { useNotificationFeed } from "@/hooks/useNotificationFeed";
 import { useScopedCustomerId } from "@/hooks/useScopedCustomerId";
 import type { AppNotification } from "@/types/notification";
 import type { Transaction } from "@/lib/api";
+import { hrefForNotificationRoute } from "@/lib/notification-routing";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, typography } from "@/theme/tokens";
 
@@ -22,6 +24,7 @@ export function HomeNotificationBell({
   controlSize?: number;
 }) {
   const { colors } = useTheme();
+  const router = useRouter();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [readCutoff, setReadCutoff] = useState<string | null>(null);
   const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
@@ -74,7 +77,20 @@ export function HomeNotificationBell({
   }, []);
 
   const handleSelect = (item: AppNotification) => {
-    openReceipt(item.transaction);
+    if (item.transaction) {
+      openReceipt(item.transaction);
+      return;
+    }
+    setSheetOpen(false);
+    if (item.kind === "kyc") {
+      router.push(hrefForNotificationRoute("kyc"));
+      return;
+    }
+    if (item.kind === "security") {
+      router.push(hrefForNotificationRoute("security"));
+      return;
+    }
+    router.push(hrefForNotificationRoute("activity"));
   };
 
   const closeReceipt = () => {

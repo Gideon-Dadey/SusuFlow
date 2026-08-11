@@ -1,9 +1,8 @@
-/** Same mark as web `apps/web/public/brand/logo-transparent.png` (PaySense-style wordmark). */
-export const BRAND_LOGO = require("../../assets/images/logo-transparent.png");
-/** Intrinsic aspect of the optimized wordmark (~2.58:1). */
-export const BRAND_LOGO_ASPECT = 922 / 357;
-/** Atmospheric splash / welcome backdrop (optimized JPEG). */
-export const SPLASH_BACKGROUND = require("../../assets/images/splash-bg.jpg");
+export {
+  BRAND_LOGO,
+  BRAND_LOGO_ASPECT,
+  SPLASH_BACKGROUND,
+} from "@/lib/brand-splash";
 /** Welcome screen rotating lifestyle slides. */
 export const WELCOME_SLIDES = [
   require("../../assets/images/welcome-slide-1.jpg"),

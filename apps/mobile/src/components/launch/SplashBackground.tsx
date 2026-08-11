@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 import { ImageBackground, StyleSheet, View } from "react-native";
-import { SPLASH_BACKGROUND } from "@/lib/brand-assets";
+import { SPLASH_BACKGROUND } from "@/lib/brand-splash";
 
 /** Launch + welcome canvas — black base + atmospheric photo. */
 export const BRAND_SPLASH_BACKGROUND = "#000000";
 
-export const LAUNCH_SPLASH_DURATION_MS = 5000;
+export const LAUNCH_SPLASH_DURATION_MS = 900;
 
 interface BrandSplashBackgroundProps {
   children?: ReactNode;

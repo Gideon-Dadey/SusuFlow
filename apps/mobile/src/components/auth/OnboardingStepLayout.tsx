@@ -1,5 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import { ReactNode } from "react";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BrandSplashBackground } from "@/components/launch/SplashBackground";
@@ -72,10 +72,11 @@ export function OnboardingStepLayout({
             ]}
           >
             <Text style={styles.nextLabel}>{actionLabel}</Text>
-            <Ionicons
-              name="arrow-forward"
+            <AppIcon
+              name="arrow-right"
               size={18}
               color={authChrome.onBlackLabel}
+              weight="bold"
             />
           </Pressable>
         </View>

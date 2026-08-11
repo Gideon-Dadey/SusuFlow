@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { withdrawalApi, Transaction } from "@/lib/api";
 import { formatGhs, formatDate } from "@/lib/utils";
 import { TransactionListSkeleton } from "@/components/ui/skeleton";
 import { ReceiptModal } from "@/components/financial/receipt-modal";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "@/components/icons/phosphor";
+import { CompanyPageHeader } from "@/components/company-admin/company-page-header";
+import { CompanyPanel } from "@/components/company-admin/company-panel";
+import { CompanyFilterTabs } from "@/components/company-admin/company-filter-tabs";
 
 export default function StaffWithdrawalsPage() {
   const queryClient = useQueryClient();
@@ -17,6 +20,7 @@ export default function StaffWithdrawalsPage() {
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
 
   const { data, isLoading } = useQuery({
     queryKey: ["staff-withdrawals"],
@@ -92,35 +96,61 @@ export default function StaffWithdrawalsPage() {
   };
 
   const withdrawals = data?.items || [];
+  const filtered = useMemo(
+    () =>
+      status
+        ? withdrawals.filter((item) => item.status === status)
+        : withdrawals,
+    [withdrawals, status],
+  );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="dashboard-title">Withdrawals</h1>
-        </div>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={handleExportCsv}
-          className="text-xs font-semibold"
-          disabled={!data?.items?.length}
-        >
-          Download CSV
-        </Button>
-      </div>
+    <div className="space-y-5">
+      <CompanyPageHeader
+        title="Withdrawals"
+        actions={
+          <button
+            type="button"
+            onClick={handleExportCsv}
+            disabled={!withdrawals.length}
+            className="company-cta-secondary disabled:opacity-50"
+          >
+            Export
+          </button>
+        }
+      />
 
-      <Card>
+      <CompanyFilterTabs
+        value={status}
+        onChange={setStatus}
+        tabs={[
+          { label: "All withdrawals", value: "", count: withdrawals.length },
+          {
+            label: "Pending",
+            value: "pending",
+            count: withdrawals.filter((item) => item.status === "pending")
+              .length,
+          },
+          {
+            label: "Completed",
+            value: "completed",
+            count: withdrawals.filter((item) => item.status === "completed")
+              .length,
+          },
+        ]}
+      />
+
+      <CompanyPanel>
         <CardContent className="p-0">
           {isLoading ? (
             <TransactionListSkeleton count={5} />
-          ) : withdrawals.length === 0 ? (
+          ) : filtered.length === 0 ? (
             <div className="p-12 text-center text-muted-foreground text-sm">
               No withdrawals recorded yet.
             </div>
           ) : (
-            <div className="divide-y divide-border/60">
-              {withdrawals.map((t) => {
+            <div>
+              {filtered.map((t) => {
                 const amt =
                   typeof t.amount === "string"
                     ? parseFloat(t.amount)
@@ -132,7 +162,7 @@ export default function StaffWithdrawalsPage() {
                       setSelectedTxn(t);
                       setReceiptOpen(true);
                     }}
-                    className="flex items-center gap-4 p-4 hover:bg-muted/50 cursor-pointer transition-colors"
+                    className="company-row cursor-pointer"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
                       <ArrowUpRight className="h-5 w-5" />
@@ -187,7 +217,7 @@ export default function StaffWithdrawalsPage() {
             </div>
           )}
         </CardContent>
-      </Card>
+      </CompanyPanel>
 
       <ReceiptModal
         transaction={selectedTxn}

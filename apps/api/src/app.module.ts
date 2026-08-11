@@ -23,6 +23,7 @@ import { HealthModule } from "./modules/health/health.module";
 import { BillingModule } from "./modules/billing/billing.module";
 import { PlanModule } from "./modules/plan/plan.module";
 import { OperationsModule } from "./modules/operations/operations.module";
+import { NotificationModule } from "./modules/notification/notification.module";
 import { CommonModule } from "./common/common.module";
 import { TenantMiddleware } from "./common/middleware/tenant.middleware";
 import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
@@ -44,6 +45,12 @@ import { loggerConfig } from "./config/logger.config";
     ]),
     BullModule.forRoot({
       connection: getRedisConnectionOptions(),
+      defaultJobOptions: {
+        attempts: 5,
+        backoff: { type: "exponential", delay: 2500 },
+        removeOnComplete: 1000,
+        removeOnFail: 2000,
+      },
     }),
     CacheModule,
     PrismaModule,
@@ -62,6 +69,7 @@ import { loggerConfig } from "./config/logger.config";
     BillingModule,
     PlanModule,
     OperationsModule,
+    NotificationModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

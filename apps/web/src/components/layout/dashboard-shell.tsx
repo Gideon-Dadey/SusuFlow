@@ -26,7 +26,7 @@ export function DashboardShell({
   }, [pathname]);
 
   return (
-    <div className="dashboard-shell">
+    <div className="dashboard-shell" data-portal={variant}>
       {sidebarOpen ? (
         <button
           type="button"
@@ -50,9 +50,11 @@ export function DashboardShell({
           onMenuClick={() => setSidebarOpen(true)}
         />
         <main
-          data-portal={variant}
           className={cn(
-            "dashboard-scroll p-3 pt-2.5 sm:p-4 lg:p-5 pb-6",
+            "dashboard-scroll",
+            variant === "staff" || variant === "admin"
+              ? "company-main"
+              : "p-3 pt-2.5 sm:p-4 lg:p-5 pb-6",
             sidebarOpen && "overflow-hidden lg:overflow-y-auto",
           )}
         >

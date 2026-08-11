@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { customerApi } from "@/lib/api";
 import { getInitials } from "@/lib/utils";
 import { OnboardCustomerForm } from "@/components/collector/onboard-customer-form";
-import { Plus, Search, Wallet } from "lucide-react";
+import { Plus, Search, Wallet } from "@/components/icons/phosphor";
 
 export default function CollectorCustomersPage() {
   const [search, setSearch] = useState("");

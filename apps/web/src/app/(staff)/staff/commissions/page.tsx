@@ -2,12 +2,16 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/badge";
 import { ledgerApi } from "@/lib/api";
 import { formatGhs, formatDate } from "@/lib/utils";
+import { CompanyPageHeader } from "@/components/company-admin/company-page-header";
+import {
+  CompanyPanel,
+  CompanyPanelHeader,
+} from "@/components/company-admin/company-panel";
 
 export default function CommissionsLedgerPage() {
   const queryClient = useQueryClient();
@@ -154,248 +158,228 @@ export default function CommissionsLedgerPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="dashboard-title">Collector Commissions</h1>
-
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleExportCsv}
-            className="text-xs font-semibold min-h-[36px]"
-            disabled={!transactions.length}
-          >
-            Download CSV
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => setIsPayingOut(!isPayingOut)}
-            className="text-xs font-semibold min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95"
-          >
-            {isPayingOut ? "Close Panel" : "Record Payout"}
-          </Button>
-        </div>
-      </div>
+      <CompanyPageHeader
+        title="Commissions"
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={handleExportCsv}
+              disabled={!transactions.length}
+              className="company-cta-secondary disabled:opacity-50"
+            >
+              Download CSV
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsPayingOut(!isPayingOut)}
+              className="company-cta-primary"
+            >
+              {isPayingOut ? "Close panel" : "Record payout"}
+            </button>
+          </>
+        }
+      />
 
       {isPayingOut && (
-        <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden max-w-xl">
-          <CardHeader className="px-6 py-4 border-b border-border/60">
-            <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
-              Record Commission Payout
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <form onSubmit={handlePayoutSubmit} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-muted-foreground">
-                  Select Collector
-                </label>
-                <select
-                  value={selectedCollectorId}
-                  onChange={(e) => setSelectedCollectorId(e.target.value)}
-                  className="w-full rounded-none border border-border/60 bg-card px-3 py-2 text-xs text-foreground outline-none focus:border-primary min-h-[40px]"
-                  required
-                >
-                  <option value="">-- Choose Collector --</option>
-                  {collectors.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.firstName} {c.lastName} (Bal: {formatGhs(c.balance)})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-muted-foreground">
-                  Payout Amount (GHS)
-                </label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  placeholder="0.00"
-                  value={payoutAmount}
-                  onChange={(e) => setPayoutAmount(e.target.value)}
-                  className="min-h-[40px] rounded-none border border-border/60 text-xs"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-muted-foreground">
-                  Notes / Reference
-                </label>
-                <Input
-                  type="text"
-                  placeholder="e.g. Paid via Mobile Money"
-                  value={payoutDescription}
-                  onChange={(e) => setPayoutDescription(e.target.value)}
-                  className="min-h-[40px] rounded-none border border-border/60 text-xs"
-                />
-              </div>
-
-              <Button
-                type="submit"
-                loading={payoutMutation.isPending}
-                className="w-full text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white min-h-[40px] border-none"
+        <CompanyPanel className="max-w-xl" padded>
+          <h2 className="company-panel-title mb-4">Record commission payout</h2>
+          <form onSubmit={handlePayoutSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-muted-foreground">
+                Select Collector
+              </label>
+              <select
+                value={selectedCollectorId}
+                onChange={(e) => setSelectedCollectorId(e.target.value)}
+                className="w-full rounded-none border border-border/60 bg-card px-3 py-2 text-xs text-foreground outline-none focus:border-primary min-h-[40px]"
+                required
               >
-                Confirm Payout
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+                <option value="">-- Choose Collector --</option>
+                {collectors.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.firstName} {c.lastName} (Bal: {formatGhs(c.balance)})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-muted-foreground">
+                Payout Amount (GHS)
+              </label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0.01"
+                placeholder="0.00"
+                value={payoutAmount}
+                onChange={(e) => setPayoutAmount(e.target.value)}
+                className="min-h-[40px] rounded-none border border-border/60 text-xs"
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-muted-foreground">
+                Notes / Reference
+              </label>
+              <Input
+                type="text"
+                placeholder="e.g. Paid via Mobile Money"
+                value={payoutDescription}
+                onChange={(e) => setPayoutDescription(e.target.value)}
+                className="min-h-[40px] rounded-none border border-border/60 text-xs"
+              />
+            </div>
+
+            <Button
+              type="submit"
+              loading={payoutMutation.isPending}
+              className="w-full text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white min-h-[40px] border-none"
+            >
+              Confirm Payout
+            </Button>
+          </form>
+        </CompanyPanel>
       )}
 
-      {/* Collector balances summary card */}
-      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
-        <CardHeader className="px-6 py-4 border-b border-border/60">
-          <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
-            Agent Balances
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
-                  <th className="py-3.5 px-6">Collector</th>
-                  <th className="py-3.5 px-6">Email</th>
-                  <th className="py-3.5 px-6">Total Earned</th>
-                  <th className="py-3.5 px-6">Total Paid</th>
-                  <th className="py-3.5 px-6 text-right">Available Balance</th>
+      <CompanyPanel>
+        <CompanyPanelHeader title="Agent balances" />
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
+                <th className="py-3.5 px-6">Collector</th>
+                <th className="py-3.5 px-6">Email</th>
+                <th className="py-3.5 px-6">Total Earned</th>
+                <th className="py-3.5 px-6">Total Paid</th>
+                <th className="py-3.5 px-6 text-right">Available Balance</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/60">
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="py-8 text-center text-xs text-muted-foreground"
+                  >
+                    Loading collector summaries...
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {isLoading ? (
-                  <tr>
-                    <td
-                      colSpan={5}
-                      className="py-8 text-center text-xs text-muted-foreground"
-                    >
-                      Loading collector summaries...
+              ) : collectors.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="py-8 text-center text-xs text-muted-foreground"
+                  >
+                    No collector commission data found
+                  </td>
+                </tr>
+              ) : (
+                collectors.map((c) => (
+                  <tr
+                    key={c.id}
+                    className="hover:bg-muted/20 transition-colors"
+                  >
+                    <td className="py-3.5 px-6 font-semibold text-xs text-foreground">
+                      {c.firstName} {c.lastName}
+                    </td>
+                    <td className="py-3.5 px-6 text-muted-foreground text-xs font-mono">
+                      {c.email}
+                    </td>
+                    <td className="py-3.5 px-6 text-foreground text-xs font-semibold tabular-nums">
+                      {formatGhs(c.earned)}
+                    </td>
+                    <td className="py-3.5 px-6 text-muted-foreground text-xs font-semibold tabular-nums">
+                      {formatGhs(c.paid)}
+                    </td>
+                    <td className="py-3.5 px-6 text-right font-bold text-xs tabular-nums text-foreground">
+                      {formatGhs(c.balance)}
                     </td>
                   </tr>
-                ) : collectors.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={5}
-                      className="py-8 text-center text-xs text-muted-foreground"
-                    >
-                      No collector commission data found
-                    </td>
-                  </tr>
-                ) : (
-                  collectors.map((c) => (
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </CompanyPanel>
+
+      <CompanyPanel>
+        <CompanyPanelHeader title="Commissions log" />
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
+                <th className="py-3.5 px-6">Date</th>
+                <th className="py-3.5 px-6">Type</th>
+                <th className="py-3.5 px-6">Collector</th>
+                <th className="py-3.5 px-6">Reference / Notes</th>
+                <th className="py-3.5 px-6 text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/60">
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="py-8 text-center text-xs text-muted-foreground"
+                  >
+                    Loading activity logs...
+                  </td>
+                </tr>
+              ) : transactions.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="py-8 text-center text-xs text-muted-foreground"
+                  >
+                    No recent activities recorded
+                  </td>
+                </tr>
+              ) : (
+                transactions.map((t: any) => {
+                  const isEarned = t.type === "deposit";
+                  const entry1200 = t.ledgerEntries?.find(
+                    (e: any) => e.account?.code === "1200",
+                  );
+                  const displayAmt = isEarned
+                    ? Number(entry1200?.amount || 0)
+                    : Number(t.amount);
+
+                  return (
                     <tr
-                      key={c.id}
+                      key={t.id}
                       className="hover:bg-muted/20 transition-colors"
                     >
-                      <td className="py-3.5 px-6 font-semibold text-xs text-foreground">
-                        {c.firstName} {c.lastName}
+                      <td className="py-3.5 px-6 text-xs text-muted-foreground font-mono">
+                        {formatDate(t.createdAt)}
                       </td>
-                      <td className="py-3.5 px-6 text-muted-foreground text-xs font-mono">
-                        {c.email}
+                      <td className="py-3.5 px-6 text-xs">
+                        <StatusBadge
+                          status={isEarned ? "completed" : "pending"}
+                        />
                       </td>
-                      <td className="py-3.5 px-6 text-foreground text-xs font-semibold tabular-nums">
-                        {formatGhs(c.earned)}
+                      <td className="py-3.5 px-6 text-foreground font-semibold text-xs">
+                        {t.collector
+                          ? `${t.collector.firstName} ${t.collector.lastName}`
+                          : "System"}
                       </td>
-                      <td className="py-3.5 px-6 text-muted-foreground text-xs font-semibold tabular-nums">
-                        {formatGhs(c.paid)}
+                      <td className="py-3.5 px-6 text-muted-foreground text-xs">
+                        {isEarned ? `Deposit: ${t.reference}` : t.description}
                       </td>
                       <td className="py-3.5 px-6 text-right font-bold text-xs tabular-nums text-foreground">
-                        {formatGhs(c.balance)}
+                        {isEarned ? "+" : "-"}
+                        {formatGhs(displayAmt)}
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Audit ledger transaction list */}
-      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
-        <CardHeader className="px-6 py-4 border-b border-border/60">
-          <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
-            Commissions Log
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase">
-                  <th className="py-3.5 px-6">Date</th>
-                  <th className="py-3.5 px-6">Type</th>
-                  <th className="py-3.5 px-6">Collector</th>
-                  <th className="py-3.5 px-6">Reference / Notes</th>
-                  <th className="py-3.5 px-6 text-right">Amount</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {isLoading ? (
-                  <tr>
-                    <td
-                      colSpan={5}
-                      className="py-8 text-center text-xs text-muted-foreground"
-                    >
-                      Loading activity logs...
-                    </td>
-                  </tr>
-                ) : transactions.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={5}
-                      className="py-8 text-center text-xs text-muted-foreground"
-                    >
-                      No recent activities recorded
-                    </td>
-                  </tr>
-                ) : (
-                  transactions.map((t: any) => {
-                    const isEarned = t.type === "deposit";
-                    const entry1200 = t.ledgerEntries?.find(
-                      (e: any) => e.account?.code === "1200",
-                    );
-                    const displayAmt = isEarned
-                      ? Number(entry1200?.amount || 0)
-                      : Number(t.amount);
-
-                    return (
-                      <tr
-                        key={t.id}
-                        className="hover:bg-muted/20 transition-colors"
-                      >
-                        <td className="py-3.5 px-6 text-xs text-muted-foreground font-mono">
-                          {formatDate(t.createdAt)}
-                        </td>
-                        <td className="py-3.5 px-6 text-xs">
-                          <StatusBadge
-                            status={isEarned ? "completed" : "pending"}
-                          />
-                        </td>
-                        <td className="py-3.5 px-6 text-foreground font-semibold text-xs">
-                          {t.collector
-                            ? `${t.collector.firstName} ${t.collector.lastName}`
-                            : "System"}
-                        </td>
-                        <td className="py-3.5 px-6 text-muted-foreground text-xs">
-                          {isEarned ? `Deposit: ${t.reference}` : t.description}
-                        </td>
-                        <td className="py-3.5 px-6 text-right font-bold text-xs tabular-nums text-foreground">
-                          {isEarned ? "+" : "-"}
-                          {formatGhs(displayAmt)}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </CompanyPanel>
     </div>
   );
 }

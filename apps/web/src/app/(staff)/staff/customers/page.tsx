@@ -3,14 +3,17 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { customerApi } from "@/lib/api";
-import { getInitials, cn } from "@/lib/utils";
+import { getInitials } from "@/lib/utils";
 import Link from "next/link";
 import { CustomerListSkeleton } from "@/components/ui/skeleton";
-import { Plus, Search, Filter } from "lucide-react";
+import { CompanyPageHeader } from "@/components/company-admin/company-page-header";
+import { CompanyPanel } from "@/components/company-admin/company-panel";
+import { CompanyFilterTabs } from "@/components/company-admin/company-filter-tabs";
+import { CompanySearchField } from "@/components/company-admin/company-search-field";
 
 export default function StaffCustomersPage() {
   const router = useRouter();
@@ -83,82 +86,44 @@ export default function StaffCustomersPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="dashboard-title">Customers</h1>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleExportCsv}
-            className="text-xs font-semibold min-h-[36px]"
-            disabled={!data?.items?.length}
-          >
-            Download CSV
-          </Button>
-          <Link href="/staff/customers/new">
-            <Button className="flex items-center gap-1.5 font-semibold text-xs min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95">
-              <Plus className="h-3.5 w-3.5" />
-              Onboard Customer
-            </Button>
-          </Link>
-        </div>
-      </div>
+    <div className="space-y-5">
+      <CompanyPageHeader
+        title="Customers"
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={handleExportCsv}
+              disabled={!data?.items?.length}
+              className="company-cta-secondary disabled:opacity-50"
+            >
+              Export
+            </button>
+            <Link href="/staff/customers/new" className="company-cta-primary">
+              Add customer
+            </Link>
+          </>
+        }
+      />
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-border/60 pb-1">
-        {[
-          { label: "All Customers", value: "" },
+      <CompanyFilterTabs
+        value={status}
+        onChange={handleStatusChange}
+        tabs={[
+          { label: "All customers", value: "" },
           { label: "Active", value: "active" },
           { label: "Pending", value: "pending" },
           { label: "Suspended", value: "suspended" },
-        ].map((tab) => (
-          <button
-            key={tab.value}
-            type="button"
-            onClick={() => handleStatusChange(tab.value)}
-            className={cn(
-              "px-3 py-1.5 text-xs font-semibold border-b-2 transition-colors",
-              status === tab.value
-                ? "border-primary text-primary font-bold"
-                : "border-transparent text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+        ]}
+      />
 
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search by name, email, phone, or customer ID..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-xs rounded-none border border-border/60 bg-card text-foreground focus:outline-none focus:border-primary min-h-[38px]"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-muted-foreground shrink-0" />
-          <select
-            value={status}
-            onChange={(e) => handleStatusChange(e.target.value)}
-            className="py-2 px-3 text-xs rounded-none border border-border/60 bg-card text-foreground focus:outline-none focus:border-primary min-h-[38px]"
-          >
-            <option value="">All Statuses</option>
-            <option value="active">Active</option>
-            <option value="pending">Pending</option>
-            <option value="suspended">Suspended</option>
-          </select>
-        </div>
-      </div>
+      <CompanySearchField
+        value={search}
+        onChange={setSearch}
+        placeholder="Search by name, email, phone, or customer ID"
+      />
 
-      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+      <CompanyPanel>
         <CardContent className="p-0">
           {isLoading ? (
             <CustomerListSkeleton count={4} />
@@ -229,7 +194,7 @@ export default function StaffCustomersPage() {
             </div>
           )}
         </CardContent>
-      </Card>
+      </CompanyPanel>
     </div>
   );
 }

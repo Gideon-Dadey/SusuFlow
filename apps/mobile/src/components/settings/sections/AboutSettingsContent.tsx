@@ -32,23 +32,23 @@ export function AboutSettingsContent() {
 
       <SettingsPanel>
         <SettingRow
-          icon="flag-outline"
+          icon="target"
           title="Built for Ghana"
           subtitle="Digital susu for modern communities"
         />
         <SettingRow
-          icon="shield-outline"
+          icon="shield"
           title="Regulated & secure"
           subtitle="Your savings protected by industry standards"
         />
         <SettingRow
-          icon="document-text-outline"
+          icon="file-text"
           title="Terms of service"
           subtitle="Read our terms and policies"
           onPress={() => router.push("/(tabs)/profile/terms")}
         />
         <SettingRow
-          icon="lock-closed-outline"
+          icon="lock"
           title="Privacy policy"
           subtitle="How we handle your data"
           onPress={() => router.push("/(tabs)/profile/privacy")}

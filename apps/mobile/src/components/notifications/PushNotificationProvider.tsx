@@ -5,13 +5,16 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
 import { refreshCustomerFinancials } from "@/lib/financial-queries";
 import {
+  hrefForNotificationRoute,
   parsePushNotificationData,
   resolveNotificationRouteFromPush,
   resolveTransactionForDeepLink,
 } from "@/lib/notification-routing";
+import { queryKeys } from "@/lib/query-keys";
 import {
   configurePushNotificationHandler,
   registerDevicePushToken,
+  registerDevicePushTokenWithRetry,
 } from "@/lib/push-notifications";
 import { useAuthStore } from "@/stores/auth.store";
 import { useDeepLinkStore } from "@/stores/deep-link.store";
@@ -25,22 +28,30 @@ export function PushNotificationProvider({
 }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const isHydrated = useAuthStore((s) => s.isHydrated);
+  const userId = useAuthStore((s) => s.user?.id);
   const queryClient = useQueryClient();
   const { sessionKey } = useCustomerSession();
   const router = useRouter();
   const setPendingReceipt = useDeepLinkStore((s) => s.setPendingReceipt);
   const registerAttemptedRef = useRef(false);
+  const wasAuthenticatedRef = useRef(false);
   const handledResponseIds = useRef(new Set<string>());
 
   useEffect(() => {
-    if (!isHydrated || !isAuthenticated) {
-      registerAttemptedRef.current = false;
+    if (!isHydrated) return;
+
+    if (!isAuthenticated) {
+      if (wasAuthenticatedRef.current) {
+        registerAttemptedRef.current = false;
+      }
+      wasAuthenticatedRef.current = false;
       return;
     }
 
+    wasAuthenticatedRef.current = true;
     if (registerAttemptedRef.current) return;
     registerAttemptedRef.current = true;
-    void registerDevicePushToken();
+    void registerDevicePushTokenWithRetry(2);
 
     const tokenSub = Notifications.addPushTokenListener(() => {
       void registerDevicePushToken();
@@ -58,6 +69,11 @@ export function PushNotificationProvider({
       if (sessionKey) {
         refreshCustomerFinancials(queryClient, sessionKey, { force: true });
       }
+      if (userId) {
+        void queryClient.invalidateQueries({
+          queryKey: queryKeys.notificationInbox(userId),
+        });
+      }
     };
 
     const handleResponse = async (
@@ -74,28 +90,23 @@ export function PushNotificationProvider({
       );
       const fallback = resolveNotificationRouteFromPush(data);
 
-      if (fallback.kind === "kyc") {
-        router.push("/(tabs)/profile/kyc");
+      if (fallback.kind === "kyc" || fallback.kind === "security") {
+        router.push(hrefForNotificationRoute(fallback.kind));
         return;
       }
       if (fallback.kind === "plans") {
-        router.push("/(tabs)/plans");
+        router.push(hrefForNotificationRoute("plans"));
         return;
       }
 
       const transaction = await resolveTransactionForDeepLink(sessionKey, data);
       if (transaction) {
         setPendingReceipt(transaction);
-        router.push("/(tabs)/activity");
+        router.push(hrefForNotificationRoute("activity"));
         return;
       }
 
-      if (fallback.kind === "activity") {
-        router.push("/(tabs)/activity");
-        return;
-      }
-
-      router.push("/(tabs)");
+      router.push(hrefForNotificationRoute(fallback.kind));
     };
 
     const receivedSub = Notifications.addNotificationReceivedListener(() => {
@@ -108,7 +119,6 @@ export function PushNotificationProvider({
       },
     );
 
-    // Cold start: user tapped a notification while the app was killed.
     void Notifications.getLastNotificationResponseAsync().then((response) => {
       if (response) void handleResponse(response);
     });
@@ -124,6 +134,7 @@ export function PushNotificationProvider({
     queryClient,
     router,
     setPendingReceipt,
+    userId,
   ]);
 
   return <>{children}</>;

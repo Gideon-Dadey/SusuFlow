@@ -1,20 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ReceiptModal } from "@/components/financial/receipt-modal";
 import { StatusBadge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { depositApi, type Transaction } from "@/lib/api";
 import { formatGhs, formatDate } from "@/lib/utils";
 import { TransactionListSkeleton } from "@/components/ui/skeleton";
+import { CompanyPageHeader } from "@/components/company-admin/company-page-header";
+import { CompanyPanel } from "@/components/company-admin/company-panel";
+import { CompanyFilterTabs } from "@/components/company-admin/company-filter-tabs";
 
 export default function StaffDepositsPage() {
   const queryClient = useQueryClient();
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
+  const [status, setStatus] = useState("");
 
   const { data, isLoading } = useQuery({
     queryKey: ["staff-deposits"],
@@ -76,41 +79,64 @@ export default function StaffDepositsPage() {
   };
 
   const deposits = data?.items || [];
+  const filtered = useMemo(
+    () => (status ? deposits.filter((tx) => tx.status === status) : deposits),
+    [deposits, status],
+  );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="dashboard-title">All Deposits</h1>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={handleExportCsv}
-          className="text-xs font-semibold"
-          disabled={!deposits.length}
-        >
-          Download CSV
-        </Button>
-      </div>
+    <div className="space-y-5">
+      <CompanyPageHeader
+        title="Deposits"
+        actions={
+          <button
+            type="button"
+            onClick={handleExportCsv}
+            disabled={!deposits.length}
+            className="company-cta-secondary disabled:opacity-50"
+          >
+            Export
+          </button>
+        }
+      />
 
-      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+      <CompanyFilterTabs
+        value={status}
+        onChange={setStatus}
+        tabs={[
+          { label: "All deposits", value: "", count: deposits.length },
+          {
+            label: "Pending",
+            value: "pending",
+            count: deposits.filter((tx) => tx.status === "pending").length,
+          },
+          {
+            label: "Completed",
+            value: "completed",
+            count: deposits.filter((tx) => tx.status === "completed").length,
+          },
+        ]}
+      />
+
+      <CompanyPanel>
         {isLoading ? (
           <div className="p-4">
             <TransactionListSkeleton count={5} />
           </div>
-        ) : deposits.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <p className="py-8 text-center text-xs text-muted-foreground">
             No deposit transactions recorded yet.
           </p>
         ) : (
-          <div className="divide-y divide-border/60">
-            {deposits.map((tx) => (
+          <div>
+            {filtered.map((tx) => (
               <div
                 key={tx.id}
                 onClick={() => {
                   setSelectedTxn(tx);
                   setReceiptOpen(true);
                 }}
-                className="flex items-center justify-between px-4 sm:px-6 py-3.5 hover:bg-muted/20 cursor-pointer transition-colors"
+                className="company-row cursor-pointer"
               >
                 <div className="min-w-0 flex-1 pr-4">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -151,7 +177,7 @@ export default function StaffDepositsPage() {
             ))}
           </div>
         )}
-      </Card>
+      </CompanyPanel>
 
       <ReceiptModal
         transaction={selectedTxn}

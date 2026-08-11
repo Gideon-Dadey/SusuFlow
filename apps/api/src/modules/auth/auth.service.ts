@@ -28,6 +28,7 @@ import { OtpService } from "./otp.service";
 import { CacheService } from "../../cache/cache.service";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
+import { enqueueNotification } from "../../common/notifications/enqueue";
 
 @Injectable()
 export class AuthService {
@@ -197,6 +198,18 @@ export class AuthService {
           where: { id: candidate.id },
           data: updateData,
         });
+        if (updateData.lockedUntil && candidate.tenantId) {
+          void enqueueNotification(
+            this.notificationQueue,
+            "security-account-locked",
+            {
+              tenantId: candidate.tenantId,
+              userId: candidate.id,
+              firstName: candidate.firstName,
+            },
+            `${candidate.id}:${updateData.lockedUntil.getTime()}`,
+          ).catch(() => undefined);
+        }
       }
       throw new UnauthorizedException("Invalid credentials");
     }
@@ -237,10 +250,25 @@ export class AuthService {
       });
     }
 
+    const hadPriorLogin = Boolean(user.lastLoginAt);
+
     await this.prisma.user.update({
       where: { id: user.id },
       data: { failedLoginCount: 0, lockedUntil: null, lastLoginAt: new Date() },
     });
+
+    if (hadPriorLogin && user.tenantId) {
+      void enqueueNotification(
+        this.notificationQueue,
+        "security-new-login",
+        {
+          tenantId: user.tenantId,
+          userId: user.id,
+          firstName: user.firstName,
+        },
+        `${user.id}:${Date.now()}`,
+      ).catch(() => undefined);
+    }
 
     const roles = user.userRoles.map((ur) => ur.role.name);
 

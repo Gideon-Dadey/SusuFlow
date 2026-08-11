@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/components/icons/phosphor";
 import { BRAND_WORKFLOW_AUTOMATION } from "@/lib/brand-assets";
 import { MarketingContainer } from "./marketing-container";
 import { SectionEyebrow } from "./section-eyebrow";

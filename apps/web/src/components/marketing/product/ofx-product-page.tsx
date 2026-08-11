@@ -1,6 +1,6 @@
 import Link from "next/link";
-import type { LucideIcon } from "lucide-react";
-import { ArrowRight, BadgeCheck } from "lucide-react";
+import type { LucideIcon } from "@/components/icons/phosphor";
+import { ArrowRight, BadgeCheck } from "@/components/icons/phosphor";
 import { cn } from "@/lib/utils";
 import { MarketingContainer } from "../marketing-container";
 

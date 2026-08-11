@@ -13,10 +13,13 @@ import {
   BrandSplashBackground,
   LAUNCH_SPLASH_DURATION_MS,
 } from "@/components/launch/SplashBackground";
-import { BRAND_LOGO } from "@/lib/brand-assets";
+import { BRAND_LOGO } from "@/lib/brand-splash";
 
-const FADE_OUT_MS = 700;
-const FADE_OUT_START_MS = LAUNCH_SPLASH_DURATION_MS - FADE_OUT_MS;
+const FADE_OUT_MS = 280;
+const FADE_OUT_START_MS = Math.max(
+  400,
+  LAUNCH_SPLASH_DURATION_MS - FADE_OUT_MS,
+);
 
 interface LaunchSplashProps {
   onFinish: () => void;

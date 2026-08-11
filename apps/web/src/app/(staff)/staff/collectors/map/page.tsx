@@ -46,7 +46,7 @@ export default function StaffCollectorsMapPage() {
     const cardId = d.customer?.customerNumber || "";
 
     return {
-      id: `DEP-${d.reference.slice(-6)}`,
+      id: d.reference,
       collector: "Field Agent",
       customer: `${customerName} (${cardId})`,
       amount: Number(d.amount),
@@ -86,7 +86,7 @@ export default function StaffCollectorsMapPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Registered Customers
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {isLoading ? "..." : `${customers.length}`}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -98,7 +98,7 @@ export default function StaffCollectorsMapPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Field Deposits
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {isLoading ? "..." : `${deposits.length}`}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -110,7 +110,7 @@ export default function StaffCollectorsMapPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             GPS Verification Rate
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             100% Verified
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">

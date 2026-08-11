@@ -83,9 +83,6 @@ export default function DepositScreen() {
     setRefreshing(true);
     try {
       await refetchWallet();
-      if (sessionKey) {
-        invalidateCustomerFinancials(queryClient, sessionKey);
-      }
     } finally {
       setRefreshing(false);
     }

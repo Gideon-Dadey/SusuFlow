@@ -12,7 +12,9 @@
     "db:migrate:deploy": "pnpm exec prisma migrate deploy",
     "db:seed": "dotenv -e ../../.env -- tsx prisma/seed.ts",
     "db:studio": "dotenv -e ../../.env -- prisma studio",
-    "db:push": "dotenv -e ../../.env -- prisma db push"
+    "db:push": "dotenv -e ../../.env -- prisma db push",
+    "refs:normalize": "dotenv -e ../../.env -- tsx scripts/normalize-transaction-references.ts",
+    "refs:normalize:apply": "dotenv -e ../../.env -- tsx scripts/normalize-transaction-references.ts --apply"
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",

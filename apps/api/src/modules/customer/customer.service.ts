@@ -219,6 +219,7 @@ export class CustomerService {
         resourceId: result.id,
         afterState: {
           customerNumber: result.customerNumber,
+          customerName: `${dto.firstName || ""} ${dto.lastName || ""}`.trim(),
           collectorId: result.collectorId,
           onboardedById: result.onboardedById,
         },

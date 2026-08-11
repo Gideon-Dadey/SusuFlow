@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Monitor, Moon, Sun } from "lucide-react";
+import { Monitor, Moon, Sun } from "@/components/icons/phosphor";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 

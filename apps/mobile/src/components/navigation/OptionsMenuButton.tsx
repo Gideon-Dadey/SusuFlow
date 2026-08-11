@@ -1,5 +1,5 @@
-import { FontAwesome6 } from "@expo/vector-icons";
 import { Pressable, StyleSheet } from "react-native";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { useTheme } from "@/theme/ThemeProvider";
 
 interface OptionsMenuButtonProps {
@@ -30,7 +30,12 @@ export function OptionsMenuButton({
         pressed && styles.pressed,
       ]}
     >
-      <FontAwesome6 name="bars" size={iconSize} color={colors.heading} solid />
+      <AppIcon
+        name="menu"
+        size={iconSize}
+        color={colors.heading}
+        weight="bold"
+      />
     </Pressable>
   );
 }

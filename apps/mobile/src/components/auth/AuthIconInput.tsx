@@ -1,5 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
+import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import {
   Pressable,
   StyleSheet,
@@ -10,11 +10,9 @@ import {
 } from "react-native";
 import { useTheme } from "@/theme/ThemeProvider";
 
-type IconName = keyof typeof Ionicons.glyphMap;
-
 interface AuthIconInputProps extends TextInputProps {
   label: string;
-  icon: IconName;
+  icon: AppIconName;
   secure?: boolean;
 }
 
@@ -52,7 +50,7 @@ export function AuthIconInput({
           },
         ]}
       >
-        <Ionicons name={icon} size={18} color={colors.mutedForeground} />
+        <AppIcon name={icon} size={18} color={colors.mutedForeground} />
         <TextInput
           placeholderTextColor={colors.mutedForeground}
           secureTextEntry={secure && !visible}
@@ -74,8 +72,8 @@ export function AuthIconInput({
             onPress={() => setVisible((v) => !v)}
             hitSlop={8}
           >
-            <Ionicons
-              name={visible ? "eye-off-outline" : "eye-outline"}
+            <AppIcon
+              name={visible ? "eye-off" : "eye"}
               size={20}
               color={colors.mutedForeground}
             />

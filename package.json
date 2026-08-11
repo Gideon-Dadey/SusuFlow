@@ -26,6 +26,8 @@
     "db:migrate": "pnpm --filter @susuflow/database db:migrate",
     "db:seed": "pnpm --filter @susuflow/database db:seed",
     "db:studio": "pnpm --filter @susuflow/database db:studio",
+    "refs:normalize": "pnpm --filter @susuflow/database refs:normalize",
+    "refs:normalize:apply": "pnpm --filter @susuflow/database refs:normalize:apply",
     "optimize:images": "pnpm --filter @susuflow/web optimize:images",
     "docker:up": "docker compose -f infrastructure/docker/docker-compose.yml up -d",
     "docker:down": "docker compose -f infrastructure/docker/docker-compose.yml down",
@@ -41,6 +43,12 @@
     "pnpm": ">=9.0.0"
   },
   "packageManager": "pnpm@9.15.0",
+  "pnpm": {
+    "overrides": {
+      "react": "19.1.0",
+      "react-dom": "19.1.0"
+    }
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",

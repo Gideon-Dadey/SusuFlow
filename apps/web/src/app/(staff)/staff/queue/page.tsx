@@ -2,24 +2,26 @@
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   operationsApi,
   type ActionQueueItem,
   type QueueItemType,
 } from "@/lib/api";
 import { formatGhs } from "@/lib/utils";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowDown,
-  faArrowUp,
-  faUserCheck,
-  faTriangleExclamation,
-  faUserPlus,
-  faClipboardList,
-} from "@fortawesome/free-solid-svg-icons";
+  ArrowDown,
+  ArrowUp,
+  ClipboardList,
+  ShieldAlert,
+  UserCheck,
+  UserPlus,
+} from "@/components/icons/phosphor";
+import { CompanyPageHeader } from "@/components/company-admin/company-page-header";
+import {
+  CompanyPanel,
+  CompanyPanelHeader,
+} from "@/components/company-admin/company-panel";
 
 const QUEUE_LINKS: Record<QueueItemType, string> = {
   withdrawal: "/staff/withdrawals",
@@ -29,12 +31,12 @@ const QUEUE_LINKS: Record<QueueItemType, string> = {
   customer: "/staff/customers",
 };
 
-const QUEUE_ICONS: Record<QueueItemType, typeof faArrowDown> = {
-  withdrawal: faArrowUp,
-  deposit: faArrowDown,
-  kyc: faUserCheck,
-  fraud: faTriangleExclamation,
-  customer: faUserPlus,
+const QUEUE_ICONS: Record<QueueItemType, typeof ArrowDown> = {
+  withdrawal: ArrowUp,
+  deposit: ArrowDown,
+  kyc: UserCheck,
+  fraud: ShieldAlert,
+  customer: UserPlus,
 };
 
 const PRIORITY_STYLES = {
@@ -51,11 +53,13 @@ function QueueRow({ item }: { item: ActionQueueItem }) {
       href={href}
       className={`flex items-start gap-3 border-l-4 ${PRIORITY_STYLES[item.priority]} px-4 py-3.5 hover:bg-muted/40 transition-colors`}
     >
-      <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-        <FontAwesomeIcon
-          icon={QUEUE_ICONS[item.type]}
-          className="h-4 w-4 text-muted-foreground"
-        />
+      <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-[#eef3f8] dark:bg-white/5">
+        {(() => {
+          const Icon = QUEUE_ICONS[item.type] || ClipboardList;
+          return (
+            <Icon className="h-4 w-4 text-muted-foreground" weight="regular" />
+          );
+        })()}
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
@@ -122,72 +126,61 @@ export default function ActionQueuePage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="dashboard-title">Action Queue</h1>
-        </div>
-        <Button
-          variant="outline"
-          onClick={() => refetch()}
-          disabled={isFetching}
-        >
-          {isFetching ? "Refreshing…" : "Refresh"}
-        </Button>
-      </div>
+    <div className="space-y-5">
+      <CompanyPageHeader
+        title="Approvals"
+        actions={
+          <button
+            type="button"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="company-cta-secondary disabled:opacity-50"
+          >
+            {isFetching ? "Refreshing…" : "Refresh"}
+          </button>
+        }
+      />
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
         {summaryCards.map((card) => (
-          <Link key={card.label} href={card.href}>
-            <Card className="hover:border-primary/40 transition-colors h-full">
-              <CardContent className="pt-4 pb-4">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  {card.label}
-                </p>
-                <p className="text-2xl font-bold mt-1">{card.count}</p>
-              </CardContent>
-            </Card>
+          <Link key={card.label} href={card.href} className="company-panel p-4">
+            <p className="company-meta uppercase tracking-[0.06em]">
+              {card.label}
+            </p>
+            <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">
+              {card.count}
+            </p>
           </Link>
         ))}
-        <Card className="border-primary/30 bg-primary/5">
-          <CardContent className="pt-4 pb-4">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-primary">
-              Total Pending
-            </p>
-            <p className="text-2xl font-bold mt-1 text-primary">
-              {summary?.total ?? 0}
-            </p>
-          </CardContent>
-        </Card>
+        <div className="company-panel p-4">
+          <p className="company-meta uppercase tracking-[0.06em]">
+            Total pending
+          </p>
+          <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">
+            {summary?.total ?? 0}
+          </p>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base font-semibold text-foreground">
-            Pending Actions
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          {isLoading ? (
-            <div className="h-48 animate-pulse bg-muted/50 m-4 rounded-lg" />
-          ) : items.length === 0 ? (
-            <div className="py-16 text-center">
-              <p className="text-sm font-medium text-foreground">
-                All caught up
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                No pending withdrawals, deposits, KYC reviews, or fraud alerts
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-border/60">
-              {items.map((item) => (
-                <QueueRow key={`${item.type}-${item.id}`} item={item} />
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <CompanyPanel>
+        <CompanyPanelHeader title="Pending actions" />
+        {isLoading ? (
+          <div className="h-48 animate-pulse bg-muted/50 m-4 rounded-lg" />
+        ) : items.length === 0 ? (
+          <div className="py-16 text-center">
+            <p className="text-sm font-medium text-foreground">All caught up</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              No pending withdrawals, deposits, KYC reviews, or fraud alerts
+            </p>
+          </div>
+        ) : (
+          <div>
+            {items.map((item) => (
+              <QueueRow key={`${item.type}-${item.id}`} item={item} />
+            ))}
+          </div>
+        )}
+      </CompanyPanel>
     </div>
   );
 }

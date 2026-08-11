@@ -1,15 +1,13 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
-
-type IoniconName = keyof typeof Ionicons.glyphMap;
 
 interface AccountInfoFieldProps {
   label: string;
   value?: string;
   onPress?: () => void;
-  trailingIcon?: IoniconName;
+  trailingIcon?: AppIconName;
   onTrailingPress?: () => void;
 }
 
@@ -58,7 +56,7 @@ export function AccountInfoField({
           hitSlop={10}
           style={({ pressed }) => [styles.trailing, pressed && styles.pressed]}
         >
-          <Ionicons name={trailingIcon} size={18} color={colors.foreground} />
+          <AppIcon name={trailingIcon} size={18} color={colors.foreground} />
         </Pressable>
       ) : null}
     </View>

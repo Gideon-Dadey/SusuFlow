@@ -11,8 +11,8 @@ import {
   Text,
   View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { MIN_PASSWORD_LENGTH } from "@susuflow/shared/client";
 import { AuthMessage } from "@/components/auth/AuthMessage";
 import { DarkAuthField } from "@/components/auth/DarkAuthField";
@@ -245,10 +245,11 @@ export default function RegisterScreen() {
                       rule.ok ? styles.ruleIconOk : styles.ruleIconBad,
                     ]}
                   >
-                    <Ionicons
-                      name={rule.ok ? "checkmark" : "close"}
+                    <AppIcon
+                      name={rule.ok ? "check" : "close"}
                       size={12}
                       color="#ffffff"
+                      weight="bold"
                     />
                   </View>
                   <Text style={styles.ruleText}>{rule.label}</Text>
@@ -264,7 +265,12 @@ export default function RegisterScreen() {
             >
               <View style={[styles.checkbox, agreed && styles.checkboxOn]}>
                 {agreed ? (
-                  <Ionicons name="checkmark" size={14} color="#000000" />
+                  <AppIcon
+                    name="check"
+                    size={14}
+                    color="#000000"
+                    weight="bold"
+                  />
                 ) : null}
               </View>
               <Text style={styles.agreeText}>

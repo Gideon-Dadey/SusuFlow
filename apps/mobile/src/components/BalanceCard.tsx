@@ -1,4 +1,4 @@
-import { Feather } from "@expo/vector-icons";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -32,7 +32,7 @@ export function BalanceCard({
           hitSlop={12}
           accessibilityLabel={visible ? "Hide balance" : "Show balance"}
         >
-          <Feather
+          <AppIcon
             name={visible ? "eye" : "eye-off"}
             size={18}
             color="rgba(255,255,255,0.85)"
@@ -46,7 +46,7 @@ export function BalanceCard({
 
       {todayChange > 0 ? (
         <View style={styles.changeRow}>
-          <Feather name="trending-up" size={14} color="#86efac" />
+          <AppIcon name="trending-up" size={14} color="#86efac" weight="bold" />
           <Text style={styles.changeText}>
             +₵{todayChange.toFixed(2)} today
           </Text>

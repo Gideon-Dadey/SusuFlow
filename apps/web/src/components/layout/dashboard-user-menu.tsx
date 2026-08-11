@@ -41,6 +41,8 @@ export function DashboardUserMenu() {
 
   const avatarSrc =
     user?.avatarUrl || (!isSuperAdmin ? tenantBranding?.logoUrl : null);
+  const showHeaderIdentity =
+    portal !== "staff" || pathname === "/staff/dashboard";
 
   useEffect(() => {
     if (!open) return;
@@ -69,84 +71,94 @@ export function DashboardUserMenu() {
     router.push("/login");
   };
 
+  if (portal === "staff" && !showHeaderIdentity) {
+    return null;
+  }
+
   return (
     <div ref={rootRef} className="flex items-center gap-1 sm:gap-2">
       <ThemeToggle iconOnly />
 
-      <NotificationPanel />
+      {showHeaderIdentity ? (
+        <>
+          <NotificationPanel />
 
-      <div className="relative">
-        <button
-          type="button"
-          onClick={() => setOpen((value) => !value)}
-          className="flex size-9 items-center justify-center overflow-hidden border border-border/80 bg-card ring-2 ring-background transition-shadow hover:shadow-md"
-          aria-label="Account menu"
-          aria-haspopup="menu"
-          aria-expanded={open}
-        >
-          {avatarSrc ? (
-            <img
-              src={avatarSrc}
-              alt={
-                user?.firstName ? `${user.firstName} Avatar` : "Profile Avatar"
-              }
-              className="size-full object-cover"
-            />
-          ) : (
-            <span className="text-xs font-bold text-foreground">
-              {getInitials(user?.firstName, user?.lastName)}
-            </span>
-          )}
-        </button>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setOpen((value) => !value)}
+              className="company-header-chip flex size-9 items-center justify-center overflow-hidden border border-border/80 bg-card transition-shadow hover:shadow-md"
+              aria-label="Account menu"
+              aria-haspopup="menu"
+              aria-expanded={open}
+            >
+              {avatarSrc ? (
+                <img
+                  src={avatarSrc}
+                  alt={
+                    user?.firstName
+                      ? `${user.firstName} Avatar`
+                      : "Profile Avatar"
+                  }
+                  className="size-full object-cover"
+                />
+              ) : (
+                <span className="text-xs font-bold text-foreground">
+                  {getInitials(user?.firstName, user?.lastName)}
+                </span>
+              )}
+            </button>
 
-        {open ? (
-          <div
-            role="menu"
-            className="absolute right-0 top-full z-[300] mt-2 w-52 overflow-hidden rounded-none border border-border bg-popover shadow-elevated"
-          >
-            <div className="border-b border-border p-3">
-              <p className="truncate text-xs font-semibold text-foreground">
-                {user?.firstName
-                  ? `${user.firstName} ${user.lastName ?? ""}`.trim()
-                  : "User Account"}
-              </p>
-              <p className="truncate text-[11px] text-muted-foreground">
-                {user?.email}
-              </p>
-              <p className="mt-1 text-[11px] font-medium text-primary">
-                {roleLabel}
-              </p>
-            </div>
-            <div className="p-1.5 space-y-0.5">
-              <Link
-                href={profilePath}
-                onClick={() => setOpen(false)}
-                className="flex w-full items-center gap-3 px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
+            {open ? (
+              <div
+                role="menu"
+                className="absolute right-0 top-full z-[300] mt-2 w-52 overflow-hidden rounded-none border border-border bg-popover shadow-elevated"
               >
-                <FontAwesomeIcon
-                  icon={faUser}
-                  className="h-4 w-4 text-muted-foreground"
-                />
-                <span>Profile & Settings</span>
-              </Link>
-              <button
-                type="button"
-                onClick={() => {
-                  setOpen(false);
-                  handleLogout();
-                }}
-                className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
-              >
-                <FontAwesomeIcon
-                  icon={faRightFromBracket}
-                  className="h-4 w-4"
-                />
-                <span>Sign out</span>
-              </button>
-            </div>
+                <div className="border-b border-border p-3">
+                  <p className="truncate text-xs font-semibold text-foreground">
+                    {user?.firstName
+                      ? `${user.firstName} ${user.lastName ?? ""}`.trim()
+                      : "User Account"}
+                  </p>
+                  <p className="truncate text-[11px] text-muted-foreground">
+                    {user?.email}
+                  </p>
+                  <p className="mt-1 text-[11px] font-medium text-primary">
+                    {roleLabel}
+                  </p>
+                </div>
+                <div className="p-1.5 space-y-0.5">
+                  <Link
+                    href={profilePath}
+                    onClick={() => setOpen(false)}
+                    className="flex w-full items-center gap-3 px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
+                  >
+                    <FontAwesomeIcon
+                      icon={faUser}
+                      className="h-4 w-4 text-muted-foreground"
+                    />
+                    <span>Profile & Settings</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      handleLogout();
+                    }}
+                    className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+                  >
+                    <FontAwesomeIcon
+                      icon={faRightFromBracket}
+                      className="h-4 w-4"
+                    />
+                    <span>Sign out</span>
+                  </button>
+                </div>
+              </div>
+            ) : null}
           </div>
-        ) : null}
-      </div>
+        </>
+      ) : null}
     </div>
   );
 }

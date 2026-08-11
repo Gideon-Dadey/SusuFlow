@@ -65,7 +65,7 @@ export default function StaffNotificationsPage() {
     const cardId = d.customer?.customerNumber || "";
 
     return {
-      id: `LOG-${d.reference.slice(-6)}`,
+      id: d.reference,
       customer: `${customerName} (${cardId})`,
       phone,
       type: "Deposit Receipt",
@@ -138,7 +138,7 @@ export default function StaffNotificationsPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Active Customers
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {isLoading ? "..." : `${customers.length}`}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -150,7 +150,7 @@ export default function StaffNotificationsPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Dispatches
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {isLoading ? "..." : `${allLogs.length}`}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">

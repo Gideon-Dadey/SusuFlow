@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/components/icons/phosphor";
 import { MarketingContainer } from "./marketing-container";
 
 export function FooterCtaSection() {

@@ -23,7 +23,7 @@ import {
   ChevronRight,
   Copy,
   Check,
-} from "lucide-react";
+} from "@/components/icons/phosphor";
 import { cn } from "@/lib/utils";
 
 const QUICK_AMOUNTS = [10, 20, 50, 100, 200, 500];

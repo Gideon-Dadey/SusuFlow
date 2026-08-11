@@ -130,13 +130,26 @@ Scan the QR code with Expo Go, or press `a` (Android) / `i` (iOS).
    pnpm --filter @susuflow/mobile submit:production
    ```
 
+## Push notifications
+
+Background payment and security alerts use Expo Push (FCM / APNs under the hood). The **worker must be running** (`pnpm dev` includes it).
+
+1. Open the app on a **physical phone** (simulators cannot receive push).
+2. Sign in, allow notifications when prompted.
+3. More → Notifications → **Send test notification**, then leave the app.
+4. A real deposit confirmation, failed payment, payout, KYC decision, or new sign-in will also wake the phone.
+
+Expo Go can register a token without a custom EAS project. Production / development builds need `eas init` plus `EXPO_PUBLIC_EAS_PROJECT_ID` (or the UUID written into `app.json`). Optional server env: `EXPO_ACCESS_TOKEN` for higher Expo rate limits.
+
 ## Production checklist
 
 Before shipping to real users:
 
 - [ ] `eas init` linked to your Expo account (updates `app.json` `projectId`)
-- [ ] EAS env: `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_WEB_URL`, optional support contacts
-- [ ] API deployed with password reset + OTP email/SMS workers running
+- [ ] EAS env: `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_WEB_URL`, `EXPO_PUBLIC_EAS_PROJECT_ID`, optional support contacts
+- [ ] API + worker deployed; `EXPO_ACCESS_TOKEN` set in production
+- [ ] FCM (Android) and APNs (iOS) credentials uploaded in the Expo dashboard
+- [ ] Test: login → allow notifications → send test alert while the app is closed → deposit confirmed push → tap opens the receipt
 - [ ] Test full flows: register → verify → login → deposit → withdraw → logout → biometric login
 - [ ] Store listings: privacy policy, terms, support URL (linked from Profile → About)
 

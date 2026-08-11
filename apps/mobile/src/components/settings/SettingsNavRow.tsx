@@ -1,12 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import { useTheme } from "@/theme/ThemeProvider";
 import { typography } from "@/theme/tokens";
 
-type IoniconName = keyof typeof Ionicons.glyphMap;
-
 interface SettingsNavRowProps {
-  icon: IoniconName;
+  icon: AppIconName;
   label: string;
   description?: string;
   value?: string;
@@ -29,7 +27,7 @@ export function SettingsNavRow({
   const content = (
     <>
       <View style={styles.iconSlot}>
-        <Ionicons
+        <AppIcon
           name={icon}
           size={22}
           color={destructive ? colors.destructive : colors.primary}
@@ -59,8 +57,8 @@ export function SettingsNavRow({
         </Text>
       ) : null}
       {showChevron && onPress ? (
-        <Ionicons
-          name="chevron-forward"
+        <AppIcon
+          name="chevron-right"
           size={16}
           color={colors.mutedForeground}
         />

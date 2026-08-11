@@ -115,7 +115,7 @@ export default function ReportsHubPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Deposits
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {formatGhs(summary.totalDeposits)}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -127,7 +127,7 @@ export default function ReportsHubPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Withdrawals
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {formatGhs(summary.totalWithdrawals)}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -139,7 +139,7 @@ export default function ReportsHubPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Platform Cash Reserve
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {formatGhs(summary.platformCash)}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">Liquid funds</p>
@@ -149,7 +149,7 @@ export default function ReportsHubPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Customer Liability
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {formatGhs(summary.outstandingLiability)}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
