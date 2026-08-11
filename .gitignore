@@ -13,6 +13,8 @@ build/
 .env
 .env.local
 .env.*.local
+.env.bak
+*.env.bak*
 
 # IDE
 .idea/
@@ -23,6 +25,7 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+.tmp-ofx-tour/
 
 # Logs
 logs/

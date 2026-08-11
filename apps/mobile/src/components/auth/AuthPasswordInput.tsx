@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { useTheme } from "@/theme/ThemeProvider";
 
 interface AuthPasswordInputProps {
@@ -65,8 +65,8 @@ export function AuthPasswordInput({
           hitSlop={8}
           style={styles.toggle}
         >
-          <Ionicons
-            name={visible ? "eye-off-outline" : "eye-outline"}
+          <AppIcon
+            name={visible ? "eye-off" : "eye"}
             size={20}
             color={colors.mutedForeground}
           />

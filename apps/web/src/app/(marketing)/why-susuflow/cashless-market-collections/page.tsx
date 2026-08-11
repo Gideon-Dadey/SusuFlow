@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Send, Shield, Zap } from "lucide-react";
+import { Send, Shield, Zap } from "@/components/icons/phosphor";
 import { WhyPageTemplate } from "@/components/marketing/ofx/why-page-template";
 import { APP_NAME } from "@/lib/marketing-data";
 

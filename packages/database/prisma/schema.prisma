@@ -56,6 +56,7 @@ model User {
   lastLoginAt         DateTime?      @map("last_login_at") @db.Timestamptz(6)
   failedLoginCount    Int            @default(0) @map("failed_login_count")
   lockedUntil         DateTime?      @map("locked_until") @db.Timestamptz(6)
+  notificationPreferences Json?      @map("notification_preferences")
   createdAt           DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt           DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
   auditLogs           AuditLog[]
@@ -346,6 +347,7 @@ model Notification {
   status    NotificationStatus  @default(pending)
   metadata  Json                @default("{}")
   sentAt    DateTime?           @map("sent_at") @db.Timestamptz(6)
+  readAt    DateTime?           @map("read_at") @db.Timestamptz(6)
   createdAt DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
   tenant    Tenant              @relation(fields: [tenantId], references: [id])
   user      User?               @relation(fields: [userId], references: [id])
@@ -353,6 +355,8 @@ model Notification {
   @@index([tenantId])
   @@index([userId])
   @@index([status])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, readAt])
   @@map("notifications")
 }
 
@@ -447,13 +451,16 @@ model Device {
 }
 
 model UserPushToken {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  token     String   @unique @db.VarChar(512)
-  platform  String?  @db.VarChar(20)
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  token      String    @unique @db.VarChar(512)
+  platform   String?   @db.VarChar(20)
+  deviceName String?   @map("device_name") @db.VarChar(120)
+  appVersion String?   @map("app_version") @db.VarChar(40)
+  lastSeenAt DateTime? @map("last_seen_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("user_push_tokens")

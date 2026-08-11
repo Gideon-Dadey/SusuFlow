@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FileSearch, Layers, Lock } from "lucide-react";
+import { FileSearch, Layers, Lock } from "@/components/icons/phosphor";
 import { WhyPageTemplate } from "@/components/marketing/ofx/why-page-template";
 import { APP_NAME } from "@/lib/marketing-data";
 

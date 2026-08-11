@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshControl, StyleSheet, View } from "react-native";
 import { ActivityAttentionQueue } from "@/components/activity/ActivityAttentionQueue";
@@ -29,7 +29,6 @@ import {
   fetchCustomerDeposits,
   fetchCustomerWithdrawals,
   financialQueryOptions,
-  invalidateCustomerFinancials,
 } from "@/lib/financial-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { useDeepLinkStore } from "@/stores/deep-link.store";
@@ -37,7 +36,6 @@ import { spacing } from "@/theme/tokens";
 import { useTheme } from "@/theme/ThemeProvider";
 
 export default function ActivityScreen() {
-  const queryClient = useQueryClient();
   const { colors } = useTheme();
   const [filter, setFilter] = useState<ActivityFilter>("all");
   const [period, setPeriod] = useState<ActivityPeriod>("this_month");
@@ -110,8 +108,9 @@ export default function ActivityScreen() {
   }, [filtered, attentionItems]);
 
   const showSkeleton =
-    (depositsPending && deposits === undefined) ||
-    (withdrawalsPending && withdrawals === undefined);
+    deposits === undefined &&
+    withdrawals === undefined &&
+    (depositsPending || withdrawalsPending);
 
   const showError =
     (depositsQuery.isError && deposits === undefined) ||
@@ -136,14 +135,11 @@ export default function ActivityScreen() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      if (sessionKey) {
-        invalidateCustomerFinancials(queryClient, sessionKey);
-      }
       await Promise.all([depositsQuery.refetch(), withdrawalsQuery.refetch()]);
     } finally {
       setRefreshing(false);
     }
-  }, [depositsQuery, queryClient, sessionKey, withdrawalsQuery]);
+  }, [depositsQuery, withdrawalsQuery]);
 
   const hasAnyTransactions = allTransactions.length > 0;
 

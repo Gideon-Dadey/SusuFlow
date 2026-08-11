@@ -15,35 +15,44 @@ import type { User } from "@/lib/api";
 export async function prefetchAuthenticatedSession(
   userId: string,
   tenantSlug?: string | null,
-): Promise<User> {
+  customerId?: string | null,
+): Promise<User | undefined> {
   const slug = tenantSlug?.trim() || "";
+  const cached = queryClient.getQueryData<User>(queryKeys.userProfile(userId));
+  let profile = cached;
+  let resolvedCustomerId = customerId || cached?.customer?.id;
 
-  const [profile] = await Promise.all([
-    queryClient.fetchQuery({
+  const branding = slug ? prefetchTenantBranding(slug) : Promise.resolve();
+
+  if (!resolvedCustomerId) {
+    profile = await queryClient.fetchQuery({
       queryKey: queryKeys.userProfile(userId),
       queryFn: () => userApi.getMe(),
       ...profileQueryOptions,
-    }),
-    slug ? prefetchTenantBranding(slug) : Promise.resolve(),
-  ]);
+    });
+    resolvedCustomerId = profile.customer?.id;
+  }
 
-  const customerId = profile.customer?.id;
-  if (!customerId) return profile;
+  if (!resolvedCustomerId) {
+    await branding;
+    return profile;
+  }
 
   await Promise.all([
+    branding,
     queryClient.prefetchQuery({
-      queryKey: queryKeys.wallet(userId, customerId),
-      queryFn: () => fetchCustomerWallet(customerId),
+      queryKey: queryKeys.wallet(userId, resolvedCustomerId),
+      queryFn: () => fetchCustomerWallet(resolvedCustomerId!),
       ...financialQueryOptions,
     }),
     queryClient.prefetchQuery({
-      queryKey: queryKeys.deposits(userId, customerId),
-      queryFn: () => fetchCustomerDeposits(customerId),
+      queryKey: queryKeys.deposits(userId, resolvedCustomerId),
+      queryFn: () => fetchCustomerDeposits(resolvedCustomerId!),
       ...financialQueryOptions,
     }),
     queryClient.prefetchQuery({
-      queryKey: queryKeys.withdrawals(userId, customerId),
-      queryFn: () => fetchCustomerWithdrawals(customerId),
+      queryKey: queryKeys.withdrawals(userId, resolvedCustomerId),
+      queryFn: () => fetchCustomerWithdrawals(resolvedCustomerId!),
       ...financialQueryOptions,
     }),
   ]);

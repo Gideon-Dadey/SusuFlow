@@ -6,7 +6,7 @@ import {
   Scale,
   ShieldCheck,
   Wallet,
-} from "lucide-react";
+} from "@/components/icons/phosphor";
 import {
   ProductCrossLinks,
   ProductFeatureSplit,
@@ -86,9 +86,9 @@ function PlatformHeroMock() {
 /** Ledger vs gateway matching rows. */
 function ReconciliationMock() {
   const rows = [
-    { ref: "TXN-58201", amount: "GHS 20.00" },
-    { ref: "TXN-58202", amount: "GHS 120.00" },
-    { ref: "TXN-58203", amount: "GHS 50.00" },
+    { ref: "48291037", amount: "GHS 20.00" },
+    { ref: "58302148", amount: "GHS 120.00" },
+    { ref: "69413259", amount: "GHS 50.00" },
   ];
 
   return (

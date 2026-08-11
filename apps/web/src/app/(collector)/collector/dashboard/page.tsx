@@ -15,7 +15,7 @@ import {
   Wallet,
   TrendingUp,
   ListChecks,
-} from "lucide-react";
+} from "@/components/icons/phosphor";
 import { Button } from "@/components/ui/button";
 
 export default function CollectorDashboardPage() {

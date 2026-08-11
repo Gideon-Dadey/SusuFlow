@@ -14,7 +14,8 @@
       "infoPlist": {
         "NSFaceIDUsageDescription": "Allow SusuFlow to use Face ID for quick and secure sign in.",
         "NSPhotoLibraryUsageDescription": "Allow SusuFlow to access your photos so you can set a profile picture.",
-        "NSCameraUsageDescription": "Allow SusuFlow to use your camera so you can take a profile picture."
+        "NSCameraUsageDescription": "Allow SusuFlow to use your camera so you can take a profile picture.",
+        "UIBackgroundModes": ["remote-notification"]
       }
     },
     "android": {
@@ -23,7 +24,12 @@
         "foregroundImage": "./assets/images/android-icon-foreground.png"
       },
       "package": "com.susuflow.app",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -77,9 +83,11 @@
       "typedRoutes": true
     },
     "extra": {
+      "router": {},
       "eas": {
-        "projectId": "susuflow-mobile"
+        "projectId": "3a7d79a6-394e-4185-bd1f-0ab2f28da0d3"
       }
-    }
+    },
+    "owner": "g_ideon"
   }
 }

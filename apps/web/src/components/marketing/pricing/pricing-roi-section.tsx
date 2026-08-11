@@ -1,4 +1,4 @@
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck } from "@/components/icons/phosphor";
 import { PRICING_ROI } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
 

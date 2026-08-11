@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "@/components/icons/phosphor";
 import { cn } from "@/lib/utils";
 
 type DashboardPageBarProps = {

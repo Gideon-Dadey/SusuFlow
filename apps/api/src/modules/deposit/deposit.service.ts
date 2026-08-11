@@ -9,7 +9,7 @@ import { PrismaService } from "../../prisma/prisma.service";
 import { LedgerService } from "../ledger/ledger.service";
 import { CreateDepositDto } from "./dto/deposit.dto";
 import {
-  generateTransactionReference,
+  allocateTransactionReference,
   MIN_DEPOSIT_AMOUNT,
   MAX_DEPOSIT_AMOUNT,
   DEPOSIT_EXPIRY_MINUTES,
@@ -31,6 +31,8 @@ import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { FinancialEventService } from "../../common/services/financial-event.service";
 import { AuditService } from "../audit/audit.service";
+import { enqueueNotification } from "../../common/notifications/enqueue";
+import { Prisma } from "@susuflow/database";
 
 @Injectable()
 export class DepositService {
@@ -94,7 +96,10 @@ export class DepositService {
 
     const customer = await this.prisma.customer.findFirst({
       where: { id: dto.customerId, tenantId },
-      include: { wallets: { where: { walletType: "customer" } } },
+      include: {
+        wallets: { where: { walletType: "customer" } },
+        user: { select: { firstName: true, lastName: true } },
+      },
     });
     if (!customer) throw new NotFoundException("Customer not found");
 
@@ -110,7 +115,13 @@ export class DepositService {
     const wallet = customer.wallets[0];
     if (!wallet) throw new NotFoundException("Customer wallet not found");
 
-    const reference = generateTransactionReference();
+    const reference = await allocateTransactionReference(async (value) =>
+      Boolean(
+        await this.prisma.transaction.findUnique({
+          where: { reference: value },
+        }),
+      ),
+    );
     const expiresAt = new Date(Date.now() + DEPOSIT_EXPIRY_MINUTES * 60 * 1000);
 
     const isCollectorAssisted = initiatedBy.roles.includes("collector");
@@ -204,6 +215,18 @@ export class DepositService {
       status: "pending",
     });
 
+    void enqueueNotification(
+      this.notificationQueue,
+      "deposit-initiated",
+      {
+        tenantId,
+        transactionId: result.transaction.id,
+        reference,
+        amount: dto.amount,
+      },
+      result.transaction.id,
+    ).catch(() => undefined);
+
     await this.audit.log({
       tenantId,
       userId: initiatedBy.id,
@@ -214,10 +237,14 @@ export class DepositService {
         reference,
         amount: dto.amount,
         customerId: customer.id,
+        customerName:
+          `${customer.user?.firstName ?? ""} ${customer.user?.lastName ?? ""}`.trim(),
+        customerNumber: customer.customerNumber,
         collectorId: isCollectorAssisted ? initiatedBy.id : dto.collectorId,
         paymentMethod: dto.paymentMethod,
         bankCode: bank?.code,
         payerPhone,
+        status: "pending",
       },
     });
 
@@ -241,9 +268,14 @@ export class DepositService {
     amount: number,
     payerPhone?: string,
   ) {
-    const transaction = await this.prisma.transaction.findUnique({
-      where: { reference },
-      include: { payment: true, wallet: true },
+    const transaction = await this.findByReference(reference, {
+      payment: true,
+      wallet: true,
+      customer: {
+        include: {
+          user: { select: { firstName: true, lastName: true } },
+        },
+      },
     });
 
     if (!transaction) throw new NotFoundException("Transaction not found");
@@ -327,12 +359,17 @@ export class DepositService {
       }
     }
 
-    await this.notificationQueue.add("deposit-confirmed", {
-      tenantId,
-      transactionId: transaction.id,
-      reference,
-      amount,
-    });
+    await enqueueNotification(
+      this.notificationQueue,
+      "deposit-confirmed",
+      {
+        tenantId,
+        transactionId: transaction.id,
+        reference,
+        amount,
+      },
+      transaction.id,
+    );
 
     await this.receiptQueue.add("generate-receipt", {
       tenantId,
@@ -350,6 +387,76 @@ export class DepositService {
       customerId: transaction.customerId ?? undefined,
       status: "completed",
     });
+
+    await this.audit.log({
+      tenantId,
+      userId: transaction.initiatedById ?? undefined,
+      action: "deposit:complete",
+      resourceType: "transaction",
+      resourceId: transaction.id,
+      afterState: {
+        reference,
+        amount,
+        customerId: transaction.customerId,
+        customerName:
+          `${transaction.customer?.user?.firstName ?? ""} ${transaction.customer?.user?.lastName ?? ""}`.trim(),
+        status: "completed",
+      },
+    });
+
+    return this.prisma.transaction.findUnique({
+      where: { id: transaction.id },
+      include: { payment: true },
+    });
+  }
+
+  async failPayment(reference: string, reason?: string) {
+    const transaction = await this.findByReference(reference, {
+      payment: true,
+    });
+    if (!transaction) throw new NotFoundException("Transaction not found");
+    if (transaction.status === "completed" || transaction.status === "failed") {
+      return transaction;
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      if (transaction.payment) {
+        await tx.payment.update({
+          where: { id: transaction.payment.id },
+          data: {
+            status: "failed",
+            webhookReceivedAt: new Date(),
+          },
+        });
+      }
+      await tx.transaction.update({
+        where: { id: transaction.id },
+        data: { status: "failed" },
+      });
+    });
+
+    this.financialEvents.log({
+      event: "deposit.failed",
+      tenantId: transaction.tenantId,
+      transactionId: transaction.id,
+      reference: transaction.reference,
+      amount: Number(transaction.amount),
+      customerId: transaction.customerId ?? undefined,
+      status: "failed",
+    });
+
+    void enqueueNotification(
+      this.notificationQueue,
+      "deposit-failed",
+      {
+        tenantId: transaction.tenantId,
+        transactionId: transaction.id,
+        reference: transaction.reference,
+        amount: Number(transaction.amount),
+        rejectionReason: reason || "The payment was declined or timed out.",
+      },
+      transaction.id,
+    ).catch(() => undefined);
 
     return this.prisma.transaction.findUnique({
       where: { id: transaction.id },
@@ -415,27 +522,24 @@ export class DepositService {
   }
 
   async verifyReceipt(reference: string) {
-    const transaction = await this.prisma.transaction.findUnique({
-      where: { reference },
-      include: {
-        payment: true,
-        withdrawal: true,
-        tenant: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
+    const transaction = await this.findByReference(reference, {
+      payment: true,
+      withdrawal: true,
+      tenant: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
         },
-        customer: {
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                email: true,
-                phone: true,
-              },
+      },
+      customer: {
+        include: {
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true,
+              phone: true,
             },
           },
         },
@@ -450,5 +554,26 @@ export class DepositService {
     await this.prisma.setTenantContext(transaction.tenantId);
 
     return transaction;
+  }
+
+  private async findByReference<I extends Prisma.TransactionInclude>(
+    reference: string,
+    include: I,
+  ) {
+    const direct = await this.prisma.transaction.findUnique({
+      where: { reference },
+      include,
+    });
+    if (direct) return direct;
+
+    return this.prisma.transaction.findFirst({
+      where: {
+        metadata: {
+          path: ["previousReference"],
+          equals: reference,
+        },
+      },
+      include,
+    });
   }
 }

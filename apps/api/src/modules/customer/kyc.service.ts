@@ -4,6 +4,7 @@ import { Queue } from "bullmq";
 import { PrismaService } from "../../prisma/prisma.service";
 import { DocumentStatus } from "@susuflow/database";
 import { AuditService } from "../audit/audit.service";
+import { enqueueNotification } from "../../common/notifications/enqueue";
 import type { KycDocumentType } from "./dto/kyc.dto";
 
 @Injectable()
@@ -241,8 +242,10 @@ export class KycService {
     if (customerUser) {
       const event = status === "approved" ? "kyc-approved" : "kyc-rejected";
       // Don't block the HTTP response on notification delivery.
-      void this.notificationQueue
-        .add(event, {
+      void enqueueNotification(
+        this.notificationQueue,
+        event,
+        {
           tenantId,
           customerId: doc.customerId,
           userId: customerUser.id,
@@ -250,8 +253,9 @@ export class KycService {
           documentType: doc.documentType,
           rejectionReason:
             status === "rejected" ? rejectionReason || null : null,
-        })
-        .catch(() => undefined);
+        },
+        `${event}:${customerUser.id}:${id}`,
+      ).catch(() => undefined);
     }
 
     return updatedDoc;
@@ -272,6 +276,7 @@ export class KycService {
           select: {
             id: true,
             firstName: true,
+            lastName: true,
             email: true,
             phone: true,
           },
@@ -341,14 +346,19 @@ export class KycService {
         status,
         rejectionReason,
         documentIds: reviewed.map((d) => d.id),
+        customerName:
+          `${customer.user?.firstName ?? ""} ${customer.user?.lastName ?? ""}`.trim(),
+        customerId,
       },
     });
 
     const customerUser = customer.user;
     if (customerUser) {
       const event = status === "approved" ? "kyc-approved" : "kyc-rejected";
-      void this.notificationQueue
-        .add(event, {
+      void enqueueNotification(
+        this.notificationQueue,
+        event,
+        {
           tenantId,
           customerId,
           userId: customerUser.id,
@@ -356,8 +366,9 @@ export class KycService {
           documentType: reviewed[0]?.documentType,
           rejectionReason:
             status === "rejected" ? rejectionReason || null : null,
-        })
-        .catch(() => undefined);
+        },
+        `${event}:${customerUser.id}:bundle:${customerId}`,
+      ).catch(() => undefined);
     }
 
     return {

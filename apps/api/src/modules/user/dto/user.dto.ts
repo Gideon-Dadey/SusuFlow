@@ -73,6 +73,18 @@ export class RegisterPushTokenDto {
   @IsString()
   @MaxLength(20)
   platform?: string;
+
+  @ApiPropertyOptional({ example: "iPhone 15" })
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  deviceName?: string;
+
+  @ApiPropertyOptional({ example: "1.0.0" })
+  @IsOptional()
+  @IsString()
+  @MaxLength(40)
+  appVersion?: string;
 }
 
 export class RemovePushTokenDto {

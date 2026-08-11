@@ -23,7 +23,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   Target,
-} from "lucide-react";
+} from "@/components/icons/phosphor";
 
 export default function CustomerDashboard() {
   const user = useAuthStore((s) => s.user);

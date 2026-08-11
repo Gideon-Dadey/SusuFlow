@@ -9,7 +9,9 @@ import { Input } from "@/components/ui/input";
 import { teamApi, type TeamMember } from "@/lib/api";
 import { getInitials, formatDate } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth.store";
-import { Plus, X, Check, UserX, UserCheck } from "lucide-react";
+import { Plus, X, Check, UserX, UserCheck } from "@/components/icons/phosphor";
+import { CompanyPageHeader } from "@/components/company-admin/company-page-header";
+import { CompanyPanel } from "@/components/company-admin/company-panel";
 
 const ROLE_LABELS: Record<string, string> = {
   company_admin: "Company Admin",
@@ -105,22 +107,22 @@ export default function TeamManagementPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="dashboard-title">Team</h1>
-        </div>
-        {isCompanyAdmin && !showForm && (
-          <Button
-            size="sm"
-            onClick={() => setShowForm(true)}
-            className="text-xs font-semibold px-4 min-h-[36px] bg-primary text-primary-foreground hover:bg-primary/95 shrink-0 gap-1.5"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Add Team Member
-          </Button>
-        )}
-      </div>
+    <div className="space-y-5">
+      <CompanyPageHeader
+        title="Team"
+        actions={
+          isCompanyAdmin && !showForm ? (
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              className="company-cta-primary"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Add user
+            </button>
+          ) : null
+        }
+      />
 
       {credentials && (
         <Card className="rounded-none border border-emerald-500/40 bg-emerald-500/10 p-4">
@@ -274,40 +276,31 @@ export default function TeamManagementPage() {
       )}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
-          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Team Size
-          </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+        <div className="company-panel p-4">
+          <p className="company-meta uppercase tracking-[0.06em]">Team size</p>
+          <p className="mt-1 text-xl font-semibold tabular-nums text-foreground">
             {members.length}
           </p>
-          <p className="mt-1 text-[10px] text-muted-foreground">
-            Total staff accounts
+        </div>
+        <div className="company-panel p-4">
+          <p className="company-meta uppercase tracking-[0.06em]">
+            Active members
           </p>
-        </Card>
-        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
-          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Active Members
-          </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-xl font-semibold tabular-nums text-foreground">
             {activeCount}
           </p>
-          <p className="mt-1 text-[10px] text-muted-foreground">
-            Active credentials
+        </div>
+        <div className="company-panel p-4">
+          <p className="company-meta uppercase tracking-[0.06em]">
+            Field collectors
           </p>
-        </Card>
-        <Card className="rounded-none border border-border/60 bg-card p-4 shadow-sm flex flex-col justify-between">
-          <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Field Collectors
-          </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-xl font-semibold tabular-nums text-foreground">
             {collectorCount}
           </p>
-          <p className="mt-1 text-[10px] text-muted-foreground">Field agents</p>
-        </Card>
+        </div>
       </div>
 
-      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
+      <CompanyPanel>
         <CardHeader className="px-6 py-4 border-b border-border/60">
           <CardTitle className="text-sm sm:text-base font-semibold text-foreground">
             Organization Team Members
@@ -417,7 +410,7 @@ export default function TeamManagementPage() {
             </div>
           )}
         </CardContent>
-      </Card>
+      </CompanyPanel>
     </div>
   );
 }

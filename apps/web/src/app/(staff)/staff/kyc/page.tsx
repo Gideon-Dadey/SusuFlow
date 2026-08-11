@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { kycApi, KycDocument } from "@/lib/api";
 import { getInitials, cn } from "@/lib/utils";
+import { IdentityReviewDialog } from "@/components/kyc/identity-review-dialog";
 import {
   ShieldCheck,
   Clock,
@@ -16,28 +17,13 @@ import {
   Eye,
   FileText,
   Search,
-  CheckSquare,
-  ExternalLink,
   RefreshCw,
-  X,
   Building2,
-  ZoomIn,
   LayoutGrid,
   ListFilter,
-  IdCard,
-  Camera,
   UserCheck,
   FileCheck2,
-} from "lucide-react";
-
-const COMMON_REJECTION_REASONS = [
-  "Ghana Card photo is blurry or unreadable",
-  "Selfie photo does not match Ghana Card face",
-  "Ghana Card number format is invalid",
-  "Back photo of Ghana Card is missing",
-  "Expired ID document submitted",
-  "Document name does not match customer profile",
-];
+} from "@/components/icons/phosphor";
 
 export interface GroupedCustomerKyc {
   customerId: string;
@@ -222,12 +208,6 @@ export default function StaffKycReviewPage() {
     (d) => d.status === "rejected",
   ).length;
 
-  const allChecksPassed =
-    checks.idNumberMatches &&
-    checks.nameMatches &&
-    checks.selfieMatches &&
-    checks.documentLegible;
-
   return (
     <div className="space-y-6">
       {/* Top Header matching SusuFlow Staff standard */}
@@ -255,7 +235,7 @@ export default function StaffKycReviewPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Pending Review
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {pendingCount}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -267,7 +247,7 @@ export default function StaffKycReviewPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Approved
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {approvedCount}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -279,7 +259,7 @@ export default function StaffKycReviewPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Rejected
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {rejectedCount}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -291,7 +271,7 @@ export default function StaffKycReviewPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Compliance Target
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tracking-tight text-foreground">
             Act 843 Ready
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -302,7 +282,7 @@ export default function StaffKycReviewPage() {
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border/60 pb-3">
-        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+        <div className="company-filter-tabs overflow-x-auto w-full sm:w-auto">
           {[
             { label: "Pending", value: "pending" },
             { label: "Approved", value: "approved" },
@@ -314,10 +294,8 @@ export default function StaffKycReviewPage() {
               type="button"
               onClick={() => setSelectedStatus(tab.value)}
               className={cn(
-                "px-3 py-1.5 text-xs font-semibold transition-colors border-b-2",
-                selectedStatus === tab.value
-                  ? "border-primary text-primary font-bold"
-                  : "border-transparent text-muted-foreground hover:text-foreground",
+                "company-filter-tab",
+                selectedStatus === tab.value && "is-active",
               )}
             >
               {tab.label}
@@ -617,324 +595,23 @@ export default function StaffKycReviewPage() {
         </Card>
       )}
 
-      {/* FULL-SCREEN BANK INSPECTION MODAL (UNIFIED FOR CUSTOMER BUNDLE) */}
       {inspectSubmission && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-fade-in overflow-y-auto">
-          <div className="relative w-full max-w-4xl bg-card border border-border rounded-lg overflow-hidden flex flex-col my-auto max-h-[90vh] shadow-xl">
-            {/* Modal Top Bar */}
-            <div className="flex items-center justify-between p-4 border-b border-border bg-slate-900 text-white">
-              <div className="flex items-center gap-3">
-                <div className="size-9 rounded bg-primary/20 text-primary flex items-center justify-center">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                    <span>Customer Identity Audit Package</span>
-                    <span className="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
-                      {inspectSubmission.documents.length} ATTACHMENT
-                      {inspectSubmission.documents.length > 1 ? "S" : ""}
-                    </span>
-                  </h2>
-                  <p className="text-xs text-slate-400">
-                    Customer: {inspectSubmission.customerName} (
-                    {inspectSubmission.customerEmail})
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setInspectSubmission(null)}
-                className="size-8 text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Modal Main Body */}
-            <div className="flex-1 overflow-y-auto p-5 grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* Left Column: High-Res Document Viewer with Switcher Tabs */}
-              <div className="lg:col-span-7 space-y-3">
-                {/* Document Switcher Tabs */}
-                <div className="flex items-center gap-2 border-b border-border pb-2 overflow-x-auto">
-                  {inspectSubmission.documents.map((doc, idx) => (
-                    <button
-                      key={doc.id}
-                      type="button"
-                      onClick={() => setSelectedDocIndex(idx)}
-                      className={cn(
-                        "px-3 py-1 text-xs font-semibold transition-colors flex items-center gap-1.5",
-                        selectedDocIndex === idx
-                          ? "bg-primary text-white"
-                          : "bg-muted text-muted-foreground hover:text-foreground",
-                      )}
-                    >
-                      {doc.documentType === "selfie" ? (
-                        <>
-                          <Camera className="h-3.5 w-3.5" />
-                          <span>Facial Selfie</span>
-                        </>
-                      ) : (
-                        <>
-                          <IdCard className="h-3.5 w-3.5" />
-                          <span>
-                            {doc.documentType.toUpperCase().replace("_", " ")}
-                          </span>
-                        </>
-                      )}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
-                  <span>
-                    Viewing File {selectedDocIndex + 1} of{" "}
-                    {inspectSubmission.documents.length}:{" "}
-                    <strong className="text-foreground">
-                      {inspectSubmission.documents[
-                        selectedDocIndex
-                      ]?.documentType
-                        .toUpperCase()
-                        .replace("_", " ")}
-                    </strong>
-                  </span>
-                  {inspectSubmission.documents[selectedDocIndex]?.fileUrl && (
-                    <a
-                      href={
-                        inspectSubmission.documents[selectedDocIndex].fileUrl
-                      }
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-primary hover:underline flex items-center gap-1 text-xs"
-                    >
-                      <span>Full Screen Original</span>{" "}
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
-                </div>
-
-                {/* High-Res Contained Image Preview */}
-                <div className="relative aspect-4/3 w-full bg-slate-950 rounded overflow-hidden border border-slate-800 flex items-center justify-center">
-                  {inspectSubmission.documents[
-                    selectedDocIndex
-                  ]?.fileUrl.endsWith(".pdf") ? (
-                    <iframe
-                      src={
-                        inspectSubmission.documents[selectedDocIndex].fileUrl
-                      }
-                      className="w-full h-full"
-                      title="KYC PDF Viewer"
-                    />
-                  ) : inspectSubmission.documents[selectedDocIndex]?.fileUrl ? (
-                    <img
-                      src={
-                        inspectSubmission.documents[selectedDocIndex].fileUrl
-                      }
-                      alt="Full Inspection Copy"
-                      className="w-full h-full object-contain p-2"
-                    />
-                  ) : null}
-                </div>
-
-                {/* Customer Details metadata */}
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="p-2.5 rounded bg-muted/40 border border-border">
-                    <span className="text-muted-foreground block font-medium">
-                      Ghana Card / ID No:
-                    </span>
-                    <span className="font-mono font-semibold text-foreground">
-                      {inspectSubmission.cardId}
-                    </span>
-                  </div>
-                  <div className="p-2.5 rounded bg-muted/40 border border-border">
-                    <span className="text-muted-foreground block font-medium">
-                      Submitted Timestamp:
-                    </span>
-                    <span className="font-medium text-foreground">
-                      {new Date(inspectSubmission.submittedAt).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Verification Checklist & Action */}
-              <div className="lg:col-span-5 space-y-4 border-t lg:border-t-0 lg:border-l lg:pl-5 border-border">
-                {inspectSubmission.status === "pending" ? (
-                  <>
-                    <div className="space-y-2.5">
-                      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                        <CheckSquare className="h-4 w-4 text-primary" />
-                        <span>Auditor Checklist *</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Verify all 4 compliance rules before approving customer
-                        identity:
-                      </p>
-
-                      <div className="space-y-2">
-                        <label className="flex items-start gap-2.5 p-2 rounded border border-border hover:bg-muted/30 cursor-pointer text-xs font-medium text-foreground">
-                          <input
-                            type="checkbox"
-                            checked={checks.idNumberMatches}
-                            onChange={(e) =>
-                              setChecks((prev) => ({
-                                ...prev,
-                                idNumberMatches: e.target.checked,
-                              }))
-                            }
-                            className="mt-0.5 size-4 rounded text-primary focus:ring-primary"
-                          />
-                          <span>
-                            1. Ghana Card / ID Number matches registry
-                          </span>
-                        </label>
-
-                        <label className="flex items-start gap-2.5 p-2 rounded border border-border hover:bg-muted/30 cursor-pointer text-xs font-medium text-foreground">
-                          <input
-                            type="checkbox"
-                            checked={checks.nameMatches}
-                            onChange={(e) =>
-                              setChecks((prev) => ({
-                                ...prev,
-                                nameMatches: e.target.checked,
-                              }))
-                            }
-                            className="mt-0.5 size-4 rounded text-primary focus:ring-primary"
-                          />
-                          <span>2. Full name matches account profile</span>
-                        </label>
-
-                        <label className="flex items-start gap-2.5 p-2 rounded border border-border hover:bg-muted/30 cursor-pointer text-xs font-medium text-foreground">
-                          <input
-                            type="checkbox"
-                            checked={checks.selfieMatches}
-                            onChange={(e) =>
-                              setChecks((prev) => ({
-                                ...prev,
-                                selfieMatches: e.target.checked,
-                              }))
-                            }
-                            className="mt-0.5 size-4 rounded text-primary focus:ring-primary"
-                          />
-                          <span>3. Facial features match photo ID</span>
-                        </label>
-
-                        <label className="flex items-start gap-2.5 p-2 rounded border border-border hover:bg-muted/30 cursor-pointer text-xs font-medium text-foreground">
-                          <input
-                            type="checkbox"
-                            checked={checks.documentLegible}
-                            onChange={(e) =>
-                              setChecks((prev) => ({
-                                ...prev,
-                                documentLegible: e.target.checked,
-                              }))
-                            }
-                            className="mt-0.5 size-4 rounded text-primary focus:ring-primary"
-                          />
-                          <span>4. Photo is clear, un-edited, & valid</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* Rejection Reason */}
-                    <div className="space-y-2 pt-2 border-t border-border">
-                      <label className="text-xs font-semibold text-foreground">
-                        Rejection Reason (Required if Declining):
-                      </label>
-                      <select
-                        onChange={(e) => setRejectionReason(e.target.value)}
-                        value={rejectionReason}
-                        className="w-full h-8 rounded border border-input bg-background px-2.5 text-xs font-medium"
-                      >
-                        <option value="">-- Select Common Reason --</option>
-                        {COMMON_REJECTION_REASONS.map((r) => (
-                          <option key={r} value={r}>
-                            {r}
-                          </option>
-                        ))}
-                      </select>
-
-                      <Input
-                        placeholder="Or enter custom rejection details..."
-                        value={rejectionReason}
-                        onChange={(e) => setRejectionReason(e.target.value)}
-                        className="text-xs h-8"
-                      />
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="pt-2 grid grid-cols-2 gap-2">
-                      <Button
-                        type="button"
-                        variant="danger"
-                        size="sm"
-                        disabled={
-                          reviewMutation.isPending ||
-                          activeReviewId === inspectSubmission.customerId
-                        }
-                        onClick={() => handleRejectBundle(inspectSubmission)}
-                        className="font-semibold text-xs h-9"
-                      >
-                        Decline Customer
-                      </Button>
-
-                      <Button
-                        type="button"
-                        size="sm"
-                        disabled={
-                          !allChecksPassed ||
-                          reviewMutation.isPending ||
-                          activeReviewId === inspectSubmission.customerId
-                        }
-                        onClick={() => handleApproveBundle(inspectSubmission)}
-                        className={cn(
-                          "font-semibold text-xs h-9 text-white",
-                          allChecksPassed
-                            ? "bg-emerald-600 hover:bg-emerald-700"
-                            : "bg-slate-400 cursor-not-allowed opacity-60",
-                        )}
-                      >
-                        Approve Customer
-                      </Button>
-                    </div>
-
-                    {!allChecksPassed && (
-                      <p className="text-[11px] text-amber-600 dark:text-amber-400 text-center font-medium">
-                        ⓘ Verify all 4 checklist items to enable approval.
-                      </p>
-                    )}
-                  </>
-                ) : (
-                  <div className="space-y-3 py-4 text-center">
-                    <div
-                      className={cn(
-                        "size-14 rounded-full mx-auto flex items-center justify-center",
-                        inspectSubmission.status === "approved"
-                          ? "bg-emerald-500/10 text-emerald-500"
-                          : "bg-rose-500/10 text-rose-500",
-                      )}
-                    >
-                      {inspectSubmission.status === "approved" ? (
-                        <CheckCircle2 className="h-7 w-7" />
-                      ) : (
-                        <XCircle className="h-7 w-7" />
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-foreground">
-                        Customer Audit Status:{" "}
-                        {inspectSubmission.status.toUpperCase()}
-                      </h3>
-                      {inspectSubmission.rejectionReason && (
-                        <p className="text-xs text-rose-600 font-medium mt-2 bg-rose-500/10 p-2.5 rounded border border-rose-500/20">
-                          Reason: {inspectSubmission.rejectionReason}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        <IdentityReviewDialog
+          subject={inspectSubmission}
+          selectedDocIndex={selectedDocIndex}
+          onSelectDoc={setSelectedDocIndex}
+          checks={checks}
+          onChecksChange={setChecks}
+          rejectionReason={rejectionReason}
+          onRejectionReasonChange={setRejectionReason}
+          onClose={() => setInspectSubmission(null)}
+          onApprove={() => handleApproveBundle(inspectSubmission)}
+          onReject={() => handleRejectBundle(inspectSubmission)}
+          isPending={
+            reviewMutation.isPending ||
+            activeReviewId === inspectSubmission.customerId
+          }
+        />
       )}
     </div>
   );

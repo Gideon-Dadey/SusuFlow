@@ -15,7 +15,7 @@ import {
   FileCheck,
   CheckCircle2,
   AlertTriangle,
-} from "lucide-react";
+} from "@/components/icons/phosphor";
 import Link from "next/link";
 
 export default function ReceiptVerificationPage() {

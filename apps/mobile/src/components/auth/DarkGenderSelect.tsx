@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { authChrome } from "@/theme/auth-chrome";
 import { typography } from "@/theme/tokens";
 
@@ -41,7 +41,7 @@ export function DarkGenderSelect({
         <Text style={[styles.value, !selected && styles.placeholder]}>
           {selected?.label || placeholder}
         </Text>
-        <Ionicons name="chevron-down" size={18} color={authChrome.inkMuted} />
+        <AppIcon name="chevron-down" size={18} color={authChrome.inkMuted} />
       </Pressable>
 
       <Modal
@@ -74,10 +74,11 @@ export function DarkGenderSelect({
                     {option.label}
                   </Text>
                   {active ? (
-                    <Ionicons
-                      name="checkmark"
+                    <AppIcon
+                      name="check"
                       size={18}
                       color={authChrome.ink}
+                      weight="bold"
                     />
                   ) : null}
                 </Pressable>

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/components/icons/phosphor";
 import { BRAND_HERO_IMAGE } from "@/lib/brand-assets";
 import { APP_TAGLINE } from "@/lib/marketing-data";
 import { MarketingContainer } from "./marketing-container";

@@ -199,8 +199,6 @@ export function TransactionReceiptSheet({
     { label: "Currency", value: "GHS" },
   ];
 
-  const stageBg = isDark ? bankChrome.pageDark : "#F3F4F6";
-
   return (
     <Modal
       visible={visible}
@@ -208,14 +206,7 @@ export function TransactionReceiptSheet({
       presentationStyle="fullScreen"
       onRequestClose={onClose}
     >
-      <View
-        style={[
-          styles.root,
-          {
-            backgroundColor: view === "document" ? stageBg : pageBg,
-          },
-        ]}
-      >
+      <View style={[styles.root, { backgroundColor: pageBg }]}>
         <ScreenHeader
           title={headerTitle}
           style={{ backgroundColor: pageBg }}
@@ -258,7 +249,6 @@ export function TransactionReceiptSheet({
         <ScrollView
           contentContainerStyle={[
             styles.scroll,
-            view === "document" && styles.scrollDocument,
             {
               paddingBottom:
                 view === "document"
@@ -456,9 +446,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
     gap: spacing.lg,
-  },
-  scrollDocument: {
-    paddingTop: spacing.md,
   },
   companyBlock: {
     alignItems: "center",

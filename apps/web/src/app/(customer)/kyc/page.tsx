@@ -31,7 +31,7 @@ import {
   FileCheck2,
   Trash2,
   BadgeCheck,
-} from "lucide-react";
+} from "@/components/icons/phosphor";
 
 type DocType = "ghana_card" | "passport";
 type Step = 1 | 2 | 3;

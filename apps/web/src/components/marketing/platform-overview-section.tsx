@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/components/icons/phosphor";
 import { APP_NAME } from "@/lib/marketing-data";
 import { BRAND_PLATFORM_INTRO_IMAGE } from "@/lib/brand-assets";
 import { MarketingContainer } from "./marketing-container";

@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Plus } from "@/components/icons/phosphor";
 import { PRICING_FAQ } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
 

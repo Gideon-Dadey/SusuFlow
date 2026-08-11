@@ -4,6 +4,8 @@ import {
   ConflictException,
   BadRequestException,
 } from "@nestjs/common";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 import { PrismaService } from "../../prisma/prisma.service";
 import {
   UpdateUserProfileDto,
@@ -12,12 +14,16 @@ import {
   RegisterPushTokenDto,
   RemovePushTokenDto,
 } from "./dto/user.dto";
+import { enqueueNotification } from "../../common/notifications/enqueue";
 import * as bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @InjectQueue("notifications") private readonly notificationQueue: Queue,
+  ) {}
 
   async findById(id: string) {
     const user = await this.prisma.user.findUnique({
@@ -181,6 +187,19 @@ export class UserService {
       data: { passwordHash },
     });
 
+    if (user.tenantId) {
+      void enqueueNotification(
+        this.notificationQueue,
+        "password-changed",
+        {
+          tenantId: user.tenantId,
+          userId: user.id,
+          firstName: user.firstName,
+        },
+        `${user.id}:${Date.now()}`,
+      ).catch(() => undefined);
+    }
+
     return { message: "Password updated successfully" };
   }
 
@@ -243,10 +262,16 @@ export class UserService {
         userId,
         token: dto.token,
         platform: dto.platform,
+        deviceName: dto.deviceName,
+        appVersion: dto.appVersion,
+        lastSeenAt: new Date(),
       },
       update: {
         userId,
         platform: dto.platform,
+        deviceName: dto.deviceName,
+        appVersion: dto.appVersion,
+        lastSeenAt: new Date(),
       },
     });
     return { registered: true };

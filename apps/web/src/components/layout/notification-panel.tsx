@@ -189,7 +189,7 @@ export function NotificationPanel() {
       <button
         type="button"
         onClick={handleToggle}
-        className="relative inline-flex size-9 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground border border-border/60 bg-card"
+        className="company-header-chip relative inline-flex size-9 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground border border-border/60 bg-card"
         aria-label="Notifications"
         aria-haspopup="true"
         aria-expanded={open}

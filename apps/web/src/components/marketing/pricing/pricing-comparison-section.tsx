@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import Link from "next/link";
-import { Check, X } from "lucide-react";
+import { Check, X } from "@/components/icons/phosphor";
 import {
   PRICING_COMPARISON_GROUPS,
   PRICING_PLANS,

@@ -9,7 +9,7 @@ import {
   Send,
   ShieldCheck,
   Smartphone,
-} from "lucide-react";
+} from "@/components/icons/phosphor";
 import { cn } from "@/lib/utils";
 import { MarketingContainer } from "../marketing-container";
 

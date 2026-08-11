@@ -28,7 +28,7 @@ import {
   X,
   UserCheck,
   Shield,
-} from "lucide-react";
+} from "@/components/icons/phosphor";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserShield,
@@ -332,7 +332,7 @@ export default function AdminTenantsPage() {
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border/60 pb-3">
-        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+        <div className="company-filter-tabs overflow-x-auto w-full sm:w-auto">
           {[
             { label: "All Orgs", value: "" },
             { label: "Active", value: "active" },
@@ -344,10 +344,8 @@ export default function AdminTenantsPage() {
               type="button"
               onClick={() => setStatusFilter(tab.value)}
               className={cn(
-                "px-3 py-1.5 text-xs font-semibold transition-colors border-b-2",
-                statusFilter === tab.value
-                  ? "border-primary text-primary font-bold"
-                  : "border-transparent text-muted-foreground hover:text-foreground",
+                "company-filter-tab",
+                statusFilter === tab.value && "is-active",
               )}
             >
               {tab.label}

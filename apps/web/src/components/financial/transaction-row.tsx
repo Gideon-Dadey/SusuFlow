@@ -1,4 +1,4 @@
-import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight } from "@/components/icons/phosphor";
 import { MoneyDisplay } from "./money-display";
 import { StatusBadge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";

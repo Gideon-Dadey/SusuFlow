@@ -2,7 +2,7 @@
 
 import { useAuthStore } from "@/stores/auth.store";
 import { getInitials } from "@/lib/utils";
-import { LogOut } from "lucide-react";
+import { LogOut } from "@/components/icons/phosphor";
 import { useRouter } from "next/navigation";
 
 interface HeaderProps {

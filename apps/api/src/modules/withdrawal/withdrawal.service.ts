@@ -12,13 +12,15 @@ import {
   CreateWithdrawalRequestDto,
 } from "./dto/withdrawal.dto";
 import {
-  generateTransactionReference,
+  allocateTransactionReference,
   AuthenticatedUser,
   ROLES,
   clampPageLimit,
 } from "@susuflow/shared";
 import { PaymentMethod } from "@susuflow/database";
 import { FinancialEventService } from "../../common/services/financial-event.service";
+import { AuditService } from "../audit/audit.service";
+import { enqueueNotification } from "../../common/notifications/enqueue";
 
 @Injectable()
 export class WithdrawalService {
@@ -27,6 +29,7 @@ export class WithdrawalService {
     private readonly ledger: LedgerService,
     @InjectQueue("notifications") private readonly notificationQueue: Queue,
     private readonly financialEvents: FinancialEventService,
+    private readonly audit: AuditService,
   ) {}
 
   async create(
@@ -36,7 +39,10 @@ export class WithdrawalService {
   ) {
     const customer = await this.prisma.customer.findFirst({
       where: { id: dto.customerId, tenantId },
-      include: { wallets: { where: { walletType: "customer" } } },
+      include: {
+        wallets: { where: { walletType: "customer" } },
+        user: { select: { firstName: true, lastName: true } },
+      },
     });
     if (!customer) throw new NotFoundException("Customer not found");
 
@@ -51,7 +57,13 @@ export class WithdrawalService {
       );
     }
 
-    const reference = generateTransactionReference();
+    const reference = await allocateTransactionReference(async (value) =>
+      Boolean(
+        await this.prisma.transaction.findUnique({
+          where: { reference: value },
+        }),
+      ),
+    );
 
     // Create database records and update balance
     const result = await this.prisma.$transaction(async (tx) => {
@@ -113,12 +125,17 @@ export class WithdrawalService {
       },
     ]);
 
-    await this.notificationQueue.add("withdrawal-completed", {
-      tenantId,
-      transactionId: result.transaction.id,
-      reference,
-      amount: dto.amount,
-    });
+    await enqueueNotification(
+      this.notificationQueue,
+      "withdrawal-completed",
+      {
+        tenantId,
+        transactionId: result.transaction.id,
+        reference,
+        amount: dto.amount,
+      },
+      result.transaction.id,
+    );
 
     this.financialEvents.log({
       event: "withdrawal.completed",
@@ -129,6 +146,23 @@ export class WithdrawalService {
       customerId: customer.id,
       userId: initiatedBy.id,
       status: "completed",
+    });
+
+    await this.audit.log({
+      tenantId,
+      userId: initiatedBy.id,
+      action: "withdrawal:record",
+      resourceType: "transaction",
+      resourceId: result.transaction.id,
+      afterState: {
+        reference,
+        amount: dto.amount,
+        customerId: customer.id,
+        customerName:
+          `${customer.user?.firstName ?? ""} ${customer.user?.lastName ?? ""}`.trim(),
+        customerNumber: customer.customerNumber,
+        status: "completed",
+      },
     });
 
     return this.prisma.transaction.findUnique({
@@ -215,7 +249,13 @@ export class WithdrawalService {
       );
     }
 
-    const reference = generateTransactionReference();
+    const reference = await allocateTransactionReference(async (value) =>
+      Boolean(
+        await this.prisma.transaction.findUnique({
+          where: { reference: value },
+        }),
+      ),
+    );
 
     const result = await this.prisma.$transaction(async (tx) => {
       const transaction = await tx.transaction.create({
@@ -247,12 +287,17 @@ export class WithdrawalService {
       return { transaction, withdrawal };
     });
 
-    await this.notificationQueue.add("withdrawal-requested", {
-      tenantId,
-      transactionId: result.transaction.id,
-      reference,
-      amount: dto.amount,
-    });
+    await enqueueNotification(
+      this.notificationQueue,
+      "withdrawal-requested",
+      {
+        tenantId,
+        transactionId: result.transaction.id,
+        reference,
+        amount: dto.amount,
+      },
+      result.transaction.id,
+    );
 
     this.financialEvents.log({
       event: "withdrawal.requested",
@@ -263,6 +308,20 @@ export class WithdrawalService {
       customerId: customer.id,
       userId: initiatedBy.id,
       status: "requested",
+    });
+
+    await this.audit.log({
+      tenantId,
+      userId: initiatedBy.id,
+      action: "withdrawal:request",
+      resourceType: "transaction",
+      resourceId: result.transaction.id,
+      afterState: {
+        reference,
+        amount: dto.amount,
+        customerId: customer.id,
+        status: "pending",
+      },
     });
 
     return this.prisma.transaction.findUnique({
@@ -353,12 +412,17 @@ export class WithdrawalService {
       },
     ]);
 
-    await this.notificationQueue.add("withdrawal-approved", {
-      tenantId,
+    await enqueueNotification(
+      this.notificationQueue,
+      "withdrawal-approved",
+      {
+        tenantId,
+        transactionId,
+        reference,
+        amount,
+      },
       transactionId,
-      reference,
-      amount,
-    });
+    );
 
     this.financialEvents.log({
       event: "withdrawal.approved",
@@ -369,6 +433,20 @@ export class WithdrawalService {
       customerId: transaction.customerId ?? undefined,
       userId: approvedBy.id,
       status: "completed",
+    });
+
+    await this.audit.log({
+      tenantId,
+      userId: approvedBy.id,
+      action: "withdrawal:approve",
+      resourceType: "transaction",
+      resourceId: transactionId,
+      afterState: {
+        reference,
+        amount,
+        customerId: transaction.customerId,
+        status: "completed",
+      },
     });
 
     return this.prisma.transaction.findUnique({
@@ -420,13 +498,18 @@ export class WithdrawalService {
       });
     });
 
-    await this.notificationQueue.add("withdrawal-rejected", {
-      tenantId,
+    await enqueueNotification(
+      this.notificationQueue,
+      "withdrawal-rejected",
+      {
+        tenantId,
+        transactionId,
+        rejectionReason,
+        reference: transaction.reference,
+        amount: Number(transaction.amount),
+      },
       transactionId,
-      rejectionReason,
-      reference: transaction.reference,
-      amount: Number(transaction.amount),
-    });
+    );
 
     this.financialEvents.log({
       event: "withdrawal.rejected",
@@ -438,6 +521,21 @@ export class WithdrawalService {
       userId: rejectedBy.id,
       status: "rejected",
       metadata: { rejectionReason },
+    });
+
+    await this.audit.log({
+      tenantId,
+      userId: rejectedBy.id,
+      action: "withdrawal:reject",
+      resourceType: "transaction",
+      resourceId: transactionId,
+      afterState: {
+        reference: transaction.reference,
+        amount: Number(transaction.amount),
+        customerId: transaction.customerId,
+        status: "rejected",
+        rejectionReason,
+      },
     });
 
     return this.prisma.transaction.findUnique({

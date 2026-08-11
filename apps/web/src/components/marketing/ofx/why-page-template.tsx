@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ArrowRight } from "@/components/icons/phosphor";
+import type { LucideIcon } from "@/components/icons/phosphor";
 import { MarketingContainer } from "../marketing-container";
 
 export type WhyPastel = "sage" | "sky" | "sand" | "lilac";

@@ -15,7 +15,7 @@ import {
   ArrowUpRight,
   Check,
   AlertCircle,
-} from "lucide-react";
+} from "@/components/icons/phosphor";
 import Link from "next/link";
 import { ReceiptModal } from "@/components/financial/receipt-modal";
 import { CustomerListSkeleton } from "@/components/ui/skeleton";

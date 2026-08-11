@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { BookLock, Handshake, MessageSquareText } from "lucide-react";
+import {
+  BookLock,
+  Handshake,
+  MessageSquareText,
+} from "@/components/icons/phosphor";
 import { WhyPageTemplate } from "@/components/marketing/ofx/why-page-template";
 import { APP_NAME } from "@/lib/marketing-data";
 

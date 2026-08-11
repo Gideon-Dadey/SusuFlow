@@ -17,7 +17,8 @@ export const financialQueryOptions = {
   gcTime: FINANCIAL_GC_MS,
   refetchOnWindowFocus: false,
   refetchOnReconnect: true,
-  retry: 2,
+  refetchOnMount: false,
+  retry: 1,
 } as const;
 
 export const profileQueryOptions = {
@@ -25,7 +26,8 @@ export const profileQueryOptions = {
   gcTime: 30 * 60_000,
   refetchOnWindowFocus: false,
   refetchOnReconnect: true,
-  retry: 2,
+  refetchOnMount: false,
+  retry: 1,
 } as const;
 
 export const plansQueryOptions = {
@@ -33,7 +35,8 @@ export const plansQueryOptions = {
   gcTime: 30 * 60_000,
   refetchOnWindowFocus: false,
   refetchOnReconnect: true,
-  retry: 2,
+  refetchOnMount: false,
+  retry: 1,
 } as const;
 
 export function fetchCustomerDeposits(customerId: string) {

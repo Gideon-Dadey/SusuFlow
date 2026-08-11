@@ -1,13 +1,15 @@
-import { Module } from '@nestjs/common';
-import { BullModule } from '@nestjs/bullmq';
-import { WithdrawalService } from './withdrawal.service';
-import { WithdrawalController } from './withdrawal.controller';
-import { LedgerModule } from '../ledger/ledger.module';
+import { Module } from "@nestjs/common";
+import { BullModule } from "@nestjs/bullmq";
+import { WithdrawalService } from "./withdrawal.service";
+import { WithdrawalController } from "./withdrawal.controller";
+import { LedgerModule } from "../ledger/ledger.module";
+import { AuditModule } from "../audit/audit.module";
 
 @Module({
   imports: [
     LedgerModule,
-    BullModule.registerQueue({ name: 'notifications' }),
+    AuditModule,
+    BullModule.registerQueue({ name: "notifications" }),
   ],
   controllers: [WithdrawalController],
   providers: [WithdrawalService],

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/stores/auth.store";
 import { getInitials } from "@/lib/utils";
 import { userApi, tenantApi } from "@/lib/api";
-import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { Loader2, CheckCircle, AlertCircle } from "@/components/icons/phosphor";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { MIN_PASSWORD_LENGTH } from "@susuflow/shared";

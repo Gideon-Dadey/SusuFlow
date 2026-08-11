@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { staffPlanApi, type SavingsPlan } from "@/lib/api";
 import { formatGhs, formatDate } from "@/lib/utils";
-import { Plus, Pencil, X, Check } from "lucide-react";
+import { Plus, Pencil, X, Check } from "@/components/icons/phosphor";
 
 type Tab = "plans" | "enrollments";
 
@@ -189,18 +189,18 @@ export default function SavingsGoalsTrackerPage() {
         )}
       </div>
 
-      <div className="flex gap-2 border-b border-border/60">
+      <div className="company-filter-tabs">
         <button
           type="button"
           onClick={() => setActiveTab("plans")}
-          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-colors ${activeTab === "plans" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+          className={`company-filter-tab ${activeTab === "plans" ? "is-active" : ""}`}
         >
           Savings Plans ({plans?.length ?? 0})
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("enrollments")}
-          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-colors ${activeTab === "enrollments" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+          className={`company-filter-tab ${activeTab === "enrollments" ? "is-active" : ""}`}
         >
           Customer Enrollments ({enrollments?.length ?? 0})
         </button>
@@ -359,7 +359,7 @@ export default function SavingsGoalsTrackerPage() {
               <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Total Plans
               </p>
-              <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+              <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
                 {plans?.length ?? 0}
               </p>
               <p className="mt-1 text-[10px] text-muted-foreground">
@@ -370,7 +370,7 @@ export default function SavingsGoalsTrackerPage() {
               <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Active Plans
               </p>
-              <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+              <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
                 {activePlans}
               </p>
               <p className="mt-1 text-[10px] text-muted-foreground">
@@ -381,7 +381,7 @@ export default function SavingsGoalsTrackerPage() {
               <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Enrollments
               </p>
-              <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+              <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
                 {enrollments?.length ?? 0}
               </p>
               <p className="mt-1 text-[10px] text-muted-foreground">

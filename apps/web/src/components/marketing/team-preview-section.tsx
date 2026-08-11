@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/components/icons/phosphor";
 import { APP_NAME } from "@/lib/marketing-data";
 
 export function TeamPreviewSection() {

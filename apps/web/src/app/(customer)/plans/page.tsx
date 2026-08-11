@@ -1,29 +1,39 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { planApi, SavingsPlan, CustomerPlanWithProgress } from '@/lib/api';
-import { Check, Target, TrendingUp, Sparkles, Plus, Calculator, ArrowRight } from 'lucide-react';
-import { formatGhs } from '@/lib/utils';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { planApi, SavingsPlan, CustomerPlanWithProgress } from "@/lib/api";
+import {
+  Check,
+  Target,
+  TrendingUp,
+  Sparkles,
+  Plus,
+  Calculator,
+  ArrowRight,
+} from "@/components/icons/phosphor";
+import { formatGhs } from "@/lib/utils";
 
 export default function SavingsPlansPage() {
   const queryClient = useQueryClient();
   const [selectedPlan, setSelectedPlan] = useState<SavingsPlan | null>(null);
-  const [targetAmount, setTargetAmount] = useState('');
-  const [enrollError, setEnrollError] = useState('');
+  const [targetAmount, setTargetAmount] = useState("");
+  const [enrollError, setEnrollError] = useState("");
   const [enrollLoading, setEnrollLoading] = useState(false);
 
   // Calculator State
-  const [calcAmount, setCalcAmount] = useState('10');
-  const [calcFrequency, setCalcFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
-  const [calcMonths, setCalcMonths] = useState('3');
+  const [calcAmount, setCalcAmount] = useState("10");
+  const [calcFrequency, setCalcFrequency] = useState<
+    "daily" | "weekly" | "monthly"
+  >("daily");
+  const [calcMonths, setCalcMonths] = useState("3");
 
   // Fetch available plans
   const { data: plans = [] } = useQuery<SavingsPlan[]>({
-    queryKey: ['plans-list'],
+    queryKey: ["plans-list"],
     queryFn: () => planApi.listPlans(),
   });
 
@@ -31,7 +41,7 @@ export default function SavingsPlansPage() {
   const { data: enrollments = [], isLoading: isLoadingEnrollments } = useQuery<
     CustomerPlanWithProgress[]
   >({
-    queryKey: ['my-enrollments'],
+    queryKey: ["my-enrollments"],
     queryFn: () => planApi.listEnrollments(),
   });
 
@@ -43,11 +53,13 @@ export default function SavingsPlansPage() {
     if (!selectedPlan) return;
 
     setEnrollLoading(true);
-    setEnrollError('');
+    setEnrollError("");
     try {
       const amtVal = targetAmount ? parseFloat(targetAmount) : undefined;
       if (amtVal && amtVal < Number(selectedPlan.minAmount)) {
-        throw new Error(`Minimum target amount is GHS ${selectedPlan.minAmount}`);
+        throw new Error(
+          `Minimum target amount is GHS ${selectedPlan.minAmount}`,
+        );
       }
 
       await planApi.enroll({
@@ -56,11 +68,11 @@ export default function SavingsPlansPage() {
       });
 
       setSelectedPlan(null);
-      setTargetAmount('');
+      setTargetAmount("");
       // Invalidate queries to refresh lists
-      queryClient.invalidateQueries({ queryKey: ['my-enrollments'] });
+      queryClient.invalidateQueries({ queryKey: ["my-enrollments"] });
     } catch (err) {
-      setEnrollError(err instanceof Error ? err.message : 'Enrollment failed');
+      setEnrollError(err instanceof Error ? err.message : "Enrollment failed");
     } finally {
       setEnrollLoading(false);
     }
@@ -70,17 +82,17 @@ export default function SavingsPlansPage() {
   const calculateProjection = () => {
     const amt = parseFloat(calcAmount) || 0;
     const months = parseInt(calcMonths) || 3;
-    
+
     // Average days/weeks per month
     let periods = 0;
-    if (calcFrequency === 'daily') {
+    if (calcFrequency === "daily") {
       periods = months * 30; // 30 days
-    } else if (calcFrequency === 'weekly') {
+    } else if (calcFrequency === "weekly") {
       periods = months * 4.34; // 4.34 weeks
     } else {
       periods = months; // monthly
     }
-    
+
     const projected = amt * periods;
     return Math.round(projected);
   };
@@ -95,14 +107,19 @@ export default function SavingsPlansPage() {
 
       {/* Active Goals Section */}
       <div className="space-y-3">
-        <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">My Active Goals</h2>
+        <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">
+          My Active Goals
+        </h2>
         {isLoadingEnrollments ? (
           <div className="h-28 rounded-xl bg-card border border-border animate-pulse" />
         ) : enrollments.length === 0 ? (
           <Card className="border border-border bg-card">
             <CardContent className="p-8 text-center text-muted-foreground text-sm space-y-2">
               <p>You have not enrolled in any savings goal yet.</p>
-              <p className="text-xs text-muted-foreground/80">Choose an available susu plan below to begin your savings journey.</p>
+              <p className="text-xs text-muted-foreground/80">
+                Choose an available susu plan below to begin your savings
+                journey.
+              </p>
             </CardContent>
           </Card>
         ) : (
@@ -110,7 +127,10 @@ export default function SavingsPlansPage() {
             {enrollments.map((e) => {
               const targetVal = Number(e.targetAmount || 0);
               return (
-                <Card key={e.id} className="border border-border bg-card hover:shadow-card transition-all">
+                <Card
+                  key={e.id}
+                  className="border border-border bg-card hover:shadow-card transition-all"
+                >
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
                       <div>
@@ -118,7 +138,9 @@ export default function SavingsPlansPage() {
                           <Target className="h-4 w-4 text-primary shrink-0" />
                           {e.plan.name}
                         </CardTitle>
-                        <p className="text-xs text-muted-foreground pt-1">{e.plan.description}</p>
+                        <p className="text-xs text-muted-foreground pt-1">
+                          {e.plan.description}
+                        </p>
                       </div>
                       <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full uppercase">
                         {e.plan.frequency}
@@ -130,11 +152,15 @@ export default function SavingsPlansPage() {
                     <div className="flex justify-between items-end text-xs">
                       <div>
                         <span className="text-muted-foreground">Saved</span>
-                        <p className="text-lg font-bold text-foreground">{formatGhs(e.savedAmount)}</p>
+                        <p className="text-lg font-bold text-foreground">
+                          {formatGhs(e.savedAmount)}
+                        </p>
                       </div>
                       <div className="text-right">
                         <span className="text-muted-foreground">Target</span>
-                        <p className="text-sm font-semibold text-muted-foreground/80">{formatGhs(targetVal)}</p>
+                        <p className="text-sm font-semibold text-muted-foreground/80">
+                          {formatGhs(targetVal)}
+                        </p>
                       </div>
                     </div>
 
@@ -153,7 +179,10 @@ export default function SavingsPlansPage() {
                             Goal Achieved <Check className="h-3 w-3" />
                           </span>
                         ) : (
-                          <span>Remaining: {formatGhs(Math.max(0, targetVal - e.savedAmount))}</span>
+                          <span>
+                            Remaining:{" "}
+                            {formatGhs(Math.max(0, targetVal - e.savedAmount))}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -175,7 +204,9 @@ export default function SavingsPlansPage() {
             <Sparkles className="h-4 w-4 text-primary shrink-0" />
             Susu Projection Calculator
           </CardTitle>
-          <p className="text-xs text-muted-foreground pt-1">Estimate how much your daily habits will grow over time</p>
+          <p className="text-xs text-muted-foreground pt-1">
+            Estimate how much your daily habits will grow over time
+          </p>
         </CardHeader>
         <CardContent className="space-y-4 relative z-10">
           <div className="grid grid-cols-3 gap-3">
@@ -222,11 +253,20 @@ export default function SavingsPlansPage() {
 
           <div className="rounded-xl border border-dashed border-primary/20 bg-primary-100/10 p-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div>
-              <p className="text-xs text-muted-foreground">Estimated Total Savings</p>
-              <p className="text-2xl font-black text-primary">{formatGhs(projectedTotal)}</p>
+              <p className="text-xs text-muted-foreground">
+                Estimated Total Savings
+              </p>
+              <p className="text-2xl font-black text-primary">
+                {formatGhs(projectedTotal)}
+              </p>
             </div>
             <div className="text-xs text-muted-foreground text-center sm:text-right max-w-xs">
-              <span className="font-semibold text-foreground">Goal Projection:</span> Save <span className="text-primary font-bold">GHS {calcAmount}</span> {calcFrequency} for {calcMonths} months and achieve your target!
+              <span className="font-semibold text-foreground">
+                Goal Projection:
+              </span>{" "}
+              Save{" "}
+              <span className="text-primary font-bold">GHS {calcAmount}</span>{" "}
+              {calcFrequency} for {calcMonths} months and achieve your target!
             </div>
           </div>
         </CardContent>
@@ -234,12 +274,17 @@ export default function SavingsPlansPage() {
 
       {/* Available Plans Section */}
       <div className="space-y-3">
-        <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">Available Susu Plans</h2>
+        <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">
+          Available Susu Plans
+        </h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {plans.map((p) => {
             const isEnrolled = enrolledPlanIds.has(p.id);
             return (
-              <Card key={p.id} className="border border-border bg-card flex flex-col justify-between hover:border-secondary/40 transition-colors">
+              <Card
+                key={p.id}
+                className="border border-border bg-card flex flex-col justify-between hover:border-secondary/40 transition-colors"
+              >
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start gap-2">
                     <CardTitle className="text-sm text-foreground font-semibold flex items-center gap-1">
@@ -250,27 +295,39 @@ export default function SavingsPlansPage() {
                       {p.frequency}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground pt-1">{p.description}</p>
+                  <p className="text-xs text-muted-foreground pt-1">
+                    {p.description}
+                  </p>
                 </CardHeader>
                 <CardContent className="pt-2 space-y-4">
                   <div className="text-xs text-muted-foreground space-y-1">
                     <div className="flex justify-between">
                       <span>Minimum Deposit</span>
-                      <span className="font-medium text-foreground">{formatGhs(Number(p.minAmount))}</span>
+                      <span className="font-medium text-foreground">
+                        {formatGhs(Number(p.minAmount))}
+                      </span>
                     </div>
                     {p.durationMonths && (
                       <div className="flex justify-between">
                         <span>Duration</span>
-                        <span className="font-medium text-foreground">{p.durationMonths} Months</span>
+                        <span className="font-medium text-foreground">
+                          {p.durationMonths} Months
+                        </span>
                       </div>
                     )}
                   </div>
                   {isEnrolled ? (
-                    <Button disabled className="w-full bg-green-500 hover:bg-green-600 disabled:opacity-90">
+                    <Button
+                      disabled
+                      className="w-full bg-green-500 hover:bg-green-600 disabled:opacity-90"
+                    >
                       Enrolled <Check className="ml-1.5 h-4 w-4" />
                     </Button>
                   ) : (
-                    <Button className="w-full" onClick={() => setSelectedPlan(p)}>
+                    <Button
+                      className="w-full"
+                      onClick={() => setSelectedPlan(p)}
+                    >
                       Start Goal <Plus className="ml-1.5 h-4 w-4" />
                     </Button>
                   )}
@@ -291,7 +348,8 @@ export default function SavingsPlansPage() {
                 Enroll in {selectedPlan.name}
               </CardTitle>
               <p className="text-xs text-muted-foreground pt-1">
-                Set a target savings goal for this plan. Min deposit: {formatGhs(Number(selectedPlan.minAmount))}.
+                Set a target savings goal for this plan. Min deposit:{" "}
+                {formatGhs(Number(selectedPlan.minAmount))}.
               </p>
             </CardHeader>
             <form onSubmit={handleEnroll}>
@@ -313,7 +371,12 @@ export default function SavingsPlansPage() {
                 ) : null}
               </CardContent>
               <div className="flex border-t border-border p-4 gap-2 justify-end">
-                <Button type="button" variant="outline" size="sm" onClick={() => setSelectedPlan(null)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedPlan(null)}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" size="sm" loading={enrollLoading}>

@@ -292,7 +292,7 @@ export default function StaffCalculatorPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-border/60 overflow-x-auto pb-1">
+      <div className="company-filter-tabs overflow-x-auto">
         {[
           { id: "keypad", label: "Smart Keypad", icon: faCalculator },
           { id: "compound", label: "Compound Growth", icon: faChartLine },
@@ -305,10 +305,8 @@ export default function StaffCalculatorPage() {
             type="button"
             onClick={() => setActiveTab(tab.id as CalcTab)}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 text-xs font-semibold border-b-2 transition-colors whitespace-nowrap",
-              activeTab === tab.id
-                ? "border-primary text-primary font-bold bg-primary/5"
-                : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/20",
+              "company-filter-tab",
+              activeTab === tab.id && "is-active",
             )}
           >
             <FontAwesomeIcon icon={tab.icon} className="h-3.5 w-3.5" />
@@ -411,10 +409,10 @@ export default function StaffCalculatorPage() {
           <Card className="shadow-sm border-border">
             <CardHeader className="pb-3 border-b border-border/40">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-bold flex items-center gap-2">
+                <CardTitle className="flex items-center gap-1.5 text-sm font-semibold">
                   <FontAwesomeIcon
                     icon={faHistory}
-                    className="text-muted-foreground"
+                    className="h-3.5 w-3.5 text-muted-foreground"
                   />
                   Calculation Log
                 </CardTitle>

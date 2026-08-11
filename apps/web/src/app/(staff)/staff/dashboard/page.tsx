@@ -1,44 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { StatCard } from "@/components/dashboard/stat-card";
-import { QuickActionCard } from "@/components/dashboard/quick-action-card";
-import { AdminDashboardHero } from "@/components/dashboard/admin-dashboard-hero";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  CompanyPanel,
+  CompanyPanelHeader,
+} from "@/components/company-admin/company-panel";
 import { CollectionTrendChart } from "@/components/dashboard/collection-trend-chart";
-import { CollectionsByStatusChart } from "@/components/dashboard/collections-by-status-chart";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { depositApi, customerApi, operationsApi } from "@/lib/api";
-import { formatGhs, getInitials, formatDate, getGreeting } from "@/lib/utils";
-import { StatusBadge } from "@/components/ui/badge";
-import { useAuthStore } from "@/stores/auth.store";
-import {
-  portalDashboardCardGridClass,
-  portalDashboardMetricsGridClass,
-} from "@/lib/portal-dashboard-tokens";
-import {
-  faChartLine,
-  faClipboardList,
-  faUsers,
-  faWallet,
-  faUserPlus,
-  faCheckCircle,
-  faSignal,
-  faArrowRight,
-  faCircleDot,
-  faClock,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ReceiptModal } from "@/components/financial/receipt-modal";
-import { useState } from "react";
+import { StatusBadge } from "@/components/ui/badge";
+import {
+  depositApi,
+  customerApi,
+  operationsApi,
+  withdrawalApi,
+} from "@/lib/api";
+import { formatDate, formatGhs } from "@/lib/utils";
+import { CompanyAvatar } from "@/components/company-admin/company-avatar";
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  ChevronRight,
+  ClipboardList,
+  ListFilter,
+  ShieldAlert,
+  UserPlus,
+  Users,
+  Wallet,
+} from "@/components/icons/phosphor";
 
 export default function StaffDashboard() {
-  const queryClient = useQueryClient();
-  const user = useAuthStore((s) => s.user);
-  const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [selectedTxn, setSelectedTxn] = useState<any | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
+  const [actionTab, setActionTab] = useState<"collect" | "onboard">("collect");
 
   const { data: deposits } = useQuery({
     queryKey: ["staff-deposits"],
@@ -65,363 +60,482 @@ export default function StaffDashboard() {
     refetchInterval: 60_000,
   });
 
+  const { data: withdrawals } = useQuery({
+    queryKey: ["staff-withdrawals"],
+    queryFn: () => withdrawalApi.list(),
+    placeholderData: (prev) => prev,
+  });
+
   const transactions = deposits?.items || [];
   const recentCustomers = allCustomers?.items || [];
   const queueItems = queue?.items || [];
+  const summary = queue?.summary;
 
-  const todayDeposits = transactions.filter(
-    (t) =>
-      t.status === "completed" &&
-      new Date(t.createdAt).toDateString() === new Date().toDateString(),
+  const todayDeposits = useMemo(
+    () =>
+      transactions.filter(
+        (t) =>
+          t.status === "completed" &&
+          new Date(t.createdAt).toDateString() === new Date().toDateString(),
+      ),
+    [transactions],
   );
   const todayTotal = todayDeposits.reduce((s, t) => s + Number(t.amount), 0);
-  const pendingActionsCount = queue?.summary?.total ?? 0;
+  const completedVolume = transactions
+    .filter((t) => t.status === "completed")
+    .reduce((s, t) => s + Number(t.amount), 0);
+  const pendingActionsCount = summary?.total ?? 0;
 
-  // Activation mutation for pending accounts in queue
-  const activateCustomerMutation = useMutation({
-    mutationFn: (id: string) => customerApi.activate(id),
-    onSuccess: () => {
-      setActionSuccess("Customer account approved & activated successfully!");
-      queryClient.invalidateQueries({ queryKey: ["staff-all-customers"] });
-      queryClient.invalidateQueries({ queryKey: ["staff-active-customers"] });
-      queryClient.invalidateQueries({ queryKey: ["staff-action-queue"] });
-      setTimeout(() => setActionSuccess(null), 4000);
+  const bookRows = [
+    {
+      label: "Active customers",
+      detail: `${allCustomers?.items?.length || 0} registered`,
+      value: String(activeCustomers?.items?.length || 0),
+      icon: Users,
+      well: "company-well-sky",
     },
-  });
+    {
+      label: "Today’s deposits",
+      detail: `${todayDeposits.length} completed`,
+      value: formatGhs(todayTotal),
+      icon: Wallet,
+      well: "company-well-mint",
+    },
+    {
+      label: "Pending KYC",
+      detail: "Identity reviews",
+      value: String(summary?.pendingKyc ?? 0),
+      icon: ClipboardList,
+      well: "company-well-amber",
+    },
+    {
+      label: "Pending withdrawals",
+      detail: "Awaiting payout",
+      value: String(summary?.pendingWithdrawals ?? 0),
+      icon: ArrowUpRight,
+      well: "company-well-rose",
+    },
+  ];
+
+  const todoRows = [
+    {
+      label: "Open approvals",
+      detail: "Needs a decision",
+      value: pendingActionsCount,
+      href: "/staff/queue",
+      icon: ClipboardList,
+      well: "company-well-violet",
+    },
+    {
+      label: "Deposits to verify",
+      detail: "Waiting on confirmation",
+      value: summary?.pendingDeposits ?? 0,
+      href: "/staff/deposits",
+      icon: Wallet,
+      well: "company-well-mint",
+    },
+    {
+      label: "New customers",
+      detail: "Pending activation",
+      value: summary?.pendingCustomers ?? 0,
+      href: "/staff/customers?status=pending",
+      icon: UserPlus,
+      well: "company-well-sky",
+    },
+    {
+      label: "Fraud alerts",
+      detail: "Open risk cases",
+      value: summary?.openFraud ?? 0,
+      href: "/staff/fraud",
+      icon: ShieldAlert,
+      well: "company-well-rose",
+    },
+  ];
+
+  const collectRows = [
+    {
+      label: "Record a deposit",
+      detail: "MoMo or bank transfer",
+      value: "Start",
+      href: "/staff/deposits",
+      icon: Wallet,
+      well: "company-well-mint",
+    },
+    {
+      label: "Verify receipts",
+      detail: "Waiting on confirmation",
+      value: String(summary?.pendingDeposits ?? 0),
+      href: "/staff/deposits",
+      icon: ClipboardList,
+      well: "company-well-amber",
+    },
+    {
+      label: "Collected today",
+      detail: `${todayDeposits.length} completed`,
+      value: formatGhs(todayTotal),
+      href: "/staff/deposits",
+      icon: ArrowUpRight,
+      well: "company-well-sky",
+    },
+    {
+      label: "All deposits",
+      detail: "Collection history",
+      value: String(transactions.length),
+      href: "/staff/deposits",
+      icon: Wallet,
+      well: "company-well-violet",
+    },
+  ];
+
+  const onboardRows = [
+    {
+      label: "Add a customer",
+      detail: "Create an account",
+      value: "Start",
+      href: "/staff/customers/new",
+      icon: UserPlus,
+      well: "company-well-sky",
+    },
+    {
+      label: "Pending activation",
+      detail: "New accounts to review",
+      value: String(summary?.pendingCustomers ?? 0),
+      href: "/staff/customers?status=pending",
+      icon: Users,
+      well: "company-well-amber",
+    },
+    {
+      label: "Identity reviews",
+      detail: "KYC waiting on staff",
+      value: String(summary?.pendingKyc ?? 0),
+      href: "/staff/kyc",
+      icon: ClipboardList,
+      well: "company-well-violet",
+    },
+    {
+      label: "All members",
+      detail: "Customer directory",
+      value: String(allCustomers?.items?.length || 0),
+      href: "/staff/customers",
+      icon: Users,
+      well: "company-well-mint",
+    },
+  ];
 
   return (
-    <div className="space-y-6">
-      {/* 1. Staff Hero Welcome Header */}
-      <AdminDashboardHero
-        greeting={`${getGreeting()}, ${user?.firstName || "Staff Member"} 👋`}
-        title="Staff Operations Control Center"
-        subtitle="Monitor real-time deposit collections, member onboarding, and action queues."
-        highlight1Label="Today's Collections"
-        highlight1Value={formatGhs(todayTotal)}
-        highlight2Label="Pending Approvals"
-        highlight2Value={String(pendingActionsCount)}
-      />
-
-      {actionSuccess && (
-        <div className="rounded-none border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[10px] sm:text-sm text-foreground transition-all duration-300">
-          <FontAwesomeIcon
-            icon={faCheckCircle}
-            className="mr-1.5 text-emerald-500"
-          />
-          {actionSuccess}
+    <div className="space-y-5">
+      <div className="company-overview-hero">
+        <div>
+          <p className="company-hero-figure">{formatGhs(completedVolume)}</p>
+          <p className="company-meta mt-1">
+            {formatGhs(todayTotal)} collected today · {todayDeposits.length}{" "}
+            deposits
+          </p>
         </div>
-      )}
-
-      {/* 3. Metric Overview Cards Grid */}
-      <section className="space-y-1 sm:space-y-2">
-        <h2 className="text-sm sm:text-base font-semibold text-foreground">
-          Key Metrics
-        </h2>
-        <div className={portalDashboardMetricsGridClass}>
-          <StatCard
-            title="Deposits Today"
-            value={formatGhs(todayTotal)}
-            subtitle={`${todayDeposits.length} transactions today`}
-            icon={faWallet}
-            iconBgClassName="bg-emerald-500/10"
-            iconClassName="text-emerald-500"
-          />
-          <StatCard
-            title="Active Customers"
-            value={String(activeCustomers?.items?.length || 0)}
-            subtitle={`${allCustomers?.items?.length || 0} total registered`}
-            icon={faUsers}
-            iconBgClassName="bg-sky-500/10"
-            iconClassName="text-sky-500"
-          />
-          <Link href="/staff/queue" className="block">
-            <StatCard
-              title="Pending Actions"
-              value={String(pendingActionsCount)}
-              icon={faClipboardList}
-              iconBgClassName="bg-amber-500/10"
-              iconClassName="text-amber-500"
-              subtitle={
-                pendingActionsCount > 0
-                  ? "Requires staff review"
-                  : "All caught up"
-              }
-            />
+        <div className="company-cta-bar">
+          <Link
+            href="/staff/reports"
+            aria-label="Filter reports"
+            className="company-cta-icon"
+          >
+            <ListFilter className="h-4 w-4" weight="regular" />
           </Link>
-          <StatCard
-            title="Total Volume"
-            value={formatGhs(
-              transactions
-                .filter((t) => t.status === "completed")
-                .reduce((s, t) => s + Number(t.amount), 0),
-            )}
-            subtitle="Processed volume"
-            icon={faChartLine}
-            iconBgClassName="bg-indigo-500/10"
-            iconClassName="text-indigo-500"
-          />
+          <Link href="/staff/customers/new" className="company-cta-secondary">
+            Add customer
+          </Link>
+          <Link href="/staff/deposits" className="company-cta-primary">
+            Record deposit
+          </Link>
         </div>
-      </section>
-
-      {/* 4. Quick Actions Grid (4-column) */}
-      <section className="space-y-1 sm:space-y-2">
-        <h2 className="text-sm sm:text-base font-semibold text-foreground">
-          Quick Actions
-        </h2>
-        <div className={portalDashboardCardGridClass}>
-          <QuickActionCard
-            href="/staff/deposits"
-            title="Manual Payments"
-            description="Verify MoMo claims"
-            icon={faWallet}
-            iconBgClassName="bg-amber-500/10"
-            iconClassName="text-amber-500"
-          />
-          <QuickActionCard
-            href="/staff/customers/new"
-            title="Onboard Customer"
-            description="Register new account"
-            icon={faUserPlus}
-            iconBgClassName="bg-sky-500/10"
-            iconClassName="text-sky-500"
-          />
-          <QuickActionCard
-            href="/staff/withdrawals"
-            title="Review Withdrawals"
-            description="Process payouts & claims"
-            icon={faWallet}
-            iconBgClassName="bg-indigo-500/10"
-            iconClassName="text-indigo-500"
-          />
-          <QuickActionCard
-            href="/staff/team"
-            title="Agent Approvals"
-            description="Review field registrations"
-            icon={faUsers}
-            iconBgClassName="bg-emerald-500/10"
-            iconClassName="text-emerald-500"
-          />
-        </div>
-      </section>
-
-      {/* 5. Analytics Charts Grid */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <CollectionTrendChart transactions={transactions} />
-        <CollectionsByStatusChart transactions={transactions} />
       </div>
 
-      {/* 6. Two-Column Row: Priority Queue & Recent Members (Bimatro Leaderboard Layout) */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* Left Column: Priority Operations Queue */}
-        <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden lg:col-span-6">
-          <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border/60">
-            <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-tight">
-              Priority Queue
-            </h3>
-            <Link
-              href="/staff/queue"
-              className="text-xs font-semibold text-secondary hover:underline transition-colors"
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
+        <CompanyPanel className="xl:col-span-4">
+          <div className="company-filter-tabs px-[1.1rem]">
+            <button
+              type="button"
+              className={`company-filter-tab ${actionTab === "collect" ? "is-active" : ""}`}
+              onClick={() => setActionTab("collect")}
             >
-              Full Queue →
-            </Link>
+              Collect
+            </button>
+            <button
+              type="button"
+              className={`company-filter-tab ${actionTab === "onboard" ? "is-active" : ""}`}
+              onClick={() => setActionTab("onboard")}
+            >
+              Onboard
+            </button>
           </div>
-
-          {queueItems.length === 0 ? (
-            <div className="py-8 text-center text-xs text-muted-foreground">
-              <FontAwesomeIcon
-                icon={faCheckCircle}
-                className="mx-auto h-7 w-7 text-emerald-500 mb-2 block"
-              />
-              No pending queue items. All operational actions up to date.
-            </div>
-          ) : (
-            <div className="divide-y divide-border/60">
-              {queueItems.slice(0, 6).map((item: any, idx: number) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between px-4 sm:px-5 py-3 hover:bg-muted/20 transition-colors"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-3">
-                    <span
-                      className={`text-xs sm:text-sm font-bold shrink-0 w-6 text-center ${idx < 3 ? "text-amber-500" : "text-muted-foreground"}`}
-                    >
-                      #{idx + 1}
+          <div>
+            {(actionTab === "collect" ? collectRows : onboardRows).map(
+              (row) => {
+                const Icon = row.icon;
+                return (
+                  <Link key={row.label} href={row.href} className="company-row">
+                    <span className={`company-well ${row.well}`}>
+                      <Icon className="h-3.5 w-3.5" weight="regular" />
                     </span>
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 font-bold text-xs">
-                      <FontAwesomeIcon
-                        icon={faClipboardList}
-                        className="h-4 w-4"
-                      />
-                    </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-xs font-semibold text-foreground capitalize">
-                          {item.type.replace(/_/g, " ")}
-                        </span>
-                        <span className="inline-flex items-center rounded-full bg-amber-500/10 px-2 py-0.5 text-[9px] font-semibold text-amber-600 dark:text-amber-400">
-                          Pending
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground truncate mt-0.5">
-                        {item.description || "Requires staff approval"}
+                      <p className="truncate text-[13px] font-semibold text-foreground">
+                        {row.label}
+                      </p>
+                      <p className="truncate text-[11px] text-muted-foreground">
+                        {row.detail}
                       </p>
                     </div>
-                  </div>
+                    {row.value === "Start" ? (
+                      <ChevronRight
+                        className="h-4 w-4 shrink-0 text-muted-foreground"
+                        weight="regular"
+                      />
+                    ) : (
+                      <p className="shrink-0 text-[13px] font-semibold tabular-nums text-foreground">
+                        {row.value}
+                      </p>
+                    )}
+                  </Link>
+                );
+              },
+            )}
+          </div>
+        </CompanyPanel>
 
-                  <div className="text-right shrink-0">
-                    <Link href={`/staff/queue?highlight=${item.id}`}>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-7 text-[11px] px-2.5"
-                      >
-                        Review
-                      </Button>
-                    </Link>
-                    <p className="mt-1 text-[10px] text-muted-foreground font-mono">
-                      {formatDate(item.createdAt)}
+        <CompanyPanel className="xl:col-span-4">
+          <CompanyPanelHeader
+            title="Your books"
+            action={
+              <Link href="/staff/ledger" className="company-link">
+                Ledger
+              </Link>
+            }
+          />
+          <div>
+            {bookRows.map((row) => {
+              const Icon = row.icon;
+              return (
+                <div key={row.label} className="company-row">
+                  <span className={`company-well ${row.well}`}>
+                    <Icon className="h-3.5 w-3.5" weight="regular" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[13px] font-semibold text-foreground">
+                      {row.label}
+                    </p>
+                    <p className="truncate text-[11px] text-muted-foreground">
+                      {row.detail}
                     </p>
                   </div>
+                  <p className="shrink-0 text-[13px] font-semibold tabular-nums text-foreground">
+                    {row.value}
+                  </p>
                 </div>
-              ))}
+              );
+            })}
+          </div>
+        </CompanyPanel>
+
+        <CompanyPanel className="xl:col-span-4">
+          <CompanyPanelHeader
+            title="To do"
+            action={
+              <Link href="/staff/queue" className="company-link">
+                Approvals
+              </Link>
+            }
+          />
+          <div>
+            {todoRows.map((row) => {
+              const Icon = row.icon;
+              return (
+                <Link key={row.label} href={row.href} className="company-row">
+                  <span className={`company-well ${row.well}`}>
+                    <Icon className="h-3.5 w-3.5" weight="regular" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[13px] font-semibold text-foreground">
+                      {row.label}
+                    </p>
+                    <p className="truncate text-[11px] text-muted-foreground">
+                      {row.detail}
+                    </p>
+                  </div>
+                  <span
+                    className={`company-count ${Number(row.value) > 0 ? "is-live" : ""}`}
+                  >
+                    {row.value}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </CompanyPanel>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
+        <CompanyPanel className="xl:col-span-8">
+          <CompanyPanelHeader
+            title="Recent activity"
+            action={
+              <Link href="/staff/deposits" className="company-link">
+                View all
+              </Link>
+            }
+          />
+          {transactions.length === 0 ? (
+            <p className="px-4 py-10 text-center text-xs text-muted-foreground">
+              No deposit activity yet.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px] text-left">
+                <thead>
+                  <tr className="text-[11px] font-medium text-muted-foreground">
+                    <th className="px-4 py-2.5 font-medium">Date</th>
+                    <th className="px-4 py-2.5 font-medium">Transaction</th>
+                    <th className="px-4 py-2.5 font-medium">Amount</th>
+                    <th className="px-4 py-2.5 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.slice(0, 8).map((tx) => (
+                    <tr
+                      key={tx.id}
+                      onClick={() => {
+                        setSelectedTxn(tx);
+                        setReceiptOpen(true);
+                      }}
+                      className="cursor-pointer border-t border-[var(--company-line)] hover:bg-[#fafbfc] dark:hover:bg-white/[0.03]"
+                    >
+                      <td className="px-4 py-3 align-top">
+                        <p className="text-[12px] font-medium text-foreground">
+                          {formatDate(tx.createdAt)}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3 align-top">
+                        <div className="flex items-center gap-2.5">
+                          <CompanyAvatar
+                            firstName={tx.customer?.user?.firstName}
+                            lastName={tx.customer?.user?.lastName}
+                            seed={tx.customer?.id || tx.reference}
+                          />
+                          <div className="min-w-0">
+                            <p className="text-[13px] font-semibold text-foreground">
+                              {tx.customer?.user
+                                ? `${tx.customer.user.firstName} ${tx.customer.user.lastName}`
+                                : "Susu member"}
+                            </p>
+                            <p className="mt-0.5 text-[11px] text-muted-foreground">
+                              {tx.reference} ·{" "}
+                              {tx.customer?.customerNumber || "N/A"}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 align-top text-[13px] font-semibold tabular-nums text-foreground">
+                        {formatGhs(tx.amount)}
+                      </td>
+                      <td className="px-4 py-3 align-top">
+                        <StatusBadge status={tx.status} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
-        </Card>
+        </CompanyPanel>
 
-        {/* Right Column: Newly Registered Susu Members */}
-        <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden lg:col-span-6">
-          <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border/60">
-            <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-tight">
-              Recent Members
-            </h3>
-            <Link
-              href="/staff/customers"
-              className="text-xs font-semibold text-secondary hover:underline transition-colors"
-            >
-              All Members →
-            </Link>
-          </div>
+        <CompanyPanel className="xl:col-span-4">
+          <CompanyPanelHeader
+            title="Approvals"
+            action={
+              <Link href="/staff/queue" className="company-link">
+                Full queue
+              </Link>
+            }
+          />
+          {queueItems.length === 0 ? (
+            <div className="px-4 py-10 text-center">
+              <CheckCircle2 className="mx-auto mb-2 h-6 w-6 text-emerald-500" />
+              <p className="text-xs text-muted-foreground">
+                No pending approvals. Collections are up to date.
+              </p>
+            </div>
+          ) : (
+            queueItems.slice(0, 6).map((item: any) => (
+              <div key={item.id} className="company-row">
+                <span className="company-well company-well-amber">
+                  <ClipboardList className="h-3.5 w-3.5" weight="regular" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[13px] font-semibold capitalize text-foreground">
+                    {String(item.type || item.title || "").replace(/_/g, " ")}
+                  </p>
+                  <p className="truncate text-[11px] text-muted-foreground">
+                    {item.description || item.subtitle || "Needs review"}
+                  </p>
+                </div>
+                <Link
+                  href="/staff/queue"
+                  className="company-btn company-btn-secondary h-8 px-2.5 text-[11px]"
+                >
+                  Review
+                </Link>
+              </div>
+            ))
+          )}
+        </CompanyPanel>
+      </div>
 
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
+        <div className="xl:col-span-8">
+          <CollectionTrendChart
+            transactions={[...transactions, ...(withdrawals?.items || [])]}
+          />
+        </div>
+        <CompanyPanel className="xl:col-span-4">
+          <CompanyPanelHeader
+            title="Recent members"
+            action={
+              <Link href="/staff/customers" className="company-link">
+                All members
+              </Link>
+            }
+          />
           {recentCustomers.length === 0 ? (
-            <p className="py-8 text-center text-xs text-muted-foreground">
+            <p className="px-4 py-10 text-center text-xs text-muted-foreground">
               No members registered yet.
             </p>
           ) : (
-            <div className="divide-y divide-border/60">
-              {recentCustomers.slice(0, 6).map((customer, idx: number) => (
-                <div
-                  key={customer.id}
-                  className="flex items-center justify-between px-4 sm:px-5 py-3 hover:bg-muted/20 transition-colors"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-3">
-                    <span
-                      className={`text-xs sm:text-sm font-bold shrink-0 w-6 text-center ${idx < 3 ? "text-amber-500" : "text-muted-foreground"}`}
-                    >
-                      #{idx + 1}
-                    </span>
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary font-bold text-xs">
-                      {getInitials(
-                        customer.user?.firstName,
-                        customer.user?.lastName,
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-xs font-semibold text-foreground truncate">
-                          {customer.user?.firstName} {customer.user?.lastName}
-                        </span>
-                        <span className="inline-flex items-center rounded-full bg-muted/60 px-2 py-0.5 text-[9px] font-semibold text-muted-foreground uppercase">
-                          MEMBER
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground truncate mt-0.5 font-mono">
-                        {customer.customerNumber} ·{" "}
-                        {customer.user?.phone ||
-                          customer.user?.email ||
-                          "No contact"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="text-right shrink-0 flex items-center gap-2">
-                    <StatusBadge status={customer.status} />
-                    <Link href={`/staff/customers/${customer.id}`}>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 text-xs px-2 text-secondary hover:text-secondary/80"
-                      >
-                        Profile →
-                      </Button>
-                    </Link>
-                  </div>
+            recentCustomers.slice(0, 6).map((customer) => (
+              <Link
+                key={customer.id}
+                href={`/staff/customers/${customer.id}`}
+                className="company-row"
+              >
+                <CompanyAvatar
+                  firstName={customer.user?.firstName}
+                  lastName={customer.user?.lastName}
+                  src={customer.user?.avatarUrl}
+                  seed={customer.id}
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[13px] font-semibold text-foreground">
+                    {customer.user?.firstName} {customer.user?.lastName}
+                  </p>
+                  <p className="truncate text-[11px] text-muted-foreground">
+                    {customer.customerNumber}
+                  </p>
                 </div>
-              ))}
-            </div>
+                <StatusBadge status={customer.status} />
+              </Link>
+            ))
           )}
-        </Card>
+        </CompanyPanel>
       </div>
 
-      {/* 7. Live Activity Log: Recent Deposits (Bimatro Layout) */}
-      <Card className="rounded-none border border-border/60 bg-card shadow-sm p-0 overflow-hidden">
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border/60">
-          <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-tight">
-            Recent Deposits
-          </h3>
-          <Link
-            href="/staff/deposits"
-            className="text-xs font-semibold text-secondary hover:underline transition-colors"
-          >
-            View all
-          </Link>
-        </div>
-
-        {transactions.length === 0 ? (
-          <p className="py-8 text-center text-xs text-muted-foreground">
-            No deposit transactions recorded yet.
-          </p>
-        ) : (
-          <div className="divide-y divide-border/60">
-            {transactions.slice(0, 8).map((tx) => (
-              <div
-                key={tx.id}
-                onClick={() => {
-                  setSelectedTxn(tx);
-                  setReceiptOpen(true);
-                }}
-                className="flex items-center justify-between px-4 sm:px-6 py-3.5 hover:bg-muted/20 cursor-pointer transition-colors"
-              >
-                <div className="min-w-0 flex-1 pr-4">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-mono text-xs font-semibold text-foreground tracking-tight">
-                      {tx.reference}
-                    </span>
-                    <StatusBadge status={tx.status} />
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground truncate">
-                    {tx.customer?.user
-                      ? `${tx.customer.user.firstName} ${tx.customer.user.lastName}`
-                      : "Susu Member"}{" "}
-                    · {tx.customer?.customerNumber || "N/A"}
-                  </p>
-                </div>
-
-                <div className="text-right shrink-0">
-                  <p className="text-sm font-bold tabular-nums text-foreground">
-                    {formatGhs(tx.amount)}
-                  </p>
-                  <p className="mt-0.5 text-[11px] text-muted-foreground">
-                    {formatDate(tx.createdAt)}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
-
-      {/* Transaction Receipt Modal */}
-      {receiptOpen && selectedTxn && (
+      {receiptOpen && selectedTxn ? (
         <ReceiptModal
           open={receiptOpen}
           transaction={selectedTxn}
@@ -430,7 +544,7 @@ export default function StaffDashboard() {
             setSelectedTxn(null);
           }}
         />
-      )}
+      ) : null}
     </div>
   );
 }

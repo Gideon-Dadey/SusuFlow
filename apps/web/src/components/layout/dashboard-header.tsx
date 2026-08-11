@@ -1,11 +1,9 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { Menu } from "@/components/icons/phosphor";
 import { Button } from "@/components/ui/button";
 import { DashboardUserMenu } from "@/components/layout/dashboard-user-menu";
-import { cn } from "@/lib/utils";
 
 const titles: Record<string, string> = {
   // Customer portal
@@ -26,40 +24,49 @@ const titles: Record<string, string> = {
   "/collector/profile": "Profile",
 
   // Staff portal
-  "/staff/dashboard": "Dashboard",
+  "/staff/dashboard": "Overview",
+  "/staff/queue": "Approvals",
   "/staff/customers": "Customers",
-  "/staff/customers/new": "Onboard Customer",
-  "/staff/deposits": "All Deposits",
+  "/staff/customers/new": "Onboard customer",
+  "/staff/deposits": "Deposits",
   "/staff/withdrawals": "Withdrawals",
-  "/staff/plans": "Customer Savings Goals",
-  "/staff/ledger": "General Ledger",
-  "/staff/kyc": "KYC Review",
-  "/staff/fraud": "Fraud & Risk Alerts",
-  "/staff/commissions": "Collector Commissions",
-  "/staff/audit": "Audit Logs",
-  "/staff/reports": "Reports & Analytics",
-  "/staff/settings": "Profile & Settings",
+  "/staff/plans": "Plans",
+  "/staff/ledger": "Ledger",
+  "/staff/kyc": "KYC",
+  "/staff/fraud": "Fraud",
+  "/staff/commissions": "Commissions",
+  "/staff/audit": "Audit trail",
+  "/staff/reports": "Reports",
+  "/staff/settings": "Settings",
   "/staff/profile": "Profile",
+  "/staff/team": "Team",
+  "/staff/collectors/map": "Collectors map",
+  "/staff/collectors": "Collectors",
+  "/staff/reconciliation": "Reconciliation",
+  "/staff/analytics": "Analytics",
+  "/staff/notifications": "Notifications",
+  "/staff/calculator": "Calculator",
+  "/staff/excel": "Excel",
 
   // Admin portal
-  "/admin/dashboard": "Admin Control Center",
-  "/admin/tenants": "Platform Tenants",
-  "/admin/tenants/new": "Create Organization",
-  "/admin/users": "Platform Users",
-  "/admin/plans": "Platform Savings Goals",
-  "/admin/ledger": "Consolidated Ledger",
-  "/admin/audit": "System Audit Trail",
-  "/admin/kyc": "KYC Review Queue",
-  "/admin/fraud": "Fraud Alerts",
-  "/admin/health": "System Health",
-  "/admin/dev-ops": "DevOps & Database Ops",
-  "/admin/billing": "Revenue & Billing",
-  "/admin/commissions": "Collector Commissions",
-  "/admin/deposits": "Global Deposits",
-  "/admin/withdrawals": "Global Withdrawals",
-  "/admin/customers": "Savers Directory",
-  "/admin/profile": "Admin Profile",
-  "/admin/settings": "Platform Configuration",
+  "/admin/dashboard": "Overview",
+  "/admin/tenants": "Organizations",
+  "/admin/tenants/new": "Create organization",
+  "/admin/users": "Platform users",
+  "/admin/plans": "Savings goals",
+  "/admin/ledger": "Ledger",
+  "/admin/audit": "Audit trail",
+  "/admin/kyc": "Identity queue",
+  "/admin/fraud": "Fraud alerts",
+  "/admin/health": "System health",
+  "/admin/dev-ops": "DevOps",
+  "/admin/billing": "Revenue",
+  "/admin/commissions": "Commissions",
+  "/admin/deposits": "Deposits",
+  "/admin/withdrawals": "Withdrawals",
+  "/admin/customers": "Customers",
+  "/admin/profile": "Profile",
+  "/admin/settings": "Configuration",
 };
 
 interface DashboardHeaderProps {
@@ -96,24 +103,37 @@ export function DashboardHeader({
   };
 
   const mobileTitle = getMobileTitle();
+  const isCompany = variant === "staff" || variant === "admin";
+
   return (
-    <header className="dashboard-header flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-background px-3 sm:px-5 lg:px-6">
-      <div className="flex min-w-0 items-center gap-2.5 lg:hidden">
+    <header
+      className={
+        isCompany
+          ? "dashboard-header company-topbar"
+          : "dashboard-header flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-background px-3 sm:px-5 lg:px-6"
+      }
+    >
+      <div className="flex min-w-0 items-center gap-2.5">
         <Button
           type="button"
           variant="ghost"
           size="sm"
           onClick={onMenuClick}
           aria-label="Open menu"
+          className={isCompany ? "company-icon-btn lg:hidden" : "lg:hidden"}
         >
-          <FontAwesomeIcon icon={faBars} className="h-4 w-4" />
+          <Menu className="h-4 w-4" weight="regular" />
         </Button>
-        <p className="mobile-header-title min-w-0 truncate font-bold text-foreground">
-          {mobileTitle}
-        </p>
+        {isCompany ? (
+          <h1 className="company-topbar-title">{mobileTitle}</h1>
+        ) : (
+          <p className="mobile-header-title min-w-0 truncate font-bold text-foreground lg:hidden">
+            {mobileTitle}
+          </p>
+        )}
       </div>
 
-      <div className="ml-auto flex shrink-0 items-center">
+      <div className="ml-auto flex min-w-0 shrink-0 items-center gap-2">
         <DashboardUserMenu />
       </div>
     </header>

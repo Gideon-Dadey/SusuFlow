@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/components/icons/phosphor";
 import { BRAND_MOMO_PAY_SHOWCASE } from "@/lib/brand-assets";
 import { BrandLogo } from "./brand-logo";
 import { MarketingContainer } from "./marketing-container";

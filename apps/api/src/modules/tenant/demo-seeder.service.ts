@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import * as bcrypt from "bcrypt";
-import { ROLES } from "@susuflow/shared";
+import { allocateTransactionReference, ROLES } from "@susuflow/shared";
 import { PlanService } from "../plan/plan.service";
 
 @Injectable()
@@ -216,7 +216,13 @@ export class DemoSeederService {
         const customerAccount = customerAccounts[custIndex];
         const amount = 50 + Math.floor(Math.random() * 100);
 
-        const ref = `DEP-${date.getTime()}-${i}`;
+        const ref = await allocateTransactionReference(async (value) =>
+          Boolean(
+            await this.prisma.transaction.findUnique({
+              where: { reference: value },
+            }),
+          ),
+        );
         const tx = await this.prisma.transaction.create({
           data: {
             tenantId,
@@ -291,7 +297,13 @@ export class DemoSeederService {
         const customerAccount = customerAccounts[custIndex];
         const amount = 20;
 
-        const ref = `WTH-${date.getTime()}`;
+        const ref = await allocateTransactionReference(async (value) =>
+          Boolean(
+            await this.prisma.transaction.findUnique({
+              where: { reference: value },
+            }),
+          ),
+        );
         const tx = await this.prisma.transaction.create({
           data: {
             tenantId,
@@ -414,7 +426,40 @@ export class DemoSeederService {
       ],
     });
 
-    // 7. Seed Audit Logs
+    // 7. Seed Audit Logs — who did what, against whom
+    const recentMoney = await this.prisma.transaction.findMany({
+      where: { tenantId },
+      take: 12,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        type: true,
+        amount: true,
+        reference: true,
+        customerId: true,
+        status: true,
+        createdAt: true,
+      },
+    });
+
+    const moneyLogs = recentMoney.map((tx) => ({
+      tenantId,
+      userId: tx.type === "withdrawal" ? companyAdminId : collector.id,
+      action:
+        tx.type === "withdrawal" ? "withdrawal:record" : "deposit:complete",
+      resourceType: "transaction",
+      resourceId: tx.id,
+      ipAddress: "197.251.14.88",
+      userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
+      createdAt: tx.createdAt,
+      afterState: {
+        reference: tx.reference,
+        amount: Number(tx.amount),
+        customerId: tx.customerId,
+        status: tx.status,
+      } as object,
+    }));
+
     await this.prisma.auditLog.createMany({
       data: [
         {
@@ -434,17 +479,69 @@ export class DemoSeederService {
           resourceId: customerIds[0],
           ipAddress: "197.251.14.88",
           userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
+          afterState: {
+            customerName: "Kofi Mensah",
+            customerNumber: "demo",
+          },
+        },
+        {
+          tenantId,
+          userId: collector.id,
+          action: "customer:create",
+          resourceType: "customer",
+          resourceId: customerIds[1],
+          ipAddress: "197.251.14.88",
+          userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
+          afterState: {
+            customerName: "Abena Osei",
+          },
         },
         {
           tenantId,
           userId: companyAdminId,
-          action: "kyc:review",
-          resourceType: "kycDocument",
+          action: "kyc:review-bundle",
+          resourceType: "customer",
           resourceId: customerIds[2],
           ipAddress: "197.251.12.50",
           userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+          afterState: {
+            status: "approved",
+            customerName: "Kwame Asante",
+            customerId: customerIds[2],
+          },
         },
-      ],
+        {
+          tenantId,
+          userId: companyAdminId,
+          action: "kyc:review-bundle",
+          resourceType: "customer",
+          resourceId: customerIds[3],
+          ipAddress: "197.251.12.50",
+          userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+          afterState: {
+            status: "rejected",
+            customerName: "Akua Addo",
+            customerId: customerIds[3],
+            rejectionReason: "The text is blurry and illegible.",
+          },
+        },
+        {
+          tenantId,
+          userId: companyAdminId,
+          action: "withdrawal:request",
+          resourceType: "transaction",
+          resourceId: recentMoney.find((tx) => tx.type === "withdrawal")?.id,
+          ipAddress: "197.251.12.50",
+          userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+          afterState: {
+            status: "pending",
+            amount: 20,
+            customerId: customerIds[0],
+            customerName: "Kofi Mensah",
+          },
+        },
+        ...moneyLogs,
+      ].filter((row) => row.resourceId || row.action === "user:login"),
     });
 
     return {

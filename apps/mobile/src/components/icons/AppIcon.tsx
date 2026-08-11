@@ -1,29 +1,42 @@
 import {
   ArrowCircleUpIcon,
   ArrowDownLeftIcon,
+  ArrowRightIcon,
   BellIcon,
   BuildingIcon,
+  CameraIcon,
   CaretDownIcon,
   CaretLeftIcon,
   CaretRightIcon,
+  ChatCircleIcon,
   CheckCircleIcon,
+  CheckIcon,
   ClockCounterClockwiseIcon,
   ClockIcon,
   CreditCardIcon,
   DeviceMobileIcon,
   DownloadSimpleIcon,
+  EnvelopeSimpleIcon,
   EyeIcon,
   EyeSlashIcon,
   FileTextIcon,
+  FingerprintIcon,
   FlagIcon,
   GearSixIcon,
   GiftIcon,
+  GlobeIcon,
   HouseIcon,
+  IdentificationCardIcon,
   InfoIcon,
+  KeyIcon,
   LifebuoyIcon,
   ListBulletsIcon,
+  LockIcon,
   MagnifyingGlassIcon,
   MoonIcon,
+  PaletteIcon,
+  PencilSimpleIcon,
+  PhoneIcon,
   PlusIcon,
   PowerIcon,
   QuestionIcon,
@@ -33,11 +46,14 @@ import {
   SignOutIcon,
   SlidersHorizontalIcon,
   SquaresFourIcon,
+  SunIcon,
+  TrendUpIcon,
   UserCircleIcon,
   UserIcon,
   UsersIcon,
   WalletIcon,
   WarningCircleIcon,
+  WhatsappLogoIcon,
   XIcon,
   type Icon,
   type IconProps,
@@ -88,7 +104,23 @@ export type AppIconName =
   | "close"
   | "clock"
   | "download"
-  | "share";
+  | "share"
+  | "check"
+  | "lock"
+  | "fingerprint"
+  | "sun"
+  | "mail"
+  | "phone"
+  | "chat"
+  | "whatsapp"
+  | "globe"
+  | "key"
+  | "palette"
+  | "id-card"
+  | "camera"
+  | "pencil"
+  | "trending-up"
+  | "arrow-right";
 
 /**
  * Phosphor icon map — one professional family for Quick Access, tabs, and chrome.
@@ -137,6 +169,22 @@ const ICON_MAP: Record<AppIconName, Icon> = {
   clock: ClockIcon,
   download: DownloadSimpleIcon,
   share: ShareNetworkIcon,
+  check: CheckIcon,
+  lock: LockIcon,
+  fingerprint: FingerprintIcon,
+  sun: SunIcon,
+  mail: EnvelopeSimpleIcon,
+  phone: PhoneIcon,
+  chat: ChatCircleIcon,
+  whatsapp: WhatsappLogoIcon,
+  globe: GlobeIcon,
+  key: KeyIcon,
+  palette: PaletteIcon,
+  "id-card": IdentificationCardIcon,
+  camera: CameraIcon,
+  pencil: PencilSimpleIcon,
+  "trending-up": TrendUpIcon,
+  "arrow-right": ArrowRightIcon,
 };
 
 export interface AppIconProps extends Omit<IconProps, "color" | "weight"> {

@@ -7,7 +7,7 @@ import {
   View,
   type TextInputProps,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { authChrome } from "@/theme/auth-chrome";
 import { typography } from "@/theme/tokens";
 
@@ -76,8 +76,8 @@ export function DarkAuthField({
             hitSlop={8}
             style={styles.toggle}
           >
-            <Ionicons
-              name={visible ? "eye-off-outline" : "eye-outline"}
+            <AppIcon
+              name={visible ? "eye-off" : "eye"}
               size={20}
               color={authChrome.inkMuted}
             />

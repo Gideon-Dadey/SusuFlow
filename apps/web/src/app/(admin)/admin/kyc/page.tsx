@@ -8,35 +8,20 @@ import { StatusBadge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { adminApi, kycApi, KycDocument } from "@/lib/api";
 import { getInitials, cn, formatDate } from "@/lib/utils";
+import { IdentityReviewDialog } from "@/components/kyc/identity-review-dialog";
 import {
   ShieldCheck,
-  CheckCircle2,
-  XCircle,
   Eye,
   FileText,
   Search,
-  CheckSquare,
-  ExternalLink,
   RefreshCw,
-  X,
   LayoutGrid,
   ListFilter,
-  IdCard,
-  Camera,
   FileCheck2,
   Building2,
-} from "lucide-react";
+} from "@/components/icons/phosphor";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileAlt, faLink } from "@fortawesome/free-solid-svg-icons";
-
-const COMMON_REJECTION_REASONS = [
-  "Ghana Card photo is blurry or unreadable",
-  "Selfie photo does not match Ghana Card face",
-  "Ghana Card number format is invalid",
-  "Back photo of Ghana Card is missing",
-  "Expired ID document submitted",
-  "Document name does not match customer profile",
-];
 
 export interface GroupedCustomerKyc {
   customerId: string;
@@ -234,12 +219,6 @@ export default function AdminKycPage() {
     (d) => d.status === "rejected",
   ).length;
 
-  const allChecksPassed =
-    checks.idNumberMatches &&
-    checks.nameMatches &&
-    checks.selfieMatches &&
-    checks.documentLegible;
-
   return (
     <div className="space-y-6">
       {/* Top Header */}
@@ -271,7 +250,7 @@ export default function AdminKycPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Pending Global Verification
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {pendingCount}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -283,7 +262,7 @@ export default function AdminKycPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Approved Customers
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground text-emerald-600 dark:text-emerald-400">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground text-emerald-600 dark:text-emerald-400">
             {approvedCount}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -295,7 +274,7 @@ export default function AdminKycPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Rejected Submissions
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-red-600 dark:text-red-400">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-red-600 dark:text-red-400">
             {rejectedCount}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -307,7 +286,7 @@ export default function AdminKycPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Compliance Standard
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tracking-tight text-foreground">
             Act 843 Ready
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -318,7 +297,7 @@ export default function AdminKycPage() {
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border/60 pb-3">
-        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+        <div className="company-filter-tabs overflow-x-auto w-full sm:w-auto">
           {[
             { label: "Pending Audit", value: "pending" },
             { label: "Approved", value: "approved" },
@@ -330,10 +309,8 @@ export default function AdminKycPage() {
               type="button"
               onClick={() => setSelectedStatus(tab.value)}
               className={cn(
-                "px-3 py-1.5 text-xs font-semibold transition-colors border-b-2",
-                selectedStatus === tab.value
-                  ? "border-primary text-primary font-bold"
-                  : "border-transparent text-muted-foreground hover:text-foreground",
+                "company-filter-tab",
+                selectedStatus === tab.value && "is-active",
               )}
             >
               {tab.label}
@@ -637,287 +614,24 @@ export default function AdminKycPage() {
         </Card>
       )}
 
-      {/* FULL-SCREEN SUPER ADMIN AUDIT & VERIFICATION INSPECTION MODAL */}
       {inspectSubmission && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-fade-in overflow-y-auto">
-          <div className="relative w-full max-w-4xl bg-card border border-border rounded-lg overflow-hidden flex flex-col my-auto max-h-[90vh] shadow-xl">
-            {/* Modal Top Bar */}
-            <div className="flex items-center justify-between p-4 border-b border-border bg-slate-900 text-white">
-              <div className="flex items-center gap-3">
-                <div className="size-9 rounded bg-primary/20 text-primary flex items-center justify-center">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                    <span>Super Admin Identity Verification Portal</span>
-                    <span className="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
-                      {inspectSubmission.documents.length} ATTACHMENT
-                      {inspectSubmission.documents.length > 1 ? "S" : ""}
-                    </span>
-                  </h2>
-                  <p className="text-xs text-slate-400">
-                    Customer: {inspectSubmission.customerName} (
-                    {inspectSubmission.customerEmail}) • Org:{" "}
-                    {inspectSubmission.tenantName}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setInspectSubmission(null)}
-                className="size-8 text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Modal Main Body */}
-            <div className="flex-1 overflow-y-auto p-5 grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* Left Column: High-Res Document Viewer with Switcher Tabs */}
-              <div className="lg:col-span-7 space-y-3">
-                {/* Document Switcher Tabs */}
-                <div className="flex items-center gap-2 border-b border-border pb-2 overflow-x-auto">
-                  {inspectSubmission.documents.map((doc, idx) => (
-                    <button
-                      key={doc.id}
-                      type="button"
-                      onClick={() => setSelectedDocIndex(idx)}
-                      className={cn(
-                        "px-3 py-1 text-xs font-semibold transition-colors flex items-center gap-1.5",
-                        selectedDocIndex === idx
-                          ? "bg-primary text-white"
-                          : "bg-muted text-muted-foreground hover:text-foreground",
-                      )}
-                    >
-                      {doc.documentType === "selfie" ? (
-                        <>
-                          <Camera className="h-3.5 w-3.5" />
-                          <span>Facial Selfie</span>
-                        </>
-                      ) : (
-                        <>
-                          <IdCard className="h-3.5 w-3.5" />
-                          <span>
-                            {doc.documentType.toUpperCase().replace("_", " ")}
-                          </span>
-                        </>
-                      )}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
-                  <span>
-                    Viewing File {selectedDocIndex + 1} of{" "}
-                    {inspectSubmission.documents.length}:{" "}
-                    <strong className="text-foreground">
-                      {inspectSubmission.documents[
-                        selectedDocIndex
-                      ]?.documentType
-                        .toUpperCase()
-                        .replace("_", " ")}
-                    </strong>
-                  </span>
-                  {inspectSubmission.documents[selectedDocIndex]?.fileUrl && (
-                    <a
-                      href={
-                        inspectSubmission.documents[selectedDocIndex].fileUrl
-                      }
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-primary hover:underline flex items-center gap-1 text-xs font-medium"
-                    >
-                      <span>Full Screen Original</span>{" "}
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
-                </div>
-
-                {/* High-Res Contained Image Preview */}
-                <div className="relative aspect-4/3 w-full bg-slate-950 rounded overflow-hidden border border-slate-800 flex items-center justify-center">
-                  {inspectSubmission.documents[
-                    selectedDocIndex
-                  ]?.fileUrl.endsWith(".pdf") ? (
-                    <iframe
-                      src={
-                        inspectSubmission.documents[selectedDocIndex].fileUrl
-                      }
-                      className="w-full h-full"
-                      title="KYC PDF Viewer"
-                    />
-                  ) : inspectSubmission.documents[selectedDocIndex]?.fileUrl ? (
-                    <img
-                      src={
-                        inspectSubmission.documents[selectedDocIndex].fileUrl
-                      }
-                      alt="Full Inspection Copy"
-                      className="w-full h-full object-contain p-2"
-                    />
-                  ) : null}
-                </div>
-
-                {/* Customer Details metadata */}
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="p-2.5 rounded bg-muted/40 border border-border">
-                    <span className="text-muted-foreground block font-medium">
-                      Ghana Card / ID No:
-                    </span>
-                    <span className="font-mono font-semibold text-foreground">
-                      {inspectSubmission.cardId}
-                    </span>
-                  </div>
-                  <div className="p-2.5 rounded bg-muted/40 border border-border">
-                    <span className="text-muted-foreground block font-medium">
-                      Submitted Timestamp:
-                    </span>
-                    <span className="font-medium text-foreground">
-                      {formatDate(inspectSubmission.submittedAt)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Verification Checklist & Super Admin Audit Action */}
-              <div className="lg:col-span-5 space-y-4 border-t lg:border-t-0 lg:border-l lg:pl-5 border-border">
-                <div className="space-y-2.5">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                    <CheckSquare className="h-4 w-4 text-primary" />
-                    <span>Super Admin Auditor Checklist *</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Verify compliance criteria to approve or override identity
-                    status:
-                  </p>
-
-                  <div className="space-y-2">
-                    <label className="flex items-start gap-2.5 p-2 rounded border border-border hover:bg-muted/30 cursor-pointer text-xs font-medium text-foreground">
-                      <input
-                        type="checkbox"
-                        checked={checks.idNumberMatches}
-                        onChange={(e) =>
-                          setChecks((prev) => ({
-                            ...prev,
-                            idNumberMatches: e.target.checked,
-                          }))
-                        }
-                        className="mt-0.5 size-4 rounded text-primary focus:ring-primary"
-                      />
-                      <span>1. Ghana Card / ID Number matches registry</span>
-                    </label>
-
-                    <label className="flex items-start gap-2.5 p-2 rounded border border-border hover:bg-muted/30 cursor-pointer text-xs font-medium text-foreground">
-                      <input
-                        type="checkbox"
-                        checked={checks.nameMatches}
-                        onChange={(e) =>
-                          setChecks((prev) => ({
-                            ...prev,
-                            nameMatches: e.target.checked,
-                          }))
-                        }
-                        className="mt-0.5 size-4 rounded text-primary focus:ring-primary"
-                      />
-                      <span>2. Customer name matches ID document</span>
-                    </label>
-
-                    <label className="flex items-start gap-2.5 p-2 rounded border border-border hover:bg-muted/30 cursor-pointer text-xs font-medium text-foreground">
-                      <input
-                        type="checkbox"
-                        checked={checks.selfieMatches}
-                        onChange={(e) =>
-                          setChecks((prev) => ({
-                            ...prev,
-                            selfieMatches: e.target.checked,
-                          }))
-                        }
-                        className="mt-0.5 size-4 rounded text-primary focus:ring-primary"
-                      />
-                      <span>3. Facial selfie matches ID photo</span>
-                    </label>
-
-                    <label className="flex items-start gap-2.5 p-2 rounded border border-border hover:bg-muted/30 cursor-pointer text-xs font-medium text-foreground">
-                      <input
-                        type="checkbox"
-                        checked={checks.documentLegible}
-                        onChange={(e) =>
-                          setChecks((prev) => ({
-                            ...prev,
-                            documentLegible: e.target.checked,
-                          }))
-                        }
-                        className="mt-0.5 size-4 rounded text-primary focus:ring-primary"
-                      />
-                      <span>4. Image photo is crisp and legible</span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Common Rejection Reasons Selector */}
-                <div className="space-y-1.5 pt-2 border-t border-border">
-                  <label className="block text-xs font-semibold text-foreground">
-                    Rejection Reason (Required if Declining):
-                  </label>
-                  <select
-                    value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)}
-                    className="w-full text-xs p-2 rounded border border-border bg-card text-foreground"
-                  >
-                    <option value="">Select standard reason...</option>
-                    {COMMON_REJECTION_REASONS.map((r) => (
-                      <option key={r} value={r}>
-                        {r}
-                      </option>
-                    ))}
-                  </select>
-                  <Input
-                    type="text"
-                    placeholder="Or type custom rejection notes..."
-                    value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)}
-                    className="text-xs h-8 border border-border mt-1"
-                  />
-                </div>
-
-                {/* Action Buttons */}
-                <div className="pt-3 space-y-2 border-t border-border">
-                  <Button
-                    onClick={() => handleApproveBundle(inspectSubmission)}
-                    disabled={
-                      !allChecksPassed ||
-                      activeReviewId === inspectSubmission.customerId
-                    }
-                    className="w-full text-xs font-semibold h-10 gap-2 bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50"
-                  >
-                    <CheckCircle2 className="h-4 w-4" />
-                    {activeReviewId === inspectSubmission.customerId
-                      ? "Verifying..."
-                      : "Approve & Verify Identity"}
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    onClick={() => handleRejectBundle(inspectSubmission)}
-                    disabled={
-                      !rejectionReason.trim() ||
-                      activeReviewId === inspectSubmission.customerId
-                    }
-                    className="w-full text-xs font-semibold h-10 gap-2 border-red-200 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:border-red-900 dark:text-red-400 disabled:opacity-50"
-                  >
-                    <XCircle className="h-4 w-4" />
-                    {activeReviewId === inspectSubmission.customerId
-                      ? "Processing..."
-                      : "Reject Submission"}
-                  </Button>
-
-                  {!allChecksPassed && (
-                    <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium text-center">
-                      * Check all 4 verification boxes above to enable Approval.
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <IdentityReviewDialog
+          subject={{
+            ...inspectSubmission,
+            organization: inspectSubmission.tenantName,
+          }}
+          selectedDocIndex={selectedDocIndex}
+          onSelectDoc={setSelectedDocIndex}
+          checks={checks}
+          onChecksChange={setChecks}
+          rejectionReason={rejectionReason}
+          onRejectionReasonChange={setRejectionReason}
+          onClose={() => setInspectSubmission(null)}
+          onApprove={() => handleApproveBundle(inspectSubmission)}
+          onReject={() => handleRejectBundle(inspectSubmission)}
+          isPending={activeReviewId === inspectSubmission.customerId}
+          alwaysEditable
+        />
       )}
     </div>
   );

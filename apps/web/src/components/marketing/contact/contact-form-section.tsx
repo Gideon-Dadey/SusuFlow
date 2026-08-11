@@ -1,4 +1,9 @@
-import { Clock, Mail, MapPin, MessageSquare } from "lucide-react";
+import {
+  Clock,
+  Mail,
+  MapPin,
+  MessageSquare,
+} from "@/components/icons/phosphor";
 import { ContactForm } from "@/components/marketing/contact/contact-form";
 import { CONTACT_OFFICE, SUPPORT_EMAIL } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";

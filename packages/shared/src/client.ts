@@ -7,3 +7,4 @@ export * from "./utils/pagination";
 export * from "./utils/receipt";
 export * from "./validators/phone.validator";
 export * from "./validators/ghana-card.validator";
+export * from "./push/catalog";

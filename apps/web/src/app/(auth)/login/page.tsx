@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CheckCircle, Eye, EyeOff } from "lucide-react";
+import { CheckCircle, Eye, EyeOff } from "@/components/icons/phosphor";
 import { AuthShell } from "@/components/auth/auth-shell";
 import {
   AuthFooterExtras,

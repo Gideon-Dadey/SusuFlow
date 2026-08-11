@@ -33,6 +33,17 @@ export function getInitials(firstName?: string, lastName?: string): string {
   return `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase() || "?";
 }
 
+export const AVATAR_TONE_COUNT = 6;
+
+export function getAvatarTone(seed?: string | null): number {
+  const value = seed?.trim() || "?";
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 31 + value.charCodeAt(i)) >>> 0;
+  }
+  return hash % AVATAR_TONE_COUNT;
+}
+
 export type PortalVariant = "admin" | "staff" | "collector" | "customer";
 
 export function getPortalFromPathname(pathname: string): PortalVariant {

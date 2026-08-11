@@ -3,6 +3,7 @@ import {
   formatGhs,
   getDashboardPath,
   getGreeting,
+  getAvatarTone,
   getInitials,
   getPortalFromPathname,
   inferTenantSlugFromEmail,
@@ -81,6 +82,14 @@ describe("web utils", () => {
 
     it("returns ? when names missing", () => {
       expect(getInitials()).toBe("?");
+    });
+  });
+
+  describe("getAvatarTone", () => {
+    it("returns a stable tone for the same seed", () => {
+      expect(getAvatarTone("cus-42")).toBe(getAvatarTone("cus-42"));
+      expect(getAvatarTone("cus-42")).toBeGreaterThanOrEqual(0);
+      expect(getAvatarTone("cus-42")).toBeLessThan(6);
     });
   });
 });

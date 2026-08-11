@@ -1,4 +1,4 @@
-import { FontAwesome6 } from "@expo/vector-icons";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
@@ -114,11 +114,11 @@ export function UserAvatar({
             },
           ]}
         >
-          <FontAwesome6
+          <AppIcon
             name="check"
             size={spec.badge * 0.45}
             color="#ffffff"
-            solid
+            weight="bold"
           />
         </View>
       ) : null}

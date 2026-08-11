@@ -1,4 +1,4 @@
-import { FontAwesome6 } from "@expo/vector-icons";
+import { AppIcon } from "@/components/icons/AppIcon";
 import {
   ActivityIndicator,
   Modal,
@@ -13,7 +13,6 @@ import { formatGhs } from "@/lib/currency";
 import { StatusBadge } from "@/components/activity/StatusBadge";
 import { TransactionTypeIcon } from "@/components/activity/TransactionTypeIcon";
 import { NotificationBellIcon } from "@/components/notifications/NotificationBellIcon";
-import { AppIcon } from "@/components/icons/AppIcon";
 import { Button } from "@/components/Button";
 import type { AppNotification } from "@/hooks/useNotificationFeed";
 import { formatNotificationTime } from "@/lib/notification-utils";
@@ -33,6 +32,7 @@ interface NotificationSheetProps {
 }
 
 function isUnread(item: AppNotification, readCutoff: string | null) {
+  if (item.inboxId) return !item.readAt;
   if (!readCutoff) return false;
   return new Date(item.createdAt).getTime() > new Date(readCutoff).getTime();
 }
@@ -90,9 +90,12 @@ function NotificationRow({
           >
             {item.title}
           </Text>
-          <Text style={[styles.rowAmount, { color: colors.foreground }]}>
-            {formatGhs(item.amount)}
-          </Text>
+          {typeof item.amount === "number" &&
+          (item.kind === "deposit" || item.kind === "withdrawal") ? (
+            <Text style={[styles.rowAmount, { color: colors.foreground }]}>
+              {formatGhs(item.amount)}
+            </Text>
+          ) : null}
         </View>
         <Text
           style={[styles.rowCopy, { color: colors.mutedForeground }]}
@@ -162,7 +165,7 @@ export function NotificationSheet({
               <Text
                 style={[styles.subtitle, { color: colors.mutedForeground }]}
               >
-                Tap any item to open the official receipt
+                Payments, identity, and security — tap to open
               </Text>
             </View>
             <Pressable
@@ -171,11 +174,11 @@ export function NotificationSheet({
               onPress={onClose}
               hitSlop={12}
             >
-              <FontAwesome6
-                name="xmark"
+              <AppIcon
+                name="close"
                 size={20}
                 color={colors.mutedForeground}
-                solid
+                weight="bold"
               />
             </Pressable>
           </View>
@@ -205,7 +208,8 @@ export function NotificationSheet({
                 You&apos;re all caught up
               </Text>
               <Text style={[styles.hint, { color: colors.mutedForeground }]}>
-                Deposits and withdrawals will show up here the moment they move.
+                Payments, payouts, and security alerts will land here the moment
+                they happen.
               </Text>
             </View>
           ) : (

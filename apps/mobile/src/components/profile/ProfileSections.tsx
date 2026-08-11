@@ -15,6 +15,7 @@ export {
   appVersion,
   openSupportEmail,
   SettingRow,
+  SettingsSwitch,
   SettingToggle,
   StatPill,
 } from "./ProfileSettingPrimitives";

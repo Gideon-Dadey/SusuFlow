@@ -78,13 +78,13 @@ export function HelpSettingsContent() {
 
       <SettingsPanel>
         <SettingRow
-          icon="call-outline"
+          icon="phone"
           title="Call centre"
           subtitle="Mon–Fri, 8am–6pm GMT"
           onPress={() => Linking.openURL(`tel:${supportPhone}`)}
         />
         <SettingRow
-          icon="logo-whatsapp"
+          icon="whatsapp"
           title="WhatsApp"
           subtitle="Chat with our team"
           onPress={() => Linking.openURL(`https://wa.me/${supportWhatsApp}`)}

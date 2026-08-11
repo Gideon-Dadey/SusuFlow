@@ -12,6 +12,13 @@ import { clearBiometricCredentials } from "@/lib/biometric";
 import { unregisterDevicePushToken } from "@/lib/push-notifications";
 import { prefetchAuthenticatedSession } from "@/lib/session-prefetch";
 import { resetUserSessionCache } from "@/lib/session-cache";
+import {
+  clearRememberedSession,
+  rememberSession,
+  rememberedAccessToken,
+} from "@/lib/session-memory";
+import { queryClient } from "@/lib/query-client";
+import { queryKeys } from "@/lib/query-keys";
 import { recordLastLoginAt, readLastLoginAt } from "@/lib/last-login";
 import { storage } from "@/lib/storage";
 import { resolveLoginTenantSlug } from "@/lib/tenant";
@@ -25,6 +32,7 @@ interface User {
   roles: string[];
   tenantSlug?: string;
   avatarUrl?: string | null;
+  customerId?: string;
 }
 
 interface AuthState {
@@ -79,6 +87,7 @@ async function persistSession(data: LoginResponse, tenantSlug: string) {
 
 async function loadProfile(tenantSlug: string) {
   const profile = await userApi.getMe();
+  queryClient.setQueryData(queryKeys.userProfile(profile.id), profile);
   return {
     user: {
       id: profile.id,
@@ -88,8 +97,24 @@ async function loadProfile(tenantSlug: string) {
       roles: ["customer"],
       tenantSlug: tenantSlug || undefined,
       avatarUrl: profile.avatarUrl ?? null,
+      customerId: profile.customer?.id,
     },
   };
+}
+
+function warmSession(userId: string, tenantSlug: string, customerId?: string) {
+  void prefetchAuthenticatedSession(userId, tenantSlug, customerId)
+    .then((profile) => {
+      const nextCustomerId = profile?.customer?.id;
+      if (!nextCustomerId) return;
+      const current = useAuthStore.getState().user;
+      if (current && current.id === userId && !current.customerId) {
+        useAuthStore.setState({
+          user: { ...current, customerId: nextCustomerId },
+        });
+      }
+    })
+    .catch(() => undefined);
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -113,6 +138,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       ]);
 
     const slug = tenantSlug || "";
+    rememberSession({ accessToken, tenantSlug: slug });
 
     set({
       accessToken,
@@ -125,40 +151,45 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     if (!refreshToken && !accessToken) return;
 
-    try {
-      if (accessToken) {
-        const { user } = await loadProfile(slug);
-        set({ user, isAuthenticated: true });
-        void prefetchAuthenticatedSession(user.id, slug).catch(() => undefined);
-        return;
-      }
-    } catch (err) {
-      if (!(err instanceof ApiError) || err.status !== 401) {
-        await get().handleSessionExpired();
-        return;
-      }
-    }
-
-    if (refreshToken) {
-      const refreshed = await refreshSessionFromStorage();
-      if (!refreshed) {
-        await get().handleSessionExpired();
-        return;
-      }
+    void (async () => {
       try {
-        const token = await storage.getItem(storage.keys.accessToken);
-        const { user } = await loadProfile(slug);
-        set({
-          user,
-          accessToken: token,
-          refreshToken,
-          isAuthenticated: true,
-        });
-        void prefetchAuthenticatedSession(user.id, slug).catch(() => undefined);
-      } catch {
-        await get().handleSessionExpired();
+        if (accessToken) {
+          const { user } = await loadProfile(slug);
+          set({ user, isAuthenticated: true });
+          warmSession(user.id, slug, user.customerId);
+          return;
+        }
+      } catch (err) {
+        if (!(err instanceof ApiError) || err.status !== 401) {
+          await get().handleSessionExpired();
+          return;
+        }
       }
-    }
+
+      if (refreshToken) {
+        const refreshed = await refreshSessionFromStorage();
+        if (!refreshed) {
+          await get().handleSessionExpired();
+          return;
+        }
+        try {
+          const token =
+            rememberedAccessToken() ||
+            (await storage.getItem(storage.keys.accessToken));
+          rememberSession({ accessToken: token, tenantSlug: slug });
+          const { user } = await loadProfile(slug);
+          set({
+            user,
+            accessToken: token,
+            refreshToken,
+            isAuthenticated: true,
+          });
+          warmSession(user.id, slug, user.customerId);
+        } catch {
+          await get().handleSessionExpired();
+        }
+      }
+    })();
   },
 
   login: async (email, password, tenantSlug) => {
@@ -170,6 +201,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const userTenant = data.user?.tenantSlug || slug || "";
       resetUserSessionCache();
       await persistSession(data, userTenant);
+      rememberSession({
+        accessToken: data.accessToken,
+        tenantSlug: userTenant,
+      });
       const lastLoginAt = await recordLastLoginAt();
       set({
         user: data.user,
@@ -179,11 +214,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         lastLoginAt,
         isAuthenticated: true,
       });
-      void prefetchAuthenticatedSession(data.user.id, userTenant).catch(
-        (prefetchErr) => {
-          console.warn("Session prefetch warning:", prefetchErr);
-        },
-      );
+      warmSession(data.user.id, userTenant);
       return data;
     } catch (err) {
       if (err instanceof ApiError) {
@@ -228,6 +259,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
     useAppLockStore.setState({ locked: false, obscured: false });
     resetUserSessionCache();
+    clearRememberedSession();
     await unregisterDevicePushToken();
     if (refreshToken) {
       try {
@@ -249,6 +281,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       isAuthenticated: false,
     });
     resetUserSessionCache();
+    clearRememberedSession();
     await unregisterDevicePushToken();
     await clearBiometricCredentials();
     await storage.removeItem(storage.keys.accessToken);
@@ -265,6 +298,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       isAuthenticated: false,
     });
     resetUserSessionCache();
+    clearRememberedSession();
     await storage.removeItem(storage.keys.accessToken);
     await storage.removeItem(storage.keys.refreshToken);
   },
@@ -275,5 +309,6 @@ setSessionExpiredHandler(() => {
 });
 
 setTokenRefreshedHandler((accessToken) => {
+  rememberSession({ accessToken });
   useAuthStore.setState({ accessToken, isAuthenticated: true });
 });

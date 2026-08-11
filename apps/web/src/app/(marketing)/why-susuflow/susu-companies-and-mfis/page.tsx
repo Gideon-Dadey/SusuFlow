@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { Building2, ShieldCheck, TrendingUp } from "lucide-react";
+import {
+  Building2,
+  ShieldCheck,
+  TrendingUp,
+} from "@/components/icons/phosphor";
 import { WhyPageTemplate } from "@/components/marketing/ofx/why-page-template";
 import { APP_NAME } from "@/lib/marketing-data";
 

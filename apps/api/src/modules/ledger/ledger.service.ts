@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { EntryType } from "@susuflow/database";
+import { allocateTransactionReference } from "@susuflow/shared";
 import { AuditService } from "../audit/audit.service";
 import {
   ensureTenantChartOfAccounts,
@@ -213,7 +214,13 @@ export class LedgerService {
       );
     }
 
-    const ref = `PAY-COM-${Date.now()}`;
+    const ref = await allocateTransactionReference(async (value) =>
+      Boolean(
+        await this.prisma.transaction.findUnique({
+          where: { reference: value },
+        }),
+      ),
+    );
     return this.prisma.$transaction(async (tx) => {
       await ensureTenantChartOfAccounts(tx, tenantId);
 

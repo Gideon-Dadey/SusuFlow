@@ -8,7 +8,7 @@ import {
 
 const sampleTransaction = {
   id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  reference: "TXN-20240624-ABC123",
+  reference: "48291037",
   type: "deposit",
   status: "completed",
   amount: 150.5,
@@ -39,27 +39,28 @@ describe("receipt utils", () => {
     expect(text).toContain("APEX SUSU");
     expect(text).toContain("PAYMENT RECEIPT / INVOICE");
     expect(text).toContain("Customer Name: Ama Mensah");
-    expect(text).toContain("Invoice / Ref #: TXN-20240624-ABC123");
+    expect(text).toContain("Invoice / Ref #: 48291037");
+    expect(text).toContain("Payment Ref: 48291037");
     expect(text).toContain("Receipt Code: A1B2C3D4");
     expect(text).toContain("Payment Status: PAID");
     expect(text).toContain("Susu Gateway-Confirmed Deposit Contribution");
     expect(text).toContain("₵150.50");
     expect(text).toContain(
-      "https://apex-susu.susuflow.com/verify/receipt/TXN-20240624-ABC123?code=A1B2C3D4",
+      "https://apex-susu.susuflow.com/verify/receipt/48291037?code=A1B2C3D4",
     );
   });
 
   it("creates stable artifact hash from reference", () => {
-    const hash = getReceiptArtifactHash("TXN-20240624-ABC123");
+    const hash = getReceiptArtifactHash("48291037");
     expect(hash).toMatch(
       /^8efca369[0-9a-f]{8}ebffbaf96f00f53f511f71462b587c213e18a67b$/,
     );
-    expect(getReceiptArtifactHash("TXN-20240624-ABC123")).toBe(hash);
+    expect(getReceiptArtifactHash("48291037")).toBe(hash);
   });
 
   it("builds verify url with receipt code", () => {
     expect(getReceiptVerifyUrl(sampleTransaction, "https://susuflow.com")).toBe(
-      "https://susuflow.com/verify/receipt/TXN-20240624-ABC123?code=A1B2C3D4",
+      "https://susuflow.com/verify/receipt/48291037?code=A1B2C3D4",
     );
   });
 
@@ -97,7 +98,7 @@ describe("receipt utils", () => {
 
     expect(html).toContain("PAYMENT RECEIPT / INVOICE");
     expect(html).toContain("Ama Mensah");
-    expect(html).toContain("TXN-20240624-ABC123");
+    expect(html).toContain("48291037");
     expect(html).toContain("Susu Gateway-Confirmed Deposit Contribution");
     expect(html).toContain("₵150.50");
     expect(html).toContain("api.qrserver.com");

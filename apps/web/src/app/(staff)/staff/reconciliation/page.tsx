@@ -118,7 +118,7 @@ export default function StaffReconciliationPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Ledger Deposits
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {isLoading ? "..." : formatGhs(totalLedgerDeposits)}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -130,7 +130,7 @@ export default function StaffReconciliationPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Settled Withdrawals
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             {isLoading ? "..." : formatGhs(totalLedgerWithdrawals)}
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">
@@ -142,7 +142,7 @@ export default function StaffReconciliationPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Unreconciled Variance
           </p>
-          <p className="mt-1 text-sm sm:text-xl lg:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+          <p className="mt-1 text-sm sm:text-base font-semibold tabular-nums tracking-tight text-foreground">
             GH₵0.00
           </p>
           <p className="mt-1 text-[10px] text-muted-foreground">

@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck } from "@/components/icons/phosphor";
 import { HOW_IT_WORKS_TRADITIONAL_PAINS } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
 

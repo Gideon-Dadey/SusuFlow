@@ -3,9 +3,9 @@ import {
   Geist_500Medium,
   Geist_600SemiBold,
   Geist_700Bold,
-  useFonts,
 } from "@expo-google-fonts/geist";
 import { QueryClientProvider, focusManager } from "@tanstack/react-query";
+import { useFonts } from "expo-font";
 import { Stack, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -16,6 +16,7 @@ import { useAppLockStore } from "@/stores/app-lock.store";
 import { useThemeStore } from "@/stores/theme.store";
 import { ThemeProvider, useTheme } from "@/theme/ThemeProvider";
 import { AppLockGate } from "@/components/security/AppLockGate";
+import { PushNotificationProvider } from "@/components/notifications/PushNotificationProvider";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
 import { queryClient } from "@/lib/query-client";
 import { monitoring } from "@/lib/monitoring";
@@ -70,26 +71,28 @@ function RootShell() {
     <>
       <StatusBar style={isDark ? "light" : "dark"} />
       <AuthGate>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen
-            name="transactions"
-            options={{
-              presentation: "card",
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="my-profile"
-            options={{
-              presentation: "card",
-              headerShown: false,
-            }}
-          />
-        </Stack>
-        {isAuthenticated ? <AppLockGate /> : null}
+        <PushNotificationProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen
+              name="transactions"
+              options={{
+                presentation: "card",
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="my-profile"
+              options={{
+                presentation: "card",
+                headerShown: false,
+              }}
+            />
+          </Stack>
+          {isAuthenticated ? <AppLockGate /> : null}
+        </PushNotificationProvider>
       </AuthGate>
     </>
   );
@@ -108,20 +111,23 @@ export default function RootLayout() {
   const hydrateAuth = useAuthStore((s) => s.hydrateFromStorage);
   const hydrateTheme = useThemeStore((s) => s.hydrateFromStorage);
   const hydrateLock = useAppLockStore((s) => s.hydrate);
+  const isHydrated = useAuthStore((s) => s.isHydrated);
 
   useEffect(() => {
     if (fontError) throw fontError;
   }, [fontError]);
 
   useEffect(() => {
-    if (!fontsLoaded) return;
+    void Promise.all([hydrateAuth(), hydrateTheme(), hydrateLock()]);
+  }, [hydrateAuth, hydrateTheme, hydrateLock]);
 
-    Promise.all([hydrateAuth(), hydrateTheme(), hydrateLock()]).finally(() => {
+  useEffect(() => {
+    if (fontsLoaded && isHydrated) {
       void SplashScreen.hideAsync();
-    });
-  }, [fontsLoaded, hydrateAuth, hydrateTheme, hydrateLock]);
+    }
+  }, [fontsLoaded, isHydrated]);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !isHydrated) {
     return (
       <View
         style={{ flex: 1, backgroundColor: lightColors.splashBackground }}

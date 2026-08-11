@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MoneyDisplay } from "@/components/financial/money-display";
 import { customerApi, withdrawalApi, userApi } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth.store";
-import { CheckCircle, ArrowLeft } from "lucide-react";
+import { CheckCircle, ArrowLeft } from "@/components/icons/phosphor";
 import Link from "next/link";
 
 const QUICK_AMOUNTS = [10, 20, 50, 100];

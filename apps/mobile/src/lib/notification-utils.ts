@@ -1,5 +1,5 @@
 import { formatGhs } from "@/lib/currency";
-import type { Transaction } from "@/lib/api";
+import type { InboxNotification, Transaction } from "@/lib/api";
 import type { AppNotification, NotificationKind } from "@/types/notification";
 
 const PENDING_STATUSES = new Set([
@@ -61,6 +61,41 @@ export function buildNotificationFromTransaction(
     createdAt: transaction.createdAt,
     reference: transaction.reference,
     transaction,
+    screen: "activity",
+  };
+}
+
+export function kindFromInboxType(
+  type: string,
+  category?: string,
+): NotificationKind {
+  const value = `${type} ${category || ""}`.toLowerCase();
+  if (value.includes("deposit")) return "deposit";
+  if (value.includes("withdrawal")) return "withdrawal";
+  if (value.includes("kyc") || value.includes("identity")) return "kyc";
+  if (value.includes("security") || value.includes("password"))
+    return "security";
+  return "account";
+}
+
+export function buildNotificationFromInbox(
+  item: InboxNotification,
+  transaction?: Transaction,
+): AppNotification {
+  return {
+    id: item.id,
+    kind: kindFromInboxType(item.type, item.category),
+    title: item.title,
+    body: item.body,
+    amount: item.amount,
+    currency: "GHS",
+    status: item.status,
+    createdAt: item.createdAt,
+    reference: item.reference || "",
+    transaction,
+    screen: item.screen,
+    inboxId: item.id,
+    readAt: item.readAt,
   };
 }
 
@@ -77,14 +112,41 @@ export function buildNotificationFeed(
   return items.slice(0, 30);
 }
 
+export function mergeNotificationFeeds(
+  inbox: AppNotification[],
+  local: AppNotification[],
+): AppNotification[] {
+  const seen = new Set<string>();
+  const merged: AppNotification[] = [];
+
+  const remember = (item: AppNotification) => {
+    const keys = [item.id, item.inboxId, item.reference, item.transaction?.id]
+      .filter(Boolean)
+      .map((value) => String(value));
+    if (keys.some((key) => seen.has(key))) return;
+    keys.forEach((key) => seen.add(key));
+    merged.push(item);
+  };
+
+  inbox.forEach(remember);
+  local.forEach(remember);
+  merged.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
+  return merged.slice(0, 40);
+}
+
 export function countUnreadNotifications(
   items: AppNotification[],
   lastSeenAt: string | null,
 ): number {
-  if (!lastSeenAt) return 0;
-  const seenTime = new Date(lastSeenAt).getTime();
-  return items.filter((item) => new Date(item.createdAt).getTime() > seenTime)
-    .length;
+  const seenTime = lastSeenAt ? new Date(lastSeenAt).getTime() : 0;
+  return items.filter((item) => {
+    if (item.readAt) return false;
+    if (item.inboxId) return !item.readAt;
+    if (!lastSeenAt) return false;
+    return new Date(item.createdAt).getTime() > seenTime;
+  }).length;
 }
 
 export function formatNotificationTime(dateStr: string): string {

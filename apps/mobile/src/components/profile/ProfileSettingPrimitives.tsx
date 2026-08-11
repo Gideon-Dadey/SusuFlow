@@ -1,7 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 import { type ReactNode } from "react";
 import { Pressable, StyleSheet, Switch, Text, View } from "react-native";
+import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import { bankChrome, getBankWell, type BankWellTone } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, typography } from "@/theme/tokens";
@@ -9,37 +9,61 @@ import { getSupportEmail } from "@/lib/config";
 
 export { appVersion } from "@/lib/app-version";
 
-type IoniconName = keyof typeof Ionicons.glyphMap;
-
 export function openSupportEmail() {
   Linking.openURL(`mailto:${getSupportEmail()}`);
 }
 
-const ION_TONES: Partial<Record<string, BankWellTone>> = {
-  "lock-closed-outline": "olive",
-  "finger-print-outline": "mint",
-  "moon-outline": "amber",
-  "sunny-outline": "amber",
-  "notifications-outline": "blue",
-  "mail-outline": "sky",
-  "call-outline": "mint",
-  "logo-whatsapp": "mint",
-  "document-text-outline": "teal",
-  "shield-checkmark-outline": "orange",
-  "shield-outline": "orange",
-  "globe-outline": "blue",
-  "information-circle-outline": "slate",
-  "key-outline": "orange",
-  "phone-portrait-outline": "olive",
-  "flag-outline": "rose",
+const ICON_TONES: Partial<Record<AppIconName, BankWellTone>> = {
+  lock: "olive",
+  fingerprint: "mint",
+  moon: "amber",
+  sun: "amber",
+  bell: "blue",
+  mail: "sky",
+  phone: "mint",
+  whatsapp: "mint",
+  "file-text": "teal",
+  shield: "orange",
+  globe: "blue",
+  info: "slate",
+  key: "orange",
+  smartphone: "olive",
+  target: "rose",
 };
 
-function wellForIon(icon: string, isDark: boolean) {
-  return getBankWell(ION_TONES[icon] ?? "slate", isDark);
+function wellForIcon(icon: AppIconName, isDark: boolean) {
+  return getBankWell(ICON_TONES[icon] ?? "slate", isDark);
+}
+
+/** On/off must stay obvious in both themes — never white-on-white. */
+export function SettingsSwitch({
+  value,
+  onValueChange,
+  disabled,
+}: {
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+  disabled?: boolean;
+}) {
+  const { isDark } = useTheme();
+  const trackOff = isDark ? "#3F3F46" : "#D4D4D8";
+  const trackOn = isDark ? "#34D399" : "#059669";
+  const thumb = value ? "#FFFFFF" : isDark ? "#A1A1AA" : "#FAFAFA";
+
+  return (
+    <Switch
+      value={value}
+      onValueChange={onValueChange}
+      disabled={disabled}
+      trackColor={{ false: trackOff, true: trackOn }}
+      thumbColor={thumb}
+      ios_backgroundColor={trackOff}
+    />
+  );
 }
 
 interface SettingRowProps {
-  icon: IoniconName;
+  icon: AppIconName;
   title: string;
   subtitle?: string;
   onPress?: () => void;
@@ -56,13 +80,13 @@ export function SettingRow({
   showDivider = true,
 }: SettingRowProps) {
   const { colors, isDark } = useTheme();
-  const well = wellForIon(icon, isDark);
+  const well = wellForIcon(icon, isDark);
   const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   const content = (
     <>
       <View style={[styles.well, { backgroundColor: well.bg }]}>
-        <Ionicons name={icon} size={18} color={well.fg} />
+        <AppIcon name={icon} size={18} color={well.fg} />
       </View>
       <View style={styles.copy}>
         <Text style={[styles.rowTitle, { color: colors.foreground }]}>
@@ -76,8 +100,8 @@ export function SettingRow({
       </View>
       {right ??
         (onPress ? (
-          <Ionicons
-            name="chevron-forward"
+          <AppIcon
+            name="chevron-right"
             size={18}
             color={isDark ? bankChrome.chevronDark : colors.mutedForeground}
           />
@@ -108,12 +132,13 @@ export function SettingRow({
 }
 
 interface SettingToggleProps {
-  icon: IoniconName;
+  icon: AppIconName;
   title: string;
   subtitle?: string;
   value: boolean;
   onValueChange: (value: boolean) => void;
   showDivider?: boolean;
+  disabled?: boolean;
 }
 
 export function SettingToggle({
@@ -123,16 +148,17 @@ export function SettingToggle({
   value,
   onValueChange,
   showDivider = false,
+  disabled = false,
 }: SettingToggleProps) {
   const { colors, isDark } = useTheme();
-  const well = wellForIon(icon, isDark);
+  const well = wellForIcon(icon, isDark);
   const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   return (
     <View>
-      <View style={styles.row}>
+      <View style={[styles.row, disabled && { opacity: 0.72 }]}>
         <View style={[styles.well, { backgroundColor: well.bg }]}>
-          <Ionicons name={icon} size={18} color={well.fg} />
+          <AppIcon name={icon} size={18} color={well.fg} />
         </View>
         <View style={styles.copy}>
           <Text style={[styles.rowTitle, { color: colors.foreground }]}>
@@ -146,11 +172,10 @@ export function SettingToggle({
             </Text>
           ) : null}
         </View>
-        <Switch
+        <SettingsSwitch
           value={value}
           onValueChange={onValueChange}
-          trackColor={{ false: colors.border, true: colors.primary }}
-          thumbColor="#ffffff"
+          disabled={disabled}
         />
       </View>
       {showDivider ? (

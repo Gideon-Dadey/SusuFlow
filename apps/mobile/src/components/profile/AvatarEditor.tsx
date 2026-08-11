@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FontAwesome6 } from "@expo/vector-icons";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -151,13 +151,13 @@ export function AvatarEditor({
               color={isPlus ? "#111" : homeChrome.link}
             />
           ) : isPlus ? (
-            <FontAwesome6 name="plus" size={12} color="#111111" solid />
+            <AppIcon name="plus" size={12} color="#111111" weight="bold" />
           ) : (
-            <FontAwesome6
+            <AppIcon
               name="camera"
               size={12}
               color={isDark ? "#fff" : colors.foreground}
-              solid
+              weight="fill"
             />
           )}
         </View>

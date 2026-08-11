@@ -7,8 +7,12 @@ const workspaceRoot = path.resolve(projectRoot, "../..");
 
 const config = getDefaultConfig(projectRoot);
 
-// Monorepo: Metro must see the workspace, but block unrelated apps from resolution.
-config.watchFolders = [workspaceRoot];
+// Watch only what Metro needs — not web/api/docs (faster Fast Refresh).
+config.watchFolders = [
+  projectRoot,
+  path.resolve(workspaceRoot, "packages", "shared"),
+  path.resolve(workspaceRoot, "node_modules"),
+];
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, "node_modules"),
   path.resolve(workspaceRoot, "node_modules"),
@@ -36,6 +40,10 @@ config.resolver.blockList = [
   blockDirectory(workspaceRoot, "apps", "worker"),
   blockDirectory(workspaceRoot, "infrastructure"),
   blockDirectory(workspaceRoot, "docs"),
+  // Web/pnpm may install React 19.2.x — never bundle that copy into Expo.
+  new RegExp(
+    `${escapeRegExp(path.join(workspaceRoot, "node_modules", ".pnpm"))}[\\\\/]react@19\\.2[^\\\\/]*[\\\\/]`,
+  ),
 ];
 
 /**
@@ -47,11 +55,36 @@ const phosphorEntry = path.resolve(
   projectRoot,
   "node_modules/phosphor-react-native/lib/commonjs/index.js",
 );
+
+/** One React copy — web/pnpm may hoist 19.2.x, which breaks Expo hooks. */
+const reactRoot = path.resolve(projectRoot, "node_modules/react");
+const reactDomRoot = path.resolve(projectRoot, "node_modules/react-dom");
+
+config.resolver.extraNodeModules = {
+  ...(config.resolver.extraNodeModules ?? {}),
+  react: reactRoot,
+  "react-dom": reactDomRoot,
+};
+
 const defaultResolveRequest = config.resolver.resolveRequest;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (moduleName === "phosphor-react-native" && fs.existsSync(phosphorEntry)) {
     return { filePath: phosphorEntry, type: "sourceFile" };
   }
+
+  if (moduleName === "react" || moduleName.startsWith("react/")) {
+    return {
+      filePath: require.resolve(moduleName, { paths: [projectRoot] }),
+      type: "sourceFile",
+    };
+  }
+  if (moduleName === "react-dom" || moduleName.startsWith("react-dom/")) {
+    return {
+      filePath: require.resolve(moduleName, { paths: [projectRoot] }),
+      type: "sourceFile",
+    };
+  }
+
   if (defaultResolveRequest) {
     return defaultResolveRequest(context, moduleName, platform);
   }
