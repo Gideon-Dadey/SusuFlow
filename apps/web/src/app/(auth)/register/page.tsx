@@ -86,7 +86,6 @@ function RegisterContent() {
 
   return (
     <AuthShell
-      wideForm
       visualTone="sand"
       visualTagline="Set up your susu company in minutes, not months."
     >
@@ -107,7 +106,7 @@ function RegisterContent() {
           label="Susu company"
           name="tenant"
           type="text"
-          placeholder="Company slug (e.g. premier-susu)"
+          placeholder="Susu company"
           value={form.tenant}
           onChange={(e) => update("tenant", e.target.value)}
           required
@@ -144,7 +143,7 @@ function RegisterContent() {
           label="Email address"
           name="email"
           type="email"
-          placeholder="name@company.com"
+          placeholder="Email"
           value={form.email}
           onChange={(e) => update("email", e.target.value)}
           required
@@ -156,7 +155,7 @@ function RegisterContent() {
           label="Phone number"
           name="phone"
           type="tel"
-          placeholder="024XXXXXXX"
+          placeholder="Phone"
           value={form.phone}
           onChange={(e) => update("phone", e.target.value)}
           required
@@ -172,7 +171,7 @@ function RegisterContent() {
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
-              placeholder="At least 8 characters"
+              placeholder="Password"
               className={cn(authInputClassName, "pr-12")}
               value={form.password}
               onChange={(e) => update("password", e.target.value)}
@@ -195,7 +194,7 @@ function RegisterContent() {
         </div>
 
         {error ? (
-          <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700 font-medium border border-red-200">
+          <p className="bg-red-50 px-3 py-2 text-sm text-red-700 font-medium border border-red-200">
             {error}
           </p>
         ) : null}
@@ -206,7 +205,7 @@ function RegisterContent() {
           disabled={isLoading}
         >
           {isLoading ? (
-            <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <span className="w-5 h-5 border-2 border-white/30 border-t-white animate-spin" />
           ) : null}
           Create Account
         </button>

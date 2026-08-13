@@ -10,7 +10,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "optimize:images": "node scripts/optimize-images.mjs",
-    "apply-design-tokens": "node scripts/apply-design-tokens.mjs"
+    "apply-design-tokens": "node scripts/apply-design-tokens.mjs",
+    "remove-border-radius": "node scripts/remove-border-radius.mjs",
+    "remove-copy-dashes": "node scripts/remove-copy-dashes.mjs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",

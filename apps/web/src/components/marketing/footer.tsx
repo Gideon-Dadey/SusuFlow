@@ -32,7 +32,7 @@ const FOOTER_COLUMNS = [
         href: "/why-susuflow/gateway-verification",
       },
       {
-        label: "Bank-Grade Accounting",
+        label: "Bank Grade Accounting",
         href: "/why-susuflow/bank-grade-accounting",
       },
     ],
@@ -62,17 +62,20 @@ export function MarketingFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border/70 bg-[var(--ofx-cream)] text-foreground">
+    <footer className="relative overflow-hidden border-t border-slate-200 bg-white text-[#1a1a1a] dark:border-white/10 dark:bg-twitter-dark dark:text-white">
       <MarketingContainer className="py-14 sm:py-16">
-        <div className="flex flex-col gap-6 border-b border-border/70 pb-10 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-6 border-b border-slate-200 pb-10 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
           <Link href="/" className="inline-flex items-center">
             <BrandLockup wordmarkClassName="text-xl" />
           </Link>
           <div className="flex flex-wrap items-center gap-3">
-            <Link href="/login" className="ofx-btn ofx-btn-light ofx-btn-sm">
+            <Link href="/login" className="ofx-btn ofx-btn-outline ofx-btn-sm">
               Login
             </Link>
-            <Link href="/contact" className="ofx-btn ofx-btn-light ofx-btn-sm">
+            <Link
+              href="/contact"
+              className="ofx-btn ofx-btn-outline ofx-btn-sm"
+            >
               Help &amp; Contact
             </Link>
             <Link
@@ -87,15 +90,15 @@ export function MarketingFooter() {
         <div className="grid grid-cols-2 gap-x-8 gap-y-10 pt-10 sm:grid-cols-4 lg:grid-cols-5">
           {FOOTER_COLUMNS.map((column) => (
             <div key={column.heading}>
-              <h3 className="text-sm font-semibold text-foreground">
+              <h3 className="text-sm font-semibold text-[#1a1a1a] dark:text-white">
                 {column.heading}
               </h3>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+              <ul className="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-400">
                 {column.links.map(({ href, label }) => (
                   <li key={`${href}-${label}`}>
                     <Link
                       href={href}
-                      className="transition-colors hover:text-foreground"
+                      className="transition-colors hover:text-[#1a1a1a] dark:hover:text-white"
                     >
                       {label}
                     </Link>
@@ -106,13 +109,15 @@ export function MarketingFooter() {
           ))}
 
           <div className="col-span-2 sm:col-span-4 lg:col-span-1">
-            <h3 className="text-sm font-semibold text-foreground">Contact</h3>
-            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+            <h3 className="text-sm font-semibold text-[#1a1a1a] dark:text-white">
+              Contact
+            </h3>
+            <ul className="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-400">
               <li>{CONTACT_OFFICE.addressLines.join(", ")}</li>
               <li>
                 <a
                   href={`mailto:${SUPPORT_EMAIL}`}
-                  className="transition-colors hover:text-foreground"
+                  className="transition-colors hover:text-[#1a1a1a] dark:hover:text-white"
                 >
                   {SUPPORT_EMAIL}
                 </a>
@@ -121,8 +126,8 @@ export function MarketingFooter() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-border/70 pt-8">
-          <p className="max-w-4xl text-[13px] leading-relaxed text-muted-foreground">
+        <div className="mt-12 border-t border-slate-200 pt-8 dark:border-white/10">
+          <p className="max-w-4xl text-[13px] leading-relaxed text-slate-600 dark:text-slate-400">
             © {year} {APP_NAME}. {APP_NAME} is a multi-tenant digital savings
             platform for susu companies and microfinance institutions in Ghana.
             Member deposits are processed through licensed payment gateways and
@@ -131,18 +136,18 @@ export function MarketingFooter() {
             fees may apply. {APP_NAME} is a technology provider and does not
             hold customer funds.
           </p>
-          <div className="mt-6 flex flex-col gap-3 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-6 flex flex-col gap-3 text-sm text-slate-600 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
             <p>All rights reserved.</p>
             <div className="flex gap-5">
               <Link
                 href="/terms"
-                className="transition-colors hover:text-foreground"
+                className="transition-colors hover:text-[#1a1a1a] dark:hover:text-white"
               >
                 Terms of Service
               </Link>
               <Link
                 href="/privacy"
-                className="transition-colors hover:text-foreground"
+                className="transition-colors hover:text-[#1a1a1a] dark:hover:text-white"
               >
                 Privacy Policy
               </Link>
@@ -150,6 +155,13 @@ export function MarketingFooter() {
           </div>
         </div>
       </MarketingContainer>
+
+      <p
+        className="pointer-events-none select-none px-4 pb-2 text-center text-[18vw] font-semibold leading-none tracking-tight text-[#1a1a1a]/[0.06] md:hidden dark:text-white/[0.06]"
+        aria-hidden
+      >
+        {APP_NAME}
+      </p>
     </footer>
   );
 }

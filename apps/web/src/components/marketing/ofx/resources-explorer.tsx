@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { ResourceArticleCard } from "@/components/marketing/resource-article-card";
 import { RESOURCE_ARTICLES } from "@/lib/marketing-data";
 import { cn } from "@/lib/utils";
 
-const TILE_COLORS = [
-  "var(--ofx-sage)",
-  "var(--ofx-sand)",
-  "var(--ofx-sky)",
-  "var(--ofx-lilac)",
-] as const;
+const ARTICLE_IMAGES = [
+  "/marketing/why-susuflow/cashless.png",
+  "/marketing/why-susuflow/market-scale.png",
+  "/marketing/why-susuflow/use-cases.png",
+  "/marketing/why-susuflow/fraud.png",
+  "/marketing/why-susuflow/accounting.png",
+  "/marketing/why-susuflow/verification.png",
+];
 
 const CATEGORIES = [
   "All",
@@ -19,11 +22,12 @@ const CATEGORIES = [
 export function OfxResourcesExplorer() {
   const [activeCategory, setActiveCategory] = useState<string>("All");
 
-  const [featured, ...rest] = RESOURCE_ARTICLES;
-  const gridArticles =
+  const articles =
     activeCategory === "All"
-      ? rest
-      : rest.filter((article) => article.category === activeCategory);
+      ? RESOURCE_ARTICLES
+      : RESOURCE_ARTICLES.filter(
+          (article) => article.category === activeCategory,
+        );
 
   return (
     <>
@@ -39,10 +43,10 @@ export function OfxResourcesExplorer() {
             aria-pressed={category === activeCategory}
             onClick={() => setActiveCategory(category)}
             className={cn(
-              "pill rounded-full border px-5 py-2.5 text-[15px] font-medium transition-colors",
+              "border px-5 py-2.5 text-[15px] font-medium transition-colors",
               category === activeCategory
                 ? "border-[var(--ofx-ink)] bg-[var(--ofx-ink)] text-white"
-                : "border-border bg-white text-foreground hover:bg-[var(--ofx-cream-deep)]",
+                : "border-slate-200 bg-white text-[#1a1a1a] hover:bg-[#f7f7f7] dark:border-white/15 dark:bg-transparent dark:text-white dark:hover:bg-white/5",
             )}
           >
             {category}
@@ -50,58 +54,19 @@ export function OfxResourcesExplorer() {
         ))}
       </div>
 
-      <article className="ofx-card mt-10 grid overflow-hidden lg:grid-cols-2">
-        <div
-          className="flex min-h-[220px] items-end p-8 sm:min-h-[280px]"
-          style={{ backgroundColor: "var(--ofx-sage)" }}
-        >
-          <span className="rounded-full bg-white/85 px-3 py-1 text-xs font-semibold text-foreground">
-            {featured.category}
-          </span>
-        </div>
-        <div className="flex flex-col justify-center p-8 sm:p-10">
-          <p className="text-xs font-medium text-muted-foreground">
-            {featured.date} · {featured.readTime}
-          </p>
-          <h2 className="ofx-h3 mt-4">{featured.title}</h2>
-          <p className="ofx-body mt-4">{featured.excerpt}</p>
-          <p className="mt-6 text-sm font-medium text-muted-foreground">
-            Coming soon
-          </p>
-        </div>
-      </article>
-
-      <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {gridArticles.map((article, i) => (
-          <article key={article.slug} className="ofx-card flex flex-col">
-            <div
-              className="flex h-40 items-end p-6"
-              style={{ backgroundColor: TILE_COLORS[i % TILE_COLORS.length] }}
-            >
-              <span className="rounded-full bg-white/85 px-3 py-1 text-xs font-semibold text-foreground">
-                {article.category}
-              </span>
-            </div>
-            <div className="flex flex-1 flex-col p-6">
-              <p className="text-xs font-medium text-muted-foreground">
-                {article.date} · {article.readTime}
-              </p>
-              <h3 className="mt-3 text-lg font-semibold leading-snug tracking-tight text-foreground">
-                {article.title}
-              </h3>
-              <p className="mt-2.5 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-                {article.excerpt}
-              </p>
-              <p className="mt-auto pt-5 text-sm font-medium text-muted-foreground">
-                Coming soon
-              </p>
-            </div>
-          </article>
+      <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {articles.map((article, i) => (
+          <ResourceArticleCard
+            key={article.slug}
+            article={article}
+            image={ARTICLE_IMAGES[i % ARTICLE_IMAGES.length]}
+            imageAlt=""
+          />
         ))}
       </div>
 
-      {gridArticles.length === 0 && (
-        <p className="ofx-body mt-10 text-center">
+      {articles.length === 0 && (
+        <p className="omnih-body mt-10 text-center">
           More {activeCategory.toLowerCase()} stories are on the way.
         </p>
       )}

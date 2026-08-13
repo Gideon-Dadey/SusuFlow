@@ -168,9 +168,9 @@ export function hrefForNotificationRoute(
 ) {
   switch (kind) {
     case "kyc":
-      return "/(tabs)/profile/kyc" as const;
+      return "/my-profile/kyc" as const;
     case "security":
-      return "/(tabs)/profile/security" as const;
+      return "/my-profile/security" as const;
     case "plans":
       return "/(tabs)/plans" as const;
     case "activity":

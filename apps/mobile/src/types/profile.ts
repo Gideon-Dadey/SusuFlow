@@ -28,15 +28,9 @@ export const SETTINGS_GROUPS: SettingsGroup[] = [
     items: [
       {
         id: "account",
-        label: "Account overview",
-        icon: "wallet",
-        description: "Membership, email, and group",
-      },
-      {
-        id: "personal",
-        label: "Personal details",
+        label: "Account details",
         icon: "user",
-        description: "Name, phone, and contact info",
+        description: "Name, phone, email, and membership",
       },
       {
         id: "kyc",
@@ -93,17 +87,14 @@ export const SETTINGS_GROUPS: SettingsGroup[] = [
   },
 ];
 
-export const SECTION_ROUTES: Record<
-  ProfileSectionId,
-  `/(tabs)/profile/${ProfileSectionId}`
-> = {
-  account: "/(tabs)/profile/account",
-  personal: "/(tabs)/profile/personal",
-  kyc: "/(tabs)/profile/kyc",
-  security: "/(tabs)/profile/security",
-  notifications: "/(tabs)/profile/notifications",
-  appearance: "/(tabs)/profile/appearance",
-  help: "/(tabs)/profile/help",
+export const SECTION_ROUTES: Record<ProfileSectionId, string> = {
+  account: "/my-profile/account",
+  personal: "/my-profile/account",
+  kyc: "/my-profile/kyc",
+  security: "/my-profile/security",
+  notifications: "/my-profile/notifications",
+  appearance: "/my-profile/appearance",
+  help: "/support",
   about: "/(tabs)/profile/about",
 };
 
@@ -112,12 +103,12 @@ export const PROFILE_SECTION_META: Record<
   { title: string; subtitle: string }
 > = {
   account: {
-    title: "Account Information",
-    subtitle: "Your membership details and linked information",
+    title: "Account details",
+    subtitle: "View and update your profile in one place",
   },
   personal: {
-    title: "Personal details",
-    subtitle: "Keep your profile accurate and up to date",
+    title: "Account details",
+    subtitle: "View and update your profile in one place",
   },
   kyc: {
     title: "Identity verification",
@@ -125,7 +116,7 @@ export const PROFILE_SECTION_META: Record<
   },
   security: {
     title: "Security",
-    subtitle: "Protect your account and sign-in methods",
+    subtitle: "Password, app lock, and account protection",
   },
   notifications: {
     title: "Notifications",
@@ -145,12 +136,7 @@ export const PROFILE_SECTION_META: Record<
   },
 };
 
-export const PROFILE_HOME_GROUPS: SettingsGroup[] = SETTINGS_GROUPS.map(
-  (group) => ({
-    ...group,
-    items: group.items.filter((item) => item.id !== "account"),
-  }),
-).filter((group) => group.items.length > 0);
+export const PROFILE_HOME_GROUPS: SettingsGroup[] = SETTINGS_GROUPS;
 
 export const PROFILE_MENU_ITEMS = PROFILE_HOME_GROUPS.flatMap((g) => g.items);
 

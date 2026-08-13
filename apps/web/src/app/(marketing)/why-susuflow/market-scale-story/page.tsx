@@ -15,7 +15,7 @@ export default function MarketScaleStoryPage() {
       accent="lilac"
       hero={{
         title: "From 5 collectors to 50+. Across two cities.",
-        lead: "How a leading cooperative scaled from Kumasi to Accra — deploying new agents overnight, tracking daily targets in real time, and safely absorbing a massive influx of new savers.",
+        lead: "How a leading cooperative scaled from Kumasi to Accra. Deploying new agents overnight, tracking daily targets in real time, and safely absorbing a massive influx of new savers.",
         tile: {
           label: "Deposit volume growth",
           value: "+400%",
@@ -44,12 +44,12 @@ export default function MarketScaleStoryPage() {
         {
           icon: Rocket,
           title: "Deploy agents in minutes",
-          body: "Legacy systems meant days of training and printed logs. With SusuFlow, head office created new profiles in the Control Hub — agents downloaded the app and processed verified deposits on day one.",
+          body: "Legacy systems meant days of training and printed logs. With SusuFlow, head office created new profiles in the Control Hub. Agents downloaded the app and processed verified deposits on day one.",
         },
         {
           icon: Radar,
           title: "Retain centralized control",
-          body: "Distinct collection targets for Kumasi and Accra, segmented reporting, and real-time performance for every new hire — all without leaving headquarters.",
+          body: "Distinct collection targets for Kumasi and Accra, segmented reporting, and real time performance for every new hire. All without leaving headquarters.",
         },
         {
           icon: HeartHandshake,
@@ -63,7 +63,7 @@ export default function MarketScaleStoryPage() {
           title: "Growth without the growing pains",
           paragraphs: [
             "Scaling a traditional operation multiplies overhead: more notebooks to audit, more cash in transit, exponentially more reconciliation errors. That friction caps how fast ambitious MFIs can grow.",
-            "SusuFlow removes the ceiling. The platform is cloud-based and automated, so the marginal cost of a new field agent is virtually zero. Grow from 5 collectors in one Kumasi market to 50 across Greater Accra — your accounting team won't work a single extra minute.",
+            "SusuFlow removes the ceiling. The platform is cloud based and automated, so the marginal cost of a new field agent is virtually zero. Grow from 5 collectors in one Kumasi market to 50 across Greater Accra. Your accounting team won't work a single extra minute.",
           ],
           tile: {
             heading: "Head office · Live view",
@@ -101,7 +101,7 @@ export default function MarketScaleStoryPage() {
         {
           title: "Susu companies & MFIs",
           description:
-            "Purpose-built software for Ghanaian operators to scale safely.",
+            "Purpose built software for Ghanaian operators to scale safely.",
           href: "/why-susuflow/susu-companies-and-mfis",
         },
         {

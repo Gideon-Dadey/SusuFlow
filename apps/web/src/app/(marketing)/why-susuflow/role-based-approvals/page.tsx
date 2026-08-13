@@ -4,9 +4,9 @@ import { WhyPageTemplate } from "@/components/marketing/ofx/why-page-template";
 import { APP_NAME } from "@/lib/marketing-data";
 
 export const metadata: Metadata = {
-  title: `Role-Based Approvals | ${APP_NAME}`,
+  title: `Role Based Approvals | ${APP_NAME}`,
   description:
-    "Enforce manager sign-off on withdrawals and plan modifications.",
+    "Enforce manager sign off on withdrawals and plan modifications.",
 };
 
 export default function RoleBasedApprovalsPage() {
@@ -14,8 +14,8 @@ export default function RoleBasedApprovalsPage() {
     <WhyPageTemplate
       accent="sand"
       hero={{
-        title: "Nothing sensitive moves without a manager's sign-off.",
-        lead: "Enforce manager approval on withdrawals and plan modifications. Keep strict internal controls over your capital, and make sure only authorized personnel touch sensitive operations — stopping internal fraud before it starts.",
+        title: "Nothing sensitive moves without a manager's sign off.",
+        lead: "Enforce manager approval on withdrawals and plan modifications. Keep strict internal controls over your capital, and make sure only authorized personnel touch sensitive operations. Stopping internal fraud before it starts.",
         tile: {
           label: "Approvals queue",
           value: "4 pending",
@@ -49,8 +49,8 @@ export default function RoleBasedApprovalsPage() {
       highlights={[
         {
           icon: Layers,
-          title: "Multi-tier authorization",
-          body: "Significant actions — large withdrawals, interest rate adjustments — can't be executed by one person. A junior officer initiates; the request waits until a senior manager digitally signs off.",
+          title: "Multi tier authorization",
+          body: "Significant actions. Large withdrawals, interest rate adjustments. Can't be executed by one person. A junior officer initiates; the request waits until a senior manager digitally signs off.",
         },
         {
           icon: Lock,
@@ -60,7 +60,7 @@ export default function RoleBasedApprovalsPage() {
         {
           icon: FileSearch,
           title: "Total accountability",
-          body: "Every modification logs who requested it, who approved it, and when. If something goes wrong, trace it to the exact user accounts involved — in seconds.",
+          body: "Every modification logs who requested it, who approved it, and when. If something goes wrong, trace it to the exact user accounts involved. In seconds.",
         },
       ]}
       sections={[
@@ -68,8 +68,8 @@ export default function RoleBasedApprovalsPage() {
           eyebrow: "The principle",
           title: "Trust your team, but verify everything",
           paragraphs: [
-            "As an MFI grows, the founder can no longer oversee every transaction. You have to delegate to branch managers, loan officers and clerks — and without software controls, that delegation opens the door to internal fraud and reckless data modifications.",
-            "SusuFlow's role-based access control engine enforces your operational hierarchy at the code level. The principle of least privilege applies automatically: staff get access to exactly what their job requires, and nothing more.",
+            "As an MFI grows, the founder can no longer oversee every transaction. You have to delegate to branch managers, loan officers and clerks. And without software controls, that delegation opens the door to internal fraud and reckless data modifications.",
+            "SusuFlow's role based access control engine enforces your operational hierarchy at the code level. The principle of least privilege applies automatically: staff get access to exactly what their job requires, and nothing more.",
           ],
           tile: {
             heading: "Withdrawal · GHS 2,500.00",
@@ -101,7 +101,7 @@ export default function RoleBasedApprovalsPage() {
       ]}
       quote={{
         variant: "dark",
-        text: "Mandatory sign-offs remove the temptation for bad actors — and protect honest employees with rigorous, undeniable logs.",
+        text: "Mandatory sign offs remove the temptation for bad actors. And protect honest employees with rigorous, undeniable logs.",
       }}
       related={[
         {
@@ -113,11 +113,11 @@ export default function RoleBasedApprovalsPage() {
         {
           title: "Accountants & management",
           description:
-            "Reconcile books in seconds with double-entry ledgers and audit trails.",
+            "Reconcile books in seconds with double entry ledgers and audit trails.",
           href: "/why-susuflow/accountants-and-management",
         },
         {
-          title: "Bank-grade accounting",
+          title: "Bank grade accounting",
           description:
             "The transparency auditors, partners and regulators demand.",
           href: "/why-susuflow/bank-grade-accounting",

@@ -1,6 +1,6 @@
 import { TenantBrandMark } from "@/components/branding/TenantBrandMark";
-import { CardSurface } from "@/components/ui/CardSurface";
 import { StyleSheet, Text, View } from "react-native";
+import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { spacing, typography } from "@/theme/tokens";
 
@@ -11,17 +11,26 @@ interface SusuMembershipCardProps {
   isLoading?: boolean;
 }
 
+/** Quiet identity strip — matches More’s flat banking chrome. */
 export function SusuMembershipCard({
   groupName,
   logoUrl,
   memberId,
   isLoading,
 }: SusuMembershipCardProps) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
+  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   return (
-    <CardSurface innerStyle={styles.card}>
-      <TenantBrandMark logoUrl={logoUrl} size={48} />
+    <View
+      style={[
+        styles.row,
+        {
+          borderBottomColor: divider,
+        },
+      ]}
+    >
+      <TenantBrandMark logoUrl={logoUrl} size={44} />
       <View style={styles.copy}>
         <Text style={[styles.eyebrow, { color: colors.mutedForeground }]}>
           Your susu
@@ -38,16 +47,17 @@ export function SusuMembershipCard({
           </Text>
         ) : null}
       </View>
-    </CardSurface>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
+  row: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,
-    padding: spacing.md,
+    paddingBottom: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   copy: {
     flex: 1,
@@ -56,13 +66,14 @@ const styles = StyleSheet.create({
   },
   eyebrow: {
     fontFamily: typography.roles.caption,
-    fontSize: typography.size.xs,
-    letterSpacing: 0.2,
+    fontSize: 11,
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
   },
   name: {
     fontFamily: typography.fontFamily.semibold,
     fontSize: typography.size.base,
-    letterSpacing: -0.15,
+    letterSpacing: -0.2,
   },
   memberId: {
     fontFamily: typography.roles.caption,

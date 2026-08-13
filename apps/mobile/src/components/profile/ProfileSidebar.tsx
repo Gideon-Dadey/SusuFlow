@@ -16,7 +16,6 @@ interface MenuItem {
 
 const MENU_ITEMS: MenuItem[] = [
   { id: "account", label: "Account", icon: "profile" },
-  { id: "personal", label: "Profile", icon: "id-card" },
   { id: "security", label: "Security", icon: "shield" },
   { id: "notifications", label: "Alerts", icon: "bell" },
   { id: "appearance", label: "Theme", icon: "palette" },

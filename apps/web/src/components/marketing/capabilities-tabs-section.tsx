@@ -21,7 +21,7 @@ export function CapabilitiesTabsSection() {
           <div>
             <SectionEyebrow>Built for susu</SectionEyebrow>
             <h2 className="afrusan-section-title">
-              {APP_NAME} offers end-to-end tools across every stage of
+              {APP_NAME} offers end to end tools across every stage of
               operations:
             </h2>
 
@@ -48,14 +48,14 @@ export function CapabilitiesTabsSection() {
           </div>
 
           <div className="min-w-0">
-            <div className="rounded-2xl bg-card/80 p-6 sm:p-8">
+            <div className="bg-card/80 p-6 sm:p-8">
               <h3 className="font-geist text-2xl font-medium leading-snug tracking-tight text-foreground sm:text-3xl">
                 {activeTab.title}
               </h3>
               <p className="afrusan-body mt-4">{activeTab.description}</p>
             </div>
 
-            <div className="relative mt-8 aspect-[4/3] overflow-hidden rounded-2xl">
+            <div className="relative mt-8 aspect-[4/3] overflow-hidden">
               <Image
                 src={BRAND_PLATFORM_OVERVIEW}
                 alt="SusuFlow platform dashboard"

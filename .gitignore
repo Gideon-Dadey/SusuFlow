@@ -42,6 +42,10 @@ coverage/
 # Docker
 docker-data/
 
+# KYC document uploads
+uploads/
+apps/api/uploads/
+
 # Misc
 *.tsbuildinfo
 .vercel

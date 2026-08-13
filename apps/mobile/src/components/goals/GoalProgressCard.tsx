@@ -1,94 +1,85 @@
-import { CardSurface } from "@/components/ui/CardSurface";
 import { StyleSheet, Text, View } from "react-native";
 import { formatGoalStatus } from "@/components/goals/goalUtils";
 import { formatGhs } from "@/lib/currency";
 import type { CustomerPlanWithProgress } from "@/lib/api";
+import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
 
 interface GoalProgressCardProps {
   enrollment: CustomerPlanWithProgress;
+  showDivider?: boolean;
 }
 
-export function GoalProgressCard({ enrollment }: GoalProgressCardProps) {
-  const { colors } = useTheme();
+/** Active goal progress — flat list item, same chrome as More. */
+export function GoalProgressCard({
+  enrollment,
+  showDivider = true,
+}: GoalProgressCardProps) {
+  const { colors, isDark } = useTheme();
   const target = Number(enrollment.targetAmount || 0);
   const saved = Number(enrollment.savedAmount || 0);
   const progress = Math.min(100, Math.max(0, enrollment.progressPercent));
   const settled = enrollment.status === "completed";
+  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   return (
-    <CardSurface innerStyle={styles.card}>
-      <View style={styles.header}>
-        <View style={styles.copy}>
-          <Text
-            style={[styles.title, { color: colors.foreground }]}
-            numberOfLines={2}
-          >
-            {enrollment.plan.name}
-          </Text>
-          <Text style={[styles.meta, { color: colors.mutedForeground }]}>
-            {formatGoalStatus(enrollment.status)}
-          </Text>
-        </View>
-        <View
-          style={[
-            styles.percentBadge,
-            {
-              backgroundColor: settled ? colors.primary : colors.muted,
-            },
-          ]}
-        >
+    <View>
+      <View style={styles.row}>
+        <View style={styles.header}>
+          <View style={styles.copy}>
+            <Text
+              style={[styles.title, { color: colors.foreground }]}
+              numberOfLines={2}
+            >
+              {enrollment.plan.name}
+            </Text>
+            <Text style={[styles.meta, { color: colors.mutedForeground }]}>
+              {formatGoalStatus(enrollment.status)} · {formatGhs(saved)}
+              {target > 0 ? ` of ${formatGhs(target)}` : ""}
+            </Text>
+          </View>
           <Text
             style={[
-              styles.percentText,
-              { color: settled ? colors.primaryForeground : colors.foreground },
+              styles.percent,
+              {
+                color: settled ? colors.success : colors.foreground,
+              },
             ]}
           >
             {progress}%
           </Text>
         </View>
-      </View>
 
-      <View style={[styles.track, { backgroundColor: colors.muted }]}>
         <View
           style={[
-            styles.fill,
-            {
-              width: `${progress}%`,
-              backgroundColor: colors.primary,
-            },
+            styles.track,
+            { backgroundColor: isDark ? "#1A1A1A" : colors.muted },
           ]}
-        />
-      </View>
-
-      <View style={styles.amounts}>
-        <View style={styles.amountCol}>
-          <Text style={[styles.amountLabel, { color: colors.mutedForeground }]}>
-            Saved
-          </Text>
-          <Text style={[styles.amountValue, { color: colors.primary }]}>
-            {formatGhs(saved)}
-          </Text>
-        </View>
-        <View style={[styles.rule, { backgroundColor: colors.border }]} />
-        <View style={styles.amountCol}>
-          <Text style={[styles.amountLabel, { color: colors.mutedForeground }]}>
-            Target
-          </Text>
-          <Text style={[styles.amountValue, { color: colors.foreground }]}>
-            {target > 0 ? formatGhs(target) : "—"}
-          </Text>
+        >
+          <View
+            style={[
+              styles.fill,
+              {
+                width: `${progress}%`,
+                backgroundColor: settled ? colors.success : colors.primary,
+              },
+            ]}
+          />
         </View>
       </View>
-    </CardSurface>
+      {showDivider ? (
+        <View style={[styles.divider, { backgroundColor: divider }]} />
+      ) : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    padding: spacing.md,
-    gap: spacing.md,
+  row: {
+    paddingHorizontal: bankChrome.rowPaddingX,
+    paddingVertical: spacing.md,
+    gap: spacing.sm,
   },
   header: {
     flexDirection: "row",
@@ -97,31 +88,27 @@ const styles = StyleSheet.create({
   },
   copy: {
     flex: 1,
-    gap: 2,
+    gap: 3,
     minWidth: 0,
   },
   title: {
     fontFamily: typography.fontFamily.semibold,
-    fontSize: typography.size.sm,
-    letterSpacing: -0.1,
+    fontSize: bankChrome.labelSize,
+    letterSpacing: -0.15,
   },
   meta: {
-    fontFamily: typography.roles.caption,
-    fontSize: typography.size.xs,
+    fontFamily: typography.fontFamily.regular,
+    fontSize: bankChrome.subtitleSize,
+    lineHeight: 17,
   },
-  percentBadge: {
-    minWidth: 44,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: radius.full,
-    alignItems: "center",
-  },
-  percentText: {
-    fontFamily: typography.fontFamily.semibold,
-    fontSize: typography.size.xs,
+  percent: {
+    fontFamily: typography.roles.amount,
+    fontSize: typography.size.sm,
+    letterSpacing: -0.2,
+    marginTop: 2,
   },
   track: {
-    height: 8,
+    height: 6,
     borderRadius: radius.full,
     overflow: "hidden",
   },
@@ -129,26 +116,8 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: radius.full,
   },
-  amounts: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  amountCol: {
-    flex: 1,
-    gap: 2,
-  },
-  amountLabel: {
-    fontFamily: typography.roles.caption,
-    fontSize: typography.size.xs,
-  },
-  amountValue: {
-    fontFamily: typography.roles.amount,
-    fontSize: typography.size.sm,
-    letterSpacing: -0.15,
-  },
-  rule: {
-    width: StyleSheet.hairlineWidth,
-    alignSelf: "stretch",
-    marginHorizontal: spacing.md,
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    marginLeft: bankChrome.rowPaddingX,
   },
 });

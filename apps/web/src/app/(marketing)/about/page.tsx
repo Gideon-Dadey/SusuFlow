@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { AboutComplianceSection } from "@/components/marketing/about/about-compliance-section";
-import { AboutDetailsSection } from "@/components/marketing/about/about-details-section";
 import { AboutHero } from "@/components/marketing/about/about-hero";
-import { AboutPeopleSection } from "@/components/marketing/about/about-people-section";
 import { AboutValuesSection } from "@/components/marketing/about/about-values-section";
+import { LeadershipSection } from "@/components/marketing/leadership-section";
+import { VisionQuoteSection } from "@/components/marketing/vision-quote-section";
 import { APP_NAME } from "@/lib/marketing-data";
 
 export const metadata: Metadata = {
@@ -16,10 +15,12 @@ export default function AboutPage() {
   return (
     <>
       <AboutHero />
+      <VisionQuoteSection
+        label="Our thesis"
+        quote="Digitize susu collections without breaking the community trust that makes savings work in Ghana."
+      />
       <AboutValuesSection />
-      <AboutComplianceSection />
-      <AboutPeopleSection />
-      <AboutDetailsSection />
+      <LeadershipSection />
     </>
   );
 }

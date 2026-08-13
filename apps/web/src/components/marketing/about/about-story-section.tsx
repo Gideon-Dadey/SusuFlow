@@ -17,7 +17,7 @@ export function AboutStorySection() {
           </h2>
         </div>
 
-        <div className="overflow-hidden rounded-none border border-border/80 bg-card lg:grid lg:grid-cols-2">
+        <div className="overflow-hidden border border-border/80 bg card lg:grid lg:grid-cols-2">
           <div className="relative aspect-[4/3] lg:aspect-auto lg:min-h-[20rem]">
             <Image
               src={HOW_IT_WORKS_DIGITAL_COLLECTOR}

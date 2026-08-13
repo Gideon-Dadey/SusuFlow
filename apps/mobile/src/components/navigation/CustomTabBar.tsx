@@ -2,6 +2,7 @@ import {
   TabBarIcon,
   type TabBarIconName,
 } from "@/components/navigation/TabBarIcon";
+import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -12,7 +13,6 @@ import {
   TAB_BAR_MIN_BOTTOM_INSET,
   TAB_BAR_PADDING_TOP,
 } from "@/constants/tab-bar";
-import { useUiStore } from "@/stores/ui.store";
 import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { typography } from "@/theme/tokens";
@@ -28,7 +28,7 @@ interface CustomTabBarProps {
     routes: TabRoute[];
   };
   navigation: {
-    navigate: (name: string) => void;
+    navigate: (name: string, params?: object) => void;
   };
 }
 
@@ -52,8 +52,6 @@ const VISIBLE_TABS: TabConfig[] = [
 export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
   const insets = useSafeAreaInsets();
   const { colors, isDark, shadows } = useTheme();
-  const optionsOpen = useUiStore((s) => s.optionsOpen);
-  const closeOptions = useUiStore((s) => s.closeOptions);
 
   const barBg = isDark ? bankChrome.pageDark : bankChrome.pageLight;
   const inactiveColor = colors.mutedForeground;
@@ -61,9 +59,12 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
   const borderTop = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   const handleTabPress = (tab: TabConfig) => {
-    if (optionsOpen) {
-      closeOptions();
+    // Always land on the More listing, never a nested detail screen.
+    if (tab.routeName === "profile") {
+      router.navigate("/(tabs)/profile");
+      return;
     }
+
     navigation.navigate(tab.routeName);
   };
 

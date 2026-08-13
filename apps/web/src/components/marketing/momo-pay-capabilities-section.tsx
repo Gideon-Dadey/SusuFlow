@@ -14,7 +14,7 @@ export function MomoPayCapabilitiesSection() {
                 <div
                   key={label}
                   className={cn(
-                    "flex aspect-square flex-col items-center justify-center rounded-none bg-transparent px-3 py-5 text-center",
+                    "flex aspect-square flex-col items-center justify-center bg-transparent px-3 py-5 text-center",
                   )}
                 >
                   <FontAwesomeIcon
@@ -32,7 +32,8 @@ export function MomoPayCapabilitiesSection() {
 
           <div className="order-1 min-w-0 text-left lg:order-2">
             <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] tracking-tight">
-              A simple end-to-end solution to help your susu thrive
+              {" "}
+              A simple end to end solution to help your susu thrive{" "}
             </h2>
             <p className="mt-5 text-base text-muted-foreground leading-relaxed text-pretty max-w-xl">
               Forget juggling cash, WhatsApp screenshots, and manual books.
@@ -40,9 +41,10 @@ export function MomoPayCapabilitiesSection() {
               one platform with just a few taps in the field.
             </p>
             <p className="mt-4 text-base text-muted-foreground leading-relaxed text-pretty max-w-xl">
+              {" "}
               MoMo prompts, gateway verification, collector tools, live
-              dashboards, group payouts, and audit-ready records, built for how
-              Ghanaian susu actually runs.
+              dashboards, group payouts, and audit ready records, built for how
+              Ghanaian susu actually runs.{" "}
             </p>
           </div>
         </div>

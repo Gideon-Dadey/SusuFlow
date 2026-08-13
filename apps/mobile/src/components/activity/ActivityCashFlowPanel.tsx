@@ -5,8 +5,7 @@ import type { ActivityPeriodInsights } from "@/components/activity/transactionUt
 import { ACTIVITY_PERIOD_LABELS } from "@/components/activity/transactionUtils";
 import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
-import { CardSurface } from "@/components/ui/CardSurface";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { spacing, typography } from "@/theme/tokens";
 
 interface ActivityCashFlowPanelProps {
   insights: ActivityPeriodInsights;
@@ -20,6 +19,7 @@ function formatDelta(delta: number | null): string | null {
   return `${sign}${rounded}% vs prior period`;
 }
 
+/** Summary strip — no heavy card frame; sits on the page like More. */
 export function ActivityCashFlowPanel({
   insights,
 }: ActivityCashFlowPanelProps) {
@@ -27,13 +27,14 @@ export function ActivityCashFlowPanel({
   const deltaLabel = formatDelta(insights.periodDeltaPct);
   const deltaPositive =
     insights.periodDeltaPct !== null && insights.periodDeltaPct >= 0;
+  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   return (
-    <CardSurface innerStyle={styles.card}>
+    <View style={styles.wrap}>
       <View style={styles.header}>
         <View style={styles.headerCopy}>
           <Text style={[styles.eyebrow, { color: colors.mutedForeground }]}>
-            Cash flow · {ACTIVITY_PERIOD_LABELS[insights.period]}
+            Net flow · {ACTIVITY_PERIOD_LABELS[insights.period]}
           </Text>
           <Text style={[styles.netFlow, { color: colors.foreground }]}>
             {formatGhs(insights.netFlow)}
@@ -43,7 +44,7 @@ export function ActivityCashFlowPanel({
               style={[
                 styles.delta,
                 {
-                  color: deltaPositive ? colors.foreground : colors.destructive,
+                  color: deltaPositive ? colors.success : colors.destructive,
                 },
               ]}
             >
@@ -68,34 +69,16 @@ export function ActivityCashFlowPanel({
         ) : null}
       </View>
 
-      <View
-        style={[
-          styles.divider,
-          {
-            backgroundColor: isDark
-              ? bankChrome.dividerDark
-              : bankChrome.dividerLight,
-          },
-        ]}
-      />
+      <View style={[styles.divider, { backgroundColor: divider }]} />
 
       <View style={styles.grid}>
-        <Metric
-          label="Money in"
-          value={formatGhs(insights.moneyIn)}
-          valueColor={colors.foreground}
-        />
-        <Metric
-          label="Money out"
-          value={formatGhs(insights.moneyOut)}
-          valueColor={colors.foreground}
-        />
+        <Metric label="Money in" value={formatGhs(insights.moneyIn)} />
+        <Metric label="Money out" value={formatGhs(insights.moneyOut)} />
         <Metric
           label="Success rate"
           value={
             insights.successRate !== null ? `${insights.successRate}%` : "—"
           }
-          valueColor={colors.foreground}
         />
         <Metric
           label="Avg deposit"
@@ -104,22 +87,13 @@ export function ActivityCashFlowPanel({
               ? formatGhs(insights.averageDeposit)
               : "—"
           }
-          valueColor={colors.foreground}
         />
       </View>
-    </CardSurface>
+    </View>
   );
 }
 
-function Metric({
-  label,
-  value,
-  valueColor,
-}: {
-  label: string;
-  value: string;
-  valueColor: string;
-}) {
+function Metric({ label, value }: { label: string; value: string }) {
   const { colors } = useTheme();
 
   return (
@@ -127,15 +101,17 @@ function Metric({
       <Text style={[styles.metricLabel, { color: colors.mutedForeground }]}>
         {label}
       </Text>
-      <Text style={[styles.metricValue, { color: valueColor }]}>{value}</Text>
+      <Text style={[styles.metricValue, { color: colors.foreground }]}>
+        {value}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    padding: spacing.lg,
+  wrap: {
     gap: spacing.md,
+    paddingBottom: spacing.sm,
   },
   header: {
     flexDirection: "row",
@@ -150,8 +126,9 @@ const styles = StyleSheet.create({
   },
   eyebrow: {
     fontFamily: typography.roles.caption,
-    fontSize: typography.size.xs,
-    letterSpacing: 0.2,
+    fontSize: 11,
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
   },
   netFlow: {
     fontFamily: typography.roles.amount,

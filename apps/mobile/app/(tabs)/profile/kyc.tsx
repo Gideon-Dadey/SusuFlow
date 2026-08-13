@@ -1,16 +1,6 @@
-import { KycSettingsContent } from "@/components/settings/sections/KycSettingsContent";
-import { SettingsDetailLayout } from "@/components/settings/SettingsDetailLayout";
-import { PROFILE_SECTION_META } from "@/types/profile";
+import { Redirect } from "expo-router";
 
-export default function KycSettingsScreen() {
-  const meta = PROFILE_SECTION_META.kyc;
-  return (
-    <SettingsDetailLayout
-      title={meta.title}
-      subtitle={meta.subtitle}
-      keyboardAvoid
-    >
-      <KycSettingsContent />
-    </SettingsDetailLayout>
-  );
+/** KYC lives under My Profile so it never traps the More tab stack. */
+export default function ProfileKycRedirect() {
+  return <Redirect href="/my-profile/kyc" />;
 }

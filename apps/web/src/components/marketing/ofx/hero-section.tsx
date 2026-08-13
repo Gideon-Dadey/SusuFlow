@@ -28,7 +28,7 @@ function HeroProductMock() {
               GHS 12,480.00
             </p>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--ofx-sage)] px-3 py-1.5 text-xs font-semibold text-foreground">
+          <span className="inline-flex items-center gap-1.5 bg-[var(--ofx-sage)] px-3 py-1.5 text-xs font-semibold text-foreground">
             <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
             100% verified
           </span>
@@ -38,11 +38,11 @@ function HeroProductMock() {
           {bars.map((height, i) => (
             <div
               key={i}
-              className="flex-1 rounded-t-lg bg-[var(--ofx-cream-deep)]"
+              className="flex-1 bg-[var(--ofx-cream-deep)]"
               style={{ height: `${height}%` }}
             >
               <div
-                className="w-full rounded-t-lg bg-[var(--ofx-flame)]"
+                className="w-full bg-[var(--ofx-flame)]"
                 style={{ height: i >= 4 ? "100%" : "0%" }}
               />
             </div>
@@ -53,7 +53,7 @@ function HeroProductMock() {
           {deposits.map((d) => (
             <div key={d.name} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="flex size-9 items-center justify-center rounded-full bg-[var(--ofx-cream-deep)] text-xs font-semibold text-foreground">
+                <span className="flex size-9 items-center justify-center bg-[var(--ofx-cream-deep)] text-xs font-semibold text-foreground">
                   {d.name
                     .split(" ")
                     .map((n) => n[0])
@@ -79,9 +79,9 @@ function HeroProductMock() {
         </div>
       </div>
 
-      <div className="absolute -bottom-8 -left-4 w-56 rounded-2xl border border-border bg-white p-4 shadow-[0_24px_48px_-24px_rgba(28,27,23,0.4)] sm:-left-10">
+      <div className="absolute -bottom-8 -left-4 w-56 border border-border bg-white p-4 shadow-[0_24px_48px_-24px_rgba(28,27,23,0.4)] sm:-left-10">
         <div className="flex items-center gap-2.5">
-          <span className="flex size-9 items-center justify-center rounded-full bg-[var(--ofx-sand)]">
+          <span className="flex size-9 items-center justify-center bg-[var(--ofx-sand)]">
             <Smartphone className="h-4 w-4 text-foreground" aria-hidden />
           </span>
           <div>
@@ -91,8 +91,8 @@ function HeroProductMock() {
             <p className="text-xs text-muted-foreground">Ama A. · GHS 30.00</p>
           </div>
         </div>
-        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--ofx-cream-deep)]">
-          <div className="h-full w-3/4 rounded-full bg-[var(--ofx-flame)]" />
+        <div className="mt-3 h-1.5 overflow-hidden bg-[var(--ofx-cream-deep)]">
+          <div className="h-full w-3/4 bg-[var(--ofx-flame)]" />
         </div>
       </div>
     </div>

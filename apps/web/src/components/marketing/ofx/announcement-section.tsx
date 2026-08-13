@@ -6,12 +6,13 @@ export function OfxAnnouncementSection() {
   return (
     <section className="bg-[var(--ofx-paper)]">
       <MarketingContainer className="pb-16 sm:pb-20">
-        <div className="grid overflow-hidden rounded-[2rem] bg-[var(--ofx-sage)] lg:grid-cols-2">
+        <div className="grid overflow-hidden bg-[var(--ofx-sage)] lg:grid-cols-2">
           <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-14">
             <p className="ofx-eyebrow">Now live</p>
             <h2 className="ofx-h2 mt-4">
-              MoMo prompts have arrived — an easy, secure way for members to
-              pay.
+              {" "}
+              MoMo prompts have arrived. An easy, secure way for members to
+              pay.{" "}
             </h2>
             <p className="ofx-body mt-4 max-w-md text-foreground/70">
               Collectors send a prompt, members approve on their own phone, and
@@ -29,9 +30,9 @@ export function OfxAnnouncementSection() {
             className="relative flex min-h-[280px] items-center justify-center p-8"
             aria-hidden
           >
-            <div className="w-64 rounded-[1.75rem] border border-border bg-white p-5 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.4)]">
+            <div className="w-64 border border-border bg-white p-5 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.4)]">
               <div className="flex items-center gap-3">
-                <span className="flex size-10 items-center justify-center rounded-full bg-[var(--ofx-cream-deep)]">
+                <span className="flex size-10 items-center justify-center bg-[var(--ofx-cream-deep)]">
                   <Smartphone className="h-5 w-5 text-foreground" aria-hidden />
                 </span>
                 <div>
@@ -44,10 +45,10 @@ export function OfxAnnouncementSection() {
                 </div>
               </div>
               <div className="mt-5 space-y-2.5">
-                <div className="h-2 w-full rounded-full bg-[var(--ofx-cream-deep)]" />
-                <div className="h-2 w-3/4 rounded-full bg-[var(--ofx-cream-deep)]" />
+                <div className="h-2 w-full bg-[var(--ofx-cream-deep)]" />
+                <div className="h-2 w-3/4 bg-[var(--ofx-cream-deep)]" />
               </div>
-              <div className="mt-5 rounded-full bg-[var(--ofx-ink)] py-2.5 text-center text-xs font-semibold text-white">
+              <div className="mt-5 bg-[var(--ofx-ink)] py-2.5 text-center text-xs font-semibold text-white">
                 Confirm with PIN
               </div>
             </div>

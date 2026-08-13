@@ -27,7 +27,7 @@ export function OfxTickerSection() {
         <div className="ofx-marquee-track gap-4 pr-4">
           {items.map((place, i) => (
             <span key={`${place}-${i}`} className="ofx-chip">
-              <span className="size-1.5 rounded-full bg-[var(--ofx-flame)]" />
+              <span className="size-1.5 bg-[var(--ofx-flame)]" />
               Susu companies in {place}
             </span>
           ))}

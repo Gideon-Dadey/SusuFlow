@@ -2,7 +2,6 @@ import { MarketingFooter } from "@/components/marketing/footer";
 import { FooterCtaSection } from "@/components/marketing/footer-cta-section";
 import { MarketingNavbar } from "@/components/marketing/navbar";
 import { MarketingScrollToTop } from "@/components/marketing/marketing-scroll-to-top";
-import { ThemeToggleRail } from "@/components/theme-toggle-rail";
 
 export default function MarketingLayout({
   children,
@@ -14,7 +13,7 @@ export default function MarketingLayout({
       <MarketingScrollToTop />
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus: focus:bg-secondary focus:px-4 focus:py-2 focus:text-secondary-foreground"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:bg-secondary focus:px-4 focus:py-2 focus:text-secondary-foreground"
       >
         Skip to content
       </a>
@@ -27,7 +26,6 @@ export default function MarketingLayout({
         <FooterCtaSection />
         <MarketingFooter />
       </div>
-      <ThemeToggleRail />
     </>
   );
 }

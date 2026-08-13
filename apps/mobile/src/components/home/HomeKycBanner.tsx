@@ -43,7 +43,7 @@ export function HomeKycBanner() {
   return (
     <Pressable
       accessibilityRole="button"
-      onPress={() => router.push("/(tabs)/profile/kyc")}
+      onPress={() => router.push("/my-profile/kyc")}
       style={({ pressed }) => [
         styles.banner,
         {

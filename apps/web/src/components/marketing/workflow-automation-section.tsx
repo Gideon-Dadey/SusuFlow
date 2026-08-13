@@ -11,7 +11,7 @@ export function WorkflowAutomationSection() {
       <MarketingContainer>
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20">
           <div className="relative order-2 lg:order-1">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/11]">
+            <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/11]">
               <Image
                 src={BRAND_WORKFLOW_AUTOMATION}
                 alt="SusuFlow staff reviewing deposit approvals"
@@ -28,10 +28,11 @@ export function WorkflowAutomationSection() {
               Automate your deposit &amp; payout approvals
             </h2>
             <p className="afrusan-body text-pretty">
+              {" "}
               SusuFlow helps streamline collections with tailored approval
               workflows. Set clear rules for collector actions, MoMo deposit
-              verification, payout sign-offs, and staff access — so every cedi
-              moves with accountability.
+              verification, payout sign offs, and staff access. So every cedi
+              moves with accountability.{" "}
             </p>
             <Link
               href="/how-it-works"

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { Button } from "@/components/Button";
 import { HomeKycBanner } from "@/components/home/HomeKycBanner";
 import {
@@ -24,23 +24,31 @@ import {
   type WithdrawStep,
 } from "@/components/withdraw/withdrawUtils";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
+import { useMoneyStepUp } from "@/hooks/useMoneyStepUp";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { AnalyticsEvents, analytics } from "@/lib/analytics";
 import { withdrawalApi } from "@/lib/api";
 import { fetchCustomerWallet } from "@/lib/customer-wallet";
 import {
   financialQueryOptions,
   invalidateCustomerFinancials,
 } from "@/lib/financial-queries";
+import { createIdempotencyKey } from "@/lib/idempotency";
 import { monitoring } from "@/lib/monitoring";
 import { queryKeys } from "@/lib/query-keys";
+import { toast } from "@/stores/toast.store";
 import { spacing } from "@/theme/tokens";
 
 export default function WithdrawScreen() {
   const queryClient = useQueryClient();
+  const { isOnline } = useNetworkStatus();
+  const { requestStepUp, StepUpModal, appLockEnabled } = useMoneyStepUp();
   const [step, setStep] = useState<WithdrawStep>(0);
   const [amount, setAmount] = useState("");
   const [phone, setPhone] = useState("");
   const [method, setMethod] = useState("mtn_momo");
   const [submitted, setSubmitted] = useState<SubmittedWithdrawal | null>(null);
+  const idempotencyKeyRef = useRef<string | null>(null);
 
   const { phone: profilePhone } = useProfileData();
   const { sessionKey } = useCustomerSession();
@@ -66,6 +74,7 @@ export default function WithdrawScreen() {
     setSubmitted(null);
     setStep(0);
     setAmount("");
+    idempotencyKeyRef.current = null;
   };
 
   const mutation = useMutation({
@@ -75,14 +84,22 @@ export default function WithdrawScreen() {
       if (wallet && parsedAmount > wallet.balance) {
         throw new Error("Amount exceeds your available balance");
       }
+      if (!idempotencyKeyRef.current) {
+        idempotencyKeyRef.current = createIdempotencyKey("wd");
+      }
 
       return withdrawalApi.requestWithdrawal({
         amount: parsedAmount,
         disbursementMethod: method,
         disbursementPhone: phone.trim(),
+        idempotencyKey: idempotencyKeyRef.current,
       });
     },
     onSuccess: (data) => {
+      analytics.track(AnalyticsEvents.withdrawConfirmed, {
+        amount: parsedAmount ?? 0,
+        method,
+      });
       if (sessionKey) {
         invalidateCustomerFinancials(queryClient, sessionKey);
       }
@@ -94,62 +111,80 @@ export default function WithdrawScreen() {
         methodLabel: getWithdrawMethodLabel(method),
         phone: phone.trim(),
       });
+      idempotencyKeyRef.current = null;
+      if (!appLockEnabled) {
+        toast.info("Tip: turn on App lock in Security for safer payouts.");
+      }
     },
     onError: (err: Error) => {
+      analytics.track(AnalyticsEvents.withdrawFailed, {
+        message: err.message,
+      });
       monitoring.captureException(err, { scope: "withdrawal.request" });
-      Alert.alert("Withdrawal failed", err.message);
+      toast.error(err.message || "Withdrawal failed");
     },
   });
 
-  const goNext = () => {
+  const goNext = async () => {
+    if (!isOnline) {
+      toast.error("You’re offline. Connect to request a withdrawal.");
+      return;
+    }
+
     if (step === 0) {
       if (!parsedAmount) {
-        Alert.alert("Enter an amount", "Choose how much you want to withdraw.");
+        toast.error("Choose how much you want to withdraw.");
         return;
       }
       if (wallet && parsedAmount > wallet.balance) {
-        Alert.alert(
-          "Amount too high",
-          "You can’t withdraw more than your available balance.",
-        );
+        toast.error("You can’t withdraw more than your available balance.");
         return;
       }
+      analytics.track(AnalyticsEvents.withdrawStarted, {
+        amount: parsedAmount,
+      });
       setStep(1);
       return;
     }
 
     if (step === 1) {
       if (!phone.trim()) {
-        Alert.alert(
-          "Enter a MoMo number",
-          "We need the wallet number for your payout.",
-        );
+        toast.error("Enter the MoMo number for your payout.");
         return;
       }
       setStep(2);
       return;
     }
 
+    const ok = await requestStepUp("Confirm withdrawal");
+    if (!ok) {
+      toast.info("Withdrawal cancelled.");
+      return;
+    }
     mutation.mutate();
   };
 
   const goBack = () => {
     if (step === 0) return;
+    if (step === 2) {
+      idempotencyKeyRef.current = null;
+    }
     setStep((current) => (current - 1) as WithdrawStep);
   };
 
   const primaryLabel = step === 2 ? "Confirm & request" : "Continue";
+  const primaryDisabled = !isOnline || mutation.isPending;
 
   return (
     <TabScreenLayout
-      bankHeader
       header={
         <View style={styles.header}>
-          <TabScreenHeader title="Withdraw" onGeometry showBack />
-          {!submitted ? <WithdrawStepIndicator step={step} onGeometry /> : null}
+          <TabScreenHeader title="Withdraw" showBack />
+          {!submitted ? <WithdrawStepIndicator step={step} /> : null}
         </View>
       }
     >
+      {StepUpModal}
       <View style={styles.content}>
         <OfflineBanner />
         <KycActionGate actionLabel="withdraw">
@@ -199,9 +234,10 @@ export default function WithdrawScreen() {
                   />
                 ) : null}
                 <Button
-                  title={primaryLabel}
+                  title={!isOnline ? "Offline" : primaryLabel}
                   loading={mutation.isPending}
-                  onPress={goNext}
+                  disabled={primaryDisabled}
+                  onPress={() => void goNext()}
                   style={styles.primary}
                 />
               </View>

@@ -1,5 +1,6 @@
 import type { AppIconName } from "@/components/icons/AppIcon";
 import type { Href } from "expo-router";
+import { getSupportEmail } from "@/lib/config";
 import {
   getServiceWellFromLegacy,
   type LegacyServiceTone,
@@ -12,8 +13,11 @@ export interface ServiceMenuItem {
   label: string;
   subtitle: string;
   icon: AppIconName;
-  href: Href;
   tone: ServiceWellTone;
+  /** Navigate to this route when pressed. */
+  href?: Href;
+  /** Special action instead of navigation. */
+  action?: "contact-email";
 }
 
 export function getServiceWell(
@@ -24,16 +28,16 @@ export function getServiceWell(
 }
 
 /**
- * More tab — product & money services only.
+ * More tab — money services + support.
  * Account, KYC, security, and preferences live under My Profile (avatar).
  */
 export const MORE_SERVICE_ITEMS: ServiceMenuItem[] = [
   {
-    id: "history",
-    label: "Transaction history",
-    subtitle: "Deposits, withdrawals, and receipts",
-    icon: "receipt",
-    href: "/(tabs)/activity",
+    id: "deposit",
+    label: "Deposit",
+    subtitle: "Add money with Mobile Money",
+    icon: "plus",
+    href: "/(tabs)/deposit",
     tone: "slate",
   },
   {
@@ -45,12 +49,36 @@ export const MORE_SERVICE_ITEMS: ServiceMenuItem[] = [
     tone: "rose",
   },
   {
-    id: "help",
-    label: "Help & support",
-    subtitle: "Contact our team when you need help",
-    icon: "support",
-    href: "/(tabs)/profile/help",
+    id: "goals",
+    label: "Savings goals",
+    subtitle: "Plans you are enrolled in",
+    icon: "goals",
+    href: "/(tabs)/plans",
+    tone: "orange",
+  },
+  {
+    id: "history",
+    label: "Transaction history",
+    subtitle: "Deposits, withdrawals, and receipts",
+    icon: "receipt",
+    href: "/(tabs)/activity",
+    tone: "blue",
+  },
+  {
+    id: "chat",
+    label: "Chat",
+    subtitle: "Ask general questions about the app",
+    icon: "chat",
+    href: "/support" as Href,
     tone: "violet",
+  },
+  {
+    id: "contact",
+    label: "Contact us",
+    subtitle: getSupportEmail(),
+    icon: "mail",
+    action: "contact-email",
+    tone: "blue",
   },
   {
     id: "legal",
@@ -68,20 +96,12 @@ export const MORE_SERVICE_ITEMS: ServiceMenuItem[] = [
  */
 export const MY_PROFILE_ITEMS: ServiceMenuItem[] = [
   {
-    id: "personal",
-    label: "Personal details",
-    subtitle: "Name, phone, and contact info",
-    icon: "user",
-    href: "/my-profile/personal",
-    tone: "slate",
-  },
-  {
     id: "account",
-    label: "Account overview",
-    subtitle: "Membership, email, and group details",
-    icon: "wallet",
+    label: "Account details",
+    subtitle: "Name, phone, email, and membership",
+    icon: "user",
     href: "/my-profile/account",
-    tone: "mint",
+    tone: "slate",
   },
   {
     id: "kyc",
@@ -94,7 +114,7 @@ export const MY_PROFILE_ITEMS: ServiceMenuItem[] = [
   {
     id: "security",
     label: "Security",
-    subtitle: "Password, biometrics, and app lock",
+    subtitle: "Password, app lock, and biometrics",
     icon: "smartphone",
     href: "/my-profile/security",
     tone: "teal",

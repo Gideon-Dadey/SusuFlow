@@ -50,7 +50,7 @@ export function ProductFeatureSection({
                     isReversed ? "lg:order-1" : "lg:order-2",
                   )}
                 >
-                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
+                  <div className="relative aspect-[4/3] w-full overflow-hidden">
                     <Image
                       src={feature.imageSrc}
                       alt={feature.imageAlt}

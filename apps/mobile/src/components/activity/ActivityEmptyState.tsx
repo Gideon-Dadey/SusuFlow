@@ -1,6 +1,5 @@
 import { AppIcon } from "@/components/icons/AppIcon";
 import { StyleSheet, Text, View } from "react-native";
-import { CardSurface } from "@/components/ui/CardSurface";
 import type { ActivityFilter } from "@/components/activity/transactionUtils";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
@@ -29,9 +28,9 @@ export function ActivityEmptyState({ filter }: ActivityEmptyStateProps) {
           };
 
   return (
-    <CardSurface innerStyle={styles.card}>
+    <View style={styles.wrap}>
       <View style={[styles.iconWrap, { backgroundColor: colors.muted }]}>
-        <AppIcon name="receipt" size={22} color={colors.mutedForeground} />
+        <AppIcon name="receipt" size={20} color={colors.mutedForeground} />
       </View>
       <Text style={[styles.title, { color: colors.foreground }]}>
         {copy.title}
@@ -39,24 +38,24 @@ export function ActivityEmptyState({ filter }: ActivityEmptyStateProps) {
       <Text style={[styles.body, { color: colors.mutedForeground }]}>
         {copy.body}
       </Text>
-    </CardSurface>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
+  wrap: {
     alignItems: "center",
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.xxl,
     gap: spacing.sm,
   },
   iconWrap: {
-    width: 48,
-    height: 48,
+    width: 44,
+    height: 44,
     borderRadius: radius.full,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: spacing.xs,
+    marginBottom: 2,
   },
   title: {
     fontFamily: typography.roles.title,

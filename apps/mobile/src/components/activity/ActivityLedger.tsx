@@ -3,10 +3,11 @@ import { useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { ActivityTransactionRow } from "@/components/activity/ActivityTransactionRow";
 import { searchTransactions } from "@/components/activity/transactionUtils";
-import { CardSurface } from "@/components/ui/CardSurface";
+import { TabSectionLabel } from "@/components/layout/TabScreen";
 import type { Transaction } from "@/lib/api";
+import { authChrome } from "@/theme/auth-chrome";
 import { useTheme } from "@/theme/ThemeProvider";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { spacing, typography } from "@/theme/tokens";
 
 interface ActivityLedgerProps {
   transactions: Transaction[];
@@ -17,7 +18,7 @@ export function ActivityLedger({
   transactions,
   onPressTransaction,
 }: ActivityLedgerProps) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const [query, setQuery] = useState("");
 
   const visible = useMemo(
@@ -28,27 +29,48 @@ export function ActivityLedger({
   return (
     <View style={styles.section}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.foreground }]}>
-          Transaction ledger
-        </Text>
+        <TabSectionLabel>History</TabSectionLabel>
         <Text style={[styles.count, { color: colors.mutedForeground }]}>
-          {visible.length} record{visible.length === 1 ? "" : "s"}
+          {visible.length}
         </Text>
       </View>
 
-      <CardSurface innerStyle={styles.searchWrap}>
+      <View
+        style={[
+          styles.searchWrap,
+          {
+            backgroundColor: isDark ? authChrome.field : colors.muted,
+            borderColor: isDark ? authChrome.fieldBorder : colors.border,
+          },
+        ]}
+      >
         <AppIcon name="search" size={16} color={colors.mutedForeground} />
-        <TextInput
-          accessibilityLabel="Search transactions"
-          placeholder="Search reference, method, or amount"
-          placeholderTextColor={colors.mutedForeground}
-          value={query}
-          onChangeText={setQuery}
-          autoCapitalize="none"
-          autoCorrect={false}
-          clearButtonMode="while-editing"
-          style={[styles.searchInput, { color: colors.foreground }]}
-        />
+        <View style={styles.inputSlot}>
+          {/*
+            Geist + TextInput placeholders mis-kern (letters look scrambled).
+            Overlay a Text so spacing matches typed text.
+          */}
+          {!query ? (
+            <Text
+              style={[styles.placeholder, { color: colors.mutedForeground }]}
+              pointerEvents="none"
+              numberOfLines={1}
+            >
+              Search transactions
+            </Text>
+          ) : null}
+          <TextInput
+            accessibilityLabel="Search transactions"
+            placeholder=""
+            placeholderTextColor="transparent"
+            value={query}
+            onChangeText={setQuery}
+            autoCapitalize="none"
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+            style={[styles.searchInput, { color: colors.foreground }]}
+          />
+        </View>
         {query.length > 0 ? (
           <Pressable
             accessibilityRole="button"
@@ -59,29 +81,29 @@ export function ActivityLedger({
             <AppIcon name="close" size={14} color={colors.mutedForeground} />
           </Pressable>
         ) : null}
-      </CardSurface>
+      </View>
 
-      {visible.length === 0 ? (
-        <CardSurface innerStyle={styles.emptyCard}>
-          <Text style={[styles.emptyTitle, { color: colors.foreground }]}>
-            No matching records
-          </Text>
-          <Text style={[styles.emptyBody, { color: colors.mutedForeground }]}>
-            Try a reference number, payment method, or amount.
-          </Text>
-        </CardSurface>
-      ) : (
-        <CardSurface innerStyle={styles.card}>
-          {visible.map((transaction, index) => (
+      <View style={styles.menu}>
+        {visible.length === 0 ? (
+          <View style={styles.empty}>
+            <Text style={[styles.emptyTitle, { color: colors.foreground }]}>
+              No matching records
+            </Text>
+            <Text style={[styles.emptyBody, { color: colors.mutedForeground }]}>
+              Try a reference number, payment method, or amount.
+            </Text>
+          </View>
+        ) : (
+          visible.map((transaction, index) => (
             <ActivityTransactionRow
               key={transaction.id}
               transaction={transaction}
               onPress={() => onPressTransaction(transaction)}
               showDivider={index < visible.length - 1}
             />
-          ))}
-        </CardSurface>
-      )}
+          ))
+        )}
+      </View>
     </View>
   );
 }
@@ -92,41 +114,55 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    alignItems: "baseline",
+    alignItems: "center",
     justifyContent: "space-between",
     gap: spacing.md,
-    marginLeft: 2,
-  },
-  title: {
-    fontFamily: typography.fontFamily.semibold,
-    fontSize: typography.size.sm,
-    letterSpacing: -0.1,
   },
   count: {
     fontFamily: typography.roles.caption,
     fontSize: typography.size.xs,
+    marginBottom: 4,
   },
   searchWrap: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
     paddingHorizontal: spacing.md,
+    minHeight: 48,
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  inputSlot: {
+    flex: 1,
+    position: "relative",
+    justifyContent: "center",
     minHeight: 44,
+  },
+  placeholder: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    fontFamily: typography.fontFamily.regular,
+    fontSize: typography.size.sm,
+    letterSpacing: 0,
+    lineHeight: 20,
   },
   searchInput: {
     flex: 1,
     fontFamily: typography.fontFamily.regular,
     fontSize: typography.size.sm,
-    paddingVertical: 10,
+    letterSpacing: 0,
+    paddingVertical: 12,
+    includeFontPadding: false,
   },
-  card: {
-    overflow: "hidden",
+  menu: {
+    marginHorizontal: -spacing.lg,
   },
-  emptyCard: {
+  empty: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.xl,
-    alignItems: "center",
     gap: 6,
+    alignItems: "center",
   },
   emptyTitle: {
     fontFamily: typography.roles.title,

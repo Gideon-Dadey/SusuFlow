@@ -587,6 +587,7 @@ export const withdrawalApi = {
     amount: number;
     disbursementMethod: string;
     disbursementPhone: string;
+    idempotencyKey?: string;
   }) => api.post<Transaction>("/withdrawals/request", data),
   list: (params?: { customer_id?: string; limit?: number }) =>
     api.get<{ items: Transaction[] }>(`/withdrawals${toQueryString(params)}`),

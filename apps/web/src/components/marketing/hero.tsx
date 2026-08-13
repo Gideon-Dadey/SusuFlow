@@ -23,14 +23,15 @@ export function MarketingHero() {
 
             <p className="afrusan-body mt-6 max-w-xl text-pretty">
               {APP_TAGLINE} Our mission is to eliminate manual collection fraud
-              with gateway-confirmed Mobile Money deposits and audit-ready
-              double-entry ledgers.
+              with gateway confirmed Mobile Money deposits and audit ready
+              double entry ledgers.
             </p>
 
             <p className="afrusan-body mt-4 max-w-xl text-pretty">
+              {" "}
               We aim to prove that susu operations can be simple, effective, and
-              scalable for Ghanaian microfinance enterprises — starting with a
-              free trial.
+              scalable for Ghanaian microfinance enterprises. Starting with a
+              free trial.{" "}
             </p>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">

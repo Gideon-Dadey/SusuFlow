@@ -47,7 +47,7 @@ export function PricingComparisonSection() {
         </div>
 
         {/* Desktop table */}
-        <div className="mt-12 hidden overflow-hidden rounded-[2rem] border border-border/70 bg-white lg:block">
+        <div className="mt-12 hidden overflow-hidden border border-border/70 bg-white lg:block">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[52rem] border-collapse text-left">
               <thead>

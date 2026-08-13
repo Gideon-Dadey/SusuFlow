@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackArrowButton } from "@/components/navigation/BackArrowButton";
 import { AvatarEditor } from "@/components/profile/AvatarEditor";
 import { BankMenuRow } from "@/components/profile/BankProfileMenuRow";
-import { ProfileGeometricBackdrop } from "@/components/profile/ProfileGeometricBackdrop";
 import { useProfileData } from "@/components/settings/useProfileData";
 import { formatLastLoginLabel } from "@/lib/last-login";
 import { useAuthStore } from "@/stores/auth.store";
@@ -24,17 +23,30 @@ export default function MyProfileScreen() {
   const lastLoginLabel = formatLastLoginLabel(lastLoginAt);
 
   const pageBg = isDark ? bankChrome.pageDark : bankChrome.pageLight;
-  const stickyHeight = insets.top + 56;
   const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   const signOutWell = getServiceWellFromLegacy("rose", isDark);
 
   return (
     <View style={[styles.root, { backgroundColor: pageBg }]}>
-      <View style={[styles.stickyHeader, { height: stickyHeight }]}>
-        <ProfileGeometricBackdrop height={stickyHeight} isDark={isDark} />
-        <View style={[styles.navRow, { paddingTop: insets.top + 4 }]}>
-          <BackArrowButton onPress={() => router.back()} color="#FFFFFF" />
+      <View
+        style={[
+          styles.stickyHeader,
+          {
+            paddingTop: insets.top + 4,
+            backgroundColor: pageBg,
+          },
+        ]}
+      >
+        <View style={styles.navRow}>
+          <BackArrowButton
+            onPress={() => router.back()}
+            color={colors.foreground}
+          />
+          <Text style={[styles.navTitle, { color: colors.foreground }]}>
+            My Profile
+          </Text>
+          <View style={styles.navSide} />
         </View>
       </View>
 
@@ -75,7 +87,7 @@ export default function MyProfileScreen() {
           Account
         </Text>
         <View style={styles.menu}>
-          {MY_PROFILE_ITEMS.slice(0, 3).map((item, index) => {
+          {MY_PROFILE_ITEMS.slice(0, 2).map((item, index) => {
             const well = getServiceWellFromLegacy(item.tone, isDark);
             return (
               <BankMenuRow
@@ -87,9 +99,11 @@ export default function MyProfileScreen() {
                   subtitle: item.subtitle,
                   wellBg: well.bg,
                   wellFg: well.fg,
-                  onPress: () => router.push(item.href),
+                  onPress: () => {
+                    if (item.href) router.push(item.href);
+                  },
                 }}
-                showDivider={index < 2}
+                showDivider={index < 1}
               />
             );
           })}
@@ -105,7 +119,7 @@ export default function MyProfileScreen() {
           Preferences
         </Text>
         <View style={styles.menu}>
-          {MY_PROFILE_ITEMS.slice(3).map((item, index, arr) => {
+          {MY_PROFILE_ITEMS.slice(2).map((item, index, arr) => {
             const well = getServiceWellFromLegacy(item.tone, isDark);
             return (
               <BankMenuRow
@@ -117,7 +131,9 @@ export default function MyProfileScreen() {
                   subtitle: item.subtitle,
                   wellBg: well.bg,
                   wellFg: well.fg,
-                  onPress: () => router.push(item.href),
+                  onPress: () => {
+                    if (item.href) router.push(item.href);
+                  },
                 }}
                 showDivider={index < arr.length - 1}
               />
@@ -151,13 +167,23 @@ const styles = StyleSheet.create({
   },
   stickyHeader: {
     zIndex: 4,
-    overflow: "hidden",
+    paddingBottom: spacing.sm,
   },
   navRow: {
     paddingHorizontal: spacing.lg,
-    zIndex: 2,
     minHeight: 44,
-    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  navTitle: {
+    flex: 1,
+    textAlign: "center",
+    fontFamily: typography.fontFamily.semibold,
+    fontSize: typography.size.lg,
+    letterSpacing: -0.2,
+  },
+  navSide: {
+    width: 44,
   },
   scroll: {
     flex: 1,
@@ -165,7 +191,7 @@ const styles = StyleSheet.create({
   identity: {
     alignItems: "center",
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
+    paddingTop: spacing.xl,
     gap: 6,
   },
   name: {

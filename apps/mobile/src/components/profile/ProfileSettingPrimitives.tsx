@@ -5,12 +5,17 @@ import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import { bankChrome, getBankWell, type BankWellTone } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, typography } from "@/theme/tokens";
-import { getSupportEmail } from "@/lib/config";
+import { getSupportEmail, openSupportEmailUrl } from "@/lib/config";
 
 export { appVersion } from "@/lib/app-version";
 
-export function openSupportEmail() {
-  Linking.openURL(`mailto:${getSupportEmail()}`);
+export function openSupportEmail(opts?: { subject?: string; body?: string }) {
+  Linking.openURL(
+    openSupportEmailUrl({
+      subject: opts?.subject,
+      body: opts?.body,
+    }),
+  );
 }
 
 const ICON_TONES: Partial<Record<AppIconName, BankWellTone>> = {

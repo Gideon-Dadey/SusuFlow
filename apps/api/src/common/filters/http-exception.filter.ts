@@ -6,12 +6,15 @@ import {
   HttpStatus,
   ConflictException,
   BadRequestException,
+  Logger,
 } from "@nestjs/common";
 import { Response } from "express";
 import { Prisma } from "@susuflow/database";
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(HttpExceptionFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -33,6 +36,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
         resolved = new BadRequestException(
           "One of the values you entered is too long. Please check your input and try again.",
         );
+      } else if (exception.code === "P2028") {
+        resolved = new BadRequestException(
+          "Could not save your documents in time. Please try again.",
+        );
       }
     }
 
@@ -40,6 +47,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
       resolved instanceof HttpException
         ? resolved.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+      const error =
+        exception instanceof Error ? exception : new Error(String(exception));
+      this.logger.error(
+        `${request.method} ${request.url}: ${error.message}`,
+        error.stack,
+      );
+    }
 
     const exceptionResponse =
       resolved instanceof HttpException ? resolved.getResponse() : null;

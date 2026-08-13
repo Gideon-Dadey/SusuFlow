@@ -18,8 +18,8 @@ const TABS = [
     id: "collections",
     label: "MoMo Collections",
     eyebrow: "SusuFlow MoMo Collections",
-    title: "A simple end-to-end way to collect every contribution",
-    body: "Members pay straight from their own Mobile Money wallet. Every deposit is confirmed against the payment gateway before it touches your ledger — no disputed receipts, no manual reconciliation.",
+    title: "A simple end to end way to collect every contribution",
+    body: "Members pay straight from their own Mobile Money wallet. Every deposit is confirmed against the payment gateway before it touches your ledger. No disputed receipts, no manual reconciliation.",
     cta: {
       label: "Explore collections",
       href: "/product/accounts-and-payments",
@@ -27,7 +27,7 @@ const TABS = [
     tile: "var(--ofx-sand)",
     icon: Smartphone,
     points: [
-      "Gateway-verified deposits",
+      "Gateway verified deposits",
       "Instant member receipts",
       "Automatic reconciliation",
     ],
@@ -37,7 +37,7 @@ const TABS = [
     label: "Collector App",
     eyebrow: "SusuFlow Collector App",
     title: "100% cashless collectors. Zero notebook disputes.",
-    body: "Our collector workflow has rewritten the rules. Onboard members at the stall, send MoMo prompts in the field, and track every collection with total visibility — cash never changes hands.",
+    body: "Our collector workflow has rewritten the rules. Onboard members at the stall, send MoMo prompts in the field, and track every collection with total visibility. Cash never changes hands.",
     cta: {
       label: "See the collector app",
       href: "/product/accounts-and-payments",
@@ -55,7 +55,7 @@ const TABS = [
     label: "Control Hub",
     eyebrow: "SusuFlow Control Hub",
     title: "Become the world's most relaxed operations manager",
-    body: "Approvals, roles, branch budgets and access rights in one hub. Set clear rules for segregating duties, payout approvals and account access — then let the platform enforce them.",
+    body: "Approvals, roles, branch budgets and access rights in one hub. Set clear rules for segregating duties, payout approvals and account access. Then let the platform enforce them.",
     cta: {
       label: "Explore the Control Hub",
       href: "/product/manage-and-control",
@@ -63,17 +63,17 @@ const TABS = [
     tile: "var(--ofx-sky)",
     icon: ShieldCheck,
     points: [
-      "Role-based approvals",
+      "Role based approvals",
       "Segregation of duties",
-      "Branch-level settings",
+      "Branch level settings",
     ],
   },
   {
     id: "ledger",
     label: "Ledger & Reports",
     eyebrow: "SusuFlow Ledger",
-    title: "Bank-grade books without the back office",
-    body: "Double-entry accounting, exportable reports and reference-linked receipts give management and accountants the visibility they need for audits, reviews and daily operations.",
+    title: "Bank grade books without the back office",
+    body: "Double entry accounting, exportable reports and reference linked receipts give management and accountants the visibility they need for audits, reviews and daily operations.",
     cta: {
       label: "Explore the ledger",
       href: "/product/platform-capabilities",
@@ -81,8 +81,8 @@ const TABS = [
     tile: "var(--ofx-lilac)",
     icon: BookOpenCheck,
     points: [
-      "Double-entry ledger",
-      "Auditor-ready exports",
+      "Double entry ledger",
+      "Auditor ready exports",
       "Reference per transaction",
     ],
   },
@@ -96,9 +96,9 @@ const TABS = [
     tile: "var(--ofx-sand)",
     icon: BadgeCheck,
     points: [
-      "Multi-step sign-offs",
+      "Multi step sign offs",
       "Full request history",
-      "Wallet-direct payouts",
+      "Wallet direct payouts",
     ],
   },
 ] as const;
@@ -114,12 +114,14 @@ export function OfxProductTabsSection() {
     <section className="bg-[var(--ofx-paper)]">
       <MarketingContainer className="ofx-section">
         <h2 className="ofx-h2 mx-auto max-w-3xl text-center">
-          A simple end-to-end solution to help your susu company thrive
+          {" "}
+          A simple end to end solution to help your susu company thrive{" "}
         </h2>
         <p className="ofx-lead mx-auto mt-5 max-w-2xl text-center">
+          {" "}
           Get the tools you need in one platform. With just a few clicks, you
-          can digitize everything — collections, approvals, ledgers, payouts and
-          so much more.
+          can digitize everything. Collections, approvals, ledgers, payouts and
+          so much more.{" "}
         </p>
 
         <div
@@ -135,7 +137,7 @@ export function OfxProductTabsSection() {
               aria-selected={tab.id === activeId}
               onClick={() => setActiveId(tab.id)}
               className={cn(
-                "pill rounded-full border px-5 py-2.5 text-[15px] font-medium transition-colors",
+                "border px-5 py-2.5 text-[15px] font-medium transition-colors",
                 tab.id === activeId
                   ? "border-[var(--ofx-ink)] bg-[var(--ofx-ink)] text-white"
                   : "border-border bg-white text-foreground hover:bg-[var(--ofx-cream-deep)]",
@@ -146,7 +148,7 @@ export function OfxProductTabsSection() {
           ))}
         </div>
 
-        <div className="mt-10 grid items-center gap-10 rounded-[2rem] border border-border/70 bg-white p-8 sm:p-12 lg:grid-cols-2 lg:gap-14">
+        <div className="mt-10 grid items-center gap-10 border border-border/70 bg-white p-8 sm:p-12 lg:grid-cols-2 lg:gap-14">
           <div>
             <p className="ofx-eyebrow">{active.eyebrow}</p>
             <h3 className="ofx-h3 mt-4 text-[1.6rem] sm:text-[2rem]">
@@ -174,23 +176,23 @@ export function OfxProductTabsSection() {
           </div>
 
           <div
-            className="flex min-h-[260px] items-center justify-center rounded-[1.5rem] p-8 sm:min-h-[320px]"
+            className="flex min-h-[260px] items-center justify-center p-8 sm:min-h-[320px]"
             style={{ backgroundColor: active.tile }}
             aria-hidden
           >
-            <div className="w-full max-w-xs rounded-3xl border border-border bg-white p-6 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.35)]">
-              <span className="flex size-11 items-center justify-center rounded-full bg-[var(--ofx-cream)]">
+            <div className="w-full max-w-xs border border-border bg-white p-6 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.35)]">
+              <span className="flex size-11 items-center justify-center bg-[var(--ofx-cream)]">
                 <Icon className="h-5 w-5 text-foreground" aria-hidden />
               </span>
               <p className="mt-4 text-base font-semibold text-foreground">
                 {active.label}
               </p>
               <div className="mt-4 space-y-2.5">
-                <div className="h-2 w-full rounded-full bg-[var(--ofx-cream-deep)]" />
-                <div className="h-2 w-5/6 rounded-full bg-[var(--ofx-cream-deep)]" />
-                <div className="h-2 w-2/3 rounded-full bg-[var(--ofx-cream-deep)]" />
+                <div className="h-2 w-full bg-[var(--ofx-cream-deep)]" />
+                <div className="h-2 w-5/6 bg-[var(--ofx-cream-deep)]" />
+                <div className="h-2 w-2/3 bg-[var(--ofx-cream-deep)]" />
               </div>
-              <div className="mt-5 flex items-center justify-between rounded-2xl bg-[var(--ofx-cream)] px-4 py-3">
+              <div className="mt-5 flex items-center justify-between bg-[var(--ofx-cream)] px-4 py-3">
                 <span className="text-xs font-medium text-muted-foreground">
                   Status
                 </span>

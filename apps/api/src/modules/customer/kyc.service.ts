@@ -6,6 +6,7 @@ import { DocumentStatus } from "@susuflow/database";
 import { AuditService } from "../audit/audit.service";
 import { enqueueNotification } from "../../common/notifications/enqueue";
 import type { KycDocumentType } from "./dto/kyc.dto";
+import { persistKycUpload } from "./kyc-storage";
 
 @Injectable()
 export class KycService {
@@ -75,32 +76,58 @@ export class KycService {
 
     if (!customer) throw new NotFoundException("Customer profile not found");
 
-    const created = await this.prisma.$transaction(async (tx) => {
-      await tx.customer.update({
-        where: { id: customer.id },
-        data: {
-          ghanaCardNumber: dto.idNumber,
-          address: dto.address || customer.address,
-          dateOfBirth: dto.dateOfBirth
-            ? new Date(dto.dateOfBirth)
-            : customer.dateOfBirth,
-          kycStatus: "pending",
-        },
+    const storedDocs: Array<{
+      documentType: KycDocumentType;
+      fileUrl: string;
+    }> = [];
+    for (const doc of dto.documents) {
+      storedDocs.push({
+        documentType: doc.documentType,
+        fileUrl: await persistKycUpload(doc.fileUrl),
       });
+    }
 
-      return Promise.all(
-        dto.documents.map((doc) =>
-          tx.kycDocument.create({
-            data: {
-              customerId: customer.id,
-              documentType: doc.documentType,
-              fileUrl: doc.fileUrl,
-              status: "pending",
-            },
-          }),
-        ),
-      );
-    });
+    const created = await this.prisma.$transaction(
+      async (tx) => {
+        await tx.customer.update({
+          where: { id: customer.id },
+          data: {
+            ghanaCardNumber: dto.idNumber,
+            address: dto.address || customer.address,
+            dateOfBirth: dto.dateOfBirth
+              ? new Date(dto.dateOfBirth)
+              : customer.dateOfBirth,
+            kycStatus: "pending",
+          },
+        });
+
+        const rows = [];
+        for (const doc of storedDocs) {
+          rows.push(
+            await tx.kycDocument.create({
+              data: {
+                customerId: customer.id,
+                documentType: doc.documentType,
+                fileUrl: doc.fileUrl,
+                status: "pending",
+              },
+              select: {
+                id: true,
+                customerId: true,
+                documentType: true,
+                fileUrl: true,
+                status: true,
+                rejectionReason: true,
+                reviewedAt: true,
+                createdAt: true,
+              },
+            }),
+          );
+        }
+        return rows;
+      },
+      { maxWait: 10_000, timeout: 20_000 },
+    );
 
     await Promise.all(
       created.map((kycDoc) =>

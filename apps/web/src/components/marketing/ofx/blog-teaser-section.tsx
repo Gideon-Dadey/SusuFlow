@@ -34,7 +34,7 @@ export function OfxBlogTeaserSection() {
                 className="flex h-40 items-end p-6"
                 style={{ backgroundColor: TILE_COLORS[i % TILE_COLORS.length] }}
               >
-                <span className="rounded-full bg-white/85 px-3 py-1 text-xs font-semibold text-foreground">
+                <span className="bg-white/85 px-3 py-1 text-xs font-semibold text-foreground">
                   {article.category}
                 </span>
               </div>

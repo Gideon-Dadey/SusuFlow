@@ -14,7 +14,7 @@ export interface LegalDocument {
 export const TERMS_OF_SERVICE: LegalDocument = {
   title: "Terms of Service",
   updated: "June 2026",
-  contactEmail: "hello@susuflow.com",
+  contactEmail: "gideondadey@gmail.com",
   sections: [
     {
       title: "1. Acceptance",
@@ -65,7 +65,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
 export const PRIVACY_POLICY: LegalDocument = {
   title: "Privacy Policy",
   updated: "June 2026",
-  contactEmail: "hello@susuflow.com",
+  contactEmail: "gideondadey@gmail.com",
   sections: [
     {
       title: "1. Overview",
@@ -100,7 +100,7 @@ export const PRIVACY_POLICY: LegalDocument = {
     {
       title: "5. Security",
       paragraphs: [
-        "We use encryption in transit, access controls, and audit logging. No system is 100% secure. Report concerns to hello@susuflow.com.",
+        "We use encryption in transit, access controls, and audit logging. No system is 100% secure. Report concerns to gideondadey@gmail.com.",
       ],
     },
     {

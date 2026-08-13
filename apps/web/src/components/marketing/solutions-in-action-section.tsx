@@ -22,7 +22,7 @@ export function SolutionsInActionSection() {
             </Link>
           </div>
 
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/11]">
+          <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/11]">
             <Image
               src="/images/home/solutions-in-action.png"
               alt="See SusuFlow solutions in action"

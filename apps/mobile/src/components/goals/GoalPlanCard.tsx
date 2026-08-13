@@ -1,4 +1,3 @@
-import { CardSurface } from "@/components/ui/CardSurface";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
@@ -8,99 +7,104 @@ import {
 import type { SavingsPlan } from "@/lib/api";
 import { bankChrome, getBankWell } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { typography } from "@/theme/tokens";
 
 interface GoalPlanCardProps {
   plan: SavingsPlan;
   enrolled?: boolean;
   onPress: () => void;
+  showDivider?: boolean;
 }
 
-export function GoalPlanCard({ plan, enrolled, onPress }: GoalPlanCardProps) {
+/** Flat More-style row for available savings plans. */
+export function GoalPlanCard({
+  plan,
+  enrolled,
+  onPress,
+  showDivider = true,
+}: GoalPlanCardProps) {
   const { colors, isDark } = useTheme();
   const well = getBankWell("orange", isDark);
+  const divider = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
+  const subtitle = [
+    formatPlanFrequency(plan.frequency),
+    formatPlanAmountRange(plan),
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
-    <CardSurface
-      innerStyle={[styles.cardShell, { opacity: enrolled ? 0.72 : 1 }]}
-    >
+    <View>
       <Pressable
         accessibilityRole="button"
         disabled={enrolled}
         onPress={onPress}
         style={({ pressed }) => [
-          styles.card,
+          styles.row,
+          { opacity: enrolled ? 0.72 : 1 },
           pressed && !enrolled && styles.pressed,
         ]}
       >
-        <View style={[styles.iconWrap, { backgroundColor: well.bg }]}>
-          <AppIcon name="target" size={18} color={well.fg} strokeWidth={2} />
+        <View style={[styles.well, { backgroundColor: well.bg }]}>
+          <AppIcon name="target" size={17} color={well.fg} strokeWidth={2} />
         </View>
 
         <View style={styles.copy}>
           <Text
             style={[styles.title, { color: colors.foreground }]}
-            numberOfLines={2}
+            numberOfLines={1}
           >
             {plan.name}
           </Text>
+          <Text
+            style={[styles.subtitle, { color: colors.mutedForeground }]}
+            numberOfLines={2}
+          >
+            {plan.description?.trim() || subtitle}
+          </Text>
           {plan.description ? (
             <Text
-              style={[styles.description, { color: colors.mutedForeground }]}
-              numberOfLines={2}
+              style={[styles.meta, { color: colors.mutedForeground }]}
+              numberOfLines={1}
             >
-              {plan.description}
+              {subtitle}
             </Text>
           ) : null}
-          <View style={styles.metaRow}>
-            <View style={[styles.chip, { backgroundColor: colors.muted }]}>
-              <Text
-                style={[styles.chipText, { color: colors.mutedForeground }]}
-              >
-                {formatPlanFrequency(plan.frequency)}
-              </Text>
-            </View>
-            <Text style={[styles.range, { color: colors.mutedForeground }]}>
-              {formatPlanAmountRange(plan)}
-            </Text>
-          </View>
         </View>
 
         {enrolled ? (
-          <View style={[styles.joinedBadge, { backgroundColor: colors.muted }]}>
-            <Text
-              style={[styles.joinedText, { color: colors.mutedForeground }]}
-            >
-              Joined
-            </Text>
-          </View>
+          <Text style={[styles.joined, { color: colors.mutedForeground }]}>
+            Joined
+          </Text>
         ) : (
           <AppIcon
             name="chevron-right"
-            size={16}
-            color={colors.mutedForeground}
+            size={18}
+            color={isDark ? bankChrome.chevronDark : colors.mutedForeground}
+            strokeWidth={2}
           />
         )}
       </Pressable>
-    </CardSurface>
+      {showDivider ? (
+        <View style={[styles.divider, { backgroundColor: divider }]} />
+      ) : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  cardShell: {
-    overflow: "hidden",
-  },
-  card: {
+  row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.md,
-    padding: spacing.md,
-    minHeight: 84,
+    gap: bankChrome.rowGap,
+    paddingHorizontal: bankChrome.rowPaddingX,
+    paddingVertical: bankChrome.rowPaddingY,
+    minHeight: bankChrome.rowMinHeight,
   },
   pressed: {
-    opacity: 0.86,
+    opacity: 0.82,
   },
-  iconWrap: {
+  well: {
     width: bankChrome.wellSize,
     height: bankChrome.wellSize,
     borderRadius: bankChrome.wellSize / 2,
@@ -109,47 +113,31 @@ const styles = StyleSheet.create({
   },
   copy: {
     flex: 1,
-    gap: 4,
+    gap: 2,
     minWidth: 0,
   },
   title: {
     fontFamily: typography.fontFamily.semibold,
-    fontSize: typography.size.sm,
-    letterSpacing: -0.1,
+    fontSize: bankChrome.labelSize,
+    letterSpacing: -0.15,
   },
-  description: {
-    fontFamily: typography.roles.caption,
-    fontSize: typography.size.xs,
-    lineHeight: 16,
+  subtitle: {
+    fontFamily: typography.fontFamily.regular,
+    fontSize: bankChrome.subtitleSize,
+    lineHeight: 17,
   },
-  metaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    flexWrap: "wrap",
-    marginTop: 2,
+  meta: {
+    fontFamily: typography.fontFamily.regular,
+    fontSize: 11,
+    marginTop: 1,
   },
-  chip: {
-    borderRadius: radius.full,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  chipText: {
-    fontFamily: typography.fontFamily.medium,
-    fontSize: 10,
-    textTransform: "capitalize",
-  },
-  range: {
-    fontFamily: typography.roles.caption,
-    fontSize: typography.size.xs,
-  },
-  joinedBadge: {
-    borderRadius: radius.full,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  joinedText: {
+  joined: {
     fontFamily: typography.fontFamily.semibold,
-    fontSize: 10,
+    fontSize: 12,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    marginLeft:
+      bankChrome.rowPaddingX + bankChrome.wellSize + bankChrome.rowGap,
   },
 });

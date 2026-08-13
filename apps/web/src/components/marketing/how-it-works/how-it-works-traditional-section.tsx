@@ -4,12 +4,12 @@ import { HOW_IT_WORKS_TRADITIONAL_PAINS } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
 
 const VERIFIED_FLOW_HIGHLIGHTS = [
-  "Gateway-verified MoMo deposits",
+  "Gateway verified MoMo deposits",
   "Live balances for every member",
   "Instant digital receipts",
   "Zero cash in collectors' hands",
   "Payouts with approval trails",
-  "Audit-ready exports on demand",
+  "Audit ready exports on demand",
 ];
 
 export function HowItWorksTraditionalSection() {
@@ -22,14 +22,15 @@ export function HowItWorksTraditionalSection() {
             Still running susu the old way? You&apos;re not alone.
           </h2>
           <p className="ofx-lead mx-auto mt-5 max-w-2xl">
-            Notebooks, cash floats, and WhatsApp receipts work — until a payment
+            {" "}
+            Notebooks, cash floats, and WhatsApp receipts work. Until a payment
             is disputed and nobody can prove what was collected. SusuFlow keeps
-            the trust and removes the guesswork.
+            the trust and removes the guesswork.{" "}
           </p>
         </div>
 
         <div className="mt-12 grid gap-6 lg:mt-14 lg:grid-cols-2">
-          <div className="rounded-[1.75rem] bg-[var(--ofx-cream-deep)] p-7 sm:p-9">
+          <div className="bg-[var(--ofx-cream-deep)] p-7 sm:p-9">
             <p className="ofx-eyebrow">The old way</p>
             <h3 className="ofx-h3 mt-3">Cash, paper, and crossed fingers</h3>
             <p className="ofx-body mt-3 max-w-md">
@@ -40,7 +41,7 @@ export function HowItWorksTraditionalSection() {
               {HOW_IT_WORKS_TRADITIONAL_PAINS.map(({ label, icon }) => (
                 <span
                   key={label}
-                  className="inline-flex items-center gap-2 rounded-full bg-white/55 px-4 py-2 text-sm font-medium text-muted-foreground"
+                  className="inline-flex items-center gap-2 bg-white/55 px-4 py-2 text-sm font-medium text-muted-foreground"
                 >
                   <FontAwesomeIcon
                     icon={icon}
@@ -53,7 +54,7 @@ export function HowItWorksTraditionalSection() {
             </div>
           </div>
 
-          <div className="rounded-[1.75rem] bg-[var(--ofx-sage)] p-7 sm:p-9">
+          <div className="bg-[var(--ofx-sage)] p-7 sm:p-9">
             <p className="ofx-eyebrow">The SusuFlow way</p>
             <h3 className="ofx-h3 mt-3">Verified, from deposit to payout</h3>
             <p className="ofx-body mt-3 max-w-md">
@@ -63,7 +64,7 @@ export function HowItWorksTraditionalSection() {
             <ul className="mt-7 space-y-3.5">
               {VERIFIED_FLOW_HIGHLIGHTS.map((item) => (
                 <li key={item} className="flex items-center gap-3">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white">
+                  <span className="flex size-7 shrink-0 items-center justify-center bg-white">
                     <BadgeCheck
                       className="h-4 w-4 text-foreground"
                       aria-hidden

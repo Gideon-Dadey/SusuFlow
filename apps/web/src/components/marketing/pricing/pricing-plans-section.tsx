@@ -12,7 +12,7 @@ function PlanCard({ plan }: { plan: Plan }) {
   return (
     <article
       className={cn(
-        "relative flex flex-col rounded-[1.75rem] p-7 sm:p-8",
+        "relative flex flex-col p-7 sm:p-8",
         dark
           ? "ofx-dark-section border border-transparent"
           : "ofx-card overflow-visible",
@@ -20,7 +20,7 @@ function PlanCard({ plan }: { plan: Plan }) {
       style={dark ? { backgroundColor: "var(--ofx-ink)" } : undefined}
     >
       {plan.popular ? (
-        <span className="absolute right-6 top-6 rounded-full bg-[var(--ofx-flame)] px-3 py-1 text-xs font-semibold text-white">
+        <span className="absolute right-6 top-6 bg-[var(--ofx-flame)] px-3 py-1 text-xs font-semibold text-white">
           Most popular
         </span>
       ) : null}

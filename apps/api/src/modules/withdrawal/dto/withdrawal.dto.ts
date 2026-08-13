@@ -1,5 +1,13 @@
-import { IsString, IsNotEmpty, IsNumber, IsPositive, IsUUID } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsUUID,
+  IsOptional,
+  MaxLength,
+} from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class CreateWithdrawalDto {
   @ApiProperty()
@@ -21,6 +29,12 @@ export class CreateWithdrawalDto {
   @IsString()
   @IsNotEmpty()
   disbursementPhone!: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  idempotencyKey?: string;
 }
 
 export class CreateWithdrawalRequestDto {
@@ -38,6 +52,12 @@ export class CreateWithdrawalRequestDto {
   @IsString()
   @IsNotEmpty()
   disbursementPhone!: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  idempotencyKey?: string;
 }
 
 export class RejectWithdrawalDto {
@@ -46,4 +66,3 @@ export class RejectWithdrawalDto {
   @IsNotEmpty()
   rejectionReason!: string;
 }
-

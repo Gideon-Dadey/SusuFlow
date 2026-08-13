@@ -14,7 +14,7 @@ export function PricingFaqSection() {
           {PRICING_FAQ.map((item) => (
             <details
               key={item.q}
-              className="group rounded-2xl border border-border/70 bg-white"
+              className="group border border-border/70 bg-white"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-base font-medium tracking-tight text-foreground [&::-webkit-details-marker]:hidden">
                 {item.q}

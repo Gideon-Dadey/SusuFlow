@@ -17,6 +17,9 @@ export default function MyProfileLayout() {
       <Stack.Screen name="account" />
       <Stack.Screen name="kyc" />
       <Stack.Screen name="security" />
+      <Stack.Screen name="security-password" />
+      <Stack.Screen name="security-lock" />
+      <Stack.Screen name="security-delete" />
       <Stack.Screen name="notifications" />
       <Stack.Screen name="appearance" />
       <Stack.Screen name="settings" />
