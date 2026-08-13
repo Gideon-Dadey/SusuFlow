@@ -18,12 +18,15 @@ import { ThemeProvider, useTheme } from "@/theme/ThemeProvider";
 import { AppLockGate } from "@/components/security/AppLockGate";
 import { PushNotificationProvider } from "@/components/notifications/PushNotificationProvider";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
+import { AppToastHost } from "@/components/ui/AppToast";
 import { queryClient } from "@/lib/query-client";
 import { monitoring } from "@/lib/monitoring";
-import { lightColors } from "@/theme/tokens";
+import { analytics } from "@/lib/analytics";
+import { darkColors } from "@/theme/tokens";
 
 SplashScreen.preventAutoHideAsync();
 monitoring.init();
+analytics.init();
 
 function useReactNativeFocusManager() {
   useEffect(() => {
@@ -90,8 +93,16 @@ function RootShell() {
                 headerShown: false,
               }}
             />
+            <Stack.Screen
+              name="support"
+              options={{
+                presentation: "modal",
+                headerShown: false,
+              }}
+            />
           </Stack>
           {isAuthenticated ? <AppLockGate /> : null}
+          <AppToastHost />
         </PushNotificationProvider>
       </AuthGate>
     </>
@@ -129,9 +140,7 @@ export default function RootLayout() {
 
   if (!fontsLoaded || !isHydrated) {
     return (
-      <View
-        style={{ flex: 1, backgroundColor: lightColors.splashBackground }}
-      />
+      <View style={{ flex: 1, backgroundColor: darkColors.splashBackground }} />
     );
   }
 

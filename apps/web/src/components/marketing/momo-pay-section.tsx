@@ -9,12 +9,12 @@ import { SectionEyebrow } from "./section-eyebrow";
 function MomoPayBadge({ className }: { className?: string }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full bg-[#ffcc00] px-3 py-1.5 text-sm font-bold tracking-tight text-[#1a1a1a] ${className ?? ""}`}
+      className={`inline-flex items-center gap-1 bg-[#ffcc00] px-3 py-1.5 text-sm font-bold tracking-tight text-[#1a1a1a] ${className ?? ""}`}
     >
       <span className="text-[0.65rem] font-extrabold uppercase tracking-wider">
         MTN
       </span>
-      <span className="font-extrabold leading-none">MoMo</span>
+      <span className="font extrabold leading-none">MoMo</span>
     </span>
   );
 }
@@ -32,8 +32,9 @@ export function MomoPaySection() {
 
             <SectionEyebrow>Payments</SectionEyebrow>
             <h2 className="afrusan-section-title text-balance">
-              MoMo Pay is integrated — a fast, secure, and local way to collect
-              deposits.
+              {" "}
+              MoMo Pay is integrated. A fast, secure, and local way to collect
+              deposits.{" "}
             </h2>
 
             <p className="afrusan-body mt-5 max-w-xl text-pretty">

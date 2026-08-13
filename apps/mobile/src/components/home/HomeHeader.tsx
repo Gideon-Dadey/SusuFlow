@@ -3,12 +3,10 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { formatLastLoginLabel } from "@/lib/last-login";
 import { homeChrome } from "@/components/home/homeChrome";
 import { HomeNotificationBell } from "@/components/notifications/HomeNotificationBell";
-import { OptionsMenuButton } from "@/components/navigation/OptionsMenuButton";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useProfileData } from "@/components/settings/useProfileData";
 import { useAuthStore } from "@/stores/auth.store";
-import { useUiStore } from "@/stores/ui.store";
 import { useTheme } from "@/theme/ThemeProvider";
 import { spacing, typography } from "@/theme/tokens";
 
@@ -18,7 +16,6 @@ const HEADER_ICON_SIZE = 20;
 export function HomeHeader() {
   const router = useRouter();
   const { colors, isDark } = useTheme();
-  const openOptions = useUiStore((s) => s.openOptions);
   const lastLoginAt = useAuthStore((s) => s.lastLoginAt);
   const { displayName, initials, isLoading, avatarUrl } = useProfileData();
   const firstName = displayName.split(/\s+/)[0] || "there";
@@ -45,6 +42,7 @@ export function HomeHeader() {
           imageUrl={avatarUrl}
           size="sm"
           loading={isLoading}
+          showVerified
         />
 
         <View style={styles.greeting}>
@@ -82,11 +80,6 @@ export function HomeHeader() {
       <View style={styles.actions}>
         <HomeNotificationBell
           variant="dot"
-          iconSize={HEADER_ICON_SIZE}
-          controlSize={HEADER_CONTROL_SIZE}
-        />
-        <OptionsMenuButton
-          onPress={openOptions}
           iconSize={HEADER_ICON_SIZE}
           controlSize={HEADER_CONTROL_SIZE}
         />

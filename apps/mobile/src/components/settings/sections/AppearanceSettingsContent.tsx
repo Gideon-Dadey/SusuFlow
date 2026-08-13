@@ -13,7 +13,7 @@ export function AppearanceSettingsContent() {
         title="Dark theme"
         subtitle={
           colorScheme === "dark"
-            ? "Easier on the eyes in low light"
+            ? "Banking chrome (default)"
             : "Bright, clean interface"
         }
         value={colorScheme === "dark"}

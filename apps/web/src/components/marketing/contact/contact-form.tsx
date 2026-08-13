@@ -18,7 +18,7 @@ const INTENT_COPY: Record<string, { title: string; cta: string }> = {
 };
 
 const fieldClassName =
-  "min-h-[3rem] rounded-xl border-border bg-[var(--ofx-paper)] text-base";
+  "min-h-[3rem] border border bg-[var(--ofx-paper)] text-base";
 
 const textareaClassName = cn(
   fieldClassName,
@@ -43,7 +43,7 @@ function ContactFormInner() {
 
   if (submitted) {
     return (
-      <div className="rounded-2xl bg-[var(--ofx-sage)] px-6 py-10 text-center">
+      <div className="bg-[var(--ofx-sage)] px-6 py-10 text-center">
         <p className="ofx-h3">Message sent</p>
         <p className="ofx-body mx-auto mt-3 max-w-sm text-balance">
           Thanks for reaching out. We&apos;ll get back to you within one

@@ -1,29 +1,68 @@
+import {
+  Circle,
+  Diamond,
+  Hexagon,
+  ShieldCheck,
+} from "@/components/icons/phosphor";
+import {
+  VALUES_IMAGE_GHANA,
+  VALUES_IMAGE_GROWTH,
+  VALUES_IMAGE_TRANSPARENCY,
+  VALUES_IMAGE_TRUST,
+} from "@/lib/brand-assets";
 import { ABOUT_VALUES } from "@/lib/marketing-data";
 import { MarketingContainer } from "../marketing-container";
+import { MicroLabel } from "../micro-label";
+import { PhotoColumns } from "../photo-columns";
+
+const VALUE_MEDIA = [
+  {
+    image: VALUES_IMAGE_TRUST,
+    imageAlt: "A trader completing a susu contribution by Mobile Money",
+    icon: Diamond,
+  },
+  {
+    image: VALUES_IMAGE_GHANA,
+    imageAlt: "A field collector working a Ghanaian market route",
+    icon: Hexagon,
+  },
+  {
+    image: VALUES_IMAGE_TRANSPARENCY,
+    imageAlt: "An operations manager reviewing a live susu ledger",
+    icon: ShieldCheck,
+  },
+  {
+    image: VALUES_IMAGE_GROWTH,
+    imageAlt: "A modern susu office using digital tools",
+    icon: Circle,
+  },
+] as const;
 
 export function AboutValuesSection() {
   return (
-    <section id="mission" className="scroll-mt-24 bg-[var(--ofx-paper)]">
-      <MarketingContainer className="ofx-section">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="ofx-eyebrow">What we stand for</p>
-          <h2 className="ofx-h2 mt-4">Four values. Every decision.</h2>
-          <p className="ofx-lead mx-auto mt-5 max-w-2xl">
-            SusuFlow builds on Ghana&apos;s susu heritage — digital tools that
-            strengthen the relationships savers already rely on.
-          </p>
-        </div>
-
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4">
-          {ABOUT_VALUES.map(({ title, body }) => (
-            <article key={title} className="ofx-card p-7">
-              <span className="block size-2.5 rounded-full bg-[var(--ofx-flame)]" />
-              <h3 className="ofx-h3 mt-6">{title}</h3>
-              <p className="ofx-body mt-3">{body}</p>
-            </article>
-          ))}
-        </div>
-      </MarketingContainer>
+    <section id="mission" className="scroll-mt-24">
+      <div className="bg-[#f7f7f7] dark:bg-slate-900">
+        <MarketingContainer className="py-16 md:py-28">
+          <div className="mx-auto max-w-3xl text-center">
+            <MicroLabel className="justify-center">Our values</MicroLabel>
+            <h2 className="omnih-h2 mt-4">Four values. Every decision.</h2>
+            <p className="omnih-body mx-auto mt-5 max-w-2xl">
+              {" "}
+              SusuFlow builds on Ghana&apos;s susu heritage. Digital tools that
+              strengthen the relationships savers already rely on.{" "}
+            </p>
+          </div>
+        </MarketingContainer>
+      </div>
+      <PhotoColumns
+        items={ABOUT_VALUES.map((value, i) => ({
+          title: `${value.title} (${i + 1})`,
+          body: value.body,
+          image: VALUE_MEDIA[i].image,
+          imageAlt: VALUE_MEDIA[i].imageAlt,
+          icon: VALUE_MEDIA[i].icon,
+        }))}
+      />
     </section>
   );
 }

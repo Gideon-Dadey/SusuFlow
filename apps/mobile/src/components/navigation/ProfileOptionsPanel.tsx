@@ -1,4 +1,5 @@
-import * as Linking from "expo-linking";
+import { useRouter } from "expo-router";
+import type { Href } from "expo-router";
 import { AppIcon, type AppIconName } from "@/components/icons/AppIcon";
 import { ReactNode, useEffect, useState } from "react";
 import {
@@ -19,7 +20,7 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppBrandFooter } from "@/components/profile/AppBrandFooter";
 import { openSupportEmail } from "@/components/profile/ProfileSettingPrimitives";
-import { getSupportEmail, getSupportWhatsApp } from "@/lib/config";
+import { getSupportEmail } from "@/lib/config";
 import { useUiStore } from "@/stores/ui.store";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, spacing, typography } from "@/theme/tokens";
@@ -124,6 +125,7 @@ function OptionSection({
 }
 
 export function ProfileOptionsPanel() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const optionsOpen = useUiStore((s) => s.optionsOpen);
@@ -159,7 +161,7 @@ export function ProfileOptionsPanel() {
 
   const openChat = () => {
     closeOptions();
-    Linking.openURL(`https://wa.me/${getSupportWhatsApp()}`);
+    router.push("/support" as Href);
   };
 
   const openContact = () => {
@@ -243,7 +245,7 @@ export function ProfileOptionsPanel() {
               <OptionRow
                 icon="chat"
                 label="Chat"
-                subtitle="WhatsApp · Mon–Fri, 8am–6pm"
+                subtitle="Help hub · ask general questions"
                 onPress={openChat}
               />
             </OptionSection>

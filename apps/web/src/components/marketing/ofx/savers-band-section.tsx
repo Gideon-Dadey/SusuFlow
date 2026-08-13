@@ -6,7 +6,7 @@ export function OfxSaversBandSection() {
   return (
     <section className="bg-[var(--ofx-cream)]">
       <MarketingContainer className="ofx-section">
-        <div className="grid overflow-hidden rounded-[2rem] bg-[var(--ofx-sky)] lg:grid-cols-[1.2fr_1fr]">
+        <div className="grid overflow-hidden bg-[var(--ofx-sky)] lg:grid-cols-[1.2fr_1fr]">
           <div className="p-8 sm:p-12 lg:p-14">
             <p className="ofx-eyebrow">For individual savers</p>
             <h2 className="ofx-h2 mt-4">
@@ -33,7 +33,7 @@ export function OfxSaversBandSection() {
             className="relative hidden items-center justify-center p-10 lg:flex"
             aria-hidden
           >
-            <div className="w-full max-w-[260px] rounded-3xl border border-border bg-white p-6 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.35)]">
+            <div className="w-full max-w-[260px] border border-border bg-white p-6 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.35)]">
               <p className="text-xs font-medium text-muted-foreground">
                 My susu balance
               </p>

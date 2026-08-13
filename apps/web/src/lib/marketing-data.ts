@@ -46,7 +46,7 @@ export const MEGA_NAV: MegaNavItem[] = [
         links: [
           {
             title: "MoMo Deposits",
-            description: "Gateway-verified Mobile Money collections",
+            description: "Gateway verified Mobile Money collections",
             href: "/product/accounts-and-payments",
           },
           {
@@ -71,7 +71,7 @@ export const MEGA_NAV: MegaNavItem[] = [
           },
           {
             title: "Payout Approvals",
-            description: "Role-based sign-offs before funds move",
+            description: "Role based sign offs before funds move",
             href: "/product/manage-and-control",
           },
           {
@@ -86,7 +86,7 @@ export const MEGA_NAV: MegaNavItem[] = [
         links: [
           {
             title: "Ledger & Reports",
-            description: "Double-entry books with exportable reports",
+            description: "Double entry books with exportable reports",
             href: "/product/platform-capabilities",
           },
           {
@@ -122,12 +122,12 @@ export const MEGA_NAV: MegaNavItem[] = [
           },
           {
             title: "Field Collectors",
-            description: "Cashless agents with a mobile-first workflow",
+            description: "Cashless agents with a mobile first workflow",
             href: "/why-susuflow/field-collectors",
           },
           {
             title: "Accountants & Management",
-            description: "Live balances and auditor-ready exports",
+            description: "Live balances and auditor ready exports",
             href: "/why-susuflow/accountants-and-management",
           },
         ],
@@ -146,7 +146,7 @@ export const MEGA_NAV: MegaNavItem[] = [
             href: "/why-susuflow/cashless-market-collections",
           },
           {
-            title: "Role-Based Approvals",
+            title: "Role Based Approvals",
             description: "Segregate duties across staff and branches",
             href: "/why-susuflow/role-based-approvals",
           },
@@ -161,8 +161,8 @@ export const MEGA_NAV: MegaNavItem[] = [
             href: "/why-susuflow/gateway-verification",
           },
           {
-            title: "Bank-Grade Accounting",
-            description: "Double-entry ledger behind every balance",
+            title: "Bank Grade Accounting",
+            description: "Double entry ledger behind every balance",
             href: "/why-susuflow/bank-grade-accounting",
           },
           {
@@ -251,16 +251,16 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
     readTime: "4 minute read",
     title: "The operator's guide to cashless susu collections",
     excerpt:
-      "Accuracy, trust and detail define great susu companies. But for too long, they've come at the cost of notebooks, cash floats and end-of-month headaches…",
+      "Accuracy, trust and detail define great susu companies. But for too long, they've come at the cost of notebooks, cash floats and end of month headaches…",
   },
   {
     slug: "how-growing-susu-companies-save-time",
     category: "Growth",
     date: "3 August 2026",
     readTime: "14 minute read",
-    title: "How fast-growing susu companies are saving time with verified MoMo",
+    title: "How fast growing susu companies are saving time with verified MoMo",
     excerpt:
-      "From one collector team to multi-branch operations: what changes when every deposit is gateway-confirmed before it hits the ledger.",
+      "From one collector team to multi branch operations: what changes when every deposit is gateway confirmed before it hits the ledger.",
   },
   {
     slug: "collect-smarter-with-collector-app",
@@ -285,9 +285,9 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
     category: "Accounting",
     date: "20 July 2026",
     readTime: "9 minute read",
-    title: "Bank-grade books: double-entry accounting for susu companies",
+    title: "Bank grade books: double entry accounting for susu companies",
     excerpt:
-      "What auditors, MFI boards and regulators expect from your records — and how a proper ledger gets you there without hiring a back office.",
+      "What auditors, MFI boards and regulators expect from your records. And how a proper ledger gets you there without hiring a back office.",
   },
   {
     slug: "payout-approvals-that-scale",
@@ -800,7 +800,7 @@ export const HOME_CAPABILITY_TABS = [
   {
     id: "momo-deposits",
     label: "MoMo Deposits (1)",
-    title: "Gateway-verified Mobile Money deposits",
+    title: "Gateway verified Mobile Money deposits",
     description:
       "Savers pay directly from their MoMo wallet. Every deposit is confirmed against the payment gateway before it hits the ledger, eliminating disputed receipts and manual reconciliation.",
   },
@@ -813,22 +813,22 @@ export const HOME_CAPABILITY_TABS = [
   },
   {
     id: "multi-branch",
-    label: "Multi-Branch Control (3)",
+    label: "Multi Branch Control (3)",
     title: "Run every branch from one hub",
     description:
-      "Configure staff roles, approval rules, and branch settings from a single admin dashboard. Scale from one collector team to multi-branch susu companies without losing control.",
+      "Configure staff roles, approval rules, and branch settings from a single admin dashboard. Scale from one collector team to multi branch susu companies without losing control.",
   },
   {
     id: "audit",
     label: "Audit & Reconcile (4)",
-    title: "Bank-grade ledger and reporting",
+    title: "Bank grade ledger and reporting",
     description:
-      "Double-entry accounting, exportable reports, and reference-linked receipts give management and accountants the visibility they need for audits, reviews, and daily operations.",
+      "Double entry accounting, exportable reports, and reference linked receipts give management and accountants the visibility they need for audits, reviews, and daily operations.",
   },
   {
     id: "payouts",
     label: "Payouts & Approvals (5)",
-    title: "Role-based payout sign-offs",
+    title: "Role based payout sign offs",
     description:
       "Tailored approval workflows for deposits, payouts, and staff access ensure every cedi moves with accountability. Staff review requests with a full history before funds are released.",
   },
@@ -846,15 +846,74 @@ export const HOME_TESTIMONIALS = [
   },
   {
     quote:
-      "As a susu manager, I am always worried about collector disputes and missing cash. The SusuFlow model is exciting because it focuses on affordable, reliable, gateway-confirmed collections. It gives me hope we can scale without fraud.",
+      "As a susu manager, I am always worried about collector disputes and missing cash. The SusuFlow model is exciting because it focuses on affordable, reliable, gateway confirmed collections. It gives me hope we can scale without fraud.",
     author: "Amina K.",
     role: "Operations lead, Kumasi",
   },
   {
     quote:
-      "I send money home for family susu contributions from abroad. A platform like this would bring so much peace of mind — knowing deposits are verified and balances are visible without waiting for WhatsApp updates.",
+      "I send money home for family susu contributions from abroad. A platform like this would bring so much peace of mind. Knowing deposits are verified and balances are visible without waiting for WhatsApp updates.",
     author: "David M.",
     role: "Diaspora member, Minnesota",
+  },
+] as const;
+
+export const FEATURED_CUSTOMER_STORIES = [
+  {
+    id: "verified",
+    highlight: "Verified deposits",
+    rest: "before they hit the books.",
+    quote:
+      "Every contribution is confirmed against the gateway before it touches our ledger. We plan collections and payouts from numbers we can trust, not from a notebook.",
+    author: "Grace M.",
+    role: "Operator, Accra susu company",
+    image: "/marketing/testimonials/grace-m-accra.png",
+    imageAlt:
+      "A susu company operator at her desk with client, savings and disbursement ledgers",
+    imagePosition: "50% 22%",
+    href: "/why-susuflow/gateway-verification",
+  },
+  {
+    id: "cashless",
+    highlight: "Cash never",
+    rest: "has to change hands.",
+    quote:
+      "Collectors send a MoMo prompt at the stall. Members pay from their own wallet. The receipt is on the phone before anyone walks away.",
+    author: "Akosua T.",
+    role: "Trader and susu member, Kumasi",
+    image: "/marketing/why-susuflow/case-studies.png",
+    imageAlt:
+      "A market trader showing a confirmed Mobile Money payment of GHS 124 on her phone",
+    imagePosition: "50% 35%",
+    href: "/why-susuflow/cashless-market-collections",
+  },
+  {
+    id: "payouts",
+    highlight: "Lightning quick payouts.",
+    rest: "",
+    quote:
+      "With SusuFlow we move money to member wallets securely and with less risk. Approved amounts go out on MTN, Telecel or AT. Teams get paid without a cash float on market day.",
+    author: "Amina K.",
+    role: "Operations lead, Kumasi",
+    image: "/marketing/susu-enterprise-tech.png",
+    imageAlt:
+      "A susu operations team reviewing live collection and payout figures on an analytics screen",
+    imagePosition: "50% 42%",
+    href: "/product/accounts-and-payments",
+  },
+  {
+    id: "platform",
+    highlight: "Easiest platform",
+    rest: "we have ever run.",
+    quote:
+      "SusuFlow is the most straightforward system our team has used. Deposits, approvals and reports live in one place, so finance is not chasing WhatsApp screenshots at month end.",
+    author: "Yaw B.",
+    role: "Operations manager, Takoradi",
+    image: "/marketing/susu-office-manager.png",
+    imageAlt:
+      "An operations manager reviewing live collection data on a tablet in a modern Accra office",
+    imagePosition: "50% 28%",
+    href: "/why-susuflow/susu-companies-and-mfis",
   },
 ] as const;
 
@@ -873,6 +932,6 @@ export const FAQ_ITEMS = [
   },
   {
     q: "Is my money safe?",
-    a: "Deposits are recorded in a double-entry ledger only after the payment gateway confirms success. You receive a reference and receipt for every transaction.",
+    a: "Deposits are recorded in a double entry ledger only after the payment gateway confirms success. You receive a reference and receipt for every transaction.",
   },
 ];

@@ -130,7 +130,7 @@ function VerifyContent() {
           </p>
         )}
 
-        <div className="space-y-2 rounded-2xl border border-border bg-[var(--ofx-paper)] p-4">
+        <div className="space-y-2 border border-border bg-[var(--ofx-paper)] p-4">
           <p className="text-sm font-medium text-foreground">
             Email verification
           </p>
@@ -162,7 +162,7 @@ function VerifyContent() {
           </div>
         </div>
 
-        <div className="space-y-2 rounded-2xl border border-border bg-[var(--ofx-paper)] p-4">
+        <div className="space-y-2 border border-border bg-[var(--ofx-paper)] p-4">
           <p className="text-sm font-medium text-foreground">
             Phone verification
           </p>

@@ -29,7 +29,7 @@ const grotesk = Familjen_Grotesk({
 export const metadata: Metadata = {
   title: "SusuFlow | Enterprise Susu & Digital Savings",
   description:
-    "Eliminate fraud in susu collection with gateway-confirmed digital deposits",
+    "Eliminate fraud in susu collection with gateway confirmed digital deposits",
   applicationName: "SusuFlow",
   manifest: "/manifest.webmanifest",
   icons: {

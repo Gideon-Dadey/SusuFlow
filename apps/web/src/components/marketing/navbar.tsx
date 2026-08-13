@@ -23,19 +23,19 @@ function MenuIcon({ open }: { open: boolean }) {
     >
       <span
         className={cn(
-          "h-[2px] w-full rounded-full bg-current transform-gpu transition-all duration-300",
+          "h-[2px] w-full bg-current transform-gpu transition-all duration-300",
           open && "translate-y-[8px] rotate-45",
         )}
       />
       <span
         className={cn(
-          "h-[2px] w-[15px] self-end rounded-full bg-current transition-all duration-200",
+          "h-[2px] w-[15px] self-end bg-current transition-all duration-200",
           open && "opacity-0 translate-x-3",
         )}
       />
       <span
         className={cn(
-          "h-[2px] w-full rounded-full bg-current transform-gpu transition-all duration-300",
+          "h-[2px] w-full bg-current transform-gpu transition-all duration-300",
           open && "-translate-y-[8px] -rotate-45",
         )}
       />
@@ -83,7 +83,7 @@ function MegaPanel({
                     <Link
                       href={link.href}
                       onClick={onNavigate}
-                      className="group block rounded-2xl px-3 py-2.5 -mx-3 transition-colors hover:bg-[var(--ofx-cream-deep)]"
+                      className="group block px-3 py-2.5 -mx-3 transition-colors hover:bg-[var(--ofx-cream-deep)]"
                     >
                       <span className="block text-[15px] font-medium text-foreground">
                         {link.title}
@@ -102,7 +102,7 @@ function MegaPanel({
         {item.promo ? (
           <div
             className={cn(
-              "flex flex-col justify-between rounded-3xl bg-[var(--ofx-sage)] p-6",
+              "flex flex-col justify-between bg-[var(--ofx-sage)] p-6",
               item.columns.length >= 3 ? "lg:col-span-3" : "lg:col-span-4",
             )}
           >
@@ -235,7 +235,7 @@ export function MarketingNavbar() {
                       setOpenMega(null);
                     }}
                     className={cn(
-                      "rounded-full px-4 py-2 text-[15.5px] font-normal transition-colors hover:bg-[var(--ofx-cream-deep)]",
+                      "px-4 py-2 text-[15.5px] font-normal transition-colors hover:bg-[var(--ofx-cream-deep)]",
                       active ? "text-foreground" : "text-foreground/80",
                     )}
                   >
@@ -256,7 +256,7 @@ export function MarketingNavbar() {
                   onClick={() => setOpenMega(isOpen ? null : item.label)}
                   aria-expanded={isOpen}
                   className={cn(
-                    "pill flex items-center gap-1 rounded-full px-4 py-2 text-[15.5px] font-normal transition-colors hover:bg-[var(--ofx-cream-deep)]",
+                    "flex items-center gap-1 px-4 py-2 text-[15.5px] font-normal transition-colors hover:bg-[var(--ofx-cream-deep)]",
                     isOpen && "bg-[var(--ofx-cream-deep)]",
                     active || isOpen ? "text-foreground" : "text-foreground/80",
                   )}
@@ -280,7 +280,7 @@ export function MarketingNavbar() {
                 <button
                   type="button"
                   onClick={() => setUserMenuOpen((v) => !v)}
-                  className="pill flex size-10 items-center justify-center overflow-hidden rounded-full border border-border bg-white p-0 transition-colors hover:bg-[var(--ofx-cream-deep)]"
+                  className="flex size-10 items-center justify-center overflow-hidden border border-border bg-white p-0 transition-colors hover:bg-[var(--ofx-cream-deep)]"
                   aria-label="User menu"
                 >
                   {user.avatarUrl ? (
@@ -297,7 +297,7 @@ export function MarketingNavbar() {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 top-full z-[300] mt-2 w-56 rounded-2xl border border-border bg-white p-2 shadow-xl">
+                  <div className="absolute right-0 top-full z-[300] mt-2 w-56 border border-border bg-white p-2 shadow-xl">
                     <div className="px-3 py-2">
                       <p className="truncate text-sm font-medium text-foreground">
                         {user.firstName} {user.lastName}
@@ -310,8 +310,9 @@ export function MarketingNavbar() {
                       <Link
                         href={dashboardPath}
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--ofx-cream-deep)]"
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--ofx-cream-deep)]"
                       >
+                        {" "}
                         <LayoutDashboard className="h-4 w-4" />
                         <span>Go to Dashboard</span>
                       </Link>
@@ -321,7 +322,7 @@ export function MarketingNavbar() {
                           setUserMenuOpen(false);
                           logout();
                         }}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+                        className="flex w-full items-center gap-2.5 px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
                       >
                         <LogOut className="h-4 w-4" />
                         <span>Sign out</span>
@@ -350,7 +351,7 @@ export function MarketingNavbar() {
 
             <button
               type="button"
-              className="pill inline-flex items-center justify-center rounded-full p-2 text-foreground transition-opacity hover:opacity-70 lg:hidden"
+              className="inline-flex items-center justify-center p-2 text-foreground transition-opacity hover:opacity-70 lg:hidden"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
@@ -454,7 +455,8 @@ export function MarketingNavbar() {
                         onClick={() => setMenuOpen(false)}
                         className="ofx-btn ofx-btn-dark w-full"
                       >
-                        Go to Dashboard
+                        {" "}
+                        Go to Dashboard{" "}
                       </Link>
                       <button
                         type="button"
@@ -474,14 +476,16 @@ export function MarketingNavbar() {
                         onClick={() => setMenuOpen(false)}
                         className="ofx-btn ofx-btn-dark w-full"
                       >
-                        Get started for free
+                        {" "}
+                        Get started for free{" "}
                       </Link>
                       <Link
                         href="/login"
                         onClick={() => setMenuOpen(false)}
                         className="ofx-btn ofx-btn-outline w-full"
                       >
-                        Login
+                        {" "}
+                        Login{" "}
                       </Link>
                     </>
                   )}

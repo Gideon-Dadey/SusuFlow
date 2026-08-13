@@ -11,13 +11,16 @@ interface ThemeState {
   toggleColorScheme: () => Promise<void>;
 }
 
+/** Banking chrome default — dark first; users can switch in Appearance. */
 export const useThemeStore = create<ThemeState>((set, get) => ({
-  colorScheme: "light",
+  colorScheme: "dark",
   isHydrated: false,
 
   hydrateFromStorage: async () => {
     const stored = await storage.getItem(storage.keys.colorScheme);
-    const colorScheme = stored === "dark" ? "dark" : "light";
+    // First launch (no preference): dark. Explicit light/dark from settings wins.
+    const colorScheme =
+      stored === "light" ? "light" : stored === "dark" ? "dark" : "dark";
     set({ colorScheme, isHydrated: true });
   },
 

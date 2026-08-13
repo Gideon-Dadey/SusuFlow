@@ -17,6 +17,7 @@ const TARGETS = [
   { file: 'brand/logo-transparent.png', maxWidth: 800, quality: 92 },
   { file: 'brand/Logo.png', maxWidth: 800, quality: 92 },
   { file: 'marketing/susuflow-hero-organic.png', maxWidth: 1600, quality: 85 },
+  { file: 'marketing/susuflow-home-hero.png', maxWidth: 1920, quality: 92 },
   { file: 'marketing/myhero.jpg', maxWidth: 1600, quality: 82 },
   { file: 'marketing/hero-showcase.png', maxWidth: 1400, quality: 82 },
   { file: 'marketing/susuflow-introduction-organic.png', maxWidth: 1400, quality: 85 },

@@ -10,7 +10,7 @@ export function SusuManagementSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-20">
           {/* Left Column: Image */}
           <div className="relative order-2 lg:order-1">
-            <div className="relative aspect-[4/3] sm:aspect-[16/11] overflow-hidden rounded-[1.75rem] shadow-md">
+            <div className="relative aspect-[4/3] sm:aspect-[16/11] overflow-hidden shadow-md">
               <Image
                 src="/images/home/relaxed-manager.png"
                 alt="Relaxed Susu Manager"

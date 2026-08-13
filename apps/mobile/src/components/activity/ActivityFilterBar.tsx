@@ -15,14 +15,14 @@ interface ActivityFilterBarProps {
 }
 
 export function ActivityFilterBar({ value, onChange }: ActivityFilterBarProps) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
 
   return (
     <View
       style={[
         styles.track,
         {
-          backgroundColor: colors.muted,
+          backgroundColor: isDark ? "#141414" : colors.muted,
           borderColor: colors.border,
         },
       ]}
@@ -38,8 +38,7 @@ export function ActivityFilterBar({ value, onChange }: ActivityFilterBarProps) {
             style={({ pressed }) => [
               styles.segment,
               active && {
-                backgroundColor: colors.card,
-                borderColor: colors.border,
+                backgroundColor: colors.primary,
               },
               pressed && !active && styles.pressed,
             ]}
@@ -48,7 +47,9 @@ export function ActivityFilterBar({ value, onChange }: ActivityFilterBarProps) {
               style={[
                 styles.segmentLabel,
                 {
-                  color: active ? colors.foreground : colors.mutedForeground,
+                  color: active
+                    ? colors.primaryForeground
+                    : colors.mutedForeground,
                   fontFamily: active
                     ? typography.fontFamily.semibold
                     : typography.fontFamily.medium,
@@ -77,9 +78,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "transparent",
-    paddingVertical: 9,
+    paddingVertical: 10,
     paddingHorizontal: spacing.sm,
   },
   pressed: {

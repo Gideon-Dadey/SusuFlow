@@ -14,13 +14,13 @@ export const authLinkClassName =
   "font-medium text-foreground underline underline-offset-4 decoration-[1.5px] transition-opacity hover:opacity-70";
 
 export const authInputClassName =
-  "block w-full px-4 py-3 rounded-xl border text-[13.5px] font-medium transition-all duration-200 outline-none border-border bg-white text-foreground placeholder:text-muted-foreground/60 hover:border-foreground/30 focus:border-foreground focus:ring-1 focus:ring-foreground/15";
+  "block w-full px-4 py-3 border text-[13.5px] font-medium transition-all duration-200 outline-none border-border bg-white text-foreground placeholder:text-muted-foreground/60 hover:border-foreground/30 focus:border-foreground focus:ring-1 focus:ring-foreground/15";
 
 export const authSubmitClassName =
   "ofx-btn ofx-btn-dark w-full disabled:cursor-not-allowed active:scale-[0.98]";
 
 export const authErrorAlertClassName =
-  "bg-red-50 border border-red-200 text-red-700 p-3 rounded-xl text-sm mb-6 flex items-start gap-2";
+  "bg-red-50 border border-red-200 text-red-700 p-3 text-sm mb-6 flex items-start gap-2";
 
 type ModernInputProps = InputHTMLAttributes<HTMLInputElement> & {
   id: string;

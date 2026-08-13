@@ -22,7 +22,7 @@ export function AboutPeopleSection() {
           {ABOUT_PEOPLE.map(({ title, description, href, cta }, i) => (
             <article
               key={title}
-              className="flex flex-col rounded-[1.75rem] p-7 sm:p-9"
+              className="flex flex-col p-7 sm:p-9"
               style={{ backgroundColor: PEOPLE_TILE_COLORS[i % 3] }}
             >
               <h3 className="ofx-h3">{title}</h3>

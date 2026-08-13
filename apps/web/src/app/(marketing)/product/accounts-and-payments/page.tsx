@@ -43,7 +43,7 @@ function AccountsHeroMock() {
               GHS 1,240.00
             </p>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--ofx-sage)] px-3 py-1.5 text-xs font-semibold text-foreground">
+          <span className="inline-flex items-center gap-1.5 bg-[var(--ofx-sage)] px-3 py-1.5 text-xs font-semibold text-foreground">
             <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
             Up to date
           </span>
@@ -68,9 +68,9 @@ function AccountsHeroMock() {
         </div>
       </div>
 
-      <div className="absolute -bottom-7 -left-4 w-56 rounded-2xl border border-border bg-white p-4 shadow-[0_24px_48px_-24px_rgba(28,27,23,0.4)] sm:-left-8">
+      <div className="absolute -bottom-7 -left-4 w-56 border border-border bg-white p-4 shadow-[0_24px_48px_-24px_rgba(28,27,23,0.4)] sm:-left-8">
         <div className="flex items-center gap-2.5">
-          <span className="flex size-9 items-center justify-center rounded-full bg-[var(--ofx-cream-deep)]">
+          <span className="flex size-9 items-center justify-center bg-[var(--ofx-cream-deep)]">
             <Smartphone className="h-4 w-4 text-foreground" aria-hidden />
           </span>
           <div>
@@ -96,17 +96,17 @@ function AccountsListMock() {
   ];
 
   return (
-    <div className="w-full max-w-sm rounded-3xl border border-border bg-white p-6 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.35)]">
+    <div className="w-full max-w-sm border border-border bg-white p-6 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.35)]">
       <p className="text-sm font-semibold text-foreground">Member accounts</p>
       <p className="text-xs text-muted-foreground">Live balances · verified</p>
       <div className="mt-5 space-y-3">
         {members.map((m) => (
           <div
             key={m.name}
-            className="flex items-center justify-between rounded-2xl bg-[var(--ofx-cream)] px-4 py-3"
+            className="flex items-center justify-between bg-[var(--ofx-cream)] px-4 py-3"
           >
             <div className="flex items-center gap-3">
-              <span className="flex size-8 items-center justify-center rounded-full bg-white text-[11px] font-semibold text-foreground">
+              <span className="flex size-8 items-center justify-center bg-white text-[11px] font-semibold text-foreground">
                 {m.name
                   .split(" ")
                   .map((n) => n[0])
@@ -133,9 +133,9 @@ function AccountsListMock() {
 /** Payout approval card with dual sign-off. */
 function PayoutMock() {
   return (
-    <div className="w-full max-w-sm rounded-3xl border border-border bg-white p-6 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.35)]">
+    <div className="w-full max-w-sm border border-border bg-white p-6 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.35)]">
       <div className="flex items-center gap-3">
-        <span className="flex size-10 items-center justify-center rounded-full bg-[var(--ofx-sand)]">
+        <span className="flex size-10 items-center justify-center bg-[var(--ofx-sand)]">
           <Wallet className="h-5 w-5 text-foreground" aria-hidden />
         </span>
         <div>
@@ -147,17 +147,17 @@ function PayoutMock() {
           </p>
         </div>
       </div>
-      <div className="mt-5 space-y-2.5 rounded-2xl bg-[var(--ofx-cream)] p-4">
+      <div className="mt-5 space-y-2.5 bg-[var(--ofx-cream)] p-4">
         <div className="flex items-center justify-between text-xs">
           <span className="font-medium text-muted-foreground">Manager</span>
-          <span className="font-semibold text-emerald-700">Approved</span>
+          <span className="font-semibold text emerald-700">Approved</span>
         </div>
         <div className="flex items-center justify-between text-xs">
           <span className="font-medium text-muted-foreground">Director</span>
-          <span className="font-semibold text-emerald-700">Approved</span>
+          <span className="font-semibold text emerald-700">Approved</span>
         </div>
       </div>
-      <div className="mt-5 rounded-full bg-[var(--ofx-ink)] py-2.5 text-center text-xs font-semibold text-white">
+      <div className="mt-5 bg-[var(--ofx-ink)] py-2.5 text-center text-xs font-semibold text-white">
         Release payout
       </div>
     </div>
@@ -167,9 +167,9 @@ function PayoutMock() {
 /** Collector-in-the-field card: route, daily target, live prompt. */
 function CollectorMock() {
   return (
-    <div className="w-full max-w-sm rounded-3xl border border-border bg-white p-6 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.35)]">
+    <div className="w-full max-w-sm border border-border bg-white p-6 shadow-[0_32px_64px_-32px_rgba(28,27,23,0.35)]">
       <div className="flex items-center gap-3">
-        <span className="flex size-10 items-center justify-center rounded-full bg-[var(--ofx-sand)]">
+        <span className="flex size-10 items-center justify-center bg-[var(--ofx-sand)]">
           <MapPin className="h-5 w-5 text-foreground" aria-hidden />
         </span>
         <div>
@@ -188,11 +188,11 @@ function CollectorMock() {
             GHS 1,180 / 1,500
           </span>
         </div>
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--ofx-cream-deep)]">
-          <div className="h-full w-[78%] rounded-full bg-[var(--ofx-flame)]" />
+        <div className="mt-2 h-2 overflow-hidden bg-[var(--ofx-cream-deep)]">
+          <div className="h-full w-[78%] bg-[var(--ofx-flame)]" />
         </div>
       </div>
-      <div className="mt-5 flex items-center justify-between rounded-2xl bg-[var(--ofx-cream)] px-4 py-3">
+      <div className="mt-5 flex items-center justify-between bg-[var(--ofx-cream)] px-4 py-3">
         <div className="flex items-center gap-2.5">
           <Smartphone className="h-4 w-4 text-foreground" aria-hidden />
           <p className="text-xs font-medium text-foreground">
@@ -213,8 +213,10 @@ export default function AccountsAndPaymentsPage() {
       <ProductPageHero
         eyebrow="Accounts & Payments"
         title="Modernize collection without losing offline trust."
-        lead="Transition your entire Susu operation to a secure, cashless environment. Manage digital accounts, automate mobile money payouts, and empower your field collectors with real-time tools."
+        lead="Transition your entire Susu operation to a secure, cashless environment. Manage digital accounts, automate mobile money payouts, and empower your field collectors with real time tools."
         tile={SAND}
+        image="/marketing/susu-trader-payment.png"
+        imageAlt="A trader paying a susu contribution by Mobile Money"
         mock={<AccountsHeroMock />}
         secondaryCta={{ label: "See how it works", href: "/how-it-works" }}
       />
@@ -224,7 +226,7 @@ export default function AccountsAndPaymentsPage() {
         eyebrow="Digital accounts"
         title="Digital Susu Accounts"
         paragraphs={[
-          "Upgrade your savers from paper passbooks to real-time digital accounts. Every cedi deposited is instantly logged and verified against the gateway, ensuring 100% reconciliation and zero missing funds.",
+          "Upgrade your savers from paper passbooks to real time digital accounts. Every cedi deposited is instantly logged and verified against the gateway, ensuring 100% reconciliation and zero missing funds.",
           "Give your clients the peace of mind they deserve with SMS alerts for every transaction and clear, immutable balances that build trust and drive growth for your business.",
         ]}
         bullets={[
@@ -237,6 +239,8 @@ export default function AccountsAndPaymentsPage() {
           href: "/why-susuflow/gateway-verification",
         }}
         tile={SAND}
+        image="/marketing/susu-office-manager.png"
+        imageAlt="A susu manager reviewing member balances"
         mock={<AccountsListMock />}
       />
 
@@ -247,11 +251,11 @@ export default function AccountsAndPaymentsPage() {
         title="Instant MoMo Payouts"
         paragraphs={[
           "When it's time for clients to cash out their savings, completely eliminate the risk of handling bulk cash. Push payouts directly to their MTN, Telecel, or AT wallets in seconds.",
-          "Secure your cash flow with our robust dual sign-off system. Require management approval for large payouts, ensuring complete control over outbound funds while delivering instant liquidity to your savers.",
+          "Secure your cash flow with our robust dual sign off system. Require management approval for large payouts, ensuring complete control over outbound funds while delivering instant liquidity to your savers.",
         ]}
         bullets={[
           "Payouts straight to MTN, Telecel & AT wallets",
-          "Dual sign-off on large payouts",
+          "Dual sign off on large payouts",
           "No bulk cash risk, ever",
         ]}
         link={{
@@ -259,6 +263,8 @@ export default function AccountsAndPaymentsPage() {
           href: "/why-susuflow/role-based-approvals",
         }}
         tile={SAND}
+        image="/marketing/susu-enterprise-tech.png"
+        imageAlt="Staff approving a payout from the control hub"
         mock={<PayoutMock />}
       />
 
@@ -268,25 +274,27 @@ export default function AccountsAndPaymentsPage() {
         title="Field Collector App"
         paragraphs={[
           "Equip your market agents with our dedicated mobile app. Say goodbye to easily lost notebooks and illegible handwriting. Collectors can instantly pull up client accounts, initiate deposits, and issue digital receipts.",
-          "Track your agents in the field, monitor live collection targets, and guarantee that no collector handles cash unless authorized. Every collection is securely tethered to your central double-entry ledger.",
+          "Track your agents in the field, monitor live collection targets, and guarantee that no collector handles cash unless authorized. Every collection is securely tethered to your central double entry ledger.",
         ]}
         bullets={[
           "Digital receipts at the stall",
           "Live collection targets per agent",
-          "Cash-free collection by default",
+          "Cash free collection by default",
         ]}
         link={{
           label: "Meet the field collector app",
           href: "/why-susuflow/field-collectors",
         }}
         tile={SAND}
+        image="/marketing/susu-field-collector.png"
+        imageAlt="A field collector using the SusuFlow app at a market stall"
         mock={<CollectorMock />}
       />
 
       <ProductStatsBand
         background="cream"
         title="Cashless collection. Verified end to end."
-        lead="Every contribution moves through the gateway, lands in the ledger and pings the member's phone — with nothing lost along the way."
+        lead="Every contribution moves through the gateway, lands in the ledger and pings the member's phone. With nothing lost along the way."
         stats={[
           { value: "100%", label: "Deposits verified against the gateway" },
           { value: "3", label: "Mobile money networks supported" },
@@ -301,7 +309,7 @@ export default function AccountsAndPaymentsPage() {
           {
             title: "Manage & Control",
             description:
-              "Branch oversight, approval workflows and flexible savings plans — run every branch from one hub.",
+              "Branch oversight, approval workflows and flexible savings plans. Run every branch from one hub.",
             href: "/product/manage-and-control",
             tile: "var(--ofx-sage)",
             icon: ShieldCheck,
@@ -309,7 +317,7 @@ export default function AccountsAndPaymentsPage() {
           {
             title: "Platform Capabilities",
             description:
-              "Automated reconciliation, telco gateway integrations and live, auditor-ready reporting.",
+              "Automated reconciliation, telco gateway integrations and live, auditor ready reporting.",
             href: "/product/platform-capabilities",
             tile: "var(--ofx-sky)",
             icon: Layers,

@@ -23,7 +23,7 @@ export function PricingAudienceSection() {
           {PRICING_AUDIENCES.map((audience, i) => (
             <div
               key={audience.plan}
-              className="flex flex-col rounded-[2rem] p-8"
+              className="flex flex-col p-8"
               style={{ backgroundColor: TILE_COLORS[i % TILE_COLORS.length] }}
             >
               <p className="ofx-eyebrow text-foreground/70">{audience.plan}</p>

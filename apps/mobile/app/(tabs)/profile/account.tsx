@@ -1,12 +1,6 @@
-import { AccountSettingsContent } from "@/components/settings/sections/AccountSettingsContent";
-import { SettingsDetailLayout } from "@/components/settings/SettingsDetailLayout";
-import { PROFILE_SECTION_META } from "@/types/profile";
+import { Redirect } from "expo-router";
 
-export default function AccountSettingsScreen() {
-  const meta = PROFILE_SECTION_META.account;
-  return (
-    <SettingsDetailLayout title={meta.title}>
-      <AccountSettingsContent />
-    </SettingsDetailLayout>
-  );
+/** Legacy tab route — canonical screen lives under /my-profile. */
+export default function AccountRedirect() {
+  return <Redirect href="/my-profile/account" />;
 }

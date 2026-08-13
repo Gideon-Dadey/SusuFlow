@@ -1,6 +1,7 @@
 import {
   Injectable,
   BadRequestException,
+  ConflictException,
   NotFoundException,
 } from "@nestjs/common";
 import { InjectQueue } from "@nestjs/bullmq";
@@ -216,6 +217,24 @@ export class WithdrawalService {
     dto: CreateWithdrawalRequestDto,
     initiatedBy: AuthenticatedUser,
   ) {
+    if (dto.idempotencyKey) {
+      const existing = await this.prisma.transaction.findUnique({
+        where: { idempotencyKey: dto.idempotencyKey },
+        include: { withdrawal: true },
+      });
+      if (existing) {
+        if (
+          existing.type !== "withdrawal" ||
+          existing.tenantId !== tenantId ||
+          Number(existing.amount) !== Number(dto.amount)
+        ) {
+          throw new ConflictException("Idempotency key reuse conflict");
+        }
+        // Same intent — return the original transaction (safe retries).
+        return existing;
+      }
+    }
+
     const customer = await this.prisma.customer.findFirst({
       where: { userId: initiatedBy.id, tenantId },
       include: { wallets: { where: { walletType: "customer" } } },
@@ -268,6 +287,7 @@ export class WithdrawalService {
           customerId: customer.id,
           walletId: wallet.id,
           initiatedById: initiatedBy.id,
+          idempotencyKey: dto.idempotencyKey,
           description: `Withdrawal Request to ${dto.disbursementPhone} (${dto.disbursementMethod})`,
         },
       });

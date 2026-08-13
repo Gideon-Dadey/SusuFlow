@@ -49,7 +49,7 @@ export function HelpSettingsContent() {
     <>
       <Pressable
         accessibilityRole="button"
-        onPress={openSupportEmail}
+        onPress={() => openSupportEmail()}
         style={({ pressed }) => [
           styles.supportCard,
           {
@@ -76,21 +76,30 @@ export function HelpSettingsContent() {
         />
       </Pressable>
 
-      <SettingsPanel>
-        <SettingRow
-          icon="phone"
-          title="Call centre"
-          subtitle="Mon–Fri, 8am–6pm GMT"
-          onPress={() => Linking.openURL(`tel:${supportPhone}`)}
-        />
-        <SettingRow
-          icon="whatsapp"
-          title="WhatsApp"
-          subtitle="Chat with our team"
-          onPress={() => Linking.openURL(`https://wa.me/${supportWhatsApp}`)}
-          showDivider={false}
-        />
-      </SettingsPanel>
+      {supportPhone || supportWhatsApp ? (
+        <SettingsPanel>
+          {supportPhone ? (
+            <SettingRow
+              icon="phone"
+              title="Call centre"
+              subtitle="Mon–Fri, 8am–6pm GMT"
+              onPress={() => Linking.openURL(`tel:${supportPhone}`)}
+              showDivider={Boolean(supportWhatsApp)}
+            />
+          ) : null}
+          {supportWhatsApp ? (
+            <SettingRow
+              icon="whatsapp"
+              title="WhatsApp"
+              subtitle="Chat with our team"
+              onPress={() =>
+                Linking.openURL(`https://wa.me/${supportWhatsApp}`)
+              }
+              showDivider={false}
+            />
+          ) : null}
+        </SettingsPanel>
+      ) : null}
 
       <View style={{ gap: 10 }}>
         <Text style={[styles.faqHeading, { color: colors.mutedForeground }]}>

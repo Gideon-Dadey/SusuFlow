@@ -1,12 +1,5 @@
-import { AppearanceSettingsContent } from "@/components/settings/sections/AppearanceSettingsContent";
-import { SettingsDetailLayout } from "@/components/settings/SettingsDetailLayout";
-import { PROFILE_SECTION_META } from "@/types/profile";
+import { Redirect } from "expo-router";
 
-export default function AppearanceSettingsScreen() {
-  const meta = PROFILE_SECTION_META.appearance;
-  return (
-    <SettingsDetailLayout title={meta.title} subtitle={meta.subtitle}>
-      <AppearanceSettingsContent />
-    </SettingsDetailLayout>
-  );
+export default function AppearanceRedirect() {
+  return <Redirect href="/my-profile/appearance" />;
 }

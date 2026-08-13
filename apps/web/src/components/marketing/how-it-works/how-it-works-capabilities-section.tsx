@@ -33,7 +33,7 @@ export function HowItWorksCapabilitiesSection() {
                 <div
                   key={label}
                   className={cn(
-                    "flex aspect-square flex-col items-center justify-center rounded-none bg-transparent px-3 py-5 text-center",
+                    "flex aspect-square flex-col items-center justify-center bg-transparent px-3 py-5 text-center",
                   )}
                 >
                   <FontAwesomeIcon

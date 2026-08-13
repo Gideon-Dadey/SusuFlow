@@ -15,7 +15,7 @@ export default function FieldCollectorsPage() {
       accent="sky"
       hero={{
         title: "Give every collector a bank in their pocket.",
-        lead: "Empower market agents with mobile collection tools and live tracking. Collectors pull up client profiles, process MoMo deposits and track daily targets — no easily-lost notebooks required.",
+        lead: "Empower market agents with mobile collection tools and live tracking. Collectors pull up client profiles, process MoMo deposits and track daily targets. No easily lost notebooks required.",
         tile: {
           label: "My target · Today",
           value: "GHS 1,850 / 2,000",
@@ -49,17 +49,17 @@ export default function FieldCollectorsPage() {
         {
           icon: Smartphone,
           title: "A bank in your pocket",
-          body: "Any smartphone becomes a fully-fledged point-of-sale terminal for microfinance. Agents pull up profiles, review savings goals and fire off MoMo prompts — no cash, no paper receipts.",
+          body: "Any smartphone becomes a fully fledged point of sale terminal for microfinance. Agents pull up profiles, review savings goals and fire off MoMo prompts. No cash, no paper receipts.",
         },
         {
           icon: Target,
-          title: "Real-time target tracking",
+          title: "Real time target tracking",
           body: "A live dashboard shows every collector their daily, weekly and monthly targets. Instant visual feedback drives higher collection rates and healthy competition across teams.",
         },
         {
           icon: BadgeCheck,
           title: "Unshakeable client trust",
-          body: "Savers get an instant, un-spoofable SMS the second a deposit clears. No more 'he-said, she-said' over notebook entries — your agents become the most trusted collectors in the market.",
+          body: "Savers get an instant, un spoofable SMS the second a deposit clears. No more 'he said, she said' over notebook entries. Your agents become the most trusted collectors in the market.",
         },
       ]}
       sections={[
@@ -67,8 +67,8 @@ export default function FieldCollectorsPage() {
           eyebrow: "The upgrade",
           title: "Empowering the frontlines",
           paragraphs: [
-            "Field collectors are the lifeblood of any susu operation — yet they've been burdened for too long with weather-prone paper notebooks and the security risk of carrying bulk cash through crowded markets.",
-            "With enterprise-grade technology in the palm of their hands, an agent serves twice as many clients in the same time. No robbery worries, no math errors, no angry savers at month-end — just respected, digitized financial representatives for their communities.",
+            "Field collectors are the lifeblood of any susu operation. Yet they've been burdened for too long with weather prone paper notebooks and the security risk of carrying bulk cash through crowded markets.",
+            "With enterprise grade technology in the palm of their hands, an agent serves twice as many clients in the same time. No robbery worries, no math errors, no angry savers at month end. Just respected, digitized financial representatives for their communities.",
           ],
           tile: {
             heading: "A collector's day",
@@ -80,13 +80,13 @@ export default function FieldCollectorsPage() {
               },
               { label: "Cash carried", value: "GHS 0.00", status: "Cashless" },
               { label: "Receipts issued", value: "46 SMS", status: "Instant" },
-              { label: "Month-end disputes", value: "0", status: "Resolved" },
+              { label: "Month end disputes", value: "0", status: "Resolved" },
             ],
           },
         },
       ]}
       quote={{
-        text: "Give field agents enterprise-grade technology and they work faster, safer, and with far greater confidence.",
+        text: "Give field agents enterprise grade technology and they work faster, safer, and with far greater confidence.",
       }}
       related={[
         {

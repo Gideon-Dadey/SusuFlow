@@ -13,17 +13,17 @@ export function ContactFormSection() {
     <section id="contact-form" className="scroll-mt-24 bg-[var(--ofx-paper)]">
       <MarketingContainer className="ofx-section">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-start">
-          <div className="ofx-card p-6 sm:p-9">
+          <div className="omnih-atmosphere border border-white/40 bg-white/70 p-6 shadow-[0_8px_32px_rgba(15,23,42,0.06)] backdrop-blur-md dark:border-white/10 dark:bg-white/5 sm:p-9">
             <ContactForm />
           </div>
 
-          <aside className="rounded-[1.75rem] bg-[var(--ofx-sand)] p-7 sm:p-9">
+          <aside className="bg-[#f7f7f7] p-7 dark:bg-slate-900 sm:p-9">
             <p className="ofx-eyebrow">Our office</p>
             <h2 className="ofx-h3 mt-3">{CONTACT_OFFICE.headline}</h2>
 
             <ul className="mt-8 space-y-6">
               <li className="flex items-start gap-4">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white">
+                <span className="flex size-10 shrink-0 items-center justify-center bg-white">
                   <MapPin className="h-4 w-4 text-foreground" aria-hidden />
                 </span>
                 <div>
@@ -40,7 +40,7 @@ export function ContactFormSection() {
                 </div>
               </li>
               <li className="flex items-start gap-4">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white">
+                <span className="flex size-10 shrink-0 items-center justify-center bg-white">
                   <Mail className="h-4 w-4 text-foreground" aria-hidden />
                 </span>
                 <div>
@@ -54,7 +54,7 @@ export function ContactFormSection() {
                 </div>
               </li>
               <li className="flex items-start gap-4">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white">
+                <span className="flex size-10 shrink-0 items-center justify-center bg-white">
                   <MessageSquare
                     className="h-4 w-4 text-foreground"
                     aria-hidden
@@ -75,7 +75,7 @@ export function ContactFormSection() {
                 </div>
               </li>
               <li className="flex items-start gap-4">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white">
+                <span className="flex size-10 shrink-0 items-center justify-center bg-white">
                   <Clock className="h-4 w-4 text-foreground" aria-hidden />
                 </span>
                 <div>

@@ -22,17 +22,9 @@ export function GoalsEmptyState({ variant }: GoalsEmptyStateProps) {
         };
 
   return (
-    <View
-      style={[
-        styles.card,
-        {
-          backgroundColor: colors.card,
-          borderColor: colors.border,
-        },
-      ]}
-    >
+    <View style={styles.wrap}>
       <View style={[styles.iconWrap, { backgroundColor: colors.muted }]}>
-        <AppIcon name="target" size={22} color={colors.mutedForeground} />
+        <AppIcon name="target" size={20} color={colors.mutedForeground} />
       </View>
       <Text style={[styles.title, { color: colors.foreground }]}>
         {copy.title}
@@ -45,21 +37,19 @@ export function GoalsEmptyState({ variant }: GoalsEmptyStateProps) {
 }
 
 const styles = StyleSheet.create({
-  card: {
+  wrap: {
     alignItems: "center",
-    borderRadius: radius.lg,
-    borderWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.xl,
     gap: spacing.sm,
   },
   iconWrap: {
-    width: 48,
-    height: 48,
+    width: 44,
+    height: 44,
     borderRadius: radius.full,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: spacing.xs,
+    marginBottom: 2,
   },
   title: {
     fontFamily: typography.roles.title,

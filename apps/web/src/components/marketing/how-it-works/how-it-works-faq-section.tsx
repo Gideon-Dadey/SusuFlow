@@ -18,7 +18,7 @@ export function HowItWorksFaqSection() {
                 <span className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
                   {q}
                 </span>
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--ofx-cream)] transition-transform duration-200 group-open:rotate-45">
+                <span className="flex size-8 shrink-0 items-center justify-center bg-[var(--ofx-cream)] transition-transform duration-200 group-open:rotate-45">
                   <Plus className="h-4 w-4 text-foreground" aria-hidden />
                 </span>
               </summary>

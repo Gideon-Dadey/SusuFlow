@@ -9,7 +9,7 @@ export function HowItWorksLocalSection() {
     <section className="bg-background">
       <MarketingContainer className="py-16 sm:py-20 lg:py-24">
         <div className="flex flex-col gap-10 sm:gap-12 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
-          <div className="relative order-1 mx-auto w-full max-w-xl overflow-hidden rounded-[1.75rem] shadow-md lg:order-1 lg:max-w-none">
+          <div className="relative order-1 mx-auto w-full max-w-xl overflow-hidden shadow-md lg:order-1 lg:max-w-none">
             <div className="relative aspect-[4/3] w-full sm:aspect-[5/4]">
               <Image
                 src={HOW_IT_WORKS_DIGITAL_COLLECTOR}
@@ -34,9 +34,10 @@ export function HowItWorksLocalSection() {
               for cash handoffs or waiting for a collector to visit.
             </p>
             <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground">
-              SusuFlow is designed to empower Ghanaian savers: convenient
-              self-service mobile money payments, instant digital receipts, and
-              real-time dashboard verification for the Susu company.
+              {" "}
+              SusuFlow is designed to empower Ghanaian savers: convenient self
+              service mobile money payments, instant digital receipts, and real
+              time dashboard verification for the Susu company.{" "}
             </p>
             <Link
               href="/contact?intent=demo"

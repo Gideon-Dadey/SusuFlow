@@ -6,7 +6,7 @@ export function PricingRoiSection() {
   return (
     <section className="bg-[var(--ofx-paper)]">
       <MarketingContainer className="ofx-section">
-        <div className="ofx-dark-section rounded-[2rem] px-6 py-12 sm:px-12 sm:py-16">
+        <div className="ofx-dark-section px-6 py-12 sm:px-12 sm:py-16">
           <div className="mx-auto max-w-3xl text-center">
             <p className="ofx-eyebrow">Manual vs digital</p>
             <h2 className="ofx-h2 mt-4">

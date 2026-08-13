@@ -14,13 +14,14 @@ export function PlatformOverviewSection() {
           <div className="min-w-0">
             <SectionEyebrow>Introduction</SectionEyebrow>
             <h2 className="afrusan-section-title text-balance">
-              Transforming susu through verified MoMo deposits and a world-class
-              operations model
+              {" "}
+              Transforming susu through verified MoMo deposits and a world class
+              operations model{" "}
             </h2>
             <p className="afrusan-body mt-5 max-w-xl text-pretty">
               {APP_NAME} was built for Ghanaian susu companies and microfinance
               operators with a goal of increasing trust in collections through
-              gateway-verified Mobile Money deposits and scalable, audit-ready
+              gateway verified Mobile Money deposits and scalable, audit ready
               ledger programs.
             </p>
             <Link
@@ -39,7 +40,7 @@ export function PlatformOverviewSection() {
             <div className="relative aspect-[4/3] w-full sm:aspect-[16/11] lg:aspect-[5/4]">
               <Image
                 src={BRAND_PLATFORM_INTRO_IMAGE}
-                alt="SusuFlow field collector confirming a gateway-verified Mobile Money deposit with a market trader in Ghana"
+                alt="SusuFlow field collector confirming a gateway verified Mobile Money deposit with a market trader in Ghana"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-contain object-center"

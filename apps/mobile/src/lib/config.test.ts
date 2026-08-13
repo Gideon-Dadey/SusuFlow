@@ -2,6 +2,7 @@ import {
   getApiBaseUrl,
   getSupportEmail,
   getSupportPhone,
+  getSupportWhatsApp,
   getWebBaseUrl,
 } from "./config";
 
@@ -21,18 +22,25 @@ describe("mobile config", () => {
     expect(getApiBaseUrl()).toBe("https://api.example.com");
   });
 
-  it("requires web URL when not in dev and unset", () => {
-    delete process.env.EXPO_PUBLIC_WEB_URL;
-    expect(() => getWebBaseUrl()).toThrow(/EXPO_PUBLIC_WEB_URL/);
-  });
-
   it("uses configured web URL when set", () => {
     process.env.EXPO_PUBLIC_WEB_URL = "https://susuflow.com";
     expect(getWebBaseUrl()).toBe("https://susuflow.com");
   });
 
-  it("provides support contact defaults", () => {
+  it("provides a support email default", () => {
+    delete process.env.EXPO_PUBLIC_SUPPORT_EMAIL;
     expect(getSupportEmail()).toContain("@");
-    expect(getSupportPhone()).toMatch(/^\+/);
+  });
+
+  it("hides placeholder phone and WhatsApp contacts", () => {
+    process.env.EXPO_PUBLIC_SUPPORT_PHONE = "+233302000000";
+    process.env.EXPO_PUBLIC_SUPPORT_WHATSAPP = "233302000000";
+    expect(getSupportPhone()).toBeNull();
+    expect(getSupportWhatsApp()).toBeNull();
+  });
+
+  it("returns real support phone when configured", () => {
+    process.env.EXPO_PUBLIC_SUPPORT_PHONE = "+233201234567";
+    expect(getSupportPhone()).toBe("+233201234567");
   });
 });

@@ -9,7 +9,6 @@ import {
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackArrowButton } from "@/components/navigation/BackArrowButton";
-import { ProfileGeometricBackdrop } from "@/components/profile/ProfileGeometricBackdrop";
 import { CardSurface } from "@/components/ui/CardSurface";
 import { tabBarScrollPadding } from "@/constants/tab-bar";
 import { bankChrome } from "@/theme/bankChrome";
@@ -20,12 +19,9 @@ interface TabScreenLayoutProps {
   header?: ReactNode;
   children: ReactNode;
   refreshControl?: React.ReactElement<RefreshControlProps>;
-  /**
-   * Banking geometric header behind the sticky title (Activity, Goals, etc.).
-   * Home keeps its own header without this.
-   */
+  /** @deprecated Quiet SusuFlow headers only — kept for call-site compatibility. */
   bankHeader?: boolean;
-  /** @deprecated Prefer bankHeader — arcs are no longer used. */
+  /** @deprecated Unused. */
   headerDecoration?: boolean;
 }
 
@@ -33,44 +29,25 @@ export function TabScreenLayout({
   header,
   children,
   refreshControl,
-  bankHeader = false,
 }: TabScreenLayoutProps) {
   const insets = useSafeAreaInsets();
   const { isDark } = useTheme();
   const pageBg = isDark ? bankChrome.pageDark : bankChrome.pageLight;
-  const geometryHeight = insets.top + 92;
 
   return (
     <View style={[styles.root, { backgroundColor: pageBg }]}>
       {header ? (
-        bankHeader ? (
-          <View style={{ height: geometryHeight }}>
-            <ProfileGeometricBackdrop height={geometryHeight} isDark={isDark} />
-            <View
-              style={[
-                styles.stickyHeader,
-                {
-                  paddingTop: insets.top + spacing.sm,
-                  backgroundColor: "transparent",
-                },
-              ]}
-            >
-              {header}
-            </View>
-          </View>
-        ) : (
-          <View
-            style={[
-              styles.stickyHeader,
-              {
-                paddingTop: insets.top + spacing.md,
-                backgroundColor: pageBg,
-              },
-            ]}
-          >
-            {header}
-          </View>
-        )
+        <View
+          style={[
+            styles.stickyHeader,
+            {
+              paddingTop: insets.top + spacing.md,
+              backgroundColor: pageBg,
+            },
+          ]}
+        >
+          {header}
+        </View>
       ) : null}
 
       <ScrollView
@@ -94,7 +71,7 @@ export function TabScreenLayout({
 interface TabScreenHeaderProps {
   title: string;
   rightAction?: ReactNode;
-  /** White title when sitting on the geometric bank header. */
+  /** @deprecated Quiet headers always use foreground ink. */
   onGeometry?: boolean;
   /** Show a leading back control (e.g. Withdraw opened from Home). */
   showBack?: boolean;
@@ -103,23 +80,23 @@ interface TabScreenHeaderProps {
 export function TabScreenHeader({
   title,
   rightAction,
-  onGeometry = false,
   showBack = false,
 }: TabScreenHeaderProps) {
   const router = useRouter();
   const { colors } = useTheme();
-  const titleColor = onGeometry ? "#FFFFFF" : colors.foreground;
-  const backColor = onGeometry ? "#FFFFFF" : colors.foreground;
 
   return (
     <View style={styles.header}>
       {showBack ? (
         <View style={styles.headerLeading}>
-          <BackArrowButton onPress={() => router.back()} color={backColor} />
+          <BackArrowButton
+            onPress={() => router.back()}
+            color={colors.foreground}
+          />
         </View>
       ) : null}
       <Text
-        style={[styles.headerTitle, { color: titleColor }]}
+        style={[styles.headerTitle, { color: colors.foreground }]}
         numberOfLines={1}
       >
         {title}
@@ -134,6 +111,28 @@ export function TabScreenHeader({
 interface TabScreenSectionProps {
   title: string;
   children: ReactNode;
+}
+
+/** More / Goals / Activity section eyebrow — uppercase banking chrome. */
+export function TabSectionLabel({
+  children,
+  spaced,
+}: {
+  children: string;
+  spaced?: boolean;
+}) {
+  const { colors } = useTheme();
+  return (
+    <Text
+      style={[
+        styles.sectionLabel,
+        spaced && styles.sectionLabelSpaced,
+        { color: colors.mutedForeground },
+      ]}
+    >
+      {children}
+    </Text>
+  );
 }
 
 export function TabScreenSection({ title, children }: TabScreenSectionProps) {
@@ -190,8 +189,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     position: "absolute",
-    left: 0,
-    right: 0,
+    left: 48,
+    right: 48,
     fontFamily: typography.roles.headline,
     fontSize: typography.size.lg,
     textAlign: "center",
@@ -219,6 +218,16 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.medium,
     fontSize: typography.size.sm,
     marginLeft: 4,
+  },
+  sectionLabel: {
+    fontFamily: typography.fontFamily.medium,
+    fontSize: 12,
+    letterSpacing: 0.4,
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+  sectionLabelSpaced: {
+    marginTop: spacing.lg,
   },
   sectionCard: {
     overflow: "hidden",

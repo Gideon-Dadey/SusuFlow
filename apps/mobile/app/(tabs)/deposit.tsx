@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as WebBrowser from "expo-web-browser";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert, RefreshControl, StyleSheet, View } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { RefreshControl, StyleSheet, View } from "react-native";
 import { Button } from "@/components/Button";
 import { DepositAmountStep } from "@/components/deposit/DepositAmountStep";
 import { DepositConfirmStep } from "@/components/deposit/DepositConfirmStep";
@@ -28,24 +28,25 @@ import { KycActionGate } from "@/components/security/KycActionGate";
 import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { useProfileData } from "@/components/settings/useProfileData";
 import { useCustomerSession } from "@/hooks/useCustomerSession";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { AnalyticsEvents, analytics } from "@/lib/analytics";
 import { depositApi } from "@/lib/api";
 import { fetchCustomerWallet } from "@/lib/customer-wallet";
 import {
   financialQueryOptions,
   invalidateCustomerFinancials,
 } from "@/lib/financial-queries";
+import { createIdempotencyKey } from "@/lib/idempotency";
 import { monitoring } from "@/lib/monitoring";
 import { queryKeys } from "@/lib/query-keys";
+import { toast } from "@/stores/toast.store";
 import { spacing } from "@/theme/tokens";
 import { useTheme } from "@/theme/ThemeProvider";
-
-function createIdempotencyKey(): string {
-  return `dep_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
-}
 
 export default function DepositScreen() {
   const queryClient = useQueryClient();
   const { colors } = useTheme();
+  const { isOnline } = useNetworkStatus();
   const [step, setStep] = useState<DepositStep>(0);
   const [amount, setAmount] = useState("");
   const [phone, setPhone] = useState("");
@@ -53,6 +54,7 @@ export default function DepositScreen() {
   const [bankCode, setBankCode] = useState<string | null>(null);
   const [pending, setPending] = useState<PendingDepositSession | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const idempotencyKeyRef = useRef<string | null>(null);
 
   const { phone: profilePhone } = useProfileData();
   const { sessionKey } = useCustomerSession();
@@ -86,12 +88,13 @@ export default function DepositScreen() {
     } finally {
       setRefreshing(false);
     }
-  }, [queryClient, refetchWallet, sessionKey]);
+  }, [refetchWallet]);
 
   const resetFlow = () => {
     setPending(null);
     setStep(0);
     setAmount("");
+    idempotencyKeyRef.current = null;
   };
 
   const mutation = useMutation({
@@ -104,6 +107,9 @@ export default function DepositScreen() {
       if (isDepositBankTransfer(method) && !bankCode) {
         throw new Error("Select the bank you will pay from");
       }
+      if (!idempotencyKeyRef.current) {
+        idempotencyKeyRef.current = createIdempotencyKey("dep");
+      }
 
       return depositApi.initiate({
         amount: parsedAmount,
@@ -113,10 +119,14 @@ export default function DepositScreen() {
         bankCode: isDepositBankTransfer(method)
           ? (bankCode ?? undefined)
           : undefined,
-        idempotencyKey: createIdempotencyKey(),
+        idempotencyKey: idempotencyKeyRef.current,
       });
     },
     onSuccess: async (data) => {
+      analytics.track(AnalyticsEvents.depositConfirmed, {
+        amount: parsedAmount ?? 0,
+        method,
+      });
       const session: PendingDepositSession = {
         transactionId: data.transactionId,
         reference: data.reference,
@@ -128,6 +138,7 @@ export default function DepositScreen() {
           : getDepositMethodLabel(method),
       };
       setPending(session);
+      idempotencyKeyRef.current = null;
 
       if (data.payment?.paymentUrl) {
         await WebBrowser.openBrowserAsync(data.payment.paymentUrl);
@@ -138,8 +149,9 @@ export default function DepositScreen() {
       }
     },
     onError: (err: Error) => {
+      analytics.track(AnalyticsEvents.depositFailed, { message: err.message });
       monitoring.captureException(err, { scope: "deposit.initiate" });
-      Alert.alert("Deposit failed", err.message);
+      toast.error(err.message || "Deposit failed");
     },
   });
 
@@ -151,18 +163,26 @@ export default function DepositScreen() {
   };
 
   const goNext = () => {
+    if (!isOnline) {
+      toast.error("You’re offline. Connect to make a deposit.");
+      return;
+    }
+
     if (step === 0) {
       if (!parsedAmount) {
-        Alert.alert("Enter an amount", "Choose how much you want to save.");
+        toast.error("Choose how much you want to save.");
         return;
       }
+      analytics.track(AnalyticsEvents.depositStarted, {
+        amount: parsedAmount,
+      });
       setStep(1);
       return;
     }
 
     if (step === 1) {
       if (isDepositBankTransfer(method) && !bankCode) {
-        Alert.alert("Select a bank", "Choose the bank you’ll pay from.");
+        toast.error("Choose the bank you’ll pay from.");
         return;
       }
       setStep(2);
@@ -174,19 +194,22 @@ export default function DepositScreen() {
 
   const goBack = () => {
     if (step === 0) return;
+    if (step === 2) {
+      idempotencyKeyRef.current = null;
+    }
     setStep((current) => (current - 1) as DepositStep);
   };
 
   const primaryLabel =
     step === 2 ? "Confirm & pay" : step === 1 ? "Continue" : "Continue";
+  const primaryDisabled = !isOnline || mutation.isPending;
 
   return (
     <TabScreenLayout
-      bankHeader
       header={
         <View style={styles.header}>
-          <TabScreenHeader title="Deposit" onGeometry />
-          {!pending ? <DepositStepIndicator step={step} onGeometry /> : null}
+          <TabScreenHeader title="Deposit" />
+          {!pending ? <DepositStepIndicator step={step} /> : null}
         </View>
       }
       refreshControl={
@@ -248,8 +271,9 @@ export default function DepositScreen() {
                   />
                 ) : null}
                 <Button
-                  title={primaryLabel}
+                  title={!isOnline ? "Offline" : primaryLabel}
                   loading={mutation.isPending}
+                  disabled={primaryDisabled}
                   onPress={goNext}
                   style={step > 0 ? styles.primary : styles.full}
                   accessibilityLabel={primaryLabel}

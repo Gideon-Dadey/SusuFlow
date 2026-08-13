@@ -12,16 +12,13 @@ interface DepositStepIndicatorProps {
   onGeometry?: boolean;
 }
 
-export function DepositStepIndicator({
-  step,
-  onGeometry = false,
-}: DepositStepIndicatorProps) {
+export function DepositStepIndicator({ step }: DepositStepIndicatorProps) {
   const { colors } = useTheme();
-  const idle = onGeometry ? "rgba(255,255,255,0.35)" : colors.border;
-  const mute = onGeometry ? "rgba(255,255,255,0.7)" : colors.mutedForeground;
-  const activeLabel = onGeometry ? "#FFFFFF" : colors.foreground;
-  const activeDot = onGeometry ? "#FFFFFF" : colors.primary;
-  const activeDotFg = onGeometry ? "#0B1220" : colors.primaryForeground;
+  const idle = colors.border;
+  const mute = colors.mutedForeground;
+  const activeLabel = colors.foreground;
+  const activeDot = colors.primary;
+  const activeDotFg = colors.primaryForeground;
 
   return (
     <View style={styles.root}>
@@ -37,11 +34,7 @@ export function DepositStepIndicator({
                   styles.dot,
                   {
                     backgroundColor:
-                      complete || active
-                        ? activeDot
-                        : onGeometry
-                          ? "rgba(255,255,255,0.12)"
-                          : colors.muted,
+                      complete || active ? activeDot : colors.muted,
                     borderColor: complete || active ? activeDot : idle,
                   },
                 ]}

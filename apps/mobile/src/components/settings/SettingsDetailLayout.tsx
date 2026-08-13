@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackArrowButton } from "@/components/navigation/BackArrowButton";
-import { ProfileGeometricBackdrop } from "@/components/profile/ProfileGeometricBackdrop";
 import { tabBarScrollPadding } from "@/constants/tab-bar";
 import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
@@ -21,6 +20,8 @@ interface SettingsDetailLayoutProps {
   subtitle?: string;
   children: ReactNode;
   keyboardAvoid?: boolean;
+  /** Pure black professional surface (account / personal details). */
+  surface?: "default" | "ink";
 }
 
 export function SettingsDetailLayout({
@@ -28,30 +29,42 @@ export function SettingsDetailLayout({
   subtitle,
   children,
   keyboardAvoid = false,
+  surface = "default",
 }: SettingsDetailLayoutProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { colors, isDark } = useTheme();
-  const pageBg = isDark ? bankChrome.pageDark : bankChrome.pageLight;
-  const geometryHeight = insets.top + 88;
+  const ink = surface === "ink";
+  const pageBg = ink
+    ? bankChrome.pageDark
+    : isDark
+      ? bankChrome.pageDark
+      : bankChrome.pageLight;
+  const titleColor = ink ? "#FFFFFF" : colors.foreground;
+  const subtitleColor = ink ? "rgba(255,255,255,0.55)" : colors.mutedForeground;
+  const backColor = ink ? "#FFFFFF" : colors.foreground;
 
   const body = (
     <View style={styles.flex}>
-      {/* Sticky bank header — does not scroll with content */}
-      <View style={{ height: geometryHeight }}>
-        <ProfileGeometricBackdrop height={geometryHeight} isDark={isDark} />
-        <View style={[styles.navBar, { paddingTop: insets.top + 4 }]}>
-          <View style={styles.navSide}>
-            <BackArrowButton onPress={() => router.back()} color="#FFFFFF" />
-          </View>
-          <Text
-            style={[styles.navTitle, { color: "#FFFFFF" }]}
-            numberOfLines={1}
-          >
-            {title}
-          </Text>
-          <View style={styles.navSide} />
+      <View
+        style={[
+          styles.navBar,
+          {
+            paddingTop: insets.top + 4,
+            backgroundColor: pageBg,
+          },
+        ]}
+      >
+        <View style={styles.navSide}>
+          <BackArrowButton onPress={() => router.back()} color={backColor} />
         </View>
+        <Text
+          style={[styles.navTitle, { color: titleColor }]}
+          numberOfLines={1}
+        >
+          {title}
+        </Text>
+        <View style={styles.navSide} />
       </View>
 
       <ScrollView
@@ -67,7 +80,7 @@ export function SettingsDetailLayout({
             style={[
               styles.subtitle,
               {
-                color: colors.mutedForeground,
+                color: subtitleColor,
                 paddingHorizontal: layout.pageGutter,
                 paddingTop: spacing.md,
               },
@@ -123,6 +136,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     minHeight: 44,
     paddingHorizontal: layout.pageGutter,
+    paddingBottom: spacing.sm,
     zIndex: 2,
   },
   navSide: {

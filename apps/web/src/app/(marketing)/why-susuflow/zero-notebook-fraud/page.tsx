@@ -19,7 +19,7 @@ export default function ZeroNotebookFraudPage() {
       accent="sage"
       hero={{
         title: "Zero notebook fraud. In 30 days.",
-        lead: "Partner MFIs eliminated ledger disputes and missing cash in a single month. Digital receipts and instant SMS confirmations give savers and companies one shared truth — making fraud structurally impossible.",
+        lead: "Partner MFIs eliminated ledger disputes and missing cash in a single month. Digital receipts and instant SMS confirmations give savers and companies one shared truth. Making fraud structurally impossible.",
         tile: {
           label: "Ledger disputes · This month",
           value: "0 open",
@@ -40,7 +40,7 @@ export default function ZeroNotebookFraudPage() {
         {
           icon: BookLock,
           title: "Immutable digital ledgers",
-          body: "Paper can be lost, damaged or quietly altered. Once a transaction is verified, it's permanently etched into a secure cloud ledger — no post-collection edits, ever.",
+          body: "Paper can be lost, damaged or quietly altered. Once a transaction is verified, it's permanently etched into a secure cloud ledger. No post collection edits, ever.",
         },
         {
           icon: MessageSquareText,
@@ -50,7 +50,7 @@ export default function ZeroNotebookFraudPage() {
         {
           icon: Handshake,
           title: "Zero ledger disputes",
-          body: "End-of-month arguments over who paid what simply stop. The digital trail is absolute, protecting your reputation and the community's trust.",
+          body: "End of month arguments over who paid what simply stop. The digital trail is absolute, protecting your reputation and the community's trust.",
         },
       ]}
       sections={[
@@ -62,7 +62,7 @@ export default function ZeroNotebookFraudPage() {
             "When a saver insists they handed over 50 cedis and the notebook only shows 20, the resulting dispute destroys the one thing a microfinance institution relies on most: community trust.",
           ],
           tile: {
-            heading: "End-of-month reconciliation",
+            heading: "End of month reconciliation",
             rows: [
               {
                 label: "Notebook entry",
@@ -89,7 +89,7 @@ export default function ZeroNotebookFraudPage() {
           eyebrow: "The fix",
           title: "An unbreakable chain of truth",
           paragraphs: [
-            "SusuFlow doesn't just look for bad actors — it builds an architecture where fraud is structurally impossible to commit.",
+            "SusuFlow doesn't just look for bad actors. It builds an architecture where fraud is structurally impossible to commit.",
             "Dual verification means the collector logs the payment while the saver instantly receives a digital receipt on their own device. Both sides share the exact same record, from the very first second.",
           ],
           tile: {
@@ -116,7 +116,7 @@ export default function ZeroNotebookFraudPage() {
       ]}
       quote={{
         variant: "dark",
-        text: "When the truth is instantaneous and transparent, trust flourishes — and operations scale seamlessly.",
+        text: "When the truth is instantaneous and transparent, trust flourishes. And operations scale seamlessly.",
       }}
       related={[
         {
@@ -126,15 +126,15 @@ export default function ZeroNotebookFraudPage() {
           href: "/why-susuflow/gateway-verification",
         },
         {
-          title: "Role-based approvals",
+          title: "Role based approvals",
           description:
-            "Manager sign-off on withdrawals stops internal fraud cold.",
+            "Manager sign off on withdrawals stops internal fraud cold.",
           href: "/why-susuflow/role-based-approvals",
         },
         {
           title: "Susu companies & MFIs",
           description:
-            "Purpose-built software for Ghanaian operators to scale safely.",
+            "Purpose built software for Ghanaian operators to scale safely.",
           href: "/why-susuflow/susu-companies-and-mfis",
         },
       ]}

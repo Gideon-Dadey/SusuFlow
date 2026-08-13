@@ -19,7 +19,9 @@ import {
 import {
   TabScreenLayout,
   TabScreenHeader,
+  TabSectionLabel,
 } from "@/components/layout/TabScreen";
+import { AppBrandFooter } from "@/components/profile/AppBrandFooter";
 import { OfflineBanner } from "@/components/ui/OfflineBanner";
 import { QueryErrorState } from "@/components/ui/QueryErrorState";
 import { ActivityScreenSkeleton } from "@/components/ui/Skeleton";
@@ -146,8 +148,7 @@ export default function ActivityScreen() {
   return (
     <>
       <TabScreenLayout
-        bankHeader
-        header={<TabScreenHeader title="Activity" onGeometry />}
+        header={<TabScreenHeader title="Activity" />}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -171,27 +172,37 @@ export default function ActivityScreen() {
             <ActivityEmptyState filter="all" />
           ) : (
             <>
+              <TabSectionLabel>Period</TabSectionLabel>
               <ActivityPeriodSelector value={period} onChange={setPeriod} />
 
               <ActivityCashFlowPanel insights={insights} />
 
+              <TabSectionLabel spaced>Type</TabSectionLabel>
               <ActivityFilterBar value={filter} onChange={setFilter} />
 
-              <ActivityAttentionQueue
-                items={attentionItems}
-                onPressTransaction={openReceipt}
-              />
+              <View style={styles.blockSpaced}>
+                <ActivityAttentionQueue
+                  items={attentionItems}
+                  onPressTransaction={openReceipt}
+                />
+              </View>
 
               {filtered.length === 0 ? (
                 <ActivityEmptyState filter={filter} />
               ) : ledgerTransactions.length === 0 ? null : (
-                <ActivityLedger
-                  transactions={ledgerTransactions}
-                  onPressTransaction={openReceipt}
-                />
+                <View style={styles.blockSpaced}>
+                  <ActivityLedger
+                    transactions={ledgerTransactions}
+                    onPressTransaction={openReceipt}
+                  />
+                </View>
               )}
             </>
           )}
+
+          <View style={styles.brandFooter}>
+            <AppBrandFooter />
+          </View>
         </View>
       </TabScreenLayout>
 
@@ -206,6 +217,13 @@ export default function ActivityScreen() {
 
 const styles = StyleSheet.create({
   content: {
-    gap: spacing.lg,
+    gap: spacing.sm,
+  },
+  blockSpaced: {
+    marginTop: spacing.md,
+  },
+  brandFooter: {
+    marginTop: spacing.xl,
+    paddingTop: spacing.lg,
   },
 });

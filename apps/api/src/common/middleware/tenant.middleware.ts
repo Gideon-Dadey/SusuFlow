@@ -38,6 +38,7 @@ export class TenantMiddleware implements NestMiddleware {
       "/api/docs",
       "/api/v1/admin",
       "/api/v1/webhooks",
+      "/uploads",
     ];
     if (skipPaths.some((p) => path.startsWith(p))) {
       return next();

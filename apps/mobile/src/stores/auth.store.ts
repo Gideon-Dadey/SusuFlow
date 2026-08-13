@@ -8,7 +8,16 @@ import {
   setTokenRefreshedHandler,
   userApi,
 } from "@/lib/api";
-import { clearBiometricCredentials } from "@/lib/biometric";
+import {
+  clearBiometricCredentials,
+  getBiometricSupport,
+  isBiometricLoginReady,
+  loadBiometricSession,
+  saveBiometricSession,
+  updateBiometricSession,
+} from "@/lib/biometric";
+import { AnalyticsEvents, analytics } from "@/lib/analytics";
+import { monitoring } from "@/lib/monitoring";
 import { unregisterDevicePushToken } from "@/lib/push-notifications";
 import { prefetchAuthenticatedSession } from "@/lib/session-prefetch";
 import { resetUserSessionCache } from "@/lib/session-cache";
@@ -52,6 +61,10 @@ interface AuthState {
     password: string,
     tenantSlug?: string,
   ) => Promise<LoginResponse>;
+  /** Restore session via Face ID / fingerprint using a stored refresh token. */
+  loginWithBiometric: () => Promise<LoginResponse>;
+  /** Offer to save biometric login after a password login. */
+  offerBiometricEnrollment: () => Promise<boolean>;
   register: (
     data: {
       firstName: string;
@@ -215,6 +228,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isAuthenticated: true,
       });
       warmSession(data.user.id, userTenant);
+      analytics.track(AnalyticsEvents.loginSuccess);
+      analytics.identify(data.user.id, { email: data.user.email });
+      monitoring.setUser({ id: data.user.id, email: data.user.email });
+      // Refresh stored biometric session silently when already enrolled.
+      void updateBiometricSession({
+        email: data.user.email,
+        tenant: userTenant,
+        refreshToken: data.refreshToken,
+      });
       return data;
     } catch (err) {
       if (err instanceof ApiError) {
@@ -227,6 +249,109 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } finally {
       set({ isLoading: false });
     }
+  },
+
+  loginWithBiometric: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const support = await getBiometricSupport();
+      if (!support.available) {
+        throw new Error(
+          support.hasHardware
+            ? `Set up ${support.label} in your phone settings first.`
+            : "Biometrics are not available on this device.",
+        );
+      }
+
+      const session = await loadBiometricSession(support.label);
+      if (!session?.refreshToken) {
+        throw new Error(
+          `No ${support.label} sign-in is saved. Log in with email once to enable it.`,
+        );
+      }
+
+      await storage.setItem(storage.keys.refreshToken, session.refreshToken);
+      if (session.tenant) {
+        await storage.setItem(storage.keys.tenantSlug, session.tenant);
+      }
+
+      const refreshed = await refreshSessionFromStorage();
+      if (!refreshed) {
+        await clearBiometricCredentials();
+        throw new Error(
+          "Your saved sign-in expired. Please log in with email and password.",
+        );
+      }
+
+      const accessToken =
+        rememberedAccessToken() ||
+        (await storage.getItem(storage.keys.accessToken));
+      const refreshToken = await storage.getItem(storage.keys.refreshToken);
+      if (!accessToken || !refreshToken) {
+        throw new Error("Could not restore your session. Please log in again.");
+      }
+
+      rememberSession({
+        accessToken,
+        tenantSlug: session.tenant,
+      });
+      const { user } = await loadProfile(session.tenant);
+      const lastLoginAt = await recordLastLoginAt();
+      set({
+        user,
+        accessToken,
+        refreshToken,
+        tenantSlug: session.tenant,
+        lastLoginAt,
+        isAuthenticated: true,
+      });
+      warmSession(user.id, session.tenant, user.customerId);
+      analytics.track(AnalyticsEvents.loginBiometric);
+      analytics.identify(user.id, { email: user.email });
+      monitoring.setUser({ id: user.id, email: user.email });
+      void updateBiometricSession({
+        email: user.email,
+        tenant: session.tenant,
+        refreshToken,
+      });
+      return {
+        accessToken,
+        refreshToken,
+        expiresIn: 0,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          roles: user.roles,
+          tenantSlug: user.tenantSlug,
+        },
+      };
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Biometric sign-in failed";
+      set({ error: message });
+      throw err instanceof Error ? err : new Error(message);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  offerBiometricEnrollment: async () => {
+    const { user, refreshToken, tenantSlug } = get();
+    if (!user || !refreshToken) return false;
+    const ready = await isBiometricLoginReady();
+    if (ready) return true;
+    const support = await getBiometricSupport();
+    if (!support.available) return false;
+    return saveBiometricSession(
+      {
+        email: user.email,
+        tenant: tenantSlug || user.tenantSlug || "",
+        refreshToken,
+      },
+      support.label,
+    );
   },
 
   register: async (data, tenantSlug) => {
@@ -260,6 +385,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     useAppLockStore.setState({ locked: false, obscured: false });
     resetUserSessionCache();
     clearRememberedSession();
+    analytics.reset();
+    monitoring.setUser(null);
     await unregisterDevicePushToken();
     if (refreshToken) {
       try {
@@ -284,6 +411,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     clearRememberedSession();
     await unregisterDevicePushToken();
     await clearBiometricCredentials();
+    await useAppLockStore.getState().reset();
     await storage.removeItem(storage.keys.accessToken);
     await storage.removeItem(storage.keys.refreshToken);
   },

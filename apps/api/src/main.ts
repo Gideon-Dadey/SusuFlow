@@ -4,7 +4,8 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { Logger } from "nestjs-pino";
 import helmet from "helmet";
 import compression = require("compression");
-import { json, urlencoded } from "express";
+import { json, urlencoded, static as expressStatic } from "express";
+import { join } from "path";
 import { AppModule } from "./app.module";
 import { HttpExceptionFilter } from "./common/filters/http-exception.filter";
 import { TransformInterceptor } from "./common/interceptors/transform.interceptor";
@@ -21,13 +22,22 @@ async function bootstrap() {
   });
   app.useLogger(app.get(Logger));
 
-  app.use(json({ limit: "10mb" }));
-  app.use(urlencoded({ limit: "10mb", extended: true }));
+  app.use(json({ limit: "20mb" }));
+  app.use(urlencoded({ limit: "20mb", extended: true }));
+  app.use(
+    "/uploads",
+    expressStatic(join(process.cwd(), "uploads"), {
+      index: false,
+      fallthrough: false,
+      maxAge: "7d",
+    }),
+  );
   app.use(compression());
   app.use(
     helmet({
       contentSecurityPolicy: process.env.NODE_ENV === "production",
       crossOriginEmbedderPolicy: false,
+      crossOriginResourcePolicy: { policy: "cross-origin" },
     }),
   );
   app.enableCors({

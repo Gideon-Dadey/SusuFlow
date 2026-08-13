@@ -12,11 +12,19 @@ export const BRAND_PLATFORM_INTRO_IMAGE =
 export const BRAND_MOMO_PAY_SHOWCASE = "/marketing/momo-transparent.png?v=2";
 export const BRAND_WORKFLOW_AUTOMATION =
   "/marketing/workflow-automation-bg.webp?v=2";
-export const HOW_IT_WORKS_GHANIAN_MARKET =
-  "/marketing/how-it-works/ghanian-market.webp";
+export const HOW_IT_WORKS_GHANIAN_MARKET = "/marketing/susu-trader-payment.png";
 export const HOW_IT_WORKS_DIGITAL_COLLECTOR =
-  "/marketing/how-it-works/digital-collector.webp";
-export const PRICING_HERO_IMAGE = "/marketing/pricing/ghanian-office.webp";
+  "/marketing/susu-field-collector.png";
+export const PRICING_HERO_IMAGE = "/marketing/susu-office-manager.png";
 export const CONTACT_MAP_IMAGE = "/marketing/pricing/contact-map.webp";
-export const ABOUT_HERO_IMAGE = "/marketing/pricing/ghanian-office.webp";
+export const ABOUT_HERO_IMAGE = "/marketing/susu-office-manager.png";
+export const HOME_HERO_IMAGE = "/marketing/susuflow-home-hero.webp?v=1";
+export const HOME_CTA_IMAGE = "/images/home/solutions-in-action.png";
+export const HOME_WORKFLOW_IMAGE = "/marketing/workflow-automation-bg.webp";
+export const VALUES_IMAGE_TRUST = "/marketing/susu-trader-payment.png";
+export const VALUES_IMAGE_GHANA = "/marketing/susu-field-collector.png";
+export const VALUES_IMAGE_TRANSPARENCY = "/marketing/susu-office-manager.png";
+export const VALUES_IMAGE_GROWTH = "/marketing/susu-enterprise-tech.png";
+export const LEADERSHIP_OPS_IMAGE = "/marketing/susu-office-manager.png";
+export const LEADERSHIP_FIELD_IMAGE = "/marketing/susu-field-collector.png";
 export const AUTH_LOGIN_IMAGE = "/marketing/auth.webp?v=1";

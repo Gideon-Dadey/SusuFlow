@@ -166,14 +166,14 @@ function LoginContent() {
           />
 
           {successMessage ? (
-            <p className="flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-xs text-emerald-700 font-medium">
+            <p className="flex items-center gap-2 bg-emerald-50 px-3 py-2 text-xs text-emerald-700 font-medium">
               <CheckCircle className="h-4 w-4 shrink-0" aria-hidden />
               <span>{successMessage}</span>
             </p>
           ) : null}
 
           {error ? (
-            <p className="rounded-xl bg-red-50 px-3 py-2 text-xs text-red-700 font-medium border border-red-200">
+            <p className="bg-red-50 px-3 py-2 text-xs text-red-700 font-medium border border-red-200">
               {error}
             </p>
           ) : null}
@@ -185,7 +185,7 @@ function LoginContent() {
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="w-5 h-5 border-2 border-white/30 border-t-white animate-spin" />
               ) : null}
               Verify & Complete Sign In
             </button>
@@ -226,7 +226,7 @@ function LoginContent() {
           label="Email address"
           name="email"
           type="email"
-          placeholder="name@company.com"
+          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -247,7 +247,7 @@ function LoginContent() {
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
+              placeholder="Password"
               className={cn(authInputClassName, "pr-12")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -274,7 +274,7 @@ function LoginContent() {
             type="checkbox"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
-            className="h-4 w-4 rounded border-border accent-[var(--ofx-ink)] cursor-pointer"
+            className="h-4 w-4 border-border accent-[var(--ofx-ink)] cursor-pointer"
           />
           <span className="text-sm font-medium text-foreground/80">
             Remember me on this device
@@ -282,14 +282,14 @@ function LoginContent() {
         </label>
 
         {successMessage ? (
-          <p className="flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-xs text-emerald-700 font-medium border border-emerald-500/20">
+          <p className="flex items-center gap-2 bg-emerald-50 px-3 py-2 text-xs text-emerald-700 font-medium border border-emerald-500/20">
             <CheckCircle className="h-4 w-4 shrink-0" aria-hidden />
             <span>{successMessage}</span>
           </p>
         ) : null}
 
         {error ? (
-          <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700 font-medium border border-red-200">
+          <p className="bg-red-50 px-3 py-2 text-sm text-red-700 font-medium border border-red-200">
             {error}
           </p>
         ) : null}
@@ -300,7 +300,7 @@ function LoginContent() {
           disabled={isSubmitting || !!successMessage}
         >
           {isSubmitting ? (
-            <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <span className="w-5 h-5 border-2 border-white/30 border-t-white animate-spin" />
           ) : null}
           Sign In
         </button>

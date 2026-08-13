@@ -48,12 +48,12 @@ export default function CashlessMarketCollectionsPage() {
         {
           icon: Shield,
           title: "Unmatched physical security",
-          body: "Carrying thousands of cedis through crowded markets makes collectors prime targets. Cashless collections protect your capital — and, crucially, the physical safety of your field teams.",
+          body: "Carrying thousands of cedis through crowded markets makes collectors prime targets. Cashless collections protect your capital. And, crucially, the physical safety of your field teams.",
         },
         {
           icon: Zap,
           title: "Instant liquidity settlement",
-          body: "The moment a trader enters their PIN, funds move to your corporate merchant account. Re-deploy capital into micro-loans immediately instead of waiting for end-of-day bank deposits.",
+          body: "The moment a trader enters their PIN, funds move to your corporate merchant account. Re deploy capital into micro loans immediately instead of waiting for end of day bank deposits.",
         },
       ]}
       sections={[
@@ -61,12 +61,12 @@ export default function CashlessMarketCollectionsPage() {
           eyebrow: "The shift",
           title: "The future of the African market is digital",
           paragraphs: [
-            "The informal sector drives the Ghanaian economy, but its reliance on physical cash creates real danger for collectors and hours of lost liquidity for the MFI waiting on end-of-day branch deposits.",
-            "SusuFlow leverages the explosive growth of Mobile Money in West Africa to remove cash from the collection cycle entirely — every transaction is a direct digital exchange between the saver's wallet and your corporate account.",
+            "The informal sector drives the Ghanaian economy, but its reliance on physical cash creates real danger for collectors and hours of lost liquidity for the MFI waiting on end of day branch deposits.",
+            "SusuFlow leverages the explosive growth of Mobile Money in West Africa to remove cash from the collection cycle entirely. Every transaction is a direct digital exchange between the saver's wallet and your corporate account.",
             "The shift doesn't just improve security. It accelerates the velocity of your capital: funds settle instantly, so you disburse loans faster, earn interest sooner and serve clients with unprecedented speed.",
           ],
           tile: {
-            heading: "Old day vs. cashless day",
+            heading: "Old day vs. Cashless day",
             rows: [
               {
                 label: "Cash carried by agents",
@@ -103,7 +103,7 @@ export default function CashlessMarketCollectionsPage() {
         {
           title: "Susu companies & MFIs",
           description:
-            "Purpose-built software for Ghanaian operators to scale safely.",
+            "Purpose built software for Ghanaian operators to scale safely.",
           href: "/why-susuflow/susu-companies-and-mfis",
         },
       ]}

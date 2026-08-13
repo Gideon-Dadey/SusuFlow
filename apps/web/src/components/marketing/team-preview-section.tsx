@@ -30,7 +30,7 @@ export function TeamPreviewSection() {
           className="mt-8 inline-flex w-fit items-center gap-3 bg-primary px-5 py-2.5 pl-6 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 sm:text-base"
         >
           <span>View team</span>
-          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/25">
+          <span className="flex h-9 w-9 items-center justify-center border border-white/25">
             <ArrowRight className="h-4 w-4" aria-hidden />
           </span>
         </Link>

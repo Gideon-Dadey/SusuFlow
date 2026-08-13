@@ -4,7 +4,7 @@ import {
   type ActivityPeriod,
 } from "@/components/activity/transactionUtils";
 import { useTheme } from "@/theme/ThemeProvider";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { radius, typography } from "@/theme/tokens";
 
 const PERIODS: ActivityPeriod[] = ["this_month", "last_month", "all_time"];
 
@@ -17,14 +17,14 @@ export function ActivityPeriodSelector({
   value,
   onChange,
 }: ActivityPeriodSelectorProps) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
 
   return (
     <View
       style={[
         styles.track,
         {
-          backgroundColor: colors.muted,
+          backgroundColor: isDark ? "#141414" : colors.muted,
           borderColor: colors.border,
         },
       ]}
@@ -40,8 +40,7 @@ export function ActivityPeriodSelector({
             style={({ pressed }) => [
               styles.segment,
               active && {
-                backgroundColor: colors.card,
-                borderColor: colors.border,
+                backgroundColor: colors.primary,
               },
               pressed && !active && styles.pressed,
             ]}
@@ -50,7 +49,9 @@ export function ActivityPeriodSelector({
               style={[
                 styles.label,
                 {
-                  color: active ? colors.foreground : colors.mutedForeground,
+                  color: active
+                    ? colors.primaryForeground
+                    : colors.mutedForeground,
                   fontFamily: active
                     ? typography.fontFamily.semibold
                     : typography.fontFamily.medium,
@@ -80,9 +81,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "transparent",
-    paddingVertical: 9,
+    paddingVertical: 10,
     paddingHorizontal: 6,
   },
   pressed: {

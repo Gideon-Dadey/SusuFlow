@@ -18,8 +18,7 @@ const INTENT_COPY: Record<string, { title: string; cta: string }> = {
   },
 };
 
-const fieldClassName =
-  "min-h-[3rem] rounded-xl border-border bg-background text-base";
+const fieldClassName = "min-h-[3rem] border border bg-background text-base";
 
 const textareaClassName = cn(
   fieldClassName,
@@ -44,8 +43,8 @@ function ContactFormInner() {
 
   if (submitted) {
     return (
-      <div className="rounded-2xl border border-[#c6e5df] bg-[#c6e5df]/20 px-6 py-10 text-center">
-        <p className="font-geist text-xl font-medium text-foreground">
+      <div className="border border-[#c6e5df] bg-[#c6e5df]/20 px-6 py-10 text-center">
+        <p className="font-geist text xl font-medium text-foreground">
           Message sent
         </p>
         <p className="afrusan-body mt-3 text-balance">
@@ -59,7 +58,7 @@ function ContactFormInner() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <input type="hidden" name="intent" value={intent} />
-      <p className="font-geist text-lg font-medium text-foreground">
+      <p className="font-geist text lg font-medium text-foreground">
         {copy.title}
       </p>
 

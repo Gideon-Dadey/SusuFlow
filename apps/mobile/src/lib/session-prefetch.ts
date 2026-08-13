@@ -30,7 +30,7 @@ export async function prefetchAuthenticatedSession(
       queryFn: () => userApi.getMe(),
       ...profileQueryOptions,
     });
-    resolvedCustomerId = profile.customer?.id;
+    resolvedCustomerId = profile?.customer?.id;
   }
 
   if (!resolvedCustomerId) {

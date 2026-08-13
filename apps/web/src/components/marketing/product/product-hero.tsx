@@ -54,7 +54,7 @@ export function ProductHero({
           </div>
 
           <div className="relative order-1 mx-auto w-full max-w-xl lg:order-2 lg:max-w-none">
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl sm:aspect-[16/11]">
+            <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/11]">
               <Image
                 src={imageSrc}
                 alt={imageAlt}

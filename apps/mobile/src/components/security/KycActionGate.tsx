@@ -68,7 +68,7 @@ export function KycActionGate({
       </Text>
       <Button
         title={pending ? "View status" : "Verify identity"}
-        onPress={() => router.push("/(tabs)/profile/kyc")}
+        onPress={() => router.push("/my-profile/kyc")}
       />
     </View>
   );

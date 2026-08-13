@@ -1,16 +1,5 @@
-import { SecuritySettingsContent } from "@/components/settings/sections/SecuritySettingsContent";
-import { SettingsDetailLayout } from "@/components/settings/SettingsDetailLayout";
-import { PROFILE_SECTION_META } from "@/types/profile";
+import { Redirect } from "expo-router";
 
-export default function SecuritySettingsScreen() {
-  const meta = PROFILE_SECTION_META.security;
-  return (
-    <SettingsDetailLayout
-      title={meta.title}
-      subtitle={meta.subtitle}
-      keyboardAvoid
-    >
-      <SecuritySettingsContent />
-    </SettingsDetailLayout>
-  );
+export default function SecurityRedirect() {
+  return <Redirect href="/my-profile/security" />;
 }

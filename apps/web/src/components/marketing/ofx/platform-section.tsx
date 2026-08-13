@@ -34,9 +34,9 @@ function PlatformMock() {
     <div className="ofx-card mx-auto max-w-4xl p-5 sm:p-8" aria-hidden>
       <div className="flex items-center justify-between border-b border-border/70 pb-5">
         <div className="flex items-center gap-2">
-          <span className="size-2.5 rounded-full bg-[var(--ofx-flame)]" />
-          <span className="size-2.5 rounded-full bg-[var(--ofx-sand)]" />
-          <span className="size-2.5 rounded-full bg-[var(--ofx-sage)]" />
+          <span className="size-2.5 bg-[var(--ofx-flame)]" />
+          <span className="size-2.5 bg-[var(--ofx-sand)]" />
+          <span className="size-2.5 bg-[var(--ofx-sage)]" />
         </div>
         <p className="text-xs font-medium text-muted-foreground">
           SusuFlow · Control Hub
@@ -44,11 +44,8 @@ function PlatformMock() {
       </div>
       <div className="grid gap-4 pt-6 sm:grid-cols-3">
         {rows.map(({ label, value, meta, icon: Icon }) => (
-          <div
-            key={label}
-            className="rounded-2xl bg-[var(--ofx-cream)] p-5 text-left"
-          >
-            <span className="flex size-9 items-center justify-center rounded-full bg-white">
+          <div key={label} className="bg-[var(--ofx-cream)] p-5 text-left">
+            <span className="flex size-9 items-center justify-center bg-white">
               <Icon className="h-4 w-4 text-foreground" aria-hidden />
             </span>
             <p className="mt-4 text-[13px] font-medium text-muted-foreground">
