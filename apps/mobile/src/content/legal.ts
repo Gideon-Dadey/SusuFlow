@@ -25,13 +25,13 @@ export const TERMS_OF_SERVICE: LegalDocument = {
     {
       title: "2. Services",
       paragraphs: [
-        "SusuFlow provides software for digital susu savings management, including customer wallets, collector tools, staff dashboards, and payment gateway integrations. We do not hold customer funds. Deposits are processed through licensed payment providers.",
+        "SusuFlow provides software for digital susu savings management, including customer wallets, self-serve deposits and withdrawals, staff dashboards, and licensed payment gateway integrations. We do not hold customer funds. Deposits are processed through licensed payment providers into your susu company’s settlement account.",
       ],
     },
     {
       title: "3. Accounts",
       paragraphs: [
-        "You are responsible for maintaining the confidentiality of your credentials and for all activity under your account. Susu companies are responsible for staff and collector access they grant within their tenant.",
+        "You are responsible for maintaining the confidentiality of your credentials and for all activity under your account. Susu companies are responsible for staff access they grant within their tenant.",
       ],
     },
     {

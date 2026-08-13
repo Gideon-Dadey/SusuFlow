@@ -42,14 +42,26 @@ export interface DisbursementParams {
   phone: string;
   reference: string;
   description?: string;
+  /** SusuFlow payment method → mapped to provider channel (e.g. mtn-gh). */
+  paymentMethod: string;
+  recipientName?: string;
+  callbackUrl?: string;
 }
 
 export interface DisbursementResult {
   success: boolean;
+  /** Terminal success, async pending, or failed. */
+  status: "success" | "pending" | "failed";
   gatewayReference?: string;
   message?: string;
+  rawResponse?: unknown;
 }
 
+/**
+ * Licensed PSP adapter (Hubtel today). SusuFlow owns the wallet/ledger;
+ * the gateway only moves cash in/out of the org settlement account.
+ * Direct MTN/BoG rails replace this adapter after licensing — not the ledger.
+ */
 export interface PaymentGateway {
   readonly name: string;
   initiatePayment(params: InitiatePaymentParams): Promise<PaymentSession>;

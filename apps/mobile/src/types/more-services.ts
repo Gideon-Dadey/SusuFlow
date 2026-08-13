@@ -57,6 +57,14 @@ export const MORE_SERVICE_ITEMS: ServiceMenuItem[] = [
     tone: "orange",
   },
   {
+    id: "passbook",
+    label: "Passbook",
+    subtitle: "Total paid in and payment marks",
+    icon: "receipt",
+    href: "/my-profile/passbook",
+    tone: "teal",
+  },
+  {
     id: "history",
     label: "Transaction history",
     subtitle: "Deposits, withdrawals, and receipts",
@@ -102,6 +110,14 @@ export const MY_PROFILE_ITEMS: ServiceMenuItem[] = [
     icon: "user",
     href: "/my-profile/account",
     tone: "slate",
+  },
+  {
+    id: "passbook",
+    label: "Passbook",
+    subtitle: "Your digital savings book",
+    icon: "receipt",
+    href: "/my-profile/passbook",
+    tone: "teal",
   },
   {
     id: "kyc",

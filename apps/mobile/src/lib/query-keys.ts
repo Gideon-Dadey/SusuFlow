@@ -19,6 +19,8 @@ export const queryKeys = {
     ["notification-preferences", userId] as const,
   enrollments: (userId: string) => ["my-enrollments", userId] as const,
   plans: ["plans"] as const,
+  passbook: (userId: string, customerId: string) =>
+    ["passbook", userId, customerId] as const,
   kycStatus: (userId: string) => ["kyc-status", userId] as const,
   tenantBranding: (slug: string) => ["tenant-branding", slug] as const,
 };

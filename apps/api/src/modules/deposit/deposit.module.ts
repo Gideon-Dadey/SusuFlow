@@ -6,12 +6,14 @@ import { PaymentWebhookController } from "../payment/webhooks/payment-webhook.co
 import { LedgerModule } from "../ledger/ledger.module";
 import { PaymentModule } from "../payment/payment.module";
 import { AuditModule } from "../audit/audit.module";
+import { WithdrawalModule } from "../withdrawal/withdrawal.module";
 
 @Module({
   imports: [
     LedgerModule,
     PaymentModule,
     AuditModule,
+    WithdrawalModule,
     BullModule.registerQueue({ name: "notifications" }, { name: "receipts" }),
   ],
   controllers: [DepositController, PaymentWebhookController],

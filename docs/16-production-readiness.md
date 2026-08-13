@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-SusuFlow has completed all 16 delivery phases from documentation through production readiness review. The platform delivers the **hybrid collector MVP**: multi-tenant auth, customer onboarding, MoMo deposits via Hubtel, double-entry ledger, staff/collector/customer portals, and full DevOps toolchain.
+SusuFlow has completed the core delivery phases from documentation through production readiness review. The platform delivers the **customer-first susu product**: multi-tenant auth, self-serve MoMo/bank deposits via Hubtel into the company settlement account, org-approved withdrawals with live disbursement, double-entry ledger, digital passbook, staff portals, and full DevOps toolchain. Collector tools remain optional for field recovery — not required for daily contributions.
 
 | Environment     | Recommendation                                  |
 | --------------- | ----------------------------------------------- |
@@ -59,12 +59,21 @@ SusuFlow has completed all 16 delivery phases from documentation through product
 | -------------------------- | -------- | ------------------------------------------------ |
 | MFA (TOTP)                 | P0       | Documented; not implemented                      |
 | Email/SMS OTP verification | P0       | Schema ready; providers not wired                |
-| Withdrawals                | P0       | Phase 2 per PRD                                  |
 | PDF/email/SMS receipts     | P0       | Worker queues exist; SendGrid/SMS not integrated |
 | PostgreSQL RLS             | P0       | `setTenantContext` ready; policies not applied   |
 | Telecel/AirtelTigo MoMo    | P0       | Hubtel gateway supports; not fully tested        |
 | Paystack cards             | P1       | Interface defined; not implemented               |
 | Fraud detection            | P3       | Phase 3 roadmap                                  |
+
+### Recently closed (customer-first money rail)
+
+| Item                | Notes                                                         |
+| ------------------- | ------------------------------------------------------------- |
+| Withdrawals         | Request → org approve → Hubtel send-money → ledger on success |
+| Passbook            | API + mobile `/my-profile/passbook`                           |
+| Server KYC          | Enforced on customer self-serve deposit/withdraw              |
+| Durable KYC storage | S3 when configured; local disk forbidden in production        |
+| Hubtel hardening    | No mock rail in production; webhook HMAC required             |
 
 ---
 

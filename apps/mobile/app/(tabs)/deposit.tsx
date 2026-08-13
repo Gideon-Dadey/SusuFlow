@@ -206,6 +206,7 @@ export default function DepositScreen() {
 
   return (
     <TabScreenLayout
+      tabRouteName="deposit"
       header={
         <View style={styles.header}>
           <TabScreenHeader title="Deposit" />

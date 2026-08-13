@@ -75,7 +75,6 @@ export default function GoalsScreen() {
         queryKey: queryKeys.enrollments(authUserId),
       });
     }
-    queryClient.invalidateQueries({ queryKey: queryKeys.plans });
   };
 
   const onRefresh = useCallback(async () => {
@@ -91,17 +90,17 @@ export default function GoalsScreen() {
     }
   }, [enrollmentsQuery, plansQuery, refetchProfile]);
 
-  const showGoalsSkeleton =
-    (plansPending && plans === undefined) ||
-    (enrollPending && enrollments === undefined);
+  const showActiveSkeleton = enrollPending && enrollments === undefined;
+  const showCatalogSkeleton = plansPending && plans === undefined;
 
   const showError =
-    (plansQuery.isError && plans === undefined) ||
-    (enrollmentsQuery.isError && enrollments === undefined);
+    (plansQuery.isError && plans === undefined && !enrollments) ||
+    (enrollmentsQuery.isError && enrollments === undefined && !plans);
 
   return (
     <>
       <TabScreenLayout
+        tabRouteName="plans"
         header={<TabScreenHeader title="Goals" />}
         refreshControl={
           <RefreshControl
@@ -130,7 +129,7 @@ export default function GoalsScreen() {
 
           <TabSectionLabel spaced>Active goals</TabSectionLabel>
           <View style={styles.menu}>
-            {showGoalsSkeleton ? (
+            {showActiveSkeleton ? (
               <PlanEnrollmentSkeleton rows={2} />
             ) : !enrollments?.length ? (
               <GoalsEmptyState variant="active" />
@@ -147,7 +146,7 @@ export default function GoalsScreen() {
 
           <TabSectionLabel spaced>Available plans</TabSectionLabel>
           <View style={styles.menu}>
-            {showGoalsSkeleton ? (
+            {showCatalogSkeleton ? (
               <PlanEnrollmentSkeleton rows={2} />
             ) : !plans?.length ? (
               <GoalsEmptyState variant="catalog" />

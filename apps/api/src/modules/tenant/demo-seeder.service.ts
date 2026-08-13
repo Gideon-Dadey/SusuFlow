@@ -2,14 +2,10 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import * as bcrypt from "bcrypt";
 import { allocateTransactionReference, ROLES } from "@susuflow/shared";
-import { PlanService } from "../plan/plan.service";
 
 @Injectable()
 export class DemoSeederService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly planService: PlanService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async seedDemoData(tenantSlug: string) {
     const tenant = await this.prisma.tenant.findUnique({
@@ -21,8 +17,6 @@ export class DemoSeederService {
     }
 
     const tenantId = tenant.id;
-
-    await this.planService.seedDefaultPlans(tenantId);
 
     // Clean existing data for this tenant to make it idempotent
     await this.prisma.$executeRawUnsafe(
@@ -149,26 +143,6 @@ export class DemoSeederService {
 
       customerIds.push(customer.id);
       customerAccounts.push(account);
-    }
-
-    // 2. Fetch Daily Susu plan
-    const dailySusuPlan = await this.prisma.savingsPlan.findFirst({
-      where: { tenantId, name: "Daily Susu" },
-    });
-
-    if (dailySusuPlan) {
-      // Enroll Kofi, Abena, Kwame
-      for (let i = 0; i < 3; i++) {
-        await this.prisma.customerPlan.create({
-          data: {
-            customerId: customerIds[i],
-            planId: dailySusuPlan.id,
-            targetAmount: 500,
-            status: "active",
-            startedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
-          },
-        });
-      }
     }
 
     // 3. Seed Chart of Accounts helper models if they somehow don't exist

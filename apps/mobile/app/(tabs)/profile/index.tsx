@@ -22,7 +22,13 @@ import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { AppIcon } from "@/components/icons/AppIcon";
 
-const MONEY_IDS = new Set(["deposit", "withdraw", "goals", "history"]);
+const MONEY_IDS = new Set([
+  "deposit",
+  "withdraw",
+  "goals",
+  "passbook",
+  "history",
+]);
 
 export default function MoreServicesScreen() {
   const router = useRouter();
@@ -58,7 +64,10 @@ export default function MoreServicesScreen() {
   };
 
   return (
-    <TabScreenLayout header={<TabScreenHeader title="More" />}>
+    <TabScreenLayout
+      tabRouteName="profile"
+      header={<TabScreenHeader title="More" />}
+    >
       {showKycPrompt ? (
         <Pressable
           accessibilityRole="button"

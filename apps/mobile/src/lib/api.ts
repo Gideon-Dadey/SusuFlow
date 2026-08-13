@@ -530,6 +530,28 @@ export const customerApi = {
     api.get<{ walletId: string; balance: number; currency: string }>(
       `/customers/${id}/wallet`,
     ),
+  getPassbook: (id: string) =>
+    api.get<{
+      walletId: string;
+      customerId: string;
+      currency: string;
+      balance: number;
+      availableBalance: number;
+      pendingWithdrawalAmount: number;
+      totalDeposited: number;
+      totalWithdrawn: number;
+      depositCount: number;
+      entries: Array<{
+        id: string;
+        reference: string;
+        amount: number;
+        paidAt: string;
+        description: string | null;
+        method: string | null;
+        gateway: string | null;
+        payerPhone: string | null;
+      }>;
+    }>(`/customers/${id}/passbook`),
 };
 
 export const depositApi = {

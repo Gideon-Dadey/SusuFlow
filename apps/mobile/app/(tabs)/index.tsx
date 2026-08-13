@@ -115,6 +115,7 @@ export default function HomeScreen() {
   return (
     <>
       <TabScreenLayout
+        tabRouteName="index"
         header={<HomeHeader />}
         refreshControl={
           <RefreshControl
@@ -206,9 +207,9 @@ export default function HomeScreen() {
               onPress: () => router.push("/(tabs)/plans"),
             },
             {
-              label: "Activity",
-              icon: "activity",
-              onPress: () => router.push("/(tabs)/activity"),
+              label: "Passbook",
+              icon: "receipt",
+              onPress: () => router.push("/my-profile/passbook"),
             },
           ]}
         />

@@ -2,6 +2,7 @@ import {
   TabBarIcon,
   type TabBarIconName,
 } from "@/components/navigation/TabBarIcon";
+import { emitTabScrollToTop } from "@/lib/tab-scroll";
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -60,9 +61,21 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
   const borderTop = isDark ? bankChrome.dividerDark : bankChrome.dividerLight;
 
   const handleTabPress = (tab: TabConfig) => {
+    const routeIndex = state.routes.findIndex((r) => r.name === tab.routeName);
+    const focused = routeIndex >= 0 && state.index === routeIndex;
+
     // Always land on the More listing, never a nested detail screen.
     if (tab.routeName === "profile") {
+      if (focused) {
+        emitTabScrollToTop("profile");
+      }
       router.navigate("/(tabs)/profile");
+      return;
+    }
+
+    // Re-tap focused tab → scroll to top (platform convention).
+    if (focused) {
+      emitTabScrollToTop(tab.routeName);
       return;
     }
 

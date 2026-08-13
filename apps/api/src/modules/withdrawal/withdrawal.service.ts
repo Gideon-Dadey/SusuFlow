@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   ConflictException,
+  Inject,
   NotFoundException,
 } from "@nestjs/common";
 import { InjectQueue } from "@nestjs/bullmq";
@@ -22,6 +23,12 @@ import { PaymentMethod } from "@susuflow/database";
 import { FinancialEventService } from "../../common/services/financial-event.service";
 import { AuditService } from "../audit/audit.service";
 import { enqueueNotification } from "../../common/notifications/enqueue";
+import {
+  PAYMENT_GATEWAY,
+  PaymentGateway,
+} from "../payment/gateways/payment-gateway.interface";
+import { assertCustomerKycVerified } from "../../common/utils/assert-customer-kyc";
+import { assertWithdrawalMaturityAllowed } from "../../common/utils/assert-withdrawal-maturity";
 
 @Injectable()
 export class WithdrawalService {
@@ -31,6 +38,7 @@ export class WithdrawalService {
     @InjectQueue("notifications") private readonly notificationQueue: Queue,
     private readonly financialEvents: FinancialEventService,
     private readonly audit: AuditService,
+    @Inject(PAYMENT_GATEWAY) private readonly gateway: PaymentGateway,
   ) {}
 
   async create(
@@ -94,7 +102,7 @@ export class WithdrawalService {
           disbursementPhone: dto.disbursementPhone,
           approvedById: initiatedBy.id,
           approvedAt: new Date(),
-          gatewayReference: `MOCK-WD-${reference}`,
+          gatewayReference: `STAFF-WD-${reference}`,
         },
       });
 
@@ -241,6 +249,9 @@ export class WithdrawalService {
     });
     if (!customer) throw new NotFoundException("Customer profile not found");
 
+    await assertCustomerKycVerified(this.prisma, tenantId, customer.id);
+    await assertWithdrawalMaturityAllowed(this.prisma, tenantId, customer.id);
+
     const wallet = customer.wallets[0];
     if (!wallet) throw new NotFoundException("Customer wallet not found");
 
@@ -265,6 +276,24 @@ export class WithdrawalService {
     if (availableBalance < dto.amount) {
       throw new BadRequestException(
         `Insufficient funds. Current balance: GHS ${walletBalance.toFixed(2)}, pending withdrawals: GHS ${pendingAmount.toFixed(2)}, available: GHS ${availableBalance.toFixed(2)}`,
+      );
+    }
+
+    // BR-W-004: daily withdrawal limit GHS 10,000 per customer
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const dailySum = await this.prisma.withdrawal.aggregate({
+      where: {
+        customerId: customer.id,
+        status: { in: ["requested", "approved", "processing", "completed"] },
+        createdAt: { gte: startOfDay },
+      },
+      _sum: { amount: true },
+    });
+    const dailyTotal = Number(dailySum._sum.amount || 0) + dto.amount;
+    if (dailyTotal > 10_000) {
+      throw new BadRequestException(
+        "Daily withdrawal limit of GHS 10,000 exceeded",
       );
     }
 
@@ -350,6 +379,10 @@ export class WithdrawalService {
     });
   }
 
+  /**
+   * Org approval → payment-rail disbursement → ledger only after cash-out succeeds.
+   * Customer never receives wallet debit until MoMo/bank payout is accepted.
+   */
   async approve(
     tenantId: string,
     transactionId: string,
@@ -362,7 +395,15 @@ export class WithdrawalService {
         type: "withdrawal",
         status: "pending",
       },
-      include: { withdrawal: true, wallet: true },
+      include: {
+        withdrawal: true,
+        wallet: true,
+        customer: {
+          include: {
+            user: { select: { firstName: true, lastName: true } },
+          },
+        },
+      },
     });
     if (!transaction)
       throw new NotFoundException("Pending withdrawal transaction not found");
@@ -370,6 +411,10 @@ export class WithdrawalService {
     const withdrawal = transaction.withdrawal;
     if (!withdrawal || withdrawal.status !== "requested") {
       throw new BadRequestException("Withdrawal request not in pending state");
+    }
+
+    if (!withdrawal.disbursementPhone) {
+      throw new BadRequestException("Withdrawal is missing a payout phone");
     }
 
     // Final balance check before completing the withdrawal!
@@ -385,8 +430,251 @@ export class WithdrawalService {
     const reference = transaction.reference;
     const amount = Number(transaction.amount);
 
-    const result = await this.prisma.$transaction(async (tx) => {
-      const updatedTxn = await tx.transaction.update({
+    // Mark processing before calling the PSP (idempotent audit trail).
+    await this.prisma.$transaction(async (tx) => {
+      await tx.withdrawal.update({
+        where: { id: withdrawal.id },
+        data: {
+          status: "processing",
+          approvedById: approvedBy.id,
+          approvedAt: new Date(),
+        },
+      });
+    });
+
+    const recipientName =
+      `${transaction.customer?.user?.firstName ?? ""} ${transaction.customer?.user?.lastName ?? ""}`.trim() ||
+      "SusuFlow Customer";
+
+    const disbursement = await this.gateway.disburseFunds({
+      amount,
+      phone: withdrawal.disbursementPhone,
+      reference,
+      paymentMethod: withdrawal.disbursementMethod,
+      recipientName,
+      description: `Withdrawal ${reference}`,
+    });
+
+    if (disbursement.status === "failed" || !disbursement.success) {
+      await this.prisma.$transaction(async (tx) => {
+        await tx.transaction.update({
+          where: { id: transactionId },
+          data: { status: "failed", completedAt: new Date() },
+        });
+        await tx.withdrawal.update({
+          where: { id: withdrawal.id },
+          data: {
+            status: "failed",
+            rejectionReason:
+              disbursement.message || "Disbursement failed at payment provider",
+            gatewayReference: disbursement.gatewayReference,
+          },
+        });
+      });
+
+      await enqueueNotification(
+        this.notificationQueue,
+        "withdrawal-rejected",
+        {
+          tenantId,
+          transactionId,
+          rejectionReason:
+            disbursement.message || "Payout failed. Please contact support.",
+          reference,
+          amount,
+        },
+        transactionId,
+      );
+
+      this.financialEvents.log({
+        event: "withdrawal.disbursement_failed",
+        tenantId,
+        transactionId,
+        reference,
+        amount,
+        customerId: transaction.customerId ?? undefined,
+        userId: approvedBy.id,
+        status: "failed",
+        metadata: { message: disbursement.message },
+      });
+
+      await this.audit.log({
+        tenantId,
+        userId: approvedBy.id,
+        action: "withdrawal:disbursement_failed",
+        resourceType: "transaction",
+        resourceId: transactionId,
+        afterState: {
+          reference,
+          amount,
+          status: "failed",
+          message: disbursement.message,
+        },
+      });
+
+      throw new BadRequestException(
+        disbursement.message ||
+          "Payout failed. The customer balance was not debited.",
+      );
+    }
+
+    if (disbursement.status === "pending") {
+      await this.prisma.withdrawal.update({
+        where: { id: withdrawal.id },
+        data: {
+          status: "processing",
+          gatewayReference: disbursement.gatewayReference,
+        },
+      });
+
+      this.financialEvents.log({
+        event: "withdrawal.disbursement_pending",
+        tenantId,
+        transactionId,
+        reference,
+        amount,
+        customerId: transaction.customerId ?? undefined,
+        userId: approvedBy.id,
+        status: "processing",
+        metadata: { gatewayReference: disbursement.gatewayReference },
+      });
+
+      return this.prisma.transaction.findUnique({
+        where: { id: transactionId },
+        include: { withdrawal: true },
+      });
+    }
+
+    return this.finalizeSuccessfulDisbursement({
+      tenantId,
+      transactionId,
+      withdrawalId: withdrawal.id,
+      walletId: transaction.walletId!,
+      customerId: transaction.customerId,
+      reference,
+      amount,
+      gatewayReference: disbursement.gatewayReference || `WD-${reference}`,
+      actorId: approvedBy.id,
+    });
+  }
+
+  /** Completes a processing withdrawal after PSP confirms send-money success. */
+  async confirmDisbursement(
+    reference: string,
+    gatewayReference: string,
+    amount?: number,
+  ) {
+    const transaction = await this.prisma.transaction.findFirst({
+      where: { reference, type: "withdrawal" },
+      include: { withdrawal: true },
+    });
+    if (!transaction?.withdrawal) {
+      throw new NotFoundException("Withdrawal not found for disbursement");
+    }
+
+    if (transaction.withdrawal.status === "completed") {
+      return transaction;
+    }
+
+    if (transaction.withdrawal.status !== "processing") {
+      throw new BadRequestException(
+        "Withdrawal is not awaiting disbursement confirmation",
+      );
+    }
+
+    if (
+      amount !== undefined &&
+      Math.abs(Number(transaction.amount) - Number(amount)) > 0.009
+    ) {
+      throw new BadRequestException("Disbursement amount mismatch");
+    }
+
+    return this.finalizeSuccessfulDisbursement({
+      tenantId: transaction.tenantId,
+      transactionId: transaction.id,
+      withdrawalId: transaction.withdrawal.id,
+      walletId: transaction.walletId!,
+      customerId: transaction.customerId,
+      reference: transaction.reference,
+      amount: Number(transaction.amount),
+      gatewayReference,
+      actorId: transaction.withdrawal.approvedById ?? undefined,
+    });
+  }
+
+  async failDisbursement(reference: string, reason: string) {
+    const transaction = await this.prisma.transaction.findFirst({
+      where: { reference, type: "withdrawal" },
+      include: { withdrawal: true },
+    });
+    if (!transaction?.withdrawal) {
+      throw new NotFoundException("Withdrawal not found for disbursement");
+    }
+    if (transaction.withdrawal.status === "completed") {
+      return transaction;
+    }
+    if (transaction.withdrawal.status !== "processing") {
+      throw new BadRequestException("Withdrawal is not processing");
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.transaction.update({
+        where: { id: transaction.id },
+        data: { status: "failed", completedAt: new Date() },
+      });
+      await tx.withdrawal.update({
+        where: { id: transaction.withdrawal!.id },
+        data: {
+          status: "failed",
+          rejectionReason: reason,
+        },
+      });
+    });
+
+    await enqueueNotification(
+      this.notificationQueue,
+      "withdrawal-rejected",
+      {
+        tenantId: transaction.tenantId,
+        transactionId: transaction.id,
+        rejectionReason: reason,
+        reference: transaction.reference,
+        amount: Number(transaction.amount),
+      },
+      transaction.id,
+    );
+
+    return this.prisma.transaction.findUnique({
+      where: { id: transaction.id },
+      include: { withdrawal: true },
+    });
+  }
+
+  private async finalizeSuccessfulDisbursement(input: {
+    tenantId: string;
+    transactionId: string;
+    withdrawalId: string;
+    walletId: string;
+    customerId: string | null;
+    reference: string;
+    amount: number;
+    gatewayReference: string;
+    actorId?: string;
+  }) {
+    const {
+      tenantId,
+      transactionId,
+      withdrawalId,
+      walletId,
+      customerId,
+      reference,
+      amount,
+      gatewayReference,
+      actorId,
+    } = input;
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.transaction.update({
         where: { id: transactionId },
         data: {
           status: "completed",
@@ -394,43 +682,41 @@ export class WithdrawalService {
         },
       });
 
-      const updatedWd = await tx.withdrawal.update({
-        where: { id: withdrawal.id },
+      await tx.withdrawal.update({
+        where: { id: withdrawalId },
         data: {
           status: "completed",
-          approvedById: approvedBy.id,
-          approvedAt: new Date(),
-          gatewayReference: `MOCK-WD-${reference}`,
+          gatewayReference,
         },
       });
-
-      return { transaction: updatedTxn, withdrawal: updatedWd };
     });
 
-    // Post double-entry ledger entries
     const platformCash = await this.ledger.getAccountByCode(tenantId, "1000");
     const customerAccount = await this.prisma.account.findFirst({
-      where: { walletId: transaction.walletId! },
+      where: { walletId },
     });
 
     if (!customerAccount) throw new Error("Customer ledger account not found");
 
-    // Debit: Customer Wallet Account (liability decreases)
-    // Credit: Platform Cash Account (asset decreases)
-    await this.ledger.postEntries(tenantId, transactionId, [
-      {
-        accountId: customerAccount.id,
-        entryType: "debit",
-        amount,
-        description: `Withdrawal ${reference}`,
-      },
-      {
-        accountId: platformCash.id,
-        entryType: "credit",
-        amount,
-        description: `Withdrawal ${reference}`,
-      },
-    ]);
+    const existingEntries = await this.prisma.ledgerEntry.count({
+      where: { transactionId },
+    });
+    if (existingEntries === 0) {
+      await this.ledger.postEntries(tenantId, transactionId, [
+        {
+          accountId: customerAccount.id,
+          entryType: "debit",
+          amount,
+          description: `Withdrawal ${reference}`,
+        },
+        {
+          accountId: platformCash.id,
+          entryType: "credit",
+          amount,
+          description: `Withdrawal ${reference}`,
+        },
+      ]);
+    }
 
     await enqueueNotification(
       this.notificationQueue,
@@ -450,22 +736,23 @@ export class WithdrawalService {
       transactionId,
       reference,
       amount,
-      customerId: transaction.customerId ?? undefined,
-      userId: approvedBy.id,
+      customerId: customerId ?? undefined,
+      userId: actorId,
       status: "completed",
     });
 
     await this.audit.log({
       tenantId,
-      userId: approvedBy.id,
+      userId: actorId,
       action: "withdrawal:approve",
       resourceType: "transaction",
       resourceId: transactionId,
       afterState: {
         reference,
         amount,
-        customerId: transaction.customerId,
+        customerId,
         status: "completed",
+        gatewayReference,
       },
     });
 
