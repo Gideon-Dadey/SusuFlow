@@ -18,7 +18,6 @@ interface ServiceMenuRowProps {
 export function ServiceMenuRow({
   icon,
   label,
-  subtitle,
   wellBg,
   wellFg,
   onPress,
@@ -43,14 +42,6 @@ export function ServiceMenuRow({
           <Text style={[styles.label, { color: labelColor }]} numberOfLines={1}>
             {label}
           </Text>
-          {subtitle ? (
-            <Text
-              style={[styles.subtitle, { color: colors.mutedForeground }]}
-              numberOfLines={2}
-            >
-              {subtitle}
-            </Text>
-          ) : null}
         </View>
         <AppIcon
           name="chevron-right"

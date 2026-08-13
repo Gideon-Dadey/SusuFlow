@@ -45,14 +45,6 @@ export function BankMenuRow({ item, showDivider = true }: BankMenuRowProps) {
         <Text style={[styles.label, { color: labelColor }]} numberOfLines={1}>
           {item.label}
         </Text>
-        {item.subtitle ? (
-          <Text
-            style={[styles.subtitle, { color: colors.mutedForeground }]}
-            numberOfLines={2}
-          >
-            {item.subtitle}
-          </Text>
-        ) : null}
       </View>
       {item.right !== undefined ? (
         item.right

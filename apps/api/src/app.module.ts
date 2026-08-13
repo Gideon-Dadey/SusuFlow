@@ -24,6 +24,8 @@ import { BillingModule } from "./modules/billing/billing.module";
 import { PlanModule } from "./modules/plan/plan.module";
 import { OperationsModule } from "./modules/operations/operations.module";
 import { NotificationModule } from "./modules/notification/notification.module";
+import { SupportModule } from "./modules/support/support.module";
+import { AnalyticsModule } from "./modules/analytics/analytics.module";
 import { CommonModule } from "./common/common.module";
 import { TenantMiddleware } from "./common/middleware/tenant.middleware";
 import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
@@ -70,6 +72,8 @@ import { loggerConfig } from "./config/logger.config";
     PlanModule,
     OperationsModule,
     NotificationModule,
+    SupportModule,
+    AnalyticsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

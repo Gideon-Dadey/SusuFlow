@@ -1,6 +1,8 @@
 # SusuFlow Mobile (Customer App)
 
-React Native + Expo customer portal aligned with the desktop web app.
+React Native + Expo customer app for deposits, withdrawals, goals, activity, and support.
+
+Full product/ops reference: [`docs/23-MOBILE_CUSTOMER_APP_AND_STORE_READINESS.md`](../../docs/23-MOBILE_CUSTOMER_APP_AND_STORE_READINESS.md).
 
 ## Prerequisites
 
@@ -45,117 +47,121 @@ Expo Go does **not** list your project automatically on iOS in most cases. Use o
 
 ### Option C — Same Wi‑Fi still not working?
 
-Your router may block phone-to-PC traffic. Use tunnel mode instead:
-
 ```bash
 pnpm --filter @susuflow/mobile start:tunnel
 ```
-
-Scan the new QR code (slower but works across networks).
 
 **Requirements:** iPhone and PC on the **same Wi‑Fi**. Allow Node.js through **Windows Firewall** if prompted.
 
 ## Troubleshooting
 
-**iPhone won't open the app but Android works:** You are probably running Expo with `--offline`. iOS Expo Go **requires** a signed manifest and will fail with:
-
-`Offline and no cached development certificate found, unable to sign manifest`
-
-Stop the server (`Ctrl+C`) and start **without** `--offline`:
+**iPhone won't open the app but Android works:** Do **not** use `--offline`. iOS Expo Go needs a signed manifest.
 
 ```bash
 pnpm dev:mobile
-```
-
-If same Wi‑Fi still fails on iPhone, use tunnel mode:
-
-```bash
+# or
 pnpm dev:mobile:tunnel
 ```
 
-**Never use `--offline` for iPhone testing** — Android may still bundle, but iOS will not connect.
-
-**Project not showing inside Expo Go home screen:** Normal on iOS — scan the terminal QR or enter the `exp://` URL manually.
-
-**`Body has already been read` on start:** Run `pnpm dev:mobile` again; if it persists, use `start:tunnel` instead.
+**`Body has already been read` on start:** Restart; if it persists, use tunnel mode.
 
 **Port 8083 in use:** Stop other Expo terminals (`Ctrl+C`), then restart.
 
-**Alternative (no phone):** press `w` in the Expo terminal to open the app in your browser.
+**JavaScript heap OOM while bundling:** Restart with more memory:
 
 ```bash
-# Mobile only
-pnpm dev:mobile
-
-# Desktop (web + API + worker)
-pnpm dev
-
-# Everything: run in two terminals
-pnpm dev          # web + API
-pnpm dev:mobile   # Expo
+NODE_OPTIONS=--max-old-space-size=8192 pnpm --filter @susuflow/mobile start
 ```
 
-Scan the QR code with Expo Go, or press `a` (Android) / `i` (iOS).
+**`pnpm install` EPERM on Windows:** Stop Expo/Metro first (it locks `node_modules`), then reinstall.
+
+## Run
+
+```bash
+pnpm dev:mobile          # LAN
+pnpm dev:mobile:tunnel   # Tunnel for phones across networks
+pnpm --filter @susuflow/mobile lint
+pnpm --filter @susuflow/mobile test
+```
 
 ## Customer test login
 
-- Tenant: `apex-susu`
+- Tenant: `apex-susu` (or your seeded tenant, e.g. `adipa`)
 - Email: `apex.customer@gmail.com`
 - Password: `123456`
 
-## Screens (parity with web customer portal)
+## Screens
 
-- Home dashboard (balance, quick actions, recent transactions)
-- Deposit (MoMo)
-- Withdraw
-- Savings goals
-- Profile & password
-- Transaction history
+| Area    | Routes / notes                                                                                |
+| ------- | --------------------------------------------------------------------------------------------- |
+| Tabs    | Home, Deposit, Withdraw, Goals, Activity, More                                                |
+| Support | `/support`, `/support/chat` (FAQ), `/support/ticket`, `/support/tickets`, `/support/messages` |
+| Profile | `/my-profile/*` — account, KYC, security (password, app lock, delete)                         |
+| Money   | Offline disables deposit/withdraw CTAs; withdraw uses step-up + idempotency key               |
+| Auth    | Email/password + optional Face ID / fingerprint login after enroll                            |
+
+## Environment & EAS secrets
+
+| Variable                       | Where                         | Notes                                                      |
+| ------------------------------ | ----------------------------- | ---------------------------------------------------------- |
+| `EXPO_PUBLIC_API_URL`          | `.env` / `eas.json`           | Required outside `__DEV__`                                 |
+| `EXPO_PUBLIC_WEB_URL`          | `.env` / `eas.json`           | Terms / privacy links                                      |
+| `EXPO_PUBLIC_APP_ENV`          | `eas.json`                    | `development` / `preview` / `production`                   |
+| `EXPO_PUBLIC_SUPPORT_EMAIL`    | `eas.json`                    | Always shown                                               |
+| `EXPO_PUBLIC_SUPPORT_PHONE`    | `eas.json`                    | Real number only; placeholders hide Call                   |
+| `EXPO_PUBLIC_SUPPORT_WHATSAPP` | `eas.json`                    | Digits for `wa.me`; placeholders hide WhatsApp             |
+| `EXPO_PUBLIC_SENTRY_DSN`       | **EAS secret** + local `.env` | Never commit; monitoring idle without DSN                  |
+| `EXPO_PUBLIC_ANALYTICS_KEY`    | optional                      | PostHog key; first-party events always post when logged in |
+| `EXPO_PUBLIC_EAS_PROJECT_ID`   | `app.json` / env              | Push + EAS                                                 |
+
+See `.env.example`, `eas.json`, and `src/lib/store-readiness.ts`.
+
+Set a secret:
+
+```bash
+eas env:create --name EXPO_PUBLIC_SENTRY_DSN --value "https://...@o....ingest.sentry.io/..." \
+  --environment production --visibility plaintext
+```
 
 ## Production builds (EAS)
 
-1. Install EAS CLI: `npm i -g eas-cli`
-2. Log in: `eas login`
-3. Link project: `eas init` (from `apps/mobile`)
-4. Set secrets in the [Expo dashboard](https://expo.dev) or `eas.json` env for:
-   - `EXPO_PUBLIC_API_URL` — HTTPS API (e.g. `https://api.susuflow.com`)
-   - `EXPO_PUBLIC_WEB_URL` — web app (e.g. `https://susuflow.com`)
-5. Build:
-   ```bash
-   pnpm --filter @susuflow/mobile build:preview    # internal testing
-   pnpm --filter @susuflow/mobile build:production
-   ```
-6. Submit to stores (configure Apple/Google credentials interactively via `eas submit`):
-   ```bash
-   pnpm --filter @susuflow/mobile submit:production
-   ```
+```bash
+npm i -g eas-cli
+eas login
+# from apps/mobile
+pnpm --filter @susuflow/mobile smoke:store
+pnpm --filter @susuflow/mobile build:preview
+pnpm --filter @susuflow/mobile build:production
+pnpm --filter @susuflow/mobile submit:production
+```
 
 ## Push notifications
 
-Background payment and security alerts use Expo Push (FCM / APNs under the hood). The **worker must be running** (`pnpm dev` includes it).
+Background payment and security alerts use Expo Push (FCM / APNs). The **worker must be running**.
 
-1. Open the app on a **physical phone** (simulators cannot receive push).
-2. Sign in, allow notifications when prompted.
+1. Open the app on a **physical phone**.
+2. Sign in, allow notifications.
 3. More → Notifications → **Send test notification**, then leave the app.
-4. A real deposit confirmation, failed payment, payout, KYC decision, or new sign-in will also wake the phone.
 
-Expo Go can register a token without a custom EAS project. Production / development builds need `eas init` plus `EXPO_PUBLIC_EAS_PROJECT_ID` (or the UUID written into `app.json`). Optional server env: `EXPO_ACCESS_TOKEN` for higher Expo rate limits.
+## Store readiness checklist
 
-## Production checklist
+Before App Store / Play Store submit:
 
-Before shipping to real users:
-
-- [ ] `eas init` linked to your Expo account (updates `app.json` `projectId`)
-- [ ] EAS env: `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_WEB_URL`, `EXPO_PUBLIC_EAS_PROJECT_ID`, optional support contacts
-- [ ] API + worker deployed; `EXPO_ACCESS_TOKEN` set in production
-- [ ] FCM (Android) and APNs (iOS) credentials uploaded in the Expo dashboard
-- [ ] Test: login → allow notifications → send test alert while the app is closed → deposit confirmed push → tap opens the receipt
-- [ ] Test full flows: register → verify → login → deposit → withdraw → logout → biometric login
-- [ ] Store listings: privacy policy, terms, support URL (linked from Profile → About)
+- [ ] `pnpm install` (includes `@sentry/react-native`)
+- [ ] EAS secret `EXPO_PUBLIC_SENTRY_DSN`
+- [ ] Real support phone + WhatsApp (not placeholders)
+- [ ] Prod/preview `EXPO_PUBLIC_API_URL` + `EXPO_PUBLIC_WEB_URL` resolve
+- [ ] `pnpm smoke:store` passes
+- [ ] Privacy / terms / support URL on store listing
+- [ ] Android permissions: biometric only — **no** `RECORD_AUDIO`
+- [ ] Dark banking chrome default; Appearance can switch light
+- [ ] Device smoke: register → verify → login → biometric enroll → deposit → withdraw (double-tap safe) → app lock → **in-app ticket** → logout → biometric login
+- [ ] Push: closed-app deposit confirmation + tap opens receipt
 
 ## Tests
 
 ```bash
 pnpm --filter @susuflow/mobile test
 pnpm --filter @susuflow/mobile lint
+pnpm --filter @susuflow/mobile smoke:store
 ```

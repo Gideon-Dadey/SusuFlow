@@ -16,8 +16,8 @@ const RECEIPT_OPEN_DELAY_MS = 280;
 
 export function HomeNotificationBell({
   variant = "count",
-  iconSize = 20,
-  controlSize = 44,
+  iconSize = 26,
+  controlSize = 52,
 }: {
   variant?: "count" | "dot";
   iconSize?: number;
@@ -172,25 +172,25 @@ const styles = StyleSheet.create({
   },
   dot: {
     position: "absolute",
-    width: 8,
-    height: 8,
+    width: 10,
+    height: 10,
     borderRadius: radius.full,
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: "#ffffff",
   },
   badge: {
     position: "absolute",
-    top: 4,
-    right: 4,
-    minWidth: 18,
-    height: 18,
+    top: 6,
+    right: 6,
+    minWidth: 20,
+    height: 20,
     borderRadius: radius.full,
-    paddingHorizontal: 4,
+    paddingHorizontal: 5,
     alignItems: "center",
     justifyContent: "center",
   },
   badgeText: {
     fontFamily: typography.fontFamily.bold,
-    fontSize: 10,
+    fontSize: 11,
   },
 });

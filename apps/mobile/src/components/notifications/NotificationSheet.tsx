@@ -162,11 +162,6 @@ export function NotificationSheet({
               <Text style={[styles.title, { color: colors.heading }]}>
                 Notifications
               </Text>
-              <Text
-                style={[styles.subtitle, { color: colors.mutedForeground }]}
-              >
-                Payments, identity, and security — tap to open
-              </Text>
             </View>
             <Pressable
               accessibilityRole="button"

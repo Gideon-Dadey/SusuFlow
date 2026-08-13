@@ -291,6 +291,70 @@ const notificationWorker = new Worker(
       return { sent: true, event: job.name };
     }
 
+    if (job.name === "support-ticket-created") {
+      const { supportEmail, email, subject, body, topic, ticketId, tenantId } =
+        job.data as {
+          supportEmail?: string;
+          email?: string;
+          subject?: string;
+          body?: string;
+          topic?: string;
+          ticketId?: string;
+          tenantId?: string;
+        };
+
+      const to =
+        supportEmail?.trim() ||
+        process.env.SUPPORT_EMAIL?.trim() ||
+        "support@susuflow.com";
+      const tenant = tenantId
+        ? await db.tenant.findUnique({ where: { id: tenantId } })
+        : null;
+      const tenantName = tenant?.name || "SusuFlow";
+      const html = generateSaaSEmailHtml({
+        title: "New in-app support ticket",
+        preheader: subject || "Customer needs help",
+        greeting: "Hello Support",
+        message:
+          "A customer submitted a support ticket from the SusuFlow mobile app.",
+        details: [
+          { label: "Ticket ID", value: ticketId || "n/a" },
+          { label: "Topic", value: topic || "general" },
+          { label: "From", value: email || "n/a" },
+          { label: "Subject", value: subject || "n/a" },
+          { label: "Message", value: (body || "").slice(0, 800) },
+        ],
+        tenantName,
+      });
+      await sendEmail(
+        to,
+        `[SusuFlow Support] ${subject || "New ticket"}`,
+        html,
+      );
+
+      if (email) {
+        const ack = generateSaaSEmailHtml({
+          title: "We received your message",
+          preheader: "SusuFlow support will reply soon",
+          greeting: "Hello",
+          message:
+            "Thanks for contacting SusuFlow. Our team has your ticket and will follow up by email.",
+          details: [
+            { label: "Subject", value: subject || "Support request" },
+            { label: "Ticket ID", value: ticketId || "n/a" },
+          ],
+          tenantName,
+        });
+        await sendEmail(
+          email,
+          `We received your support request - ${tenantName}`,
+          ack,
+        );
+      }
+
+      return { sent: true, event: job.name };
+    }
+
     const userOnlyEvents = new Set([
       "kyc-approved",
       "kyc-rejected",

@@ -1,5 +1,16 @@
 import * as Crypto from "expo-crypto";
 import * as SecureStore from "expo-secure-store";
+import {
+  APP_LOCK_PIN_MAX,
+  APP_LOCK_PIN_MIN,
+  isValidLockPin,
+} from "./app-lock-pin";
+
+export {
+  APP_LOCK_PIN_MAX,
+  APP_LOCK_PIN_MIN,
+  isValidLockPin,
+} from "./app-lock-pin";
 
 const PIN_KEY = "app_lock_pin_v1";
 const ENABLED_KEY = "app_lock_enabled_v1";
@@ -12,9 +23,6 @@ const SECURE_OPTS: SecureStore.SecureStoreOptions = {
 /** Lock after this long in background (ms). */
 export const APP_LOCK_BACKGROUND_MS = 12_000;
 
-export const APP_LOCK_PIN_MIN = 4;
-export const APP_LOCK_PIN_MAX = 6;
-
 type PinPayload = { salt: string; hash: string };
 
 function randomSalt(): string {
@@ -25,14 +33,6 @@ async function hashPin(pin: string, salt: string): Promise<string> {
   return Crypto.digestStringAsync(
     Crypto.CryptoDigestAlgorithm.SHA256,
     `susuflow-lock:${salt}:${pin}`,
-  );
-}
-
-export function isValidLockPin(pin: string): boolean {
-  return (
-    /^\d+$/.test(pin) &&
-    pin.length >= APP_LOCK_PIN_MIN &&
-    pin.length <= APP_LOCK_PIN_MAX
   );
 }
 

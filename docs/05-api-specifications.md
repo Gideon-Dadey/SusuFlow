@@ -11,27 +11,27 @@
 
 ### 1.1 Conventions
 
-| Aspect | Standard |
-|--------|----------|
-| Protocol | HTTPS only (TLS 1.3) |
-| Format | JSON (`application/json`) |
-| Versioning | URL path prefix `/v1` |
-| Authentication | Bearer JWT in `Authorization` header |
-| Tenant context | Resolved from subdomain or `X-Tenant-ID` header (super admin) |
-| Pagination | Cursor-based: `?cursor=xxx&limit=20` (max 100) |
-| Filtering | Query params: `?status=active&type=deposit` |
-| Sorting | `?sort=created_at&order=desc` |
-| Idempotency | `Idempotency-Key` header on POST/PUT |
-| Rate limiting | `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset` headers |
-| Request ID | `X-Request-ID` echoed in response |
-| Errors | RFC 7807 Problem Details format |
+| Aspect         | Standard                                                                  |
+| -------------- | ------------------------------------------------------------------------- |
+| Protocol       | HTTPS only (TLS 1.3)                                                      |
+| Format         | JSON (`application/json`)                                                 |
+| Versioning     | URL path prefix `/v1`                                                     |
+| Authentication | Bearer JWT in `Authorization` header                                      |
+| Tenant context | Resolved from subdomain or `X-Tenant-ID` header (super admin)             |
+| Pagination     | Cursor-based: `?cursor=xxx&limit=20` (max 100)                            |
+| Filtering      | Query params: `?status=active&type=deposit`                               |
+| Sorting        | `?sort=created_at&order=desc`                                             |
+| Idempotency    | `Idempotency-Key` header on POST/PUT                                      |
+| Rate limiting  | `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset` headers |
+| Request ID     | `X-Request-ID` echoed in response                                         |
+| Errors         | RFC 7807 Problem Details format                                           |
 
 ### 1.2 Standard Response Envelope
 
 ```json
 {
   "success": true,
-  "data": { },
+  "data": {},
   "meta": {
     "request_id": "req_abc123",
     "timestamp": "2026-06-18T10:30:00Z"
@@ -44,7 +44,7 @@
 ```json
 {
   "success": true,
-  "data": [ ],
+  "data": [],
   "meta": {
     "request_id": "req_abc123",
     "pagination": {
@@ -65,27 +65,25 @@
   "status": 422,
   "detail": "Phone number is required",
   "instance": "/v1/customers",
-  "errors": [
-    { "field": "phone", "message": "Phone number is required" }
-  ]
+  "errors": [{ "field": "phone", "message": "Phone number is required" }]
 }
 ```
 
 ### 1.5 HTTP Status Codes
 
-| Code | Usage |
-|------|-------|
-| 200 | Success (GET, PUT, PATCH) |
-| 201 | Created (POST) |
-| 204 | No content (DELETE) |
-| 400 | Bad request |
-| 401 | Unauthorized (missing/invalid token) |
-| 403 | Forbidden (insufficient permissions) |
-| 404 | Resource not found |
-| 409 | Conflict (duplicate, idempotency) |
-| 422 | Validation error |
-| 429 | Rate limit exceeded |
-| 500 | Internal server error |
+| Code | Usage                                |
+| ---- | ------------------------------------ |
+| 200  | Success (GET, PUT, PATCH)            |
+| 201  | Created (POST)                       |
+| 204  | No content (DELETE)                  |
+| 400  | Bad request                          |
+| 401  | Unauthorized (missing/invalid token) |
+| 403  | Forbidden (insufficient permissions) |
+| 404  | Resource not found                   |
+| 409  | Conflict (duplicate, idempotency)    |
+| 422  | Validation error                     |
+| 429  | Rate limit exceeded                  |
+| 500  | Internal server error                |
 
 ---
 
@@ -96,6 +94,7 @@
 Register a new customer account.
 
 **Request:**
+
 ```json
 {
   "first_name": "Kwame",
@@ -108,6 +107,7 @@ Register a new customer account.
 ```
 
 **Response (201):**
+
 ```json
 {
   "success": true,
@@ -121,6 +121,7 @@ Register a new customer account.
 ### POST /auth/login
 
 **Request:**
+
 ```json
 {
   "email": "kwame@example.com",
@@ -130,6 +131,7 @@ Register a new customer account.
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -150,6 +152,7 @@ Register a new customer account.
 ### POST /auth/mfa/verify
 
 **Request:**
+
 ```json
 {
   "code": "123456",
@@ -160,6 +163,7 @@ Register a new customer account.
 ### POST /auth/refresh
 
 **Request:**
+
 ```json
 {
   "refresh_token": "rt_abc123"
@@ -187,6 +191,7 @@ Revokes refresh token.
 Create a new tenant.
 
 **Request:**
+
 ```json
 {
   "slug": "abc-susu",
@@ -223,6 +228,7 @@ Create customer (staff/collector onboarding).
 **Roles:** company_admin, account_officer, collector
 
 **Request:**
+
 ```json
 {
   "first_name": "Kwame",
@@ -263,6 +269,7 @@ Generate account statement.
 ### POST /customers/:id/assign-collector
 
 **Request:**
+
 ```json
 {
   "collector_id": "uuid"
@@ -281,9 +288,10 @@ Initiate a deposit.
 **Roles:** customer, collector, account_officer
 
 **Request:**
+
 ```json
 {
-  "amount": 100.00,
+  "amount": 100.0,
   "payment_method": "mtn_momo",
   "customer_id": "uuid",
   "payer_phone": "+233241234567",
@@ -292,6 +300,7 @@ Initiate a deposit.
 ```
 
 **Response (201):**
+
 ```json
 {
   "success": true,
@@ -329,22 +338,43 @@ Payment gateway webhook (no auth — signature verified).
 
 ## 6. Withdrawal APIs
 
-### POST /withdrawals
+### POST /withdrawals/request
 
-Request a withdrawal.
+Customer self-serve withdrawal request (pending staff approval / payout).
 
-**Permissions:** `withdrawal:create`  
+**Permissions:** authenticated customer  
 **Roles:** customer
 
-**Request:**
+**Request (camelCase — mobile + Nest DTOs):**
+
 ```json
 {
-  "amount": 500.00,
-  "disbursement_method": "mtn_momo",
-  "disbursement_phone": "+233241234567",
-  "idempotency_key": "wd_unique_key_456"
+  "amount": 500.0,
+  "disbursementMethod": "mtn_momo",
+  "disbursementPhone": "+233241234567",
+  "idempotencyKey": "wd_1710000000000_ab12cd34"
 }
 ```
+
+| Field                | Required    | Notes                                                |
+| -------------------- | ----------- | ---------------------------------------------------- |
+| `amount`             | yes         | Minimum GHS 10.00                                    |
+| `disbursementMethod` | yes         | e.g. `mtn_momo`, `vodafone_cash`, `airteltigo_money` |
+| `disbursementPhone`  | yes         | MoMo wallet number                                   |
+| `idempotencyKey`     | recommended | Unique per user intent; mobile always sends `wd_…`   |
+
+**Idempotency semantics** (`Transaction.idempotencyKey` UNIQUE):
+
+- Same key + same tenant + type `withdrawal` + same amount → return the **original** transaction (safe client retry)
+- Same key + conflicting payload → `409 Conflict` (`Idempotency key reuse conflict`)
+- Missing key → always creates a new request (avoid on flaky networks)
+
+### POST /withdrawals
+
+Staff/admin recorded withdrawal (includes `customerId`). Also accepts optional `idempotencyKey`.
+
+**Permissions:** `withdrawal:create`  
+**Roles:** staff / company_admin (collector-assisted paths as configured)
 
 ### GET /withdrawals
 
@@ -360,9 +390,46 @@ List withdrawals.
 ### POST /withdrawals/:id/reject
 
 **Request:**
+
 ```json
 {
-  "reason": "Insufficient verification"
+  "rejectionReason": "Insufficient verification"
+}
+```
+
+---
+
+## 6b. Support & analytics (mobile)
+
+### POST /support/tickets
+
+Create an in-app support ticket. Enqueues `support-ticket-created` (email to `SUPPORT_EMAIL` + customer ack).
+
+**Roles:** customer (and staff roles as configured)
+
+```json
+{
+  "topic": "withdrawals",
+  "subject": "Withdrawal still pending",
+  "body": "I requested a withdrawal yesterday and it is still pending.",
+  "lastChatQuestion": "When will my withdrawal arrive?"
+}
+```
+
+### GET /support/tickets
+
+List tickets for the authenticated user (tenant-scoped).
+
+### GET /support/tickets/:id
+
+### POST /analytics/events
+
+Authenticated product analytics ingest (logged server-side; optional PostHog from the client).
+
+```json
+{
+  "event": "deposit.confirmed",
+  "properties": { "amount": 50, "method": "mtn_momo" }
 }
 ```
 
@@ -377,12 +444,13 @@ Get wallet details and balance.
 ### GET /wallets/:id/balance
 
 **Response:**
+
 ```json
 {
   "success": true,
   "data": {
     "wallet_id": "uuid",
-    "balance": 1500.00,
+    "balance": 1500.0,
     "currency": "GHS",
     "last_transaction_at": "2026-06-18T09:00:00Z"
   }
@@ -432,16 +500,17 @@ Collector's own dashboard (when logged in as collector).
 ### GET /dashboard/summary
 
 **Response:**
+
 ```json
 {
   "success": true,
   "data": {
-    "total_deposits_today": 25000.00,
+    "total_deposits_today": 25000.0,
     "deposit_count_today": 45,
-    "total_withdrawals_today": 5000.00,
+    "total_withdrawals_today": 5000.0,
     "active_customers": 1250,
     "pending_withdrawals": 3,
-    "recent_transactions": [ ]
+    "recent_transactions": []
   }
 }
 ```
@@ -477,6 +546,7 @@ User's notifications.
 ### PUT /notifications/preferences
 
 **Request:**
+
 ```json
 {
   "email_enabled": true,
@@ -495,6 +565,7 @@ User's notifications.
 Upload KYC document.
 
 **Request:** `multipart/form-data`
+
 - `document_type`: ghana_card | passport | utility_bill | selfie
 - `file`: binary
 
@@ -508,6 +579,7 @@ List customer's KYC documents.
 **Roles:** company_admin, account_officer
 
 **Request:**
+
 ```json
 {
   "status": "approved",
@@ -518,6 +590,7 @@ List customer's KYC documents.
 ### POST /kyc/verify-ghana-card
 
 **Request:**
+
 ```json
 {
   "ghana_card_number": "GHA-123456789-0",
@@ -563,6 +636,7 @@ List fraud alerts.
 Update alert status.
 
 **Request:**
+
 ```json
 {
   "status": "resolved",
@@ -582,6 +656,7 @@ Create staff user.
 **Roles:** company_admin
 
 **Request:**
+
 ```json
 {
   "email": "officer@abcsusu.com",
@@ -617,10 +692,11 @@ Deactivate staff user.
 ### POST /customers/:id/enroll-plan
 
 **Request:**
+
 ```json
 {
   "plan_id": "uuid",
-  "target_amount": 5000.00
+  "target_amount": 5000.0
 }
 ```
 
@@ -665,14 +741,14 @@ Kubernetes liveness probe.
 
 ## 18. Rate Limits
 
-| Endpoint Group | Limit | Window |
-|---------------|-------|--------|
-| Auth (login, register) | 10 | 1 minute |
-| Deposits | 30 | 1 minute |
-| General API | 100 | 1 minute |
-| Admin API | 200 | 1 minute |
-| Webhooks | 1000 | 1 minute |
-| Reports/exports | 10 | 1 minute |
+| Endpoint Group         | Limit | Window   |
+| ---------------------- | ----- | -------- |
+| Auth (login, register) | 10    | 1 minute |
+| Deposits               | 30    | 1 minute |
+| General API            | 100   | 1 minute |
+| Admin API              | 200   | 1 minute |
+| Webhooks               | 1000  | 1 minute |
+| Reports/exports        | 10    | 1 minute |
 
 ---
 
@@ -684,6 +760,7 @@ Kubernetes liveness probe.
 **Verification:** HMAC-SHA256 signature in `Hubtel-Callback-Signature` header
 
 **Payload:**
+
 ```json
 {
   "ResponseCode": "0000",
@@ -692,9 +769,9 @@ Kubernetes liveness probe.
     "CheckoutId": "hubtel_checkout_id",
     "SalesInvoiceId": "susuflow_payment_id",
     "ClientReference": "TXN-20260618-ABC123",
-    "Amount": 100.00,
-    "Charges": 1.50,
-    "AmountAfterCharges": 98.50,
+    "Amount": 100.0,
+    "Charges": 1.5,
+    "AmountAfterCharges": 98.5,
     "CustomerPhoneNumber": "233241234567",
     "Status": "Success",
     "PaymentDetails": {
@@ -707,6 +784,7 @@ Kubernetes liveness probe.
 ```
 
 **Processing:**
+
 1. Verify HMAC signature
 2. Lookup payment by `ClientReference`
 3. Check idempotency (reject if already processed)
@@ -717,4 +795,4 @@ Kubernetes liveness probe.
 
 ---
 
-*Document end. Swagger/OpenAPI spec generated at runtime via NestJS. Next: UI/UX Design → `06-ui-ux-design.md`*
+_Document end. Swagger/OpenAPI spec generated at runtime via NestJS. Next: UI/UX Design → `06-ui-ux-design.md`_

@@ -1,4 +1,5 @@
 import { getApiBaseUrl } from "./config";
+import { getLoginDeviceContext } from "./device-identity";
 import { rememberedAccessToken, rememberedTenantSlug } from "./session-memory";
 import { storage } from "./storage";
 
@@ -352,12 +353,19 @@ export interface CustomerPlanWithProgress {
 }
 
 export const authApi = {
-  login: (email: string, password: string, tenantSlug = "") =>
-    api.post<LoginResponse>(
+  login: async (email: string, password: string, tenantSlug = "") => {
+    const device = await getLoginDeviceContext();
+    return api.post<LoginResponse>(
       "/auth/login",
-      { email, password },
+      {
+        email,
+        password,
+        deviceFingerprint: device.deviceFingerprint,
+        deviceName: device.deviceName,
+      },
       { skipAuth: true, tenantSlug },
-    ),
+    );
+  },
   register: (
     data: {
       firstName: string;
@@ -591,6 +599,27 @@ export const withdrawalApi = {
   }) => api.post<Transaction>("/withdrawals/request", data),
   list: (params?: { customer_id?: string; limit?: number }) =>
     api.get<{ items: Transaction[] }>(`/withdrawals${toQueryString(params)}`),
+};
+
+export type SupportTicket = {
+  id: string;
+  topic: string;
+  subject: string;
+  body: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const supportApi = {
+  createTicket: (data: {
+    topic: string;
+    subject: string;
+    body: string;
+    lastChatQuestion?: string;
+  }) => api.post<SupportTicket>("/support/tickets", data),
+  listTickets: () => api.get<SupportTicket[]>("/support/tickets"),
+  getTicket: (id: string) => api.get<SupportTicket>(`/support/tickets/${id}`),
 };
 
 export const planApi = {

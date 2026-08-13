@@ -3,84 +3,40 @@ import type { Href } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppIcon } from "@/components/icons/AppIcon";
-import { BrandMark } from "@/components/profile/BrandMark";
-import { UserAvatar } from "@/components/profile/UserAvatar";
-import { useProfileData } from "@/components/settings/useProfileData";
-import { SUPPORT_TOPICS, greetingForName } from "@/lib/support-assistant";
+import { StackNavHeader } from "@/components/navigation/StackNavHeader";
+import { SUPPORT_TOPICS } from "@/lib/support-assistant";
 import { authChrome } from "@/theme/auth-chrome";
 import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { layout, radius, spacing, typography } from "@/theme/tokens";
 
 export default function SupportHubScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { isDark } = useTheme();
-  const { displayName, initials, avatarUrl } = useProfileData();
-  const greeting = greetingForName(displayName);
 
-  const pageBg = isDark ? bankChrome.pageDark : "#F4F5F7";
-  const heroBg = bankChrome.pageDark;
-  const cardBg = isDark ? authChrome.field : "#FFFFFF";
-  const cardBorder = isDark ? authChrome.fieldBorder : "#E5E7EB";
-  const cardRule = isDark ? "rgba(255,255,255,0.12)" : "#E5E7EB";
-  const titleColor = isDark ? authChrome.ink : "#0F172A";
-  const mutedColor = isDark ? authChrome.inkMuted : "#64748B";
-  const chevronColor = isDark ? authChrome.inkMuted : "#94A3B8";
-  const outlineIconBorder = isDark ? "rgba(255,255,255,0.22)" : "#CBD5E1";
-  const outlineIconBg = isDark ? "transparent" : "#FFFFFF";
-  const outlineIconFg = isDark ? authChrome.ink : "#111111";
-  const closeBtnBg = isDark ? authChrome.field : "#FFFFFF";
-  const closeBtnFg = isDark ? authChrome.ink : "#111111";
-  const topicIconBg = isDark ? "rgba(255,255,255,0.12)" : bankChrome.pageDark;
+  const pageBg = bankChrome.pageDark;
+  const cardBg = isDark ? authChrome.field : "rgba(255,255,255,0.08)";
+  const cardBorder = isDark ? authChrome.fieldBorder : "rgba(255,255,255,0.12)";
+  const cardRule = "rgba(255,255,255,0.12)";
+  const titleColor = "#FFFFFF";
+  const mutedColor = "rgba(255,255,255,0.55)";
+  const chevronColor = "rgba(255,255,255,0.45)";
+  const outlineIconBorder = "rgba(255,255,255,0.22)";
+  const outlineIconBg = "transparent";
+  const outlineIconFg = "#FFFFFF";
+  const topicIconBg = "rgba(255,255,255,0.12)";
 
   return (
     <View style={[styles.root, { backgroundColor: pageBg }]}>
-      <View
-        style={[
-          styles.hero,
-          { backgroundColor: heroBg, paddingTop: insets.top + spacing.md },
-        ]}
-      >
-        <View style={styles.heroTop}>
-          <BrandMark size={24} framed={false} />
-          <View style={styles.heroRight}>
-            <View style={styles.avatarStack}>
-              <UserAvatar
-                initials={initials}
-                seed={displayName}
-                imageUrl={avatarUrl}
-                size="sm"
-              />
-            </View>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Close support"
-              onPress={() => router.back()}
-              hitSlop={10}
-              style={({ pressed }) => [
-                styles.closeBtn,
-                { backgroundColor: closeBtnBg },
-                pressed && styles.pressed,
-              ]}
-            >
-              <AppIcon name="close" size={18} color={closeBtnFg} />
-            </Pressable>
-          </View>
-        </View>
-
-        <Text style={styles.hello}>
-          {greeting} <Text style={styles.wave}>👋</Text>
-        </Text>
-        <Text style={styles.heroPrompt}>How can we help?</Text>
-      </View>
+      <StackNavHeader title="Support" ink />
 
       <ScrollView
-        style={[styles.sheet, { backgroundColor: pageBg }]}
+        style={styles.scroll}
         contentContainerStyle={{
-          paddingHorizontal: spacing.lg,
-          paddingTop: spacing.lg,
-          paddingBottom: insets.bottom + 40,
+          paddingHorizontal: layout.pageGutter,
+          paddingTop: spacing.md,
+          paddingBottom: insets.bottom + spacing.lg,
           gap: spacing.md,
         }}
         showsVerticalScrollIndicator={false}
@@ -93,10 +49,8 @@ export default function SupportHubScreen() {
         >
           <HubNavRow
             title="Help"
-            subtitle="Guides & common questions"
             icon="help"
             titleColor={titleColor}
-            mutedColor={mutedColor}
             outlineIconBorder={outlineIconBorder}
             outlineIconBg={outlineIconBg}
             outlineIconFg={outlineIconFg}
@@ -105,15 +59,23 @@ export default function SupportHubScreen() {
           <View style={[styles.cardRule, { backgroundColor: cardRule }]} />
           <HubNavRow
             title="Messages"
-            subtitle="Chat with SusuFlow support"
             icon="chat"
             filled
             titleColor={titleColor}
-            mutedColor={mutedColor}
             outlineIconBorder={outlineIconBorder}
             outlineIconBg={outlineIconBg}
             outlineIconFg={outlineIconFg}
             onPress={() => router.push("/support/messages" as Href)}
+          />
+          <View style={[styles.cardRule, { backgroundColor: cardRule }]} />
+          <HubNavRow
+            title="My tickets"
+            icon="help"
+            titleColor={titleColor}
+            outlineIconBorder={outlineIconBorder}
+            outlineIconBg={outlineIconBg}
+            outlineIconFg={outlineIconFg}
+            onPress={() => router.push("/support/tickets" as Href)}
           />
         </View>
 
@@ -155,9 +117,6 @@ export default function SupportHubScreen() {
                   <Text style={[styles.topicTitle, { color: titleColor }]}>
                     {topic.title}
                   </Text>
-                  <Text style={[styles.topicSubtitle, { color: mutedColor }]}>
-                    {topic.subtitle}
-                  </Text>
                 </View>
                 <AppIcon name="chevron-right" size={16} color={chevronColor} />
               </Pressable>
@@ -165,21 +124,9 @@ export default function SupportHubScreen() {
           ))}
         </View>
 
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: cardBg, borderColor: cardBorder },
-          ]}
-        >
-          <Text style={[styles.cardTitle, { color: titleColor }]}>
-            How to contact our support team
-          </Text>
-          <Text style={[styles.cardBody, { color: mutedColor }]}>
-            Ask general questions in Help anytime. For account-specific issues,
-            open Messages or Contact us from More. We never ask for passwords or
-            OTPs.
-          </Text>
-        </View>
+        <Text style={[styles.footer, { color: mutedColor }]}>
+          How to contact our support team
+        </Text>
       </ScrollView>
     </View>
   );
@@ -187,23 +134,19 @@ export default function SupportHubScreen() {
 
 function HubNavRow({
   title,
-  subtitle,
   icon,
   filled,
   onPress,
   titleColor,
-  mutedColor,
   outlineIconBorder,
   outlineIconBg,
   outlineIconFg,
 }: {
   title: string;
-  subtitle: string;
   icon: "help" | "chat";
   filled?: boolean;
   onPress: () => void;
   titleColor: string;
-  mutedColor: string;
   outlineIconBorder: string;
   outlineIconBg: string;
   outlineIconFg: string;
@@ -216,9 +159,6 @@ function HubNavRow({
     >
       <View style={styles.navCopy}>
         <Text style={[styles.navTitle, { color: titleColor }]}>{title}</Text>
-        <Text style={[styles.navSubtitle, { color: mutedColor }]}>
-          {subtitle}
-        </Text>
       </View>
       <View
         style={[
@@ -247,51 +187,8 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  hero: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xl,
-    gap: spacing.sm,
-  },
-  heroTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: spacing.md,
-  },
-  heroRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  avatarStack: {
-    flexDirection: "row",
-  },
-  closeBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  hello: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: 28,
-    color: "#FFFFFF",
-    letterSpacing: -0.4,
-  },
-  wave: {
-    fontSize: 26,
-  },
-  heroPrompt: {
-    fontFamily: typography.fontFamily.semibold,
-    fontSize: 28,
-    color: "#FFFFFF",
-    letterSpacing: -0.45,
-    marginBottom: spacing.sm,
-  },
-  sheet: {
+  scroll: {
     flex: 1,
-    marginTop: -12,
   },
   card: {
     borderRadius: radius.lg,
@@ -306,12 +203,12 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: 8,
   },
-  cardBody: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: 14,
-    lineHeight: 21,
+  footer: {
+    fontFamily: typography.fontFamily.medium,
+    fontSize: 12,
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
     paddingHorizontal: 4,
-    paddingBottom: 14,
   },
   cardRule: {
     height: StyleSheet.hairlineWidth,
@@ -320,22 +217,17 @@ const styles = StyleSheet.create({
   navRow: {
     flexDirection: "row",
     alignItems: "center",
-    minHeight: 64,
+    minHeight: 56,
     paddingVertical: 12,
     paddingHorizontal: 4,
     gap: 12,
   },
   navCopy: {
     flex: 1,
-    gap: 2,
   },
   navTitle: {
     fontFamily: typography.fontFamily.semibold,
     fontSize: 17,
-  },
-  navSubtitle: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: 13,
   },
   navIcon: {
     width: 36,
@@ -363,15 +255,10 @@ const styles = StyleSheet.create({
   },
   topicCopy: {
     flex: 1,
-    gap: 2,
   },
   topicTitle: {
     fontFamily: typography.fontFamily.semibold,
     fontSize: 15,
-  },
-  topicSubtitle: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: 13,
   },
   pressed: {
     opacity: 0.82,

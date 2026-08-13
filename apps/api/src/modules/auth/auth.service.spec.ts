@@ -25,8 +25,14 @@ describe("AuthService", () => {
       findUnique: jest.Mock;
       updateMany: jest.Mock;
     };
+    device: {
+      findUnique: jest.Mock;
+      create: jest.Mock;
+      update: jest.Mock;
+    };
   };
   let jwt: { sign: jest.Mock };
+  let notificationQueue: { add: jest.Mock };
 
   const mockUser = {
     id: "user-1",
@@ -38,6 +44,9 @@ describe("AuthService", () => {
     status: "active",
     failedLoginCount: 0,
     lockedUntil: null,
+    lastLoginAt: new Date("2026-01-01T00:00:00.000Z"),
+    mfaEnabled: false,
+    tenant: { slug: "abc" },
     userRoles: [
       {
         role: {
@@ -56,8 +65,14 @@ describe("AuthService", () => {
         findUnique: jest.fn(),
         updateMany: jest.fn(),
       },
+      device: {
+        findUnique: jest.fn().mockResolvedValue(null),
+        create: jest.fn().mockResolvedValue({ id: "device-1" }),
+        update: jest.fn().mockResolvedValue({}),
+      },
     };
     jwt = { sign: jest.fn().mockReturnValue("access-token") };
+    notificationQueue = { add: jest.fn().mockResolvedValue({}) };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -84,7 +99,7 @@ describe("AuthService", () => {
         },
         {
           provide: getQueueToken("notifications"),
-          useValue: { add: jest.fn().mockResolvedValue({}) },
+          useValue: notificationQueue,
         },
       ],
     }).compile();
@@ -111,6 +126,63 @@ describe("AuthService", () => {
         expect.objectContaining({
           data: expect.objectContaining({ failedLoginCount: 0 }),
         }),
+      );
+    });
+
+    it("does not alert when the same device signs in again", async () => {
+      prisma.user.findMany.mockResolvedValue([mockUser]);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      prisma.user.update.mockResolvedValue(mockUser);
+      prisma.refreshToken.create.mockResolvedValue({});
+      prisma.device.findUnique.mockResolvedValue({
+        id: "device-known",
+        fingerprint: "sf_known_device_fingerprint",
+      });
+
+      await service.login(
+        {
+          email: "test@example.com",
+          password: "password",
+          deviceFingerprint: "sf_known_device_fingerprint",
+          deviceName: "iPhone",
+        },
+        { id: "tenant-1", slug: "abc", name: "ABC", status: "active" },
+      );
+
+      expect(prisma.device.update).toHaveBeenCalled();
+      expect(notificationQueue.add).not.toHaveBeenCalledWith(
+        "security-new-login",
+        expect.anything(),
+        expect.anything(),
+      );
+    });
+
+    it("alerts when a new device signs in after a prior login", async () => {
+      prisma.user.findMany.mockResolvedValue([mockUser]);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      prisma.user.update.mockResolvedValue(mockUser);
+      prisma.refreshToken.create.mockResolvedValue({});
+      prisma.device.findUnique.mockResolvedValue(null);
+      prisma.device.create.mockResolvedValue({ id: "device-new" });
+
+      await service.login(
+        {
+          email: "test@example.com",
+          password: "password",
+          deviceFingerprint: "sf_brand_new_device_fp",
+          deviceName: "Pixel 8",
+        },
+        { id: "tenant-1", slug: "abc", name: "ABC", status: "active" },
+      );
+
+      expect(prisma.device.create).toHaveBeenCalled();
+      expect(notificationQueue.add).toHaveBeenCalledWith(
+        "security-new-login",
+        expect.objectContaining({
+          userId: "user-1",
+          deviceName: "Pixel 8",
+        }),
+        expect.anything(),
       );
     });
 

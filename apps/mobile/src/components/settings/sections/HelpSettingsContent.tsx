@@ -5,11 +5,7 @@ import {
   openSupportEmail,
 } from "@/components/profile/ProfileSections";
 import { SettingsPanel } from "@/components/settings/SettingsDetailLayout";
-import {
-  getSupportEmail,
-  getSupportPhone,
-  getSupportWhatsApp,
-} from "@/lib/config";
+import { getSupportPhone, getSupportWhatsApp } from "@/lib/config";
 import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radius, typography } from "@/theme/tokens";
@@ -33,16 +29,12 @@ const FAQ_ITEMS = [
 
 export function HelpSettingsContent() {
   const { colors, isDark } = useTheme();
-  const supportEmail = getSupportEmail();
   const supportPhone = getSupportPhone();
   const supportWhatsApp = getSupportWhatsApp();
 
   /** Light: solid black CTA. Dark: raised charcoal card so it separates from the page. */
   const cardBg = isDark ? "#1A1A1A" : "#000000";
   const cardBorder = isDark ? bankChrome.dividerDark : "transparent";
-  const subtitleColor = isDark
-    ? "rgba(255,255,255,0.72)"
-    : "rgba(255,255,255,0.85)";
   const iconWell = isDark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.18)";
 
   return (
@@ -65,9 +57,6 @@ export function HelpSettingsContent() {
         </View>
         <View style={styles.supportCopy}>
           <Text style={styles.supportTitle}>Contact support</Text>
-          <Text style={[styles.supportSubtitle, { color: subtitleColor }]}>
-            {supportEmail}
-          </Text>
         </View>
         <AppIcon
           name="chevron-right"

@@ -4,10 +4,9 @@ import type { Href } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppIcon } from "@/components/icons/AppIcon";
-import { BackArrowButton } from "@/components/navigation/BackArrowButton";
+import { StackNavHeader } from "@/components/navigation/StackNavHeader";
 import { openSupportEmail } from "@/components/profile/ProfileSettingPrimitives";
 import {
-  getSupportEmail,
   getSupportPhone,
   getSupportWhatsApp,
   openSupportWhatsAppUrl,
@@ -15,12 +14,11 @@ import {
 import { toast } from "@/stores/toast.store";
 import { authChrome } from "@/theme/auth-chrome";
 import { bankChrome } from "@/theme/bankChrome";
-import { radius, spacing, typography } from "@/theme/tokens";
+import { layout, radius, spacing, typography } from "@/theme/tokens";
 
 export default function SupportMessagesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const email = getSupportEmail();
   const phone = getSupportPhone();
   const whatsapp = getSupportWhatsApp();
 
@@ -36,26 +34,18 @@ export default function SupportMessagesScreen() {
   };
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top + 4 }]}>
-      <View style={styles.header}>
-        <BackArrowButton onPress={() => router.back()} color={authChrome.ink} />
-        <Text style={styles.headerTitle}>Messages</Text>
-        <View style={styles.headerSide} />
-      </View>
+    <View style={styles.root}>
+      <StackNavHeader title="Messages" ink />
 
       <ScrollView
         contentContainerStyle={{
-          paddingHorizontal: spacing.lg,
-          paddingBottom: insets.bottom + 40,
+          paddingHorizontal: layout.pageGutter,
+          paddingTop: spacing.md,
+          paddingBottom: insets.bottom + spacing.lg,
           gap: spacing.md,
         }}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.lead}>
-          Reach a human for account-specific help. We never ask for passwords,
-          OTPs, or full card details.
-        </Text>
-
         <Pressable
           accessibilityRole="button"
           onPress={() =>
@@ -71,9 +61,34 @@ export default function SupportMessagesScreen() {
           </View>
           <View style={styles.copy}>
             <Text style={styles.cardTitle}>Start a help chat</Text>
-            <Text style={styles.cardSubtitle}>
-              Instant answers to general app questions
-            </Text>
+          </View>
+          <AppIcon name="chevron-right" size={16} color={authChrome.inkMuted} />
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push("/support/ticket" as Href)}
+          style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+        >
+          <View style={styles.iconWell}>
+            <AppIcon name="support" size={20} color="#FFFFFF" />
+          </View>
+          <View style={styles.copy}>
+            <Text style={styles.cardTitle}>Open an in-app ticket</Text>
+          </View>
+          <AppIcon name="chevron-right" size={16} color={authChrome.inkMuted} />
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push("/support/tickets" as Href)}
+          style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+        >
+          <View style={styles.iconWell}>
+            <AppIcon name="chat" size={20} color="#FFFFFF" weight="fill" />
+          </View>
+          <View style={styles.copy}>
+            <Text style={styles.cardTitle}>My tickets</Text>
           </View>
           <AppIcon name="chevron-right" size={16} color={authChrome.inkMuted} />
         </Pressable>
@@ -88,7 +103,6 @@ export default function SupportMessagesScreen() {
           </View>
           <View style={styles.copy}>
             <Text style={styles.cardTitle}>Email support</Text>
-            <Text style={styles.cardSubtitle}>{email}</Text>
           </View>
           <AppIcon name="chevron-right" size={16} color={authChrome.inkMuted} />
         </Pressable>
@@ -104,7 +118,6 @@ export default function SupportMessagesScreen() {
             </View>
             <View style={styles.copy}>
               <Text style={styles.cardTitle}>WhatsApp</Text>
-              <Text style={styles.cardSubtitle}>Mon–Fri, 8am–6pm GMT</Text>
             </View>
             <AppIcon
               name="chevron-right"
@@ -125,7 +138,6 @@ export default function SupportMessagesScreen() {
             </View>
             <View style={styles.copy}>
               <Text style={styles.cardTitle}>Call centre</Text>
-              <Text style={styles.cardSubtitle}>{phone}</Text>
             </View>
             <AppIcon
               name="chevron-right"
@@ -143,29 +155,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: bankChrome.pageDark,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.md,
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: "center",
-    fontFamily: typography.fontFamily.semibold,
-    fontSize: 17,
-    color: authChrome.ink,
-  },
-  headerSide: {
-    width: 44,
-  },
-  lead: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: 14,
-    lineHeight: 21,
-    color: authChrome.inkMuted,
-    marginTop: spacing.sm,
   },
   card: {
     flexDirection: "row",
@@ -187,17 +176,11 @@ const styles = StyleSheet.create({
   },
   copy: {
     flex: 1,
-    gap: 2,
   },
   cardTitle: {
     fontFamily: typography.fontFamily.semibold,
     fontSize: 15,
     color: authChrome.ink,
-  },
-  cardSubtitle: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: 13,
-    color: authChrome.inkMuted,
   },
   pressed: {
     opacity: 0.82,

@@ -45,7 +45,6 @@ interface OptionRowProps {
 function OptionRow({
   icon,
   label,
-  subtitle,
   onPress,
   right,
   showDivider = false,
@@ -64,14 +63,6 @@ function OptionRow({
         >
           {label}
         </Text>
-        {subtitle ? (
-          <Text
-            style={[styles.rowSubtitle, { color: colors.mutedForeground }]}
-            numberOfLines={2}
-          >
-            {subtitle}
-          </Text>
-        ) : null}
       </View>
       {right ?? (
         <AppIcon

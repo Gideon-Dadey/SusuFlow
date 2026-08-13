@@ -4,10 +4,7 @@ import { TERMS_OF_SERVICE } from "@/content/legal";
 
 export default function TermsOfServiceScreen() {
   return (
-    <SettingsDetailLayout
-      title={TERMS_OF_SERVICE.title}
-      subtitle="Terms governing use of the SusuFlow platform"
-    >
+    <SettingsDetailLayout title={TERMS_OF_SERVICE.title} surface="ink">
       <LegalDocumentContent document={TERMS_OF_SERVICE} />
     </SettingsDetailLayout>
   );

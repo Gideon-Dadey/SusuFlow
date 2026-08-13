@@ -34,6 +34,7 @@ model Tenant {
   users          User[]
   wallets        Wallet[]
   withdrawals    Withdrawal[]
+  supportTickets SupportTicket[]
 
   @@index([status])
   @@map("tenants")
@@ -74,6 +75,7 @@ model User {
   userRoles           UserRole[]
   tenant              Tenant?        @relation(fields: [tenantId], references: [id])
   approvedWithdrawals Withdrawal[]   @relation("ApprovedBy")
+  supportTickets      SupportTicket[]
 
   @@unique([tenantId, email])
   @@index([tenantId])
@@ -669,4 +671,31 @@ enum DocumentStatus {
   pending
   approved
   rejected
+}
+
+enum SupportTicketStatus {
+  open
+  in_progress
+  resolved
+  closed
+}
+
+model SupportTicket {
+  id        String              @id @default(uuid()) @db.Uuid
+  tenantId  String              @map("tenant_id") @db.Uuid
+  userId    String              @map("user_id") @db.Uuid
+  topic     String              @db.VarChar(50)
+  subject   String              @db.VarChar(200)
+  body      String
+  status    SupportTicketStatus @default(open)
+  metadata  Json                @default("{}")
+  createdAt DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  tenant    Tenant              @relation(fields: [tenantId], references: [id])
+  user      User                @relation(fields: [userId], references: [id])
+
+  @@index([tenantId, userId])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@map("support_tickets")
 }
