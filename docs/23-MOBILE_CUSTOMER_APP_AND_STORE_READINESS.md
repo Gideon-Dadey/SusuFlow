@@ -40,20 +40,28 @@ Default theme is **dark** banking chrome (`theme.store`, `userInterfaceStyle: "d
 
 ### Deposit
 
-- KYC gate before initiate
-- Client sends `idempotencyKey` (`dep_…`) once per confirm intent; reused on retry
+- KYC gate before initiate (**client + server**)
+- Client sends `idempotencyKey` (`dep_…`) once per confirm intent; same key returns the original intent
 - Offline: primary CTA disabled + toast
 - Errors via toast (not blocking `Alert`)
+- Funds settle to the company Hubtel/merchant account; wallet updates on webhook confirm
 
 ### Withdrawal
 
-- KYC gate
+- KYC gate (**client + server**)
+- Optional cycle maturity lock (`WITHDRAWAL_ENFORCE_MATURITY`, default on) when active goals have `endsAt`
 - Client sends `idempotencyKey` (`wd_…`) to `POST /api/v1/withdrawals/request`
 - API semantics (see [`05-api-specifications.md`](./05-api-specifications.md)):
   - Same key + same tenant/type/amount → return original transaction
   - Same key + conflicting payload → `409 Conflict`
+- Org must approve before Hubtel send-money; ledger posts only after payout success
 - If app lock is enabled: biometric/PIN **step-up** before confirm (`useMoneyStepUp`)
 - Offline: CTA disabled + toast
+
+### Passbook
+
+- `GET /customers/:id/passbook` + mobile `/my-profile/passbook`
+- Shows balance, total paid in, total withdrawn, and marked payment history
 
 ---
 

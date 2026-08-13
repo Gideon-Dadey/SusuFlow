@@ -1,8 +1,9 @@
-import { userApi } from "@/lib/api";
+import { planApi, userApi } from "@/lib/api";
 import {
   fetchCustomerDeposits,
   fetchCustomerWithdrawals,
   financialQueryOptions,
+  plansQueryOptions,
   profileQueryOptions,
 } from "@/lib/financial-queries";
 import { fetchCustomerWallet } from "@/lib/customer-wallet";
@@ -11,7 +12,7 @@ import { queryKeys } from "@/lib/query-keys";
 import { prefetchTenantBranding } from "@/lib/tenant-branding";
 import type { User } from "@/lib/api";
 
-/** Warm profile + financial queries before the home tab mounts after sign-in. */
+/** Warm profile + tab queries before the home shell mounts after sign-in. */
 export async function prefetchAuthenticatedSession(
   userId: string,
   tenantSlug?: string | null,
@@ -34,7 +35,14 @@ export async function prefetchAuthenticatedSession(
   }
 
   if (!resolvedCustomerId) {
-    await branding;
+    await Promise.all([
+      branding,
+      queryClient.prefetchQuery({
+        queryKey: queryKeys.plans,
+        queryFn: () => planApi.listPlans(),
+        ...plansQueryOptions,
+      }),
+    ]);
     return profile;
   }
 
@@ -54,6 +62,16 @@ export async function prefetchAuthenticatedSession(
       queryKey: queryKeys.withdrawals(userId, resolvedCustomerId),
       queryFn: () => fetchCustomerWithdrawals(resolvedCustomerId!),
       ...financialQueryOptions,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: queryKeys.plans,
+      queryFn: () => planApi.listPlans(),
+      ...plansQueryOptions,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: queryKeys.enrollments(userId),
+      queryFn: () => planApi.listEnrollments(),
+      ...plansQueryOptions,
     }),
   ]);
 

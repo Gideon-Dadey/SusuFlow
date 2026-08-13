@@ -33,6 +33,7 @@ import { FinancialEventService } from "../../common/services/financial-event.ser
 import { AuditService } from "../audit/audit.service";
 import { enqueueNotification } from "../../common/notifications/enqueue";
 import { Prisma } from "@susuflow/database";
+import { assertCustomerKycVerified } from "../../common/utils/assert-customer-kyc";
 
 @Injectable()
 export class DepositService {
@@ -46,6 +47,41 @@ export class DepositService {
     private readonly financialEvents: FinancialEventService,
     private readonly audit: AuditService,
   ) {}
+
+  private formatInitiateResponse(
+    transaction: { id: string; reference: string; status: string },
+    payment: {
+      id: string;
+      expiresAt?: Date | null;
+      gatewayResponse?: unknown;
+    },
+    session?: {
+      paymentUrl?: string;
+      expiresAt: Date;
+      bankTransfer?: unknown;
+    },
+  ) {
+    const stored = (payment.gatewayResponse || {}) as Record<string, unknown>;
+    return {
+      transactionId: transaction.id,
+      reference: transaction.reference,
+      status: transaction.status,
+      payment: {
+        id: payment.id,
+        gateway: "hubtel" as const,
+        paymentUrl:
+          session?.paymentUrl ??
+          (typeof stored.paymentUrl === "string"
+            ? stored.paymentUrl
+            : undefined),
+        expiresAt: session?.expiresAt ?? payment.expiresAt,
+        bankTransfer:
+          session?.bankTransfer ??
+          (stored.bankTransfer as object | null | undefined) ??
+          null,
+      },
+    };
+  }
 
   async initiate(
     tenantId: string,
@@ -90,8 +126,18 @@ export class DepositService {
     if (dto.idempotencyKey) {
       const existing = await this.prisma.transaction.findUnique({
         where: { idempotencyKey: dto.idempotencyKey },
+        include: { payment: true },
       });
-      if (existing) throw new ConflictException("Duplicate deposit request");
+      if (existing) {
+        if (
+          existing.type !== "deposit" ||
+          existing.tenantId !== tenantId ||
+          Number(existing.amount) !== Number(dto.amount)
+        ) {
+          throw new ConflictException("Idempotency key reuse conflict");
+        }
+        return this.formatInitiateResponse(existing, existing.payment!);
+      }
     }
 
     const customer = await this.prisma.customer.findFirst({
@@ -102,6 +148,15 @@ export class DepositService {
       },
     });
     if (!customer) throw new NotFoundException("Customer not found");
+
+    const isPrivilegedAssisted =
+      initiatedBy.roles.includes(ROLES.COLLECTOR) ||
+      initiatedBy.roles.includes(ROLES.COMPANY_ADMIN) ||
+      initiatedBy.roles.includes(ROLES.ACCOUNT_OFFICER);
+
+    if (!isPrivilegedAssisted) {
+      await assertCustomerKycVerified(this.prisma, tenantId, customer.id);
+    }
 
     if (
       initiatedBy.roles.includes(ROLES.COLLECTOR) &&
@@ -200,6 +255,7 @@ export class DepositService {
             ? { bankTransfer: session.bankTransfer }
             : {}),
           sessionId: session.sessionId,
+          paymentUrl: session.paymentUrl,
         } as object,
       },
     });
@@ -248,18 +304,11 @@ export class DepositService {
       },
     });
 
-    return {
-      transactionId: result.transaction.id,
-      reference,
-      status: "pending",
-      payment: {
-        id: result.payment.id,
-        gateway: "hubtel",
-        paymentUrl: session.paymentUrl,
-        expiresAt: session.expiresAt,
-        bankTransfer: session.bankTransfer ?? null,
-      },
-    };
+    return this.formatInitiateResponse(
+      result.transaction,
+      result.payment,
+      session,
+    );
   }
 
   async confirmPayment(

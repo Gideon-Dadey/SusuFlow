@@ -8,7 +8,9 @@ export type FinancialEventType =
   | "withdrawal.requested"
   | "withdrawal.approved"
   | "withdrawal.rejected"
-  | "withdrawal.completed";
+  | "withdrawal.completed"
+  | "withdrawal.disbursement_failed"
+  | "withdrawal.disbursement_pending";
 
 export interface FinancialEventPayload {
   event: FinancialEventType;

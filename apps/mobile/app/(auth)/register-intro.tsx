@@ -19,7 +19,7 @@ const STEPS = [
   {
     title: "Choose your susu company",
     description:
-      "Every member belongs to one savings group on SusuFlow. Enter the company name from your invite, or ask your collector if you are unsure.",
+      "Every member belongs to one susu company on SusuFlow. Enter the company name from your invite or your group’s login details.",
     Illustration: AddressIllustration,
   },
   {

@@ -9,12 +9,13 @@
  * 3. Set real EXPO_PUBLIC_SUPPORT_PHONE and EXPO_PUBLIC_SUPPORT_WHATSAPP
  *    (placeholder numbers are intentionally hidden in the app)
  * 4. Confirm EXPO_PUBLIC_API_URL / EXPO_PUBLIC_WEB_URL for production
- * 5. Run: pnpm smoke:store  (config gate)
- * 6. Build with: pnpm build:production
- * 7. Physical device smoke on the production build
+ * 5. Confirm API Hubtel + HUBTEL_WEBHOOK_SECRET + AWS S3 KYC (server)
+ * 6. Run: pnpm smoke:store  (config gate)
+ * 7. Build with: pnpm build:production
+ * 8. Physical device smoke on the production build
  */
 export const STORE_READINESS = {
-  version: "1.1.0",
+  version: "1.2.0",
   requiredSecrets: [
     "EXPO_PUBLIC_API_URL",
     "EXPO_PUBLIC_WEB_URL",
@@ -24,6 +25,8 @@ export const STORE_READINESS = {
   ] as const,
   deviceSmoke: [
     "deposit confirm",
+    "withdraw request + staff approve payout",
+    "passbook totals after deposit",
     "withdraw double-tap / idempotency",
     "biometric login",
     "offline money CTA disabled",

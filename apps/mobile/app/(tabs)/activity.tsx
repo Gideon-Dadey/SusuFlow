@@ -148,6 +148,7 @@ export default function ActivityScreen() {
   return (
     <>
       <TabScreenLayout
+        tabRouteName="activity"
         header={<TabScreenHeader title="Activity" />}
         refreshControl={
           <RefreshControl

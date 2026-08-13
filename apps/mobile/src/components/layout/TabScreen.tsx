@@ -1,5 +1,6 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import {
+  DeviceEventEmitter,
   RefreshControlProps,
   ScrollView,
   StyleSheet,
@@ -11,6 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackArrowButton } from "@/components/navigation/BackArrowButton";
 import { CardSurface } from "@/components/ui/CardSurface";
 import { tabBarScrollPadding } from "@/constants/tab-bar";
+import { TAB_SCROLL_TO_TOP_EVENT } from "@/lib/tab-scroll";
 import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { layout, spacing, typography } from "@/theme/tokens";
@@ -19,6 +21,8 @@ interface TabScreenLayoutProps {
   header?: ReactNode;
   children: ReactNode;
   refreshControl?: React.ReactElement<RefreshControlProps>;
+  /** When set, re-tapping this tab scrolls content to top. */
+  tabRouteName?: string;
   /** @deprecated Quiet SusuFlow headers only — kept for call-site compatibility. */
   bankHeader?: boolean;
   /** @deprecated Unused. */
@@ -29,10 +33,27 @@ export function TabScreenLayout({
   header,
   children,
   refreshControl,
+  tabRouteName,
 }: TabScreenLayoutProps) {
   const insets = useSafeAreaInsets();
   const { isDark } = useTheme();
   const pageBg = isDark ? bankChrome.pageDark : bankChrome.pageLight;
+  const scrollRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    if (!tabRouteName) return;
+
+    const subscription = DeviceEventEmitter.addListener(
+      TAB_SCROLL_TO_TOP_EVENT,
+      (routeName: string) => {
+        if (routeName === tabRouteName) {
+          scrollRef.current?.scrollTo({ y: 0, animated: true });
+        }
+      },
+    );
+
+    return () => subscription.remove();
+  }, [tabRouteName]);
 
   return (
     <View style={[styles.root, { backgroundColor: pageBg }]}>
@@ -51,6 +72,7 @@ export function TabScreenLayout({
       ) : null}
 
       <ScrollView
+        ref={scrollRef}
         style={styles.scrollView}
         contentContainerStyle={[
           styles.scroll,

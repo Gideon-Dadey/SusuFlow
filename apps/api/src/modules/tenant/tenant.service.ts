@@ -16,7 +16,6 @@ import { PrismaService } from "../../prisma/prisma.service";
 import { CacheService } from "../../cache/cache.service";
 import { TENANT_CACHE_PREFIX } from "../../cache/cache.constants";
 import { CreateTenantDto, UpdateTenantDto } from "./dto/tenant.dto";
-import { PlanService } from "../plan/plan.service";
 import { ensureTenantChartOfAccounts } from "../../common/utils/chart-of-accounts";
 
 function generateTempPassword(): string {
@@ -29,7 +28,6 @@ export class TenantService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cache: CacheService,
-    private readonly planService: PlanService,
   ) {}
 
   async findAll(cursor?: string, limit?: number) {
@@ -210,8 +208,6 @@ export class TenantService {
 
       return { tenant, subscription, admin };
     });
-
-    await this.planService.seedDefaultPlans(result.tenant.id);
 
     await this.invalidateTenantCache(result.tenant.slug);
 

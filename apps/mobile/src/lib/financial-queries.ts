@@ -1,11 +1,14 @@
 import type { QueryClient, QueryKey } from "@tanstack/react-query";
-import { depositApi, withdrawalApi } from "@/lib/api";
+import { depositApi, planApi, withdrawalApi } from "@/lib/api";
 import type { CustomerSessionScope } from "@/lib/query-keys";
 import { queryKeys } from "@/lib/query-keys";
 import { fetchCustomerWallet } from "@/lib/customer-wallet";
 
 /** How long cached wallet/transaction data stays fresh before a background refetch. */
 export const FINANCIAL_STALE_MS = 2 * 60_000;
+
+/** Goals catalog + enrollments — longer stale window; progress updates via invalidate. */
+export const PLANS_STALE_MS = 5 * 60_000;
 
 /** Keep financial cache warm while navigating tabs. */
 export const FINANCIAL_GC_MS = 30 * 60_000;
@@ -22,8 +25,8 @@ export const financialQueryOptions = {
 } as const;
 
 export const profileQueryOptions = {
-  staleTime: 5 * 60_000,
-  gcTime: 30 * 60_000,
+  staleTime: PLANS_STALE_MS,
+  gcTime: FINANCIAL_GC_MS,
   refetchOnWindowFocus: false,
   refetchOnReconnect: true,
   refetchOnMount: false,
@@ -31,8 +34,8 @@ export const profileQueryOptions = {
 } as const;
 
 export const plansQueryOptions = {
-  staleTime: 5 * 60_000,
-  gcTime: 30 * 60_000,
+  staleTime: PLANS_STALE_MS,
+  gcTime: FINANCIAL_GC_MS,
   refetchOnWindowFocus: false,
   refetchOnReconnect: true,
   refetchOnMount: false,
@@ -53,10 +56,43 @@ export function fetchCustomerWithdrawals(customerId: string) {
   });
 }
 
-function isQueryStale(queryClient: QueryClient, queryKey: QueryKey): boolean {
+function isQueryStale(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  staleMs: number,
+): boolean {
   const state = queryClient.getQueryState(queryKey);
   if (!state?.dataUpdatedAt) return true;
-  return Date.now() - state.dataUpdatedAt > FINANCIAL_STALE_MS;
+  return Date.now() - state.dataUpdatedAt > staleMs;
+}
+
+function refetchStaleKeys(
+  queryClient: QueryClient,
+  keys: QueryKey[],
+  staleMs: number,
+  force: boolean,
+) {
+  if (force) {
+    // refetchType "all" updates inactive caches (e.g. Goals after a deposit).
+    void Promise.all(
+      keys.map((queryKey) =>
+        queryClient.invalidateQueries({ queryKey, refetchType: "all" }),
+      ),
+    );
+    return;
+  }
+
+  const staleKeys = keys.filter((key) =>
+    isQueryStale(queryClient, key, staleMs),
+  );
+
+  if (!staleKeys.length) return;
+
+  void Promise.all(
+    staleKeys.map((queryKey) =>
+      queryClient.refetchQueries({ queryKey, type: "active" }),
+    ),
+  );
 }
 
 /** Silent background refetch — only when cache is stale (unless forced). */
@@ -68,22 +104,31 @@ export function refreshCustomerFinancials(
   const { userId, customerId } = scope;
   const force = options?.force ?? false;
 
-  const keys: QueryKey[] = [
-    queryKeys.wallet(userId, customerId),
-    queryKeys.deposits(userId, customerId),
-    queryKeys.withdrawals(userId, customerId),
-  ];
+  refetchStaleKeys(
+    queryClient,
+    [
+      queryKeys.wallet(userId, customerId),
+      queryKeys.deposits(userId, customerId),
+      queryKeys.withdrawals(userId, customerId),
+    ],
+    FINANCIAL_STALE_MS,
+    force,
+  );
 
-  const staleKeys = force
-    ? keys
-    : keys.filter((key) => isQueryStale(queryClient, key));
+  refreshCustomerPlans(queryClient, userId, options);
+}
 
-  if (!staleKeys.length) return;
-
-  void Promise.all(
-    staleKeys.map((queryKey) =>
-      queryClient.refetchQueries({ queryKey, type: "active" }),
-    ),
+/** Keep Goals catalog + enrollments fresh without blocking tab paints. */
+export function refreshCustomerPlans(
+  queryClient: QueryClient,
+  userId: string,
+  options?: { force?: boolean },
+) {
+  refetchStaleKeys(
+    queryClient,
+    [queryKeys.plans, queryKeys.enrollments(userId)],
+    PLANS_STALE_MS,
+    options?.force ?? false,
   );
 }
 
@@ -116,6 +161,16 @@ export function prefetchCustomerTabData(
       queryKey: queryKeys.withdrawals(userId, customerId),
       queryFn: () => fetchCustomerWithdrawals(customerId),
       ...financialQueryOptions,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: queryKeys.plans,
+      queryFn: () => planApi.listPlans(),
+      ...plansQueryOptions,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: queryKeys.enrollments(userId),
+      queryFn: () => planApi.listEnrollments(),
+      ...plansQueryOptions,
     }),
   ]);
 }

@@ -10,49 +10,9 @@ import {
   UpdateSavingsPlanDto,
 } from "./dto/plan.dto";
 
-const DEFAULT_SAVINGS_PLANS = [
-  {
-    name: "Daily Susu",
-    description: "Save a small amount every day",
-    frequency: "daily" as const,
-    minAmount: 5,
-    maxAmount: 100,
-    durationMonths: 12,
-  },
-  {
-    name: "Weekly Susu",
-    description: "Commit to weekly savings",
-    frequency: "weekly" as const,
-    minAmount: 20,
-    maxAmount: 500,
-    durationMonths: 12,
-  },
-  {
-    name: "Monthly Susu",
-    description: "Monthly savings goal",
-    frequency: "monthly" as const,
-    minAmount: 50,
-    maxAmount: 2000,
-    durationMonths: 12,
-  },
-];
-
 @Injectable()
 export class PlanService {
   constructor(private readonly prisma: PrismaService) {}
-
-  async seedDefaultPlans(tenantId: string) {
-    for (const plan of DEFAULT_SAVINGS_PLANS) {
-      const exists = await this.prisma.savingsPlan.findFirst({
-        where: { tenantId, name: plan.name },
-      });
-      if (!exists) {
-        await this.prisma.savingsPlan.create({
-          data: { tenantId, ...plan, status: "active" },
-        });
-      }
-    }
-  }
 
   async create(tenantId: string, dto: CreateSavingsPlanDto) {
     if (dto.maxAmount !== undefined && dto.maxAmount < dto.minAmount) {
@@ -159,6 +119,11 @@ export class PlanService {
         targetAmount: dto.targetAmount || plan.minAmount,
         status: "active",
         startedAt: new Date(),
+        endsAt: plan.durationMonths
+          ? new Date(
+              Date.now() + plan.durationMonths * 30 * 24 * 60 * 60 * 1000,
+            )
+          : null,
       },
       include: { plan: true },
     });
@@ -167,6 +132,7 @@ export class PlanService {
   async myEnrollments(tenantId: string, customerUserId: string) {
     const customer = await this.prisma.customer.findFirst({
       where: { tenantId, userId: customerUserId },
+      select: { id: true },
     });
     if (!customer) {
       throw new NotFoundException("Customer profile not found");
@@ -177,32 +143,46 @@ export class PlanService {
       include: { plan: true },
     });
 
-    const result = [];
-    for (const enrollment of enrollments) {
-      const depositsSum = await this.prisma.transaction.aggregate({
-        where: {
-          customerId: customer.id,
-          type: "deposit",
-          status: "completed",
-          createdAt: { gte: enrollment.startedAt },
-        },
-        _sum: { amount: true },
-      });
+    if (enrollments.length === 0) {
+      return [];
+    }
 
-      const savedAmount = Number(depositsSum._sum.amount || 0);
+    // One deposits query from the earliest enrollment start, then sum in memory.
+    // Avoids N sequential aggregates that made Goals feel slow on cold load.
+    const earliestStart = enrollments.reduce(
+      (min, enrollment) =>
+        enrollment.startedAt < min ? enrollment.startedAt : min,
+      enrollments[0].startedAt,
+    );
+
+    const deposits = await this.prisma.transaction.findMany({
+      where: {
+        customerId: customer.id,
+        type: "deposit",
+        status: "completed",
+        createdAt: { gte: earliestStart },
+      },
+      select: { amount: true, createdAt: true },
+    });
+
+    return enrollments.map((enrollment) => {
+      const savedAmount = deposits.reduce((sum, deposit) => {
+        if (deposit.createdAt >= enrollment.startedAt) {
+          return sum + Number(deposit.amount);
+        }
+        return sum;
+      }, 0);
       const targetVal = Number(enrollment.targetAmount || 0);
 
-      result.push({
+      return {
         ...enrollment,
         savedAmount,
         progressPercent:
           targetVal > 0
             ? Math.min(100, Math.round((savedAmount / targetVal) * 100))
             : 0,
-      });
-    }
-
-    return result;
+      };
+    });
   }
 
   async allEnrollments(tenantId: string) {
@@ -233,31 +213,64 @@ export class PlanService {
       },
     });
 
-    const result = [];
-    for (const enrollment of enrollments) {
-      const depositsSum = await this.prisma.transaction.aggregate({
-        where: {
-          customerId: enrollment.customerId,
-          type: "deposit",
-          status: "completed",
-          createdAt: { gte: enrollment.startedAt },
-        },
-        _sum: { amount: true },
-      });
+    if (enrollments.length === 0) {
+      return [];
+    }
 
-      const savedAmount = Number(depositsSum._sum.amount || 0);
+    // Group by customer → one deposit fetch per customer, then map progress.
+    const byCustomer = new Map<string, { earliestStart: Date }>();
+
+    for (const enrollment of enrollments) {
+      const existing = byCustomer.get(enrollment.customerId);
+      if (!existing) {
+        byCustomer.set(enrollment.customerId, {
+          earliestStart: enrollment.startedAt,
+        });
+        continue;
+      }
+      if (enrollment.startedAt < existing.earliestStart) {
+        existing.earliestStart = enrollment.startedAt;
+      }
+    }
+
+    const depositsByCustomer = new Map<
+      string,
+      Array<{ amount: unknown; createdAt: Date }>
+    >();
+
+    await Promise.all(
+      [...byCustomer.entries()].map(async ([customerId, meta]) => {
+        const deposits = await this.prisma.transaction.findMany({
+          where: {
+            customerId,
+            type: "deposit",
+            status: "completed",
+            createdAt: { gte: meta.earliestStart },
+          },
+          select: { amount: true, createdAt: true },
+        });
+        depositsByCustomer.set(customerId, deposits);
+      }),
+    );
+
+    return enrollments.map((enrollment) => {
+      const deposits = depositsByCustomer.get(enrollment.customerId) ?? [];
+      const savedAmount = deposits.reduce((sum, deposit) => {
+        if (deposit.createdAt >= enrollment.startedAt) {
+          return sum + Number(deposit.amount);
+        }
+        return sum;
+      }, 0);
       const targetVal = Number(enrollment.targetAmount || 0);
 
-      result.push({
+      return {
         ...enrollment,
         savedAmount,
         progressPercent:
           targetVal > 0
             ? Math.min(100, Math.round((savedAmount / targetVal) * 100))
             : 0,
-      });
-    }
-
-    return result;
+      };
+    });
   }
 }

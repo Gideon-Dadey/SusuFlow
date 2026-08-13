@@ -7,7 +7,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { TenantService } from "./tenant.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CacheService } from "../../cache/cache.service";
-import { PlanService } from "../plan/plan.service";
 
 jest.mock("bcrypt", () => ({
   hash: jest.fn().mockResolvedValue("hashed-password"),
@@ -30,9 +29,6 @@ describe("TenantService", () => {
     $transaction: jest.fn(),
   };
   const cache = { del: jest.fn() };
-  const planService = {
-    seedDefaultPlans: jest.fn().mockResolvedValue(undefined),
-  };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -41,7 +37,6 @@ describe("TenantService", () => {
         TenantService,
         { provide: PrismaService, useValue: prisma },
         { provide: CacheService, useValue: cache },
-        { provide: PlanService, useValue: planService },
       ],
     }).compile();
 
