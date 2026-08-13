@@ -7,12 +7,13 @@
 
 ## 1. Overview of Platform Portals
 
-SusuFlow features **4 specialized role-based portals**:
+SusuFlow features **5 specialized role-based surfaces**:
 
 1. **Staff & Company Admin Portal** (`/staff/...`) — Day-to-day microfinance operations, general ledger, AI analytics, & tools.
 2. **Super Admin Platform Portal** (`/admin/...`) — Multi-tenant organization onboarding & global infrastructure health.
-3. **Customer Self-Service Portal** (`/dashboard`, `/profile`, etc.) — Individual savings, deposits, goal tracking & avatars.
+3. **Customer Self-Service Portal** (`/dashboard`, `/profile`, etc.) — Web individual savings, deposits, goal tracking & avatars.
 4. **Field Collector Mobile Portal** (`/collector/...`) — Field collection, GPS geofenced deposits, & commission tracking.
+5. **Native Customer App** (Expo — `apps/mobile`) — iOS/Android deposits, withdrawals, goals, activity, support, and app lock.
 
 ---
 
@@ -187,3 +188,37 @@ SusuFlow features **4 specialized role-based portals**:
 
 - **`/admin/dev-ops` (DevOps Control)**:
   - _Purpose_: Emergency gateway failover, maintenance locks, and global feature flags.
+
+---
+
+## 6. Native Customer App (Expo)
+
+Full detail: [`23-MOBILE_CUSTOMER_APP_AND_STORE_READINESS.md`](./23-MOBILE_CUSTOMER_APP_AND_STORE_READINESS.md).
+
+### Tabs
+
+| Tab      | Purpose                                             |
+| -------- | --------------------------------------------------- |
+| Home     | Balance, quick actions, KYC banner, recent activity |
+| Deposit  | Amount → method → confirm & pay (idempotent)        |
+| Withdraw | Amount → MoMo → confirm (step-up + idempotent)      |
+| Goals    | Savings plans / membership progress                 |
+| Activity | Period filters, cash-flow, ledger search, receipts  |
+| More     | Chat, contact, legal, profile entry                 |
+
+### Stack routes
+
+- **`/support`** — Help topics
+- **`/support/chat`** — FAQ assistant (no live balances); escalate to human
+- **`/support/messages`** — Email / WhatsApp / call centre
+- **`/my-profile`** — Account hub
+- **`/my-profile/account`** — Unified personal + account details
+- **`/my-profile/kyc`** — Identity verification
+- **`/my-profile/security*`** — Password, app lock, delete account
+- **`/my-profile/notifications`**, **`/my-profile/appearance`**
+
+### Operator notes
+
+- Dark banking chrome is the default; Appearance toggles light.
+- Offline: deposit/withdraw primary buttons disabled.
+- Biometric login enrolls after password login (refresh token only).

@@ -21,179 +21,46 @@ susuflow/
 ├── apps/
 │   ├── api/                          # NestJS Backend
 │   │   ├── src/
-│   │   │   ├── modules/
-│   │   │   │   ├── auth/
-│   │   │   │   │   ├── auth.module.ts
-│   │   │   │   │   ├── auth.controller.ts
-│   │   │   │   │   ├── auth.service.ts
-│   │   │   │   │   ├── strategies/
-│   │   │   │   │   │   ├── jwt.strategy.ts
-│   │   │   │   │   │   └── local.strategy.ts
-│   │   │   │   │   ├── guards/
-│   │   │   │   │   │   ├── jwt-auth.guard.ts
-│   │   │   │   │   │   └── mfa.guard.ts
-│   │   │   │   │   └── dto/
-│   │   │   │   │       ├── login.dto.ts
-│   │   │   │   │       ├── register.dto.ts
-│   │   │   │   │       └── mfa-verify.dto.ts
-│   │   │   │   ├── tenant/
-│   │   │   │   ├── user/
-│   │   │   │   ├── customer/
-│   │   │   │   ├── collector/
-│   │   │   │   ├── wallet/
-│   │   │   │   ├── deposit/
-│   │   │   │   ├── withdrawal/
-│   │   │   │   ├── ledger/
-│   │   │   │   ├── payment/
-│   │   │   │   │   ├── gateways/
-│   │   │   │   │   │   ├── hubtel.gateway.ts
-│   │   │   │   │   │   ├── paystack.gateway.ts
-│   │   │   │   │   │   └── payment-gateway.interface.ts
-│   │   │   │   │   └── webhooks/
-│   │   │   │   │       ├── hubtel.webhook.ts
-│   │   │   │   │       └── paystack.webhook.ts
-│   │   │   │   ├── notification/
-│   │   │   │   ├── receipt/
-│   │   │   │   ├── audit/
-│   │   │   │   ├── fraud/
-│   │   │   │   ├── report/
-│   │   │   │   ├── kyc/
-│   │   │   │   ├── subscription/
-│   │   │   │   └── health/
-│   │   │   ├── common/
-│   │   │   │   ├── guards/
-│   │   │   │   │   ├── tenant.guard.ts
-│   │   │   │   │   ├── roles.guard.ts
-│   │   │   │   │   └── rate-limit.guard.ts
-│   │   │   │   ├── interceptors/
-│   │   │   │   │   ├── audit.interceptor.ts
-│   │   │   │   │   └── transform.interceptor.ts
-│   │   │   │   ├── filters/
-│   │   │   │   │   └── http-exception.filter.ts
-│   │   │   │   ├── decorators/
-│   │   │   │   │   ├── tenant.decorator.ts
-│   │   │   │   │   ├── roles.decorator.ts
-│   │   │   │   │   ├── current-user.decorator.ts
-│   │   │   │   │   └── audit.decorator.ts
-│   │   │   │   ├── middleware/
-│   │   │   │   │   ├── tenant.middleware.ts
-│   │   │   │   │   └── request-id.middleware.ts
-│   │   │   │   └── pipes/
-│   │   │   │       └── validation.pipe.ts
+│   │   │   ├── modules/              # auth, tenant, customer, deposit, withdrawal,
+│   │   │   │                         # ledger, payment, notification, kyc, audit, …
+│   │   │   ├── common/               # guards, filters, middleware, notifications
 │   │   │   ├── config/
-│   │   │   │   ├── app.config.ts
-│   │   │   │   ├── database.config.ts
-│   │   │   │   ├── redis.config.ts
-│   │   │   │   ├── jwt.config.ts
-│   │   │   │   └── payment.config.ts
 │   │   │   ├── app.module.ts
 │   │   │   └── main.ts
 │   │   ├── test/
-│   │   │   ├── unit/
-│   │   │   ├── integration/
-│   │   │   └── e2e/
 │   │   ├── Dockerfile
-│   │   ├── nest-cli.json
-│   │   ├── tsconfig.json
 │   │   └── package.json
 │   │
-│   ├── web/                          # Next.js 15 Frontend
+│   ├── web/                          # Next.js 15 — portals + marketing
 │   │   ├── src/
 │   │   │   ├── app/
 │   │   │   │   ├── (auth)/
-│   │   │   │   │   ├── login/page.tsx
-│   │   │   │   │   ├── register/page.tsx
-│   │   │   │   │   ├── forgot-password/page.tsx
-│   │   │   │   │   ├── verify-email/page.tsx
-│   │   │   │   │   ├── verify-phone/page.tsx
-│   │   │   │   │   └── mfa/page.tsx
+│   │   │   │   ├── (marketing)/      # Public marketing (OmniH-style photo/glass)
 │   │   │   │   ├── (customer)/
-│   │   │   │   │   ├── dashboard/page.tsx
-│   │   │   │   │   ├── deposit/page.tsx
-│   │   │   │   │   ├── withdraw/page.tsx
-│   │   │   │   │   ├── transactions/page.tsx
-│   │   │   │   │   ├── statements/page.tsx
-│   │   │   │   │   └── profile/page.tsx
 │   │   │   │   ├── (staff)/
-│   │   │   │   │   ├── dashboard/page.tsx
-│   │   │   │   │   ├── customers/
-│   │   │   │   │   │   ├── page.tsx
-│   │   │   │   │   │   └── [id]/page.tsx
-│   │   │   │   │   ├── transactions/page.tsx
-│   │   │   │   │   ├── withdrawals/page.tsx
-│   │   │   │   │   ├── reports/page.tsx
-│   │   │   │   │   ├── staff/page.tsx
-│   │   │   │   │   ├── settings/page.tsx
-│   │   │   │   │   └── audit/page.tsx
 │   │   │   │   ├── (collector)/
-│   │   │   │   │   ├── dashboard/page.tsx
-│   │   │   │   │   ├── customers/
-│   │   │   │   │   │   ├── page.tsx
-│   │   │   │   │   │   ├── new/page.tsx
-│   │   │   │   │   │   └── [id]/page.tsx
-│   │   │   │   │   ├── deposit/page.tsx
-│   │   │   │   │   └── commissions/page.tsx
-│   │   │   │   ├── (admin)/
-│   │   │   │   │   ├── tenants/page.tsx
-│   │   │   │   │   ├── subscriptions/page.tsx
-│   │   │   │   │   ├── system-health/page.tsx
-│   │   │   │   │   └── fraud-alerts/page.tsx
-│   │   │   │   ├── layout.tsx
-│   │   │   │   ├── globals.css
-│   │   │   │   └── middleware.ts         # Tenant resolution, auth
+│   │   │   │   └── (admin)/
 │   │   │   ├── components/
-│   │   │   │   ├── ui/                     # ShadCN components
-│   │   │   │   ├── layout/
-│   │   │   │   │   ├── sidebar.tsx
-│   │   │   │   │   ├── header.tsx
-│   │   │   │   │   ├── bottom-nav.tsx
-│   │   │   │   │   └── tenant-branding.tsx
-│   │   │   │   ├── financial/
-│   │   │   │   │   ├── money-display.tsx
-│   │   │   │   │   ├── transaction-row.tsx
-│   │   │   │   │   ├── balance-card.tsx
-│   │   │   │   │   ├── deposit-flow.tsx
-│   │   │   │   │   ├── receipt-preview.tsx
-│   │   │   │   │   └── status-badge.tsx
-│   │   │   │   ├── forms/
-│   │   │   │   │   ├── phone-input.tsx
-│   │   │   │   │   ├── ghana-card-input.tsx
-│   │   │   │   │   └── amount-input.tsx
-│   │   │   │   └── dashboard/
-│   │   │   │       ├── stat-card.tsx
-│   │   │   │       ├── recent-transactions.tsx
-│   │   │   │       └── deposits-chart.tsx
-│   │   │   ├── lib/
-│   │   │   │   ├── api.ts                  # API client (axios/fetch)
-│   │   │   │   ├── auth.ts                 # Auth helpers
-│   │   │   │   ├── utils.ts                # cn(), formatters
-│   │   │   │   └── constants.ts
-│   │   │   ├── hooks/
-│   │   │   │   ├── use-auth.ts
-│   │   │   │   ├── use-tenant.ts
-│   │   │   │   ├── use-deposits.ts
-│   │   │   │   └── use-balance.ts
-│   │   │   └── stores/
-│   │   │       ├── auth.store.ts             # Zustand
-│   │   │       └── ui.store.ts
-│   │   ├── public/
-│   │   │   ├── favicon.ico
-│   │   │   └── images/
-│   │   ├── Dockerfile
-│   │   ├── next.config.ts
-│   │   ├── tailwind.config.ts
-│   │   ├── tsconfig.json
+│   │   │   │   └── marketing/        # photo-hero, glass-card, vision-quote, …
+│   │   │   └── lib/
 │   │   └── package.json
 │   │
-│   └── worker/                       # BullMQ Background Workers
+│   ├── mobile/                       # Expo customer app (iOS / Android)
+│   │   ├── app/                      # Expo Router: (auth), (tabs), support, my-profile
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   ├── lib/                  # api, config, monitoring, analytics, support-assistant
+│   │   │   ├── stores/               # auth, theme, app-lock, toast
+│   │   │   └── hooks/                # useMoneyStepUp, useNetworkStatus
+│   │   ├── eas.json
+│   │   ├── app.json
+│   │   ├── README.md
+│   │   └── package.json
+│   │
+│   └── worker/                       # BullMQ worker (push, notifications, email/SMS)
 │       ├── src/
 │       │   ├── processors/
-│       │   │   ├── receipt.processor.ts
-│       │   │   ├── notification.processor.ts
-│       │   │   ├── fraud.processor.ts
-│       │   │   └── audit.processor.ts
 │       │   ├── queues/
-│       │   │   └── queue.module.ts
 │       │   └── main.ts
 │       ├── Dockerfile
 │       └── package.json
@@ -299,6 +166,7 @@ susuflow/
 ## Key Configuration Files
 
 ### turbo.json
+
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
@@ -313,6 +181,7 @@ susuflow/
 ```
 
 ### pnpm-workspace.yaml
+
 ```yaml
 packages:
   - "apps/*"
@@ -321,4 +190,4 @@ packages:
 
 ---
 
-*Document end. Ready for backend and frontend development.*
+_Document end. Includes `apps/mobile`, marketing web surfaces, and worker._

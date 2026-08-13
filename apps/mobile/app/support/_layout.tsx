@@ -8,6 +8,8 @@ export default function SupportLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="chat" />
       <Stack.Screen name="messages" />
+      <Stack.Screen name="ticket" />
+      <Stack.Screen name="tickets" />
     </Stack>
   );
 }

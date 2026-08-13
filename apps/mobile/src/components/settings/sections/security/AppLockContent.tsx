@@ -293,22 +293,12 @@ export function AppLockContent() {
         <Text style={[styles.statusLabel, { color: statusFg }]}>
           {lockEnabled ? "App lock is on" : "App lock is off"}
         </Text>
-        <Text style={[styles.statusCopy, { color: colors.mutedForeground }]}>
-          {lockEnabled
-            ? "Your PIN is required when you return after leaving the app."
-            : "Turn this on to hide balances if someone opens your phone."}
-        </Text>
       </View>
 
       <SettingsPanel>
         <SettingRow
           icon="fingerprint"
           title={biometricLabel}
-          subtitle={
-            biometricAvailable
-              ? `Unlock with ${biometricLabel}`
-              : `Unavailable — set up ${biometricLabel} on this phone`
-          }
           right={
             <SettingsSwitch
               value={biometricUnlock}
@@ -320,7 +310,6 @@ export function AppLockContent() {
         <SettingRow
           icon="key"
           title="Change PIN"
-          subtitle="Update the digits used to unlock"
           onPress={() => {
             clearFields();
             setMode("change");
@@ -329,7 +318,6 @@ export function AppLockContent() {
         <SettingRow
           icon="lock"
           title="Turn off App lock"
-          subtitle="Remove PIN protection on this device"
           onPress={() => {
             clearFields();
             setMode("disable");

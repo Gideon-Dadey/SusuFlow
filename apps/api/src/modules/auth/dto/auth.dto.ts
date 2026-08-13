@@ -67,6 +67,12 @@ export class LoginDto {
   @IsOptional()
   @IsString()
   deviceFingerprint?: string;
+
+  @ApiPropertyOptional({ example: "iPhone 15 Pro iOS" })
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  deviceName?: string;
 }
 
 export class RefreshTokenDto {

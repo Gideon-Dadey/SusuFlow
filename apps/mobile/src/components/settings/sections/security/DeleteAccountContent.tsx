@@ -52,10 +52,6 @@ export function DeleteAccountContent() {
         </Text>
       </View>
 
-      <Text style={[styles.lead, { color: colors.mutedForeground }]}>
-        Enter your password to confirm it is you.
-      </Text>
-
       <Input
         label="Password"
         value={password}

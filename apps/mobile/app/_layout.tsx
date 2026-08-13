@@ -96,7 +96,7 @@ function RootShell() {
             <Stack.Screen
               name="support"
               options={{
-                presentation: "modal",
+                presentation: "card",
                 headerShown: false,
               }}
             />

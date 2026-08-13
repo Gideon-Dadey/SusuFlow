@@ -12,7 +12,6 @@ import { spacing, typography } from "@/theme/tokens";
 
 export function ChangePasswordContent() {
   const router = useRouter();
-  const { colors } = useTheme();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -50,11 +49,6 @@ export function ChangePasswordContent() {
 
   return (
     <View style={styles.stack}>
-      <Text style={[styles.lead, { color: colors.mutedForeground }]}>
-        Choose a strong password you do not use elsewhere. You will stay signed
-        in on this device.
-      </Text>
-
       <Input
         label="Current password"
         value={currentPassword}

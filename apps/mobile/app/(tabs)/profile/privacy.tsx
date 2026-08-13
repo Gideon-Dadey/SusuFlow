@@ -4,10 +4,7 @@ import { PRIVACY_POLICY } from "@/content/legal";
 
 export default function PrivacyPolicyScreen() {
   return (
-    <SettingsDetailLayout
-      title={PRIVACY_POLICY.title}
-      subtitle="How we collect, use, and protect your data"
-    >
+    <SettingsDetailLayout title={PRIVACY_POLICY.title} surface="ink">
       <LegalDocumentContent document={PRIVACY_POLICY} />
     </SettingsDetailLayout>
   );

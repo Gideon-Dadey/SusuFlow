@@ -97,11 +97,6 @@ export function SettingRow({
         <Text style={[styles.rowTitle, { color: colors.foreground }]}>
           {title}
         </Text>
-        {subtitle ? (
-          <Text style={[styles.rowSubtitle, { color: colors.mutedForeground }]}>
-            {subtitle}
-          </Text>
-        ) : null}
       </View>
       {right ??
         (onPress ? (
@@ -149,7 +144,6 @@ interface SettingToggleProps {
 export function SettingToggle({
   icon,
   title,
-  subtitle,
   value,
   onValueChange,
   showDivider = false,
@@ -169,13 +163,6 @@ export function SettingToggle({
           <Text style={[styles.rowTitle, { color: colors.foreground }]}>
             {title}
           </Text>
-          {subtitle ? (
-            <Text
-              style={[styles.rowSubtitle, { color: colors.mutedForeground }]}
-            >
-              {subtitle}
-            </Text>
-          ) : null}
         </View>
         <SettingsSwitch
           value={value}

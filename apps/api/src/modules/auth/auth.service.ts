@@ -257,26 +257,19 @@ export class AuthService {
       data: { failedLoginCount: 0, lockedUntil: null, lastLoginAt: new Date() },
     });
 
-    if (hadPriorLogin && user.tenantId) {
-      void enqueueNotification(
-        this.notificationQueue,
-        "security-new-login",
-        {
-          tenantId: user.tenantId,
-          userId: user.id,
-          firstName: user.firstName,
-        },
-        `${user.id}:${Date.now()}`,
-      ).catch(() => undefined);
-    }
-
     const roles = user.userRoles.map((ur) => ur.role.name);
 
     if (user.mfaEnabled) {
       const mfaToken = randomBytes(24).toString("hex");
       await this.cache.set(
         `mfa_session:${user.id}:${mfaToken}`,
-        { userId: user.id, tenantId: user.tenantId },
+        {
+          userId: user.id,
+          tenantId: user.tenantId,
+          hadPriorLogin,
+          deviceFingerprint: dto.deviceFingerprint?.trim() || null,
+          deviceName: dto.deviceName?.trim() || null,
+        },
         300,
       );
       try {
@@ -292,6 +285,27 @@ export class AuthService {
         email: user.email,
         message: "MFA code sent to your email address",
       };
+    }
+
+    const { deviceId, isNewDevice } = await this.rememberLoginDevice({
+      userId: user.id,
+      fingerprint: dto.deviceFingerprint,
+      name: dto.deviceName,
+    });
+
+    // Same phone / known installation: no alert. New or unknown device: alert.
+    if (hadPriorLogin && user.tenantId && isNewDevice) {
+      void enqueueNotification(
+        this.notificationQueue,
+        "security-new-login",
+        {
+          tenantId: user.tenantId,
+          userId: user.id,
+          firstName: user.firstName,
+          deviceName: dto.deviceName?.trim() || null,
+        },
+        `${user.id}:new-device:${deviceId || Date.now()}`,
+      ).catch(() => undefined);
     }
 
     const permissions = [
@@ -320,6 +334,7 @@ export class AuthService {
       data: {
         userId: user.id,
         tokenHash,
+        deviceId: deviceId || undefined,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
     });
@@ -610,9 +625,13 @@ export class AuthService {
   }
 
   async verifyMfaLogin(mfaToken: string, userId: string, code: string) {
-    const session = await this.cache.get<{ userId: string; tenantId: string }>(
-      `mfa_session:${userId}:${mfaToken}`,
-    );
+    const session = await this.cache.get<{
+      userId: string;
+      tenantId: string | null;
+      hadPriorLogin?: boolean;
+      deviceFingerprint?: string | null;
+      deviceName?: string | null;
+    }>(`mfa_session:${userId}:${mfaToken}`);
 
     if (!session || session.userId !== userId) {
       throw new UnauthorizedException(
@@ -645,6 +664,26 @@ export class AuthService {
     );
     await this.cache.del(`mfa_session:${userId}:${mfaToken}`);
 
+    const { deviceId, isNewDevice } = await this.rememberLoginDevice({
+      userId: user.id,
+      fingerprint: session.deviceFingerprint || undefined,
+      name: session.deviceName || undefined,
+    });
+
+    if (session.hadPriorLogin && user.tenantId && isNewDevice) {
+      void enqueueNotification(
+        this.notificationQueue,
+        "security-new-login",
+        {
+          tenantId: user.tenantId,
+          userId: user.id,
+          firstName: user.firstName,
+          deviceName: session.deviceName || null,
+        },
+        `${user.id}:new-device:${deviceId || Date.now()}`,
+      ).catch(() => undefined);
+    }
+
     const roles = user.userRoles.map((ur) => ur.role.name);
     const permissions = [
       ...new Set(
@@ -672,6 +711,7 @@ export class AuthService {
       data: {
         userId: user.id,
         tokenHash,
+        deviceId: deviceId || undefined,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
     });
@@ -689,5 +729,51 @@ export class AuthService {
         tenantSlug: user.tenant?.slug || "",
       },
     };
+  }
+
+  /**
+   * Trusted-device registry: logout must NOT erase the fingerprint.
+   * Same installation → isNewDevice false → no "new sign-in" alert.
+   * Missing fingerprint (e.g. web clients) → treat as unknown → alert.
+   */
+  private async rememberLoginDevice(params: {
+    userId: string;
+    fingerprint?: string | null;
+    name?: string | null;
+  }): Promise<{ deviceId: string | null; isNewDevice: boolean }> {
+    const fingerprint = params.fingerprint?.trim() || "";
+    if (fingerprint.length < 8 || fingerprint.length > 255) {
+      return { deviceId: null, isNewDevice: true };
+    }
+
+    const name = params.name?.trim().slice(0, 255) || null;
+    const existing = await this.prisma.device.findUnique({
+      where: {
+        userId_fingerprint: { userId: params.userId, fingerprint },
+      },
+    });
+
+    if (existing) {
+      await this.prisma.device.update({
+        where: { id: existing.id },
+        data: {
+          lastUsedAt: new Date(),
+          isTrusted: true,
+          ...(name ? { name } : {}),
+        },
+      });
+      return { deviceId: existing.id, isNewDevice: false };
+    }
+
+    const created = await this.prisma.device.create({
+      data: {
+        userId: params.userId,
+        fingerprint,
+        name,
+        lastUsedAt: new Date(),
+        isTrusted: true,
+      },
+    });
+    return { deviceId: created.id, isNewDevice: true };
   }
 }

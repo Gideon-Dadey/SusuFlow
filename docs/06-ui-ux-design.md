@@ -28,45 +28,45 @@
 ```css
 :root {
   /* Brand (overridable per tenant) */
-  --color-primary: #1E40AF;        /* Blue 800 */
-  --color-primary-hover: #1E3A8A;  /* Blue 900 */
-  --color-primary-light: #DBEAFE;  /* Blue 100 */
+  --color-primary: #1e40af; /* Blue 800 */
+  --color-primary-hover: #1e3a8a; /* Blue 900 */
+  --color-primary-light: #dbeafe; /* Blue 100 */
 
   /* Semantic */
-  --color-success: #059669;        /* Emerald 600 */
-  --color-success-light: #D1FAE5;
-  --color-warning: #D97706;        /* Amber 600 */
-  --color-warning-light: #FEF3C7;
-  --color-danger: #DC2626;         /* Red 600 */
-  --color-danger-light: #FEE2E2;
-  --color-info: #2563EB;           /* Blue 600 */
+  --color-success: #059669; /* Emerald 600 */
+  --color-success-light: #d1fae5;
+  --color-warning: #d97706; /* Amber 600 */
+  --color-warning-light: #fef3c7;
+  --color-danger: #dc2626; /* Red 600 */
+  --color-danger-light: #fee2e2;
+  --color-info: #2563eb; /* Blue 600 */
 
   /* Neutrals */
-  --color-background: #FAFAFA;     /* Gray 50 */
-  --color-surface: #FFFFFF;
-  --color-border: #E5E7EB;         /* Gray 200 */
-  --color-text-primary: #111827;   /* Gray 900 */
-  --color-text-secondary: #6B7280; /* Gray 500 */
-  --color-text-muted: #9CA3AF;     /* Gray 400 */
+  --color-background: #fafafa; /* Gray 50 */
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb; /* Gray 200 */
+  --color-text-primary: #111827; /* Gray 900 */
+  --color-text-secondary: #6b7280; /* Gray 500 */
+  --color-text-muted: #9ca3af; /* Gray 400 */
 
   /* Financial */
-  --color-credit: #059669;         /* Green for deposits */
-  --color-debit: #DC2626;          /* Red for withdrawals */
+  --color-credit: #059669; /* Green for deposits */
+  --color-debit: #dc2626; /* Red for withdrawals */
 }
 ```
 
 ### 2.2 Typography
 
-| Token | Font | Size | Weight | Usage |
-|-------|------|------|--------|-------|
-| `display-lg` | Inter | 36px/40px | 700 | Dashboard hero numbers |
-| `display-md` | Inter | 28px/32px | 700 | Page titles |
-| `heading-lg` | Inter | 24px/28px | 600 | Section headings |
-| `heading-md` | Inter | 20px/24px | 600 | Card titles |
-| `body-lg` | Inter | 16px/24px | 400 | Body text |
-| `body-md` | Inter | 14px/20px | 400 | Secondary text |
-| `body-sm` | Inter | 12px/16px | 400 | Captions, labels |
-| `mono` | JetBrains Mono | 14px/20px | 400 | Transaction refs, codes |
+| Token        | Font           | Size      | Weight | Usage                   |
+| ------------ | -------------- | --------- | ------ | ----------------------- |
+| `display-lg` | Inter          | 36px/40px | 700    | Dashboard hero numbers  |
+| `display-md` | Inter          | 28px/32px | 700    | Page titles             |
+| `heading-lg` | Inter          | 24px/28px | 600    | Section headings        |
+| `heading-md` | Inter          | 20px/24px | 600    | Card titles             |
+| `body-lg`    | Inter          | 16px/24px | 400    | Body text               |
+| `body-md`    | Inter          | 14px/20px | 400    | Secondary text          |
+| `body-sm`    | Inter          | 12px/16px | 400    | Captions, labels        |
+| `mono`       | JetBrains Mono | 14px/20px | 400    | Transaction refs, codes |
 
 ### 2.3 Spacing
 
@@ -74,13 +74,13 @@ Base unit: 4px. Scale: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80.
 
 ### 2.4 Border Radius
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `sm` | 4px | Badges, tags |
-| `md` | 8px | Buttons, inputs |
-| `lg` | 12px | Cards |
-| `xl` | 16px | Modals, sheets |
-| `full` | 9999px | Avatars, pills |
+| Token  | Value  | Usage           |
+| ------ | ------ | --------------- |
+| `sm`   | 4px    | Badges, tags    |
+| `md`   | 8px    | Buttons, inputs |
+| `lg`   | 12px   | Cards           |
+| `xl`   | 16px   | Modals, sheets  |
+| `full` | 9999px | Avatars, pills  |
 
 ### 2.5 Shadows
 
@@ -96,33 +96,33 @@ Base unit: 4px. Scale: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80.
 
 ### Core Components
 
-| Component | Variants | Usage |
-|-----------|----------|-------|
-| Button | primary, secondary, outline, ghost, danger | CTAs, actions |
-| Input | text, number, phone, password | Forms |
-| Select | single, searchable | Dropdowns |
-| Card | default, interactive, stat | Content containers |
-| Table | sortable, filterable, paginated | Data lists |
-| Badge | success, warning, danger, info, neutral | Status indicators |
-| Dialog | default, sheet (mobile) | Modals |
-| Toast | success, error, info | Notifications |
-| Avatar | image, initials | User representation |
-| Skeleton | text, card, table | Loading states |
-| Tabs | underline, pills | Section navigation |
-| Stat Card | with trend indicator | Dashboard KPIs |
+| Component | Variants                                   | Usage               |
+| --------- | ------------------------------------------ | ------------------- |
+| Button    | primary, secondary, outline, ghost, danger | CTAs, actions       |
+| Input     | text, number, phone, password              | Forms               |
+| Select    | single, searchable                         | Dropdowns           |
+| Card      | default, interactive, stat                 | Content containers  |
+| Table     | sortable, filterable, paginated            | Data lists          |
+| Badge     | success, warning, danger, info, neutral    | Status indicators   |
+| Dialog    | default, sheet (mobile)                    | Modals              |
+| Toast     | success, error, info                       | Notifications       |
+| Avatar    | image, initials                            | User representation |
+| Skeleton  | text, card, table                          | Loading states      |
+| Tabs      | underline, pills                           | Section navigation  |
+| Stat Card | with trend indicator                       | Dashboard KPIs      |
 
 ### Financial Components (Custom)
 
-| Component | Description |
-|-----------|-------------|
-| `MoneyDisplay` | Formatted GHS amount with color (green/red) |
-| `TransactionRow` | Type icon + amount + status + timestamp |
-| `BalanceCard` | Large balance display with trend |
-| `DepositFlow` | Multi-step deposit wizard |
-| `ReceiptPreview` | PDF receipt preview card |
-| `StatusBadge` | Transaction status with appropriate color |
-| `PhoneInput` | Ghana phone format (+233) with validation |
-| `GhanaCardInput` | Ghana Card number format (GHA-XXXXXXXXX-X) |
+| Component        | Description                                 |
+| ---------------- | ------------------------------------------- |
+| `MoneyDisplay`   | Formatted GHS amount with color (green/red) |
+| `TransactionRow` | Type icon + amount + status + timestamp     |
+| `BalanceCard`    | Large balance display with trend            |
+| `DepositFlow`    | Multi-step deposit wizard                   |
+| `ReceiptPreview` | PDF receipt preview card                    |
+| `StatusBadge`    | Transaction status with appropriate color   |
+| `PhoneInput`     | Ghana phone format (+233) with validation   |
+| `GhanaCardInput` | Ghana Card number format (GHA-XXXXXXXXX-X)  |
 
 ---
 
@@ -218,6 +218,7 @@ Base unit: 4px. Scale: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80.
 ### 5.2 Deposit Flow (3 Steps)
 
 **Step 1: Amount**
+
 ```
 ┌─────────────────────────────────────────┐
 │  ← Back          Make a Deposit         │
@@ -238,6 +239,7 @@ Base unit: 4px. Scale: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80.
 ```
 
 **Step 2: Payment Method**
+
 ```
 ┌─────────────────────────────────────────┐
 │  ← Back          Payment Method          │
@@ -261,6 +263,7 @@ Base unit: 4px. Scale: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80.
 ```
 
 **Step 3: Confirmation**
+
 ```
 ┌─────────────────────────────────────────┐
 │                                         │
@@ -347,33 +350,37 @@ Base unit: 4px. Scale: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80.
 
 ## 6. Responsive Breakpoints
 
-| Breakpoint | Width | Layout |
-|-----------|-------|--------|
-| `sm` | 640px | Single column, bottom nav |
-| `md` | 768px | Single column, optional sidebar |
-| `lg` | 1024px | Sidebar + main content |
-| `xl` | 1280px | Full admin layout |
-| `2xl` | 1536px | Max content width capped |
+| Breakpoint | Width  | Layout                          |
+| ---------- | ------ | ------------------------------- |
+| `sm`       | 640px  | Single column, bottom nav       |
+| `md`       | 768px  | Single column, optional sidebar |
+| `lg`       | 1024px | Sidebar + main content          |
+| `xl`       | 1280px | Full admin layout               |
+| `2xl`      | 1536px | Max content width capped        |
 
 ---
 
 ## 7. Interaction Patterns
 
 ### Loading States
+
 - Skeleton screens for data-heavy pages (dashboard, transaction lists)
 - Button spinner for form submissions
 - Optimistic updates for non-critical actions (mark notification read)
 
 ### Empty States
+
 - Illustration + helpful message + CTA
 - Example: "No transactions yet. Make your first deposit to start saving!"
 
 ### Error States
+
 - Inline validation on forms (real-time)
 - Toast notifications for API errors
 - Full-page error for critical failures (500, network)
 
 ### Confirmation Patterns
+
 - Destructive actions: confirmation dialog
 - Financial actions: review screen before submission
 - Withdrawals: amount + method + confirm dialog
@@ -382,15 +389,15 @@ Base unit: 4px. Scale: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80.
 
 ## 8. Accessibility
 
-| Requirement | Implementation |
-|------------|----------------|
-| Color contrast | 4.5:1 minimum for text |
-| Focus indicators | Visible focus ring on all interactive elements |
-| Screen readers | ARIA labels on icons, live regions for balance updates |
-| Keyboard navigation | Full tab order, escape to close modals |
-| Touch targets | Minimum 44x44px on mobile |
-| Motion | `prefers-reduced-motion` respected |
-| Language | `lang="en"` with Ghana locale formatting |
+| Requirement         | Implementation                                         |
+| ------------------- | ------------------------------------------------------ |
+| Color contrast      | 4.5:1 minimum for text                                 |
+| Focus indicators    | Visible focus ring on all interactive elements         |
+| Screen readers      | ARIA labels on icons, live regions for balance updates |
+| Keyboard navigation | Full tab order, escape to close modals                 |
+| Touch targets       | Minimum 44x44px on mobile                              |
+| Motion              | `prefers-reduced-motion` respected                     |
+| Language            | `lang="en"` with Ghana locale formatting               |
 
 ---
 
@@ -399,9 +406,9 @@ Base unit: 4px. Scale: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80.
 ```typescript
 // GHS formatting
 const formatMoney = (amount: number) =>
-  new Intl.NumberFormat('en-GH', {
-    style: 'currency',
-    currency: 'GHS',
+  new Intl.NumberFormat("en-GH", {
+    style: "currency",
+    currency: "GHS",
     minimumFractionDigits: 2,
   }).format(amount);
 // Output: "GHS 1,000.00"
@@ -417,19 +424,23 @@ const formatMoney = (amount: number) =>
 
 ---
 
-## 10. Dark Mode (Phase 2)
+## 10. Dark Mode
 
-Deferred to Phase 2. Design tokens structured to support via:
+**Native customer app (`apps/mobile`):** Dark banking chrome is the **default** (`userInterfaceStyle: "dark"`, theme store). Users can switch to light in Appearance.
+
+**Web product portals:** Theme tokens support light/dark via CSS variables / app shell.
+
+**Marketing site (`apps/web` marketing routes):** OmniH-inspired photo heroes, floating pill nav, glass cards, and vision quotes under `apps/web/src/components/marketing/` (`photo-hero`, `glass-card`, `vision-quote-section`, etc.). Do not apply marketing atmosphere tokens to the native customer app or staff dashboards.
 
 ```css
 [data-theme="dark"] {
-  --color-background: #0F172A;
-  --color-surface: #1E293B;
-  --color-text-primary: #F1F5F9;
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-text-primary: #f1f5f9;
   /* ... */
 }
 ```
 
 ---
 
-*Document end. Next: Folder Structure → `07-folder-structure.md`*
+_Document end. Next: Folder Structure → `07-folder-structure.md`_

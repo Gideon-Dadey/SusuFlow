@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
+  TAB_BAR_FAB_OVERHANG,
   TAB_BAR_HORIZONTAL_INSET,
   TAB_BAR_ICON_SIZE,
   TAB_BAR_ICON_SLOT,
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
     overflow: "visible",
   },
   elevatedTab: {
-    marginTop: -18,
+    marginTop: -TAB_BAR_FAB_OVERHANG,
   },
   iconSlot: {
     width: TAB_BAR_ICON_SLOT,

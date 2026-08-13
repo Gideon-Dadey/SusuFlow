@@ -10,13 +10,13 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackArrowButton } from "@/components/navigation/BackArrowButton";
-import { tabBarScrollPadding } from "@/constants/tab-bar";
 import { bankChrome } from "@/theme/bankChrome";
 import { useTheme } from "@/theme/ThemeProvider";
 import { layout, spacing, typography } from "@/theme/tokens";
 
 interface SettingsDetailLayoutProps {
   title: string;
+  /** @deprecated Page subtitles are not shown on mobile. */
   subtitle?: string;
   children: ReactNode;
   keyboardAvoid?: boolean;
@@ -26,7 +26,6 @@ interface SettingsDetailLayoutProps {
 
 export function SettingsDetailLayout({
   title,
-  subtitle,
   children,
   keyboardAvoid = false,
   surface = "default",
@@ -41,7 +40,6 @@ export function SettingsDetailLayout({
       ? bankChrome.pageDark
       : bankChrome.pageLight;
   const titleColor = ink ? "#FFFFFF" : colors.foreground;
-  const subtitleColor = ink ? "rgba(255,255,255,0.55)" : colors.mutedForeground;
   const backColor = ink ? "#FFFFFF" : colors.foreground;
 
   const body = (
@@ -70,32 +68,12 @@ export function SettingsDetailLayout({
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={{
-          paddingBottom: tabBarScrollPadding(insets.bottom),
+          paddingBottom: insets.bottom + spacing.lg,
         }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {subtitle ? (
-          <Text
-            style={[
-              styles.subtitle,
-              {
-                color: subtitleColor,
-                paddingHorizontal: layout.pageGutter,
-                paddingTop: spacing.md,
-              },
-            ]}
-          >
-            {subtitle}
-          </Text>
-        ) : null}
-
-        <View
-          style={[
-            styles.content,
-            { paddingTop: subtitle ? spacing.sm : spacing.md },
-          ]}
-        >
+        <View style={[styles.content, { paddingTop: spacing.md }]}>
           {children}
         </View>
       </ScrollView>
@@ -155,11 +133,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-  },
-  subtitle: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: typography.size.sm,
-    lineHeight: 20,
   },
   content: {
     gap: spacing.md,

@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppIcon } from "@/components/icons/AppIcon";
-import { BackArrowButton } from "@/components/navigation/BackArrowButton";
+import { StackNavHeader } from "@/components/navigation/StackNavHeader";
 import { openSupportEmail } from "@/components/profile/ProfileSettingPrimitives";
 import { AnalyticsEvents, analytics } from "@/lib/analytics";
 import { openSupportWhatsAppUrl } from "@/lib/config";
@@ -99,7 +99,17 @@ export default function SupportChatScreen() {
     setDraft("");
   };
 
-  const contactHuman = () => {
+  const openTicket = () => {
+    router.push({
+      pathname: "/support/ticket",
+      params: {
+        topic: topic ?? "general",
+        q: lastUserQuestion || undefined,
+      },
+    } as never);
+  };
+
+  const contactHumanExternal = () => {
     const body = lastUserQuestion
       ? `Hello SusuFlow support,\n\nI need help with:\n${lastUserQuestion}\n\nSent from the SusuFlow app.`
       : "Hello SusuFlow support — I need help with my account.\n\nSent from the SusuFlow app.";
@@ -130,18 +140,7 @@ export default function SupportChatScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={0}
     >
-      <View style={[styles.header, { paddingTop: insets.top + 4 }]}>
-        <BackArrowButton onPress={() => router.back()} color={authChrome.ink} />
-        <View style={styles.headerCopy}>
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            {topicMeta?.title ?? "Help"}
-          </Text>
-          <Text style={styles.headerSubtitle} numberOfLines={1}>
-            General questions · secure answers
-          </Text>
-        </View>
-        <View style={styles.headerSide} />
-      </View>
+      <StackNavHeader title={topicMeta?.title ?? "Help"} ink />
 
       <FlatList
         ref={listRef}
@@ -173,17 +172,29 @@ export default function SupportChatScreen() {
       />
 
       {showEscalate ? (
-        <Pressable
-          accessibilityRole="button"
-          onPress={contactHuman}
-          style={({ pressed }) => [
-            styles.escalateBtn,
-            pressed && styles.pressed,
-          ]}
-        >
-          <AppIcon name="support" size={16} color="#000000" />
-          <Text style={styles.escalateLabel}>Contact support</Text>
-        </Pressable>
+        <View style={styles.escalateRow}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={openTicket}
+            style={({ pressed }) => [
+              styles.escalateBtn,
+              pressed && styles.pressed,
+            ]}
+          >
+            <AppIcon name="support" size={16} color="#000000" />
+            <Text style={styles.escalateLabel}>Open a ticket</Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            onPress={contactHumanExternal}
+            style={({ pressed }) => [
+              styles.escalateSecondary,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Text style={styles.escalateSecondaryLabel}>WhatsApp / email</Text>
+          </Pressable>
+        </View>
       ) : null}
 
       <View
@@ -285,9 +296,12 @@ const styles = StyleSheet.create({
   bubbleTextBot: {
     color: authChrome.ink,
   },
-  escalateBtn: {
+  escalateRow: {
     marginHorizontal: spacing.lg,
     marginBottom: 8,
+    gap: 8,
+  },
+  escalateBtn: {
     minHeight: 44,
     borderRadius: 12,
     backgroundColor: "#FFFFFF",
@@ -300,6 +314,19 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.semibold,
     fontSize: 15,
     color: "#000000",
+  },
+  escalateSecondary: {
+    minHeight: 40,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "rgba(255,255,255,0.22)",
+  },
+  escalateSecondaryLabel: {
+    fontFamily: typography.fontFamily.medium,
+    fontSize: 14,
+    color: authChrome.ink,
   },
   composer: {
     flexDirection: "row",

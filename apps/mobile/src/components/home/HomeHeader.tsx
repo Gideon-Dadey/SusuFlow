@@ -10,8 +10,8 @@ import { useAuthStore } from "@/stores/auth.store";
 import { useTheme } from "@/theme/ThemeProvider";
 import { spacing, typography } from "@/theme/tokens";
 
-const HEADER_CONTROL_SIZE = 44;
-const HEADER_ICON_SIZE = 20;
+const HEADER_CONTROL_SIZE = 52;
+const HEADER_ICON_SIZE = 26;
 
 export function HomeHeader() {
   const router = useRouter();

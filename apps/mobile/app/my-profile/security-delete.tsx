@@ -3,11 +3,7 @@ import { SettingsDetailLayout } from "@/components/settings/SettingsDetailLayout
 
 export default function SecurityDeleteScreen() {
   return (
-    <SettingsDetailLayout
-      title="Delete account"
-      subtitle="Close your SusuFlow account permanently"
-      keyboardAvoid
-    >
+    <SettingsDetailLayout title="Delete account" keyboardAvoid>
       <DeleteAccountContent />
     </SettingsDetailLayout>
   );
