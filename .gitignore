@@ -16,6 +16,10 @@ build/
 .env.bak
 *.env.bak*
 
+# Local credentials (never commit)
+docs/ADMIN_CREDENTIALS.md
+**/ADMIN_CREDENTIALS.md
+
 # IDE
 .idea/
 .vscode/
