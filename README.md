@@ -8,6 +8,33 @@ SusuFlow is a production-grade, multi-tenant fintech SaaS platform that enables 
 
 > Allow customers to deposit directly into a centralized digital account rather than handing cash to collectors. Every transaction is gateway-confirmed, ledger-recorded, and audit-trailed.
 
+## App preview
+
+Customer mobile app (Expo) — dark banking chrome for deposits, goals, passbook, and support.
+
+<p align="center">
+  <img src="docs/screenshots/mobile/01-welcome-save.jpg" alt="SusuFlow welcome — Save" width="180" />
+  <img src="docs/screenshots/mobile/02-welcome-grow.jpg" alt="SusuFlow welcome — Grow" width="180" />
+  <img src="docs/screenshots/mobile/03-welcome-live.jpg" alt="SusuFlow welcome — Live" width="180" />
+  <img src="docs/screenshots/mobile/04-login.jpg" alt="SusuFlow login" width="180" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/mobile/06-home.jpg" alt="Home dashboard" width="180" />
+  <img src="docs/screenshots/mobile/09-deposit-amount.jpg" alt="Deposit amount" width="180" />
+  <img src="docs/screenshots/mobile/10-deposit-method.jpg" alt="Deposit payment method" width="180" />
+  <img src="docs/screenshots/mobile/11-deposit-confirm.jpg" alt="Deposit confirm" width="180" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/mobile/12-more-menu.jpg" alt="More menu" width="180" />
+  <img src="docs/screenshots/mobile/13-profile.jpg" alt="Profile" width="180" />
+  <img src="docs/screenshots/mobile/08-notifications.jpg" alt="Notifications" width="180" />
+  <img src="docs/screenshots/mobile/05-register.jpg" alt="Register" width="180" />
+</p>
+
+Full set: [`docs/screenshots/`](docs/screenshots/README.md)
+
 ## Documentation Master Index (23 Technical Specifications)
 
 | Phase | Document                                                                                | Description                                                     | Status       |
