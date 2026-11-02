@@ -130,14 +130,6 @@ pnpm dev:mobile:tunnel   # Tunnel mode for physical iOS & Android phones
 
 Once running, Swagger docs are at: http://localhost:4000/api/docs
 
-### Demo Credentials (after seed)
-
-| Role          | Email                | Password        | Tenant Header          |
-| ------------- | -------------------- | --------------- | ---------------------- |
-| Super Admin   | admin@susuflow.com   | ChangeMe123!    | —                      |
-| Company Admin | steveamoah@gmail.com | Adipa123!@#     | `x-tenant-slug: adipa` |
-| Collector     | nana@adipa.com       | Collector123!@# | `x-tenant-slug: adipa` |
-
 ## Tech Stack
 
 - **Frontend (web):** Next.js 15, TypeScript, TailwindCSS, ShadCN, React Query, Zustand
