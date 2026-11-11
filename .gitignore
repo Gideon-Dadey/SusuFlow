@@ -23,6 +23,7 @@ docs/ADMIN_CREDENTIALS.md
 # IDE
 .idea/
 .vscode/
+.cursor/rules/
 *.swp
 *.swo
 
