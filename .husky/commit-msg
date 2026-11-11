@@ -1,2 +1,8 @@
 #!/usr/bin/env sh
-pnpm exec commitlint --edit "$1"
+# Drop Cursor attribution so the commit stays under the repository author.
+msg_file=$1
+tmp="${msg_file}.nocursor"
+grep -viE '^(co-authored-by:|made-with:).*(cursor|cursoragent@cursor\.com)' "$msg_file" > "$tmp" || true
+mv "$tmp" "$msg_file"
+
+pnpm exec commitlint --edit "$msg_file"
